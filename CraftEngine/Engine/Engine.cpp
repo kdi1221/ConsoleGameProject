@@ -1,6 +1,7 @@
 ﻿#include "Engine.h"
 #include "Level/Level.h"
 #include "Core/Input.h"
+#include "Render/Renderer.h"
 #include <Windows.h>
 #include <stdint.h>
 #include <iostream>
@@ -18,6 +19,9 @@ namespace Craft
 
 		// 입력 객체 생성.
 		input = std::make_unique<Input>();
+
+		// 렌더러 객체 생성
+		renderer = std::make_unique<Renderer>();
 	}
 
 	Engine::~Engine()
@@ -178,6 +182,9 @@ namespace Craft
 		}
 
 		mainLevel->Draw();
+
+		//렌더러의 Draw 이벤트 호출
+		renderer->Draw();
 	}
 
 	void Engine::SavePreviousInputStates()

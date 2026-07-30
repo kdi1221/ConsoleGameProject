@@ -5,6 +5,12 @@
 
 using namespace Craft;
 
+TestActor::TestActor()
+	:Actor("P", Vector2(5, 5), Color::Green)
+{
+	sortingOrder = 5;
+}
+
 void TestActor::Tick(float deltaTime)
 {
 	Actor::Tick(deltaTime);
@@ -15,20 +21,27 @@ void TestActor::Tick(float deltaTime)
 		QuitGame();
 	}
 
-	if (Input::Get().GetKeyDown('A'))
+	//방향키 이동.
+	if (Input::Get().GetKey(VK_LEFT) && position.x > 0)
 	{
-		std::cout << "A key is down\n";
+		position.x -= 1;
 	}
 
-	if (Input::Get().GetKey('A'))
+	if (Input::Get().GetKey(VK_RIGHT) && position.x < 39)
 	{
-		std::cout << "A key is holding down\n";
+		position.x += 1;
 	}
 
-	if (Input::Get().GetKeyUp('A'))
+	if (Input::Get().GetKey(VK_UP) && position.y > 0)
 	{
-		std::cout << "A key is Up\n";
+		position.y -= 1;
 	}
+
+	if (Input::Get().GetKey(VK_DOWN) && position.y < 24)
+	{
+		position.y += 1;
+	}
+
 
 	//std::cout << "TestActor::Tick() - deltaTime: " << deltaTime << " | FPS: " << (1.f / deltaTime) << '\n';
 }

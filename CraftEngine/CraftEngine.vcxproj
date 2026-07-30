@@ -64,7 +64,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy *.h ..\includes\CraftEngine\ /e /y /i</Command>
+      <Command>xcopy *.h ..\Includes\CraftEngine\ /e /y /i</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>xcopy $(OutDir)CraftEngine.dll ..\Library\CraftEngine\$(Configuration)\ /e /y /i
@@ -86,7 +86,7 @@ xcopy $(OutDir)CraftEngine.lib ..\Library\CraftEngine\$(Configuration)\ /e /y /i
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy *.h ..\includes\CraftEngine\ /e /y /i</Command>
+      <Command>xcopy *.h ..\Includes\CraftEngine\ /e /y /i</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>xcopy $(OutDir)CraftEngine.dll ..\Library\CraftEngine\$(Configuration)\ /e /y /i
@@ -98,6 +98,8 @@ xcopy $(OutDir)CraftEngine.lib ..\Library\CraftEngine\$(Configuration)\ /e /y /i
     <ClCompile Include="Core\Input.cpp" />
     <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Level\Level.cpp" />
+    <ClCompile Include="Math\Vector2.cpp" />
+    <ClCompile Include="Render\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Actor.h" />
@@ -105,6 +107,9 @@ xcopy $(OutDir)CraftEngine.lib ..\Library\CraftEngine\$(Configuration)\ /e /y /i
     <ClInclude Include="Core\Input.h" />
     <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Level\Level.h" />
+    <ClInclude Include="Math\Color.h" />
+    <ClInclude Include="Math\Vector2.h" />
+    <ClInclude Include="Render\Renderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
