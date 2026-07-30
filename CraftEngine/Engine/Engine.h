@@ -1,13 +1,21 @@
 ﻿#pragma once
 
+#include <memory>
+
 namespace Craft
 {
+	//전방선언.
+	class Level;
+
+	//메인 엔진 클래스
+	//엔진 루프 제공
+	//게임 엔진의 핵심 기능 제공
 	class Engine
 	{
 		//엔진 설정 구조체.
 		struct EngineSetting
 		{
-			// 타겟 프레임 속도.
+			// 목표 프레임 속도.
 			float framerate = 120.f;
 		};
 
@@ -22,21 +30,28 @@ namespace Craft
 		// 엔진 종료 함수
 		void Quit();
 
+		// 레벨 추가 요청 함수
+		template<typename T, typename = std::enable_if_t<std::is_base_of<Level, T>::value>>
+		void AddNewLevel()
+		{
+			nextLevel = std::make_shared<T>();
+		}
+
 		// 싱글톤 접근 함수
 		static Engine& Get();
 
 	protected:
-		// 입력 처리 함수.
+		// 입력 처리 함수. (입력 폴링)
 		void ProcessInput();
 
 	// 초기화 함수.
 		//레벨 초기화 함수
 		void OnInitialized();
 
-		// 액터 초기화 함수
+		// 게임 플레이 초기화 함수
 		void BeginPlay();
 		
-		// 업데이트 함수.
+		// 게임 플레이 업데이트 함수.
 		void Tick(float deltaTime);
 
 		// 화면에 그리는 함수.
@@ -57,6 +72,12 @@ namespace Craft
 
 		// 싱글톤을 위한 전역 객체.
 		static Engine* instance;
+
+		// 메인 레벨.
+		std::shared_ptr<Level> mainLevel;
+
+		// 추가 요청된 레벨.
+		std::shared_ptr<Level> nextLevel;
 	};
 }
 
