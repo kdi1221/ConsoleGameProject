@@ -1,5 +1,6 @@
 ﻿#include "Engine.h"
 #include "Level/Level.h"
+#include "Core/Input.h"
 #include <Windows.h>
 #include <stdint.h>
 #include <iostream>
@@ -14,6 +15,9 @@ namespace Craft
 		// 엔진 객체가 생성될때 이전에 만든 엔진 객체가 없어야 함
 		assert(!instance);
 		instance = this;
+
+		// 입력 객체 생성.
+		input = std::make_unique<Input>();
 	}
 
 	Engine::~Engine()
@@ -118,13 +122,22 @@ namespace Craft
 
 	void Engine::ProcessInput()
 	{
+		assert(input);
 
+		// 입력 처리 함수 호출.
+		input->ProcessInput();
 	}
 
 	void Engine::OnInitialized()
 	{
 		// 레벨에 이벤트 전달.
 		if (!mainLevel)
+		{
+			return;
+		}
+
+		// 레벨이 이미 초기화되었으면 처리 안함.
+		if (mainLevel->HasInitialized())
 		{
 			return;
 		}
@@ -145,7 +158,7 @@ namespace Craft
 
 	void Engine::Tick(float deltaTime)
 	{
-		std::cout << "DeltaTime: " << deltaTime << " | FPS: " << (1.f / deltaTime) << '\n';
+		//std::cout << "DeltaTime: " << deltaTime << " | FPS: " << (1.f / deltaTime) << '\n';
 
 		// 레벨에 이벤트 전달.
 		if (!mainLevel)
@@ -169,7 +182,8 @@ namespace Craft
 
 	void Engine::SavePreviousInputStates()
 	{
-
+		assert(input);
+		input->SavePreviousStates();
 	}
 
 	void Engine::Shutdown()

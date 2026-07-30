@@ -6,6 +6,6 @@ using namespace Craft;
 int main(void)
 {
 	Engine engine;
-	//engine.AddNewLevel<TestLevel>();
+	engine.AddNewLevel<TestLevel>();
 	engine.Run();
 }
