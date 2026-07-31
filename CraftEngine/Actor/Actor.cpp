@@ -1,5 +1,5 @@
 ﻿#include "Actor.h"
-#include "Engine/Engine.h"
+#include <Engine/Engine.h>
 #include "Level/Level.h"
 #include "Render/Renderer.h"
 
@@ -50,16 +50,6 @@ namespace Craft
 	{
 		// 엔진 종료 요청
 		Engine::Get().Quit();
-	}
-
-	std::shared_ptr<Level> Actor::GetOwner()
-	{
-		return owner.lock();
-	}
-
-	void Actor::SetOwner(std::weak_ptr<Level> newOwner)
-	{
-		owner = newOwner;
 	}
 
 	void Actor::SetPosition(const Vector2& newPosition)

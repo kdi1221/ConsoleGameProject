@@ -68,7 +68,8 @@ namespace Craft
 			iterator != actorList.end();)
 		{
 			//제거 요청 여부 확인
-			if ((*iterator)->HasExpired())
+			auto actor = *iterator;
+			if (actor->HasExpired())
 			{
 				iterator = actorList.erase(iterator);
 				continue;

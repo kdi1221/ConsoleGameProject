@@ -11,6 +11,7 @@ namespace Craft
 	//전방선언.
 	class Level;
 
+	//가상 공간에 배치될 모든 액터의 기본 클래스
 	class CRAFT_API Actor
 	{
 	public:
@@ -36,8 +37,8 @@ namespace Craft
 		inline bool IsActive() const { return isActive && !hasExpired; }
 		inline bool HasExpired() const { return hasExpired; }
 
-		std::shared_ptr<Level> GetOwner();
-		void SetOwner(std::weak_ptr<Level> newOwner);
+		inline std::shared_ptr<Level> GetOwner() const { return owner.lock(); }
+		inline void SetOwner(std::weak_ptr<Level> newOwner) { owner = newOwner; }
 
 		inline Vector2 GetPosition() const { return position; }
 		void SetPosition(const Vector2& newPosition);

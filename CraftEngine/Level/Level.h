@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Core/Core.h"
-#include "Actor/Actor.h"
+#include <Actor/Actor.h>
 #include <vector>
 #include <memory>
 
@@ -13,6 +13,9 @@ namespace Craft
 	// 액터에 필요한 부가 기능 제공.
 	class CRAFT_API Level : public std::enable_shared_from_this<Level>
 	{
+		//public std::enable_shared_from_this<Level>
+		//shared_from_this() : this 포인터를 shared_ptr로 변환
+		//weak_from_this() - this 포인터를 weak_ptr로 변환
 		//Engine 프렌드 선언.
 		friend class Engine;
 
@@ -31,7 +34,7 @@ namespace Craft
 
 		//액터 생성 함수 템플릿.
 		template<typename T, typename... Args, typename = std::enable_if_t<std::is_base_of<Actor, T>::value>>
-		std::shared_ptr<T> SpawnActor(Args... args)
+		std::shared_ptr<T> SpawnActor(Args&& ...args)
 		{
 			// 새로운 액터 객체 생성.
 			std::shared_ptr<T> newActor = std::make_shared<T>(std::forward<Args>(args)...);
@@ -40,10 +43,28 @@ namespace Craft
 			addRequestedActorList.emplace_back(newActor);
 
 			//액터의 Owner 지정
-			newActor->SetOwner(shared_from_this());
+			newActor->SetOwner(weak_from_this());
 
 			//생성된 액터 반환.
 			return newActor;
+		}
+
+		//액터 검색 함수(템플릿).
+		template<typename T, typename = std::enable_if_t<std::is_base_of<Actor, T>::value>>
+		std::shared_ptr<T> FindActor()
+		{
+			// 검색 - 형변환.
+			for (const auto& actor : actorList)
+			{
+				// T 타입으로 형변환 시도.
+				std::shared_ptr<T> targetActor = std::dynamic_pointer_cast<T>(actor);
+				if (targetActor)
+				{
+					return targetActor;
+				}
+			}
+
+			return nullptr;
 		}
 
 		// Getter.

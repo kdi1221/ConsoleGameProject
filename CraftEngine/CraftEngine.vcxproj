@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -68,7 +68,8 @@
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>xcopy $(OutDir)CraftEngine.dll ..\Library\CraftEngine\$(Configuration)\ /e /y /i
-xcopy $(OutDir)CraftEngine.lib ..\Library\CraftEngine\$(Configuration)\ /e /y /i</Command>
+xcopy $(OutDir)CraftEngine.lib ..\Library\CraftEngine\$(Configuration)\ /e /y /i
+xcopy ..\Config\Setting.txt $(OutDir)..\Config\ /e /y /i</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -90,7 +91,8 @@ xcopy $(OutDir)CraftEngine.lib ..\Library\CraftEngine\$(Configuration)\ /e /y /i
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>xcopy $(OutDir)CraftEngine.dll ..\Library\CraftEngine\$(Configuration)\ /e /y /i
-xcopy $(OutDir)CraftEngine.lib ..\Library\CraftEngine\$(Configuration)\ /e /y /i</Command>
+xcopy $(OutDir)CraftEngine.lib ..\Library\CraftEngine\$(Configuration)\ /e /y /i
+xcopy ..\Config\Setting.txt $(OutDir)..\Config\ /e /y /i</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -100,6 +102,7 @@ xcopy $(OutDir)CraftEngine.lib ..\Library\CraftEngine\$(Configuration)\ /e /y /i
     <ClCompile Include="Level\Level.cpp" />
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Render\Renderer.cpp" />
+    <ClCompile Include="Render\ScreenBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Actor.h" />
@@ -110,6 +113,7 @@ xcopy $(OutDir)CraftEngine.lib ..\Library\CraftEngine\$(Configuration)\ /e /y /i
     <ClInclude Include="Math\Color.h" />
     <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Render\Renderer.h" />
+    <ClInclude Include="Render\ScreenBuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

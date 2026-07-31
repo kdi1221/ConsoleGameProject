@@ -19,7 +19,13 @@ namespace Craft
 		struct EngineSetting
 		{
 			// 목표 프레임 속도.
-			float framerate = 120.f;
+			float framerate = 0.f;
+
+			// 화면 가로 크기
+			int width = 0;
+
+			// 화면 세로 크기
+			int height = 0;
 		};
 
 	public:
@@ -43,6 +49,10 @@ namespace Craft
 		// 싱글톤 접근 함수
 		static Engine& Get();
 
+		// Getter.
+		inline int GetWidth() const { return setting.width; }
+		inline int GetHeight() const { return setting.height; }
+
 	protected:
 		// 입력 처리 함수. (입력 폴링)
 		void ProcessInput();
@@ -65,6 +75,9 @@ namespace Craft
 
 		// 엔진 종료 시 정리 함수.
 		void Shutdown();
+
+		// 엔진 설정 로드 함수.
+		void LoadEngineSetting();
 
 	protected:
 		// 엔진 설정.
