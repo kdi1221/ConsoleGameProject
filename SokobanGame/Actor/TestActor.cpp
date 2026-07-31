@@ -27,7 +27,7 @@ void TestActor::Tick(float deltaTime)
 		position.x -= 1;
 	}
 
-	if (Input::Get().GetKey(VK_RIGHT) && position.x < 39)
+	if (Input::Get().GetKey(VK_RIGHT) && position.x < 59)
 	{
 		position.x += 1;
 	}

@@ -292,5 +292,11 @@ namespace Craft
 
 		//처리가 완료되면 파일 닫기.
 		file.close();
+
+		//화면 크기 최대 제한 처리
+		HANDLE StdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+		COORD MaxConsoleSize = GetLargestConsoleWindowSize(StdHandle);
+		setting.width = min(setting.width, MaxConsoleSize.X);
+		setting.height = min(setting.height, MaxConsoleSize.Y);
 	}
 }

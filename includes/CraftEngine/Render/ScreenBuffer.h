@@ -9,7 +9,7 @@ namespace Craft
 	class ScreenBuffer
 	{
 	public:
-		ScreenBuffer(const Vector2& screenSize);
+		ScreenBuffer(const Vector2& InScreenSize);
 		~ScreenBuffer();
 
 	public:

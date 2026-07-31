@@ -18,23 +18,65 @@ namespace Craft
 		//제대로 생성됬는지 확인
 		assert(screenBuffer != INVALID_HANDLE_VALUE);
 
+		auto SetConsoleWindowSize = [&]()
+			{
+				SMALL_RECT rect = {};
+				rect.Top = 0;
+				rect.Left = 0;
+				rect.Right = static_cast<short>(screenSize.x - 1);
+				rect.Bottom = static_cast<short>(screenSize.y - 1);
+				BOOL result = SetConsoleWindowInfo(screenBuffer, TRUE, &rect);
+				DWORD LastErrorCode = GetLastError();
+
+				//창 크기 설정 성공 여부 확인.
+				assert(result == TRUE);
+			};
+
+		auto SetConsoleWindowBufferSize = [&]()
+			{
+				COORD coord = { };
+				coord.X = static_cast<short>(screenSize.x);
+				coord.Y = static_cast<short>(screenSize.y);
+				BOOL result = SetConsoleScreenBufferSize(screenBuffer, coord);
+
+				//버퍼 설정 성공 여부 확인
+				assert(result == TRUE);
+			};
+
+		//생성된 기존 화면의 버퍼 크기를 확인해서 화면크기와 버퍼 크기 설정 순서를 조정한다.
+		CONSOLE_SCREEN_BUFFER_INFO ConsoleScreenBufferInfo;
+		GetConsoleScreenBufferInfo(screenBuffer, &ConsoleScreenBufferInfo);
+		if ((screenSize.x > ConsoleScreenBufferInfo.dwSize.X) || (screenSize.y > ConsoleScreenBufferInfo.dwSize.Y))
+		{
+			//원하는 설정의 화면 크기가 원래 콘솔화면 사이즈보다 큰 경우 버퍼부터 설정 후 화면창 크기를 결정한다.
+			SetConsoleWindowBufferSize();
+			SetConsoleWindowSize();
+		}
+		else
+		{
+			//그렇지 않으면 화면창 크기 설정 후 버퍼 크기를 설정한다.
+			SetConsoleWindowSize();
+			SetConsoleWindowBufferSize();
+		}
+
 		// 화면 창 크기 설정.
-		SMALL_RECT rect = {};
-		rect.Top = 0;
-		rect.Left = 0;
-		rect.Right = static_cast<short>(screenSize.x - 1);
-		rect.Bottom = static_cast<short>(screenSize.y - 1);
-		BOOL result = SetConsoleWindowInfo(screenBuffer, TRUE, &rect);
+		//SMALL_RECT rect = {};
+		//rect.Top = 0;
+		//rect.Left = 0;
+		//rect.Right = static_cast<short>(screenSize.x - 1);
+		//rect.Bottom = static_cast<short>(screenSize.y - 1);
+		//BOOL result = SetConsoleWindowInfo(screenBuffer, TRUE, &rect);
+		//DWORD LastErrorCode = GetLastError();
 
-		//창 크기 설정 확인.
-		assert(result == TRUE);
+		////창 크기 설정 확인.
+		//assert(result == TRUE);
 
-		//화면 버퍼 크기 설정 및 예외처리.
-		COORD coord = { };
-		coord.X = static_cast<short>(screenSize.x);
-		coord.Y = static_cast<short>(screenSize.y);
-		result = SetConsoleScreenBufferSize(screenBuffer, coord);
-		assert(result == TRUE);
+		////화면 버퍼 크기 설정 및 예외처리.
+		//COORD coord = { };
+		//coord.X = static_cast<short>(screenSize.x);
+		//coord.Y = static_cast<short>(screenSize.y);
+		//result = SetConsoleScreenBufferSize(screenBuffer, coord);
+		//assert(result == TRUE);
 
 		// 커서 끄기(커서 깜빡임 방지).
 		CONSOLE_CURSOR_INFO info;
