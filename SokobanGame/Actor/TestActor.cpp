@@ -13,7 +13,7 @@ TestActor::TestActor()
 
 void TestActor::Tick(float deltaTime)
 {
-	Actor::Tick(deltaTime);
+	super::Tick(deltaTime);
 
 	//ESC 키 종료
 	if (Input::Get().GetKeyDown(VK_ESCAPE))

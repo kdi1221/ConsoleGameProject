@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Core/Core.h"
+#include "Core/CraftObject.h"
 #include "Math/Vector2.h"
 #include "Math/Color.h"
 #include <memory>
@@ -12,8 +13,11 @@ namespace Craft
 	class Level;
 
 	//가상 공간에 배치될 모든 액터의 기본 클래스
-	class CRAFT_API Actor
+	class CRAFT_API Actor : public CraftObject
 	{
+		// 타입 정보 설정을 위한 매크로 추가.
+		TYPE_DECLARATIONS(Actor, CraftObject)
+
 	public:
 		Actor(const std::string& image = "", 
 			const Vector2& position = Vector2::Zero, 
