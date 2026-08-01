@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CraftEngine", "CraftEngine\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SokobanGame", "SokobanGame\SokobanGame.vcxproj", "{88B68EF2-4B31-4C45-A840-5D3052AEBCF3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShootingGame", "ShootingGame\ShootingGame.vcxproj", "{DA0F058E-CCD0-44DC-8C10-923107BEEDD0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,10 @@ Global
 		{88B68EF2-4B31-4C45-A840-5D3052AEBCF3}.Debug|x64.Build.0 = Debug|x64
 		{88B68EF2-4B31-4C45-A840-5D3052AEBCF3}.Release|x64.ActiveCfg = Release|x64
 		{88B68EF2-4B31-4C45-A840-5D3052AEBCF3}.Release|x64.Build.0 = Release|x64
+		{DA0F058E-CCD0-44DC-8C10-923107BEEDD0}.Debug|x64.ActiveCfg = Debug|x64
+		{DA0F058E-CCD0-44DC-8C10-923107BEEDD0}.Debug|x64.Build.0 = Debug|x64
+		{DA0F058E-CCD0-44DC-8C10-923107BEEDD0}.Release|x64.ActiveCfg = Release|x64
+		{DA0F058E-CCD0-44DC-8C10-923107BEEDD0}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
