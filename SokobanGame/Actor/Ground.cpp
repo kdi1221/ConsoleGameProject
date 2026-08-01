@@ -1,0 +1,7 @@
+#include "Ground.h"
+
+Ground::Ground(const Craft::Vector2& position)
+	:Actor(" ", position)
+{
+
+}

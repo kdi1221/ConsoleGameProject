@@ -28,9 +28,9 @@ namespace Craft
 		virtual void OnInitialized();
 
 		//프레임 이벤트 함수.
-		void BeginPlay();
-		void Tick(float deltaTime);
-		void Draw();
+		virtual void BeginPlay();
+		virtual void Tick(float deltaTime);
+		virtual void Draw();
 
 		//액터 생성 함수 템플릿.
 		template<typename T, typename... Args, typename = std::enable_if_t<std::is_base_of<Actor, T>::value>>

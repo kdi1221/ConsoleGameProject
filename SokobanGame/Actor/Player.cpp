@@ -1,17 +1,17 @@
-﻿#include "TestActor.h"
+﻿#include "Player.h"
 #include "Core/Input.h"
 #include <iostream>
 #include <windows.h>
 
 using namespace Craft;
 
-TestActor::TestActor()
-	:Actor("P", Vector2(5, 5), Color::Green)
+Player::Player(const Craft::Vector2& position)
+	:Actor("P", position, Color::Green)
 {
 	sortingOrder = 5;
 }
 
-void TestActor::Tick(float deltaTime)
+void Player::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
 
@@ -43,5 +43,5 @@ void TestActor::Tick(float deltaTime)
 	}
 
 
-	//std::cout << "TestActor::Tick() - deltaTime: " << deltaTime << " | FPS: " << (1.f / deltaTime) << '\n';
+	//std::cout << "Player::Tick() - deltaTime: " << deltaTime << " | FPS: " << (1.f / deltaTime) << '\n';
 }

@@ -2,12 +2,12 @@
 
 #include "Actor/Actor.h"
 
-class TestActor : public Craft::Actor
+class Player : public Craft::Actor
 {
-	TYPE_DECLARATIONS(TestActor, Actor)
+	TYPE_DECLARATIONS(Player, Actor)
 
 public:
-	TestActor();
+	Player(const Craft::Vector2& position);
 
 public:
 	virtual void Tick(float deltaTime) override;
