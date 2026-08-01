@@ -2,6 +2,7 @@
 #include <Level/Level.h>
 #include "Core/Input.h"
 #include "Render/Renderer.h"
+#include "Util/Util.h"
 #include <Windows.h>
 #include <stdint.h>
 #include <iostream>
@@ -21,6 +22,9 @@ namespace Craft
 
 		// 엔진 설정 로드.
 		LoadEngineSetting();
+
+		//랜덤 시드 설정
+		Util::SetRandomSeed();
 
 		// 입력 객체 생성.
 		input = std::make_unique<Input>();
