@@ -1,5 +1,7 @@
 ﻿#include "Player.h"
 #include "Core/Input.h"
+#include "Interface/ICanPlayerMove.h"
+#include "Level/Level.h"
 #include <iostream>
 #include <windows.h>
 
@@ -21,25 +23,67 @@ void Player::Tick(float deltaTime)
 		QuitGame();
 	}
 
+	std::shared_ptr<ICanPlayerMove> canPlayerMove = std::dynamic_pointer_cast<ICanPlayerMove>(GetOwner());
+	if (!canPlayerMove)
+	{
+		return;
+	}
+
 	//방향키 이동.
-	if (Input::Get().GetKey(VK_LEFT) && position.x > 0)
+	if (Input::Get().GetKeyDown(VK_LEFT))
 	{
-		position.x -= 1;
+		//이동하려는 새 위치 구하기.
+		Vector2 newPosition = position;
+		newPosition.x -= 1;
+
+		// 새 위치가 이동 가능한지 확인.
+		if(canPlayerMove->CanMove(position, newPosition))
+		{
+			//이동 가능한 경우에는 이동 처리
+			SetPosition(newPosition);
+		}
 	}
 
-	if (Input::Get().GetKey(VK_RIGHT) && position.x < 59)
+	if (Input::Get().GetKeyDown(VK_RIGHT))
 	{
-		position.x += 1;
+		//이동하려는 새 위치 구하기.
+		Vector2 newPosition = position;
+		newPosition.x += 1;
+
+		// 새 위치가 이동 가능한지 확인.
+		if (canPlayerMove->CanMove(position, newPosition))
+		{
+			//이동 가능한 경우에는 이동 처리
+			SetPosition(newPosition);
+		}
 	}
 
-	if (Input::Get().GetKey(VK_UP) && position.y > 0)
+	if (Input::Get().GetKeyDown(VK_UP))
 	{
-		position.y -= 1;
+		//이동하려는 새 위치 구하기.
+		Vector2 newPosition = position;
+		newPosition.y -= 1;
+
+		// 새 위치가 이동 가능한지 확인.
+		if (canPlayerMove->CanMove(position, newPosition))
+		{
+			//이동 가능한 경우에는 이동 처리
+			SetPosition(newPosition);
+		}
 	}
 
-	if (Input::Get().GetKey(VK_DOWN) && position.y < 24)
+	if (Input::Get().GetKeyDown(VK_DOWN))
 	{
-		position.y += 1;
+		//이동하려는 새 위치 구하기.
+		Vector2 newPosition = position;
+		newPosition.y += 1;
+
+		// 새 위치가 이동 가능한지 확인.
+		if (canPlayerMove->CanMove(position, newPosition))
+		{
+			//이동 가능한 경우에는 이동 처리
+			SetPosition(newPosition);
+		}
 	}
 
 

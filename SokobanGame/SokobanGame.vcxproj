@@ -70,6 +70,9 @@
     <PostBuildEvent>
       <Command>xcopy ..\Library\CraftEngine\$(Configuration)\CraftEngine.dll $(OutDir)\ /e /y /i</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>xcopy ..\Assets\* $(OutDir)..\Assets\ /e /y /i</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -90,6 +93,9 @@
     <PostBuildEvent>
       <Command>xcopy ..\Library\CraftEngine\$(Configuration)\CraftEngine.dll $(OutDir)\ /e /y /i</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>xcopy ..\Assets\* $(OutDir)..\Assets\ /e /y /i</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Actor\Box.cpp" />
@@ -106,6 +112,7 @@
     <ClInclude Include="Actor\Player.h" />
     <ClInclude Include="Actor\Target.h" />
     <ClInclude Include="Actor\Wall.h" />
+    <ClInclude Include="Interface\ICanPlayerMove.h" />
     <ClInclude Include="Level\GameLevel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
