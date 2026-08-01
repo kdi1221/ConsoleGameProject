@@ -19,7 +19,7 @@ void EnemyBullet::Tick(float deltaTime)
 	yPosition += moveSpeed * deltaTime;
 
 	// ÁÂÇ¥ °Ë»ç.
-	if (yPosition >= Engine::Get().GetHeight() - 2)
+	if (yPosition >= Engine::Get().GetHeight() - 1)
 	{
 		Destroy();
 		return;

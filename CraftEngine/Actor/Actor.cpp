@@ -39,6 +39,18 @@ namespace Craft
 		Renderer::Get().Submit(image, position, color, sortingOrder);
 	}
 
+	void Actor::OnCollision(const std::shared_ptr<Actor>& other)
+	{
+
+	}
+
+	void Actor::ChangeImage(const std::string& newImage)
+	{
+		// 새로운 문자열 복사.
+		width = static_cast<int>(newImage.size());
+		image = newImage;
+	}
+
 	void Actor::Destroy()
 	{
 		// 액터 삭제 예약
@@ -50,6 +62,11 @@ namespace Craft
 	{
 		// 엔진 종료 요청
 		Engine::Get().Quit();
+	}
+
+	void Actor::SavePreviousState()
+	{
+		previousPosition = position;
 	}
 
 	void Actor::SetPosition(const Vector2& newPosition)

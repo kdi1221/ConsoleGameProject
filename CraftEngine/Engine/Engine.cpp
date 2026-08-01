@@ -2,6 +2,7 @@
 #include <Level/Level.h>
 #include "Core/Input.h"
 #include "Render/Renderer.h"
+#include "Physics/CollisionSystem.h"
 #include "Util/Util.h"
 #include <Windows.h>
 #include <stdint.h>
@@ -31,6 +32,9 @@ namespace Craft
 
 		// 렌더러 객체 생성
 		renderer = std::make_unique<Renderer>(Vector2(setting.width, setting.height));
+
+		//콜리전 시스템 객체 생성
+		collisionSystem = std::make_unique<CollisionSystem>();
 	}
 
 	Engine::~Engine()
@@ -82,6 +86,9 @@ namespace Craft
 				//레벨의 액터 업데이트 함수.
 				Tick(deltaTime);
 
+				// 충돌 처리.
+				ProcessColiision();
+
 				// 업데이트된 결과를 화면에 그리는 함수. 
 				Draw();
 
@@ -107,6 +114,9 @@ namespace Craft
 				if (mainLevel)
 				{
 					mainLevel->ProcessAddAndDestroyActors();
+
+					//액터의 이전 상태 저장.
+					mainLevel->SavePreviousActorStates();
 				}
 
 				//처리된 입력을 이전 프레임 입력으로 저장.
@@ -194,6 +204,17 @@ namespace Craft
 
 		//렌더러의 Draw 이벤트 호출
 		renderer->Draw();
+	}
+
+	void Engine::ProcessColiision()
+	{
+		if (!mainLevel)
+		{
+			return;
+		}
+
+		// 레벨의 액터 목록을 충돌 시스템에 전달해 진행.
+		collisionSystem->ProcessCollision(mainLevel->actorList);
 	}
 
 	void Engine::SavePreviousInputStates()

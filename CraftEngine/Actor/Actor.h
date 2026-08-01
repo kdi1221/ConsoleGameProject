@@ -30,11 +30,20 @@ namespace Craft
 		virtual void Tick(float deltaTime);
 		void Draw();
 
+		//충돌 시 호출될 충돌 이벤트 함수.
+		virtual void OnCollision(const std::shared_ptr<Actor>& other);
+
+		// 액터의 이미지(문자열) 값 변경
+		void ChangeImage(const std::string& newImage);
+
 		// 액터를 레벨에서 제거할 때 사용할 함수.
 		void Destroy();
 
 		// 게임(엔진)종료 요청 함수
 		void QuitGame();
+
+		//프레임 종료 후 현재 위치를 이전 위치로 저장하는 함수
+		void SavePreviousState();
 
 		//Getter/Setter
 		inline bool HasBeganPlay() const { return hasBeganPlay; }
@@ -46,6 +55,12 @@ namespace Craft
 
 		inline Vector2 GetPosition() const { return position; }
 		void SetPosition(const Vector2& newPosition);
+
+		//이전 위치 반환 함수.
+		inline Vector2 GetPreviousPosition() const { return previousPosition; }
+
+		//액터의 문자열 너비 반환 함수.
+		inline int GetWidth() const { return width; }
 
 	protected:
 		// BeginPlay 이벤트 처리 여부 플래그
@@ -74,6 +89,9 @@ namespace Craft
 
 		// 액터 위치
 		Vector2 position;
+
+		// 이전 프레임 위치.
+		Vector2 previousPosition;
 	};
 }
 

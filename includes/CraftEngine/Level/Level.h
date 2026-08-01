@@ -74,6 +74,9 @@ namespace Craft
 		// 이전 프레임에 추가/제거 요청된 액터 처리 함수.
 		void ProcessAddAndDestroyActors();
 
+		// 액터의 이전 프레임 상태 저장 함수.
+		void SavePreviousActorStates();
+
 	protected:
 		//레벨 초기화 여부 플래그
 		bool hasInitialized = false;

@@ -11,7 +11,7 @@ static std::string enemyType[] =
 	";:^:;",
 	"zZwZz",
 	"oO@Oo",
-	"<-=->"
+	"<-=->",
 	")qOp(",
 	"(o0o)"
 };

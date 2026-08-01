@@ -3,6 +3,8 @@
 #include "Engine/Engine.h"
 #include "Level/Level.h"
 #include "EnemyBullet.h"
+#include "PlayerBullet.h"
+#include "DestroyEffect.h"
 
 using namespace Craft;
 
@@ -74,6 +76,30 @@ void Enemy::Tick(float deltaTime)
 	timer.Reset();
 
 	//적 탄약 액터 생성 후 발사
-	Vector2 bulletPosition(position.x + (width / 2), position.y);
+	Vector2 bulletPosition(position.x + (width / 2), position.y + 1);
 	GetOwner()->SpawnActor<EnemyBullet>(bulletPosition, Util::RandomRange(10.f, 20.f));
+}
+
+void Enemy::OnCollision(const std::shared_ptr<Actor>& other)
+{
+	super::OnCollision(other);
+
+	// 충돌한 물체가 플레이어 탄약인지 확인.
+	if (other->IsTypeOf<PlayerBullet>())
+	{
+		//적 액터 제거
+		Destroy();
+
+		//플레이어 탄약 제거.
+		other->Destroy();
+
+		//죽음 이펙트 재생.
+		if (GetOwner())
+		{
+			//적이 죽은 위치에 이펙트 생성.
+			GetOwner()->SpawnActor<DestroyEffect>(position);
+		}
+
+		//TODO : 점수 획득 처리.
+	}
 }

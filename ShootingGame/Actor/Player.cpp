@@ -3,6 +3,8 @@
 #include "Core/Input.h"
 #include "PlayerBullet.h"
 #include "Level/Level.h"
+#include "EnemyBullet.h"
+#include "DestroyEffect.h"
 
 using namespace Craft;
 
@@ -77,6 +79,30 @@ void Player::Tick(float deltaTime)
 	}
 }
 
+void Player::OnCollision(const std::shared_ptr<Actor>& other)
+{
+	super::OnCollision(other);
+
+	// 충돌한 액터가 적 탄약인지 확인
+	if (other->IsTypeOf<EnemyBullet>())
+	{
+		// 플레이어 제거
+		Destroy();
+
+		// 적 탄약 제거
+		other->Destroy();
+
+		// 플레이어 죽음 이펙트 재생
+		if (GetOwner())
+		{
+			//플레이어가 죽은 위치에 죽음 이펙트 생성.
+			GetOwner()->SpawnActor<DestroyEffect>(position);
+		}
+
+		//TODO : 게임 관리자에 플레이어 죽음 알림.
+	}
+}
+
 void Player::Move(float direction, float deltaTime)
 {
 	//x 위치 업데이트.
@@ -103,7 +129,7 @@ void Player::Move(float direction, float deltaTime)
 void Player::Fire()
 {
 	//발사할 탄약의 위치 설정(플레이어의 가운데 위치).
-	Vector2 bulletPosition(position.x + (width / 2), position.y);
+	Vector2 bulletPosition(position.x + (width / 2), position.y - 1);
 
 	//탄약 생성 요청.
 	GetOwner()->SpawnActor<PlayerBullet>(bulletPosition);
