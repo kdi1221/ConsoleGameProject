@@ -2,6 +2,7 @@
 #include "Core/Input.h"
 #include "Interface/ICanPlayerMove.h"
 #include "Level/Level.h"
+#include "Game/Game.h"
 #include <iostream>
 #include <windows.h>
 
@@ -20,7 +21,8 @@ void Player::Tick(float deltaTime)
 	//ESC 키 종료
 	if (Input::Get().GetKeyDown(VK_ESCAPE))
 	{
-		QuitGame();
+		Game& game = dynamic_cast<Game&>(Engine::Get());
+		game.ToggleMenu();
 	}
 
 	std::shared_ptr<ICanPlayerMove> canPlayerMove = std::dynamic_pointer_cast<ICanPlayerMove>(GetOwner());

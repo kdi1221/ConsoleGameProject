@@ -16,7 +16,7 @@ void GameLevel::OnInitialized()
 	Level::OnInitialized();
 
 	//레벨이 시작되면 맵 로드.
-	LoadMap("Map.txt");
+	LoadMap("stage1.txt");
 }
 
 void GameLevel::Draw()
@@ -231,30 +231,30 @@ bool GameLevel::CanMove(const Craft::Vector2& playerPosition, const Craft::Vecto
 			{
 				return false;
 			}
+		}
 
-			//이동하려는 곳에 박스가 없다면, 이동 가능한지 추가로 확인.
-			for (const std::shared_ptr<Actor>& actor : actorList)
+		//이동하려는 곳에 박스가 없다면, 이동 가능한지 추가로 확인.
+		for (const std::shared_ptr<Actor>& actor : actorList)
+		{
+			// 박스가 이동하려는 위치에 있는 액터 검색.
+			if (actor->GetPosition() == newPosition)
 			{
-				// 박스가 이동하려는 위치에 있는 액터 검색.
-				if (actor->GetPosition() == newPosition)
+				//이 위치에 벽이 있으면 이동 불가.
+				if (actor->IsTypeOf<Wall>())
 				{
-					//이 위치에 벽이 있으면 이동 불가.
-					if (actor->IsTypeOf<Wall>())
-					{
-						return false;
-					}
+					return false;
+				}
 
-					// 이 위치에 있는 액터가 땅이거나 목표 위치라면 이동 가능.
-					if (actor->IsTypeOf<Ground>() || actor->IsTypeOf<Target>())
-					{
-						// 박스 이동 처리(플레이어가 박스를 미는 효과).
-						boxActor->SetPosition(newPosition);
+				// 이 위치에 있는 액터가 땅이거나 목표 위치라면 이동 가능.
+				if (actor->IsTypeOf<Ground>() || actor->IsTypeOf<Target>())
+				{
+					// 박스 이동 처리(플레이어가 박스를 미는 효과).
+					boxActor->SetPosition(newPosition);
 
-						// 점수 확인 함수를 구현한 후 게임 클리어 확인
-						isGameClear = CheckGameClear();
+					// 점수 확인 함수를 구현한 후 게임 클리어 확인
+					isGameClear = CheckGameClear();
 
-						return true;
-					}
+					return true;
 				}
 			}
 		}
