@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShootingGame", "ShootingGam
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SoundSystem", "SoundSystem\SoundSystem.vcxproj", "{FB8B434F-D32A-4A74-86BB-F255E0EDBEA1}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RoguelikeGame", "RoguelikeGame\RoguelikeGame.vcxproj", "{A23B3244-F189-4296-AD13-11E71F4C2CE8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -33,6 +35,10 @@ Global
 		{FB8B434F-D32A-4A74-86BB-F255E0EDBEA1}.Debug|x64.Build.0 = Debug|x64
 		{FB8B434F-D32A-4A74-86BB-F255E0EDBEA1}.Release|x64.ActiveCfg = Release|x64
 		{FB8B434F-D32A-4A74-86BB-F255E0EDBEA1}.Release|x64.Build.0 = Release|x64
+		{A23B3244-F189-4296-AD13-11E71F4C2CE8}.Debug|x64.ActiveCfg = Debug|x64
+		{A23B3244-F189-4296-AD13-11E71F4C2CE8}.Debug|x64.Build.0 = Debug|x64
+		{A23B3244-F189-4296-AD13-11E71F4C2CE8}.Release|x64.ActiveCfg = Release|x64
+		{A23B3244-F189-4296-AD13-11E71F4C2CE8}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

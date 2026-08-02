@@ -2,7 +2,7 @@
 framerate = 120
 
 # screen width
-width = 60
+width = 200
 
 # screen height
-height = 25
+height = 80
