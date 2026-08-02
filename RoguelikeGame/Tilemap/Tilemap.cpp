@@ -40,11 +40,37 @@ void Tilemap::InitializeTilemap(const Vector2& inMapSize)
 	assert(BSPRoot && "BSPRoot Alloc Failed..");
 	BSPRoot->Divide();
 
+	BSPRoot->ForeachNode([this](const BSPNode& Node)
+		{
+			switch (Node.GetNodeCategory())
+			{
+			case BSPNode::eNodeCategory::Corridor:
+				{
+					//TODO : 통로 타일 뚫기
+				}
+				break;
 
-	/*const int randomX = Util::RandomRange(0, mapSize.x - 1);
-	const int randomY = Util::RandomRange(0, mapSize.y - 1);
+			case BSPNode::eNodeCategory::Room:
+				{
+					const Vector2& StartPosition = Node.GetStartPosition() + Vector2(1, 1);
+					const int RoomWidth = Node.GetWidth() - 2;
+					const int RoomHeight = Node.GetHeight() - 2;
+					for (int y = 0; y < RoomHeight; ++y)
+					{
+						const int TilePosY = StartPosition.y + y;
+						
+						for (int x = 0; x < RoomWidth; ++x)
+						{
+							const int TilePosX = StartPosition.x + x;
 
-	SetTileCategory(randomX, randomY, eTileCategory::Ground);*/
+							//방 안의 공간 타일 뚫기
+							SetTileCategory(TilePosX, TilePosY, eTileCategory::Ground);
+						}
+					}
+				}
+				break;
+			}
+		});
 }
 
 void Tilemap::Draw()
