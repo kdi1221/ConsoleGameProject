@@ -1,5 +1,6 @@
 #include "CollisionSystem.h"
 #include "Actor/Actor.h"
+#include "Component/BoxCollisionComponent.h"
 
 namespace Craft
 {
@@ -84,23 +85,33 @@ namespace Craft
 		// AABB(Axis Aligned Bounding Box)
 		// x의 크기와 y크기를 고려해 박스를 구성하고 두 박스가 서로 겹치는 확인하는 방법.
 
+		// 두 액터의 충돌 컴포넌트 확인.
+		std::shared_ptr<BoxCollisionComponent> leftCollision = left->GetComponent<BoxCollisionComponent>();
+		std::shared_ptr<BoxCollisionComponent> rightCollision = right->GetComponent<BoxCollisionComponent>();
+
+		//예외 처리
+		if (!leftCollision || !rightCollision)
+		{
+			return false;
+		}
+
 		//left 액터의 현재/이전 위치.
-		const Vector2 leftCurrent = left->GetPosition();
+		const Vector2 leftCurrent = left->GetWorldPosition();
 		const Vector2 leftPrevious = left->GetPreviousPosition();
 
 		//right 액터의 현재/이전 위치.
-		const Vector2 rightCurrent = right->GetPosition();
+		const Vector2 rightCurrent = right->GetWorldPosition();
 		const Vector2 rightPrevious = right->GetPreviousPosition();
 
 		// 이전 프레임 위치와 현재 위치를 모두 포함하는 바운드(충돌 영역)계산.
 		const int leftXMin = (leftCurrent.x < leftPrevious.x) ? leftCurrent.x : leftPrevious.x;
-		const int leftXMaxCurrent = leftCurrent.x + left->GetWidth() - 1;
-		const int leftXMaxPrevious = leftPrevious.x + left->GetWidth() - 1;
+		const int leftXMaxCurrent = leftCurrent.x + leftCollision->GetWidth() - 1;
+		const int leftXMaxPrevious = leftPrevious.x + leftCollision->GetWidth() - 1;
 		const int leftXMax = (leftXMaxCurrent > leftXMaxPrevious) ? leftXMaxCurrent : leftXMaxPrevious;
 
 		const int rightXMin = (rightCurrent.x < rightPrevious.x) ? rightCurrent.x : rightPrevious.x;
-		const int rightXMaxCurrent = rightCurrent.x + right->GetWidth() - 1;
-		const int rightXMaxPrevious = rightPrevious.x + right->GetWidth() - 1;
+		const int rightXMaxCurrent = rightCurrent.x + rightCollision->GetWidth() - 1;
+		const int rightXMaxPrevious = rightPrevious.x + rightCollision->GetWidth() - 1;
 		const int rightXMax = (rightXMaxCurrent > rightXMaxPrevious) ? rightXMaxCurrent : rightXMaxPrevious;
 
 		//x 좌표 기준 비교.

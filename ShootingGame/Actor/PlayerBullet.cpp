@@ -1,12 +1,16 @@
 #include "PlayerBullet.h"
+#include "Component/SpriteRendererComponent.h"
+#include "Component/BoxCollisionComponent.h"
 
 using namespace Craft;
 
 PlayerBullet::PlayerBullet(const Craft::Vector2& position)
-	:super("@", position, Color::Blue)
+	:super(position)
 	,yPosition(static_cast<float>(position.y))
 {
-
+	// 필요한 컴포넌트 추가.
+	AddComponent<SpriteRendererComponent>("@", Color::Blue, 4);
+	AddComponent<BoxCollisionComponent>(1);
 }
 
 void PlayerBullet::Tick(float deltaTime)
@@ -24,6 +28,9 @@ void PlayerBullet::Tick(float deltaTime)
 		return;
 	}
 
-	//위치 설정
-	position.y = static_cast<int>(yPosition);
+	//position.y = static_cast<int>(yPosition);
+	//위치 설정 - 컴포넌트 기반으로 동작하도록 처리
+	Vector2 newPosition = GetPosition();
+	newPosition.y = static_cast<int>(yPosition);
+	SetPosition(newPosition);
 }

@@ -3,15 +3,19 @@
 #include "Interface/ICanPlayerMove.h"
 #include "Level/Level.h"
 #include "Game/Game.h"
+#include "Component/SpriteRendererComponent.h"
+#include "Component/BoxCollisionComponent.h"
 #include <iostream>
 #include <windows.h>
 
 using namespace Craft;
 
 Player::Player(const Craft::Vector2& position)
-	:Actor("P", position, Color::Green)
+	:Actor(position)
 {
-	sortingOrder = 5;
+	// 필요한 컴포넌트 추가.
+	AddComponent<SpriteRendererComponent>("P", Color::Green, 5);
+	AddComponent<BoxCollisionComponent>(1);
 }
 
 void Player::Tick(float deltaTime)
@@ -35,11 +39,12 @@ void Player::Tick(float deltaTime)
 	if (Input::Get().GetKeyDown(VK_LEFT))
 	{
 		//이동하려는 새 위치 구하기.
-		Vector2 newPosition = position;
+		Vector2 currentPosition = GetPosition();
+		Vector2 newPosition = currentPosition;
 		newPosition.x -= 1;
 
 		// 새 위치가 이동 가능한지 확인.
-		if(canPlayerMove->CanMove(position, newPosition))
+		if(canPlayerMove->CanMove(currentPosition, newPosition))
 		{
 			//이동 가능한 경우에는 이동 처리
 			SetPosition(newPosition);
@@ -49,11 +54,12 @@ void Player::Tick(float deltaTime)
 	if (Input::Get().GetKeyDown(VK_RIGHT))
 	{
 		//이동하려는 새 위치 구하기.
-		Vector2 newPosition = position;
+		Vector2 currentPosition = GetPosition();
+		Vector2 newPosition = currentPosition;
 		newPosition.x += 1;
 
 		// 새 위치가 이동 가능한지 확인.
-		if (canPlayerMove->CanMove(position, newPosition))
+		if (canPlayerMove->CanMove(currentPosition, newPosition))
 		{
 			//이동 가능한 경우에는 이동 처리
 			SetPosition(newPosition);
@@ -63,11 +69,12 @@ void Player::Tick(float deltaTime)
 	if (Input::Get().GetKeyDown(VK_UP))
 	{
 		//이동하려는 새 위치 구하기.
-		Vector2 newPosition = position;
+		Vector2 currentPosition = GetPosition();
+		Vector2 newPosition = currentPosition;
 		newPosition.y -= 1;
 
 		// 새 위치가 이동 가능한지 확인.
-		if (canPlayerMove->CanMove(position, newPosition))
+		if (canPlayerMove->CanMove(currentPosition, newPosition))
 		{
 			//이동 가능한 경우에는 이동 처리
 			SetPosition(newPosition);
@@ -77,11 +84,12 @@ void Player::Tick(float deltaTime)
 	if (Input::Get().GetKeyDown(VK_DOWN))
 	{
 		//이동하려는 새 위치 구하기.
-		Vector2 newPosition = position;
+		Vector2 currentPosition = GetPosition();
+		Vector2 newPosition = currentPosition;
 		newPosition.y += 1;
 
 		// 새 위치가 이동 가능한지 확인.
-		if (canPlayerMove->CanMove(position, newPosition))
+		if (canPlayerMove->CanMove(currentPosition, newPosition))
 		{
 			//이동 가능한 경우에는 이동 처리
 			SetPosition(newPosition);

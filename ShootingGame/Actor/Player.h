@@ -3,6 +3,10 @@
 #include "Actor/Actor.h"
 #include "Util/Timer.h"
 
+//전방 선언.
+class PlayerGun;
+class PlayerEngineEffect;
+
 class Player : public Craft::Actor
 {
 	//발사 모드(단발/연사).
@@ -20,6 +24,9 @@ public:
 	Player();
 
 private:
+	// 게임 시작 이벤트 함수 오버라이드.
+	virtual void BeginPlay() override;
+
 	//이벤트 함수 오버라이드.
 	virtual void Tick(float deltaTime) override;
 
@@ -54,5 +61,11 @@ private:
 
 	// 연사 간격(단위 : 초)
 	float fireInterval = 0.1f;
+
+	//Scene Graph에서 플레이어의 자식으로 붙을 총구 목록
+	std::vector<std::shared_ptr<PlayerGun>> gunList;
+
+	//Scene Graph에서 플레이어의 자식으로 붙을 추진 효과
+	std::shared_ptr<PlayerEngineEffect> engineEffect;
 };
 

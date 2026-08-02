@@ -68,7 +68,8 @@
       <AdditionalDependencies>CraftEngine.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy ..\Library\CraftEngine\$(Configuration)\CraftEngine.dll $(OutDir)\ /e /y /i</Command>
+      <Command>xcopy ..\Library\CraftEngine\$(Configuration)\CraftEngine.dll $(OutDir)\ /e /y /i
+xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /i</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>xcopy ..\Assets\* $(OutDir)..\Assets\ /e /y /i</Command>
@@ -91,7 +92,8 @@
       <AdditionalDependencies>CraftEngine.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy ..\Library\CraftEngine\$(Configuration)\CraftEngine.dll $(OutDir)\ /e /y /i</Command>
+      <Command>xcopy ..\Library\CraftEngine\$(Configuration)\CraftEngine.dll $(OutDir)\ /e /y /i
+xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /i</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>xcopy ..\Assets\* $(OutDir)..\Assets\ /e /y /i</Command>

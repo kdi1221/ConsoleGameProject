@@ -4,6 +4,11 @@
 #include "Util/Util.h"
 #include "Util/Timer.h"
 
+namespace Craft
+{
+	class SpriteRendererComponent;
+}
+
 class DestroyEffect : public Craft::Actor
 {
 	TYPE_DECLARATIONS(DestroyEffect, Actor)
@@ -52,5 +57,7 @@ private:
 	// 시퀀스 재생에 사용할 타이머.
 	Timer timer;
 
+	// 이미지 효과를 업데이트할 때 사용할 컴포넌트 참조 변수.
+	std::shared_ptr<Craft::SpriteRendererComponent> spriteRendererComponent;
 };
 

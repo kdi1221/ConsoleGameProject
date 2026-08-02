@@ -1,5 +1,6 @@
 #include "DestroyEffect.h"
 #include "Engine/Engine.h"
+#include "Component/SpriteRendererComponent.h"
 
 using namespace Craft;
 using EffectFrame = DestroyEffect::EffectFrame;
@@ -15,13 +16,16 @@ static const EffectFrame sequence[] =
 };
 
 DestroyEffect::DestroyEffect(const Craft::Vector2& position)
-	:super(sequence[0].frame, position)
+	:super(position)
 {
+	//컴포넌트 추가
+	spriteRendererComponent = AddComponent<SpriteRendererComponent>(sequence[0].frame, sequence[0].color, 7);
+
 	//시퀀스에 사용할 문자열 길이 값.
 	int effectFrameImageLength = static_cast<int>(sequence[0].frame.size());
 
 	//화면 위치.
-	Vector2 tempPosition = position;
+	Vector2 tempPosition = GetPosition();
 
 	// x위치 조정.
 	tempPosition.x = tempPosition.x < 0 ? effectFrameImageLength + tempPosition.x : tempPosition.x;
@@ -37,7 +41,7 @@ DestroyEffect::DestroyEffect(const Craft::Vector2& position)
 	timer.SetTargetTime(sequence[0].playTime);
 
 	//색상 설정
-	color = sequence[0].color;
+	//color = sequence[0].color;
 
 	// 현재 재생 중인 시퀀스 인덱스 설정.
 	currentSequenceIndex = 0;
@@ -70,10 +74,16 @@ void DestroyEffect::Tick(float deltaTime)
 	// 다음 프레임에서 재생할 시간으로 타이머 재설정.
 	timer.SetTargetTime(sequence[currentSequenceIndex].playTime);
 
-	//새로운 프레임 이미지로 교체.
-	ChangeImage(sequence[currentSequenceIndex].frame);
+	//새로운 프레임 이미지로 교체 및 색상 설정
+	if (spriteRendererComponent)
+	{
+		spriteRendererComponent->SetImage(sequence[currentSequenceIndex].frame);
+		spriteRendererComponent->SetColor(sequence[currentSequenceIndex].color);
+	}
+	
+	//ChangeImage(sequence[currentSequenceIndex].frame);
 
 	//색상 설정
-	color = sequence[currentSequenceIndex].color;
+	//color = sequence[currentSequenceIndex].color;
 
 }

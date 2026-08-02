@@ -1,4 +1,5 @@
 ﻿#include "Level.h"
+#include "Actor/Actor.h"
 
 namespace Craft
 {
@@ -63,6 +64,15 @@ namespace Craft
 
 	void Level::ProcessAddAndDestroyActors()
 	{
+		//액터의 컴포넌트 추가 처리 함수 호출.
+		for (const std::shared_ptr<Actor>& actor : actorList)
+		{
+			if (actor)
+			{
+				actor->ProcessAddComponents();
+			}
+		}
+
 		// 액터 제거 처리.
 		for (auto iterator = actorList.begin();
 			iterator != actorList.end();)
