@@ -2,7 +2,9 @@
 
 #include "Core/Core.h"
 #include <memory>
+#include <string>
 
+class Sound;
 namespace Craft
 {
 	//전방선언.
@@ -40,6 +42,11 @@ namespace Craft
 		// 엔진 종료 함수
 		void Quit();
 
+		//사운드 재생 함수(사운드 시스템 래퍼 함수)
+		void PlayOneShot(const std::string& filename);
+		void PlayBackgroundMusic(const std::string& filename);
+		void StopBackgroundMusic();
+
 		// 레벨 추가 요청 함수
 		template<typename T, typename = std::enable_if_t<std::is_base_of<Level, T>::value>>
 		void AddNewLevel()
@@ -58,7 +65,6 @@ namespace Craft
 		// 입력 처리 함수. (입력 폴링)
 		void ProcessInput();
 
-	// 초기화 함수.
 		//레벨 초기화 함수
 		void OnInitialized();
 
@@ -107,6 +113,9 @@ namespace Craft
 
 		//충돌 시스템 객체.
 		std::unique_ptr<CollisionSystem> collisionSystem;
+
+		//사운드 시스템 객체
+		std::unique_ptr<Sound> sound;
 	};
 }
 

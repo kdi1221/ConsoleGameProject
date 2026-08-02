@@ -5,6 +5,7 @@
 #include "Level/Level.h"
 #include "EnemyBullet.h"
 #include "DestroyEffect.h"
+#include "GameManager.h"
 
 using namespace Craft;
 
@@ -86,6 +87,9 @@ void Player::OnCollision(const std::shared_ptr<Actor>& other)
 	// 충돌한 액터가 적 탄약인지 확인
 	if (other->IsTypeOf<EnemyBullet>())
 	{
+		//폭발 사운드 재생.
+		Engine::Get().PlayOneShot("Explosion.wav");
+
 		// 플레이어 제거
 		Destroy();
 
@@ -97,9 +101,14 @@ void Player::OnCollision(const std::shared_ptr<Actor>& other)
 		{
 			//플레이어가 죽은 위치에 죽음 이펙트 생성.
 			GetOwner()->SpawnActor<DestroyEffect>(position);
-		}
 
-		//TODO : 게임 관리자에 플레이어 죽음 알림.
+			// 게임 관리자에 플레이어 죽음 알림.
+			std::shared_ptr<GameManager> gameManager = GetOwner()->GetActorOfType<GameManager>();
+			if (gameManager)
+			{
+				gameManager->SetPlayerDead(position);
+			}
+		}
 	}
 }
 
@@ -133,6 +142,9 @@ void Player::Fire()
 
 	//탄약 생성 요청.
 	GetOwner()->SpawnActor<PlayerBullet>(bulletPosition);
+
+	//사운드 재생.
+	Engine::Get().PlayOneShot("Retro_Laser_Shoot.wav");
 }
 
 void Player::FireInterval()

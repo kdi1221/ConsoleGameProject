@@ -67,6 +67,24 @@ namespace Craft
 			return nullptr;
 		}
 
+		// 특정 타입의 액터를 검색해 반환하는 함수.
+		template<typename T, typename = std::enable_if_t<std::is_base_of<Actor, T>::value>>
+		std::shared_ptr<T> GetActorOfType()
+		{
+			// 레벨에 배치된 액터 목록 순회.
+			for (std::shared_ptr<Actor>& actor : actorList)
+			{
+				//원하는 타입의 액터를 찾았으면 형변환 후 반환.
+				if (actor->IsTypeOf<T>())
+				{
+					return std::static_pointer_cast<T>(actor);
+				}
+			}
+
+			//못 찾은 경우 null반환
+			return nullptr;
+		}
+
 		// Getter.
 		inline bool HasInitialized() const { return hasInitialized; }
 

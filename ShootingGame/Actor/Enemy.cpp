@@ -5,6 +5,7 @@
 #include "EnemyBullet.h"
 #include "PlayerBullet.h"
 #include "DestroyEffect.h"
+#include "GameManager.h"
 
 using namespace Craft;
 
@@ -87,6 +88,9 @@ void Enemy::OnCollision(const std::shared_ptr<Actor>& other)
 	// 충돌한 물체가 플레이어 탄약인지 확인.
 	if (other->IsTypeOf<PlayerBullet>())
 	{
+		//사운드 재생.
+		Engine::Get().PlayOneShot("Explosion.wav");
+
 		//적 액터 제거
 		Destroy();
 
@@ -98,8 +102,15 @@ void Enemy::OnCollision(const std::shared_ptr<Actor>& other)
 		{
 			//적이 죽은 위치에 이펙트 생성.
 			GetOwner()->SpawnActor<DestroyEffect>(position);
-		}
 
-		//TODO : 점수 획득 처리.
+			// 점수 획득 처리.
+			std::shared_ptr<GameManager> gameManager = GetOwner()->GetActorOfType<GameManager>();
+
+			//게임 관리자에 점수 획득 알림
+			if (gameManager)
+			{
+				gameManager->SetScore(gameManager->GetScore() + 1);
+			}
+		}
 	}
 }
