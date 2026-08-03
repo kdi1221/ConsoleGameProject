@@ -1,6 +1,6 @@
 ﻿#include "Engine.h"
 #include <Level/Level.h>
-#include "Core/Input.h"
+#include <Core/Input.h>
 #include "Render/Renderer.h"
 #include "Physics/CollisionSystem.h"
 #include "Util/Util.h"
@@ -186,7 +186,12 @@ namespace Craft
 
 	void Engine::ProcessInput()
 	{
-		assert(input);
+		assert(input && "input should not be null here.");
+
+		if (!input)
+		{
+			return;
+		}
 
 		// 입력 처리 함수 호출.
 		input->ProcessInput();
@@ -256,7 +261,13 @@ namespace Craft
 
 	void Engine::SavePreviousInputStates()
 	{
-		assert(input);
+		assert(input && "input should not null here");
+
+		if (!input)
+		{
+			return;
+		}
+
 		input->SavePreviousStates();
 	}
 

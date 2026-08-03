@@ -21,6 +21,9 @@ public:
 
 	void SetTileCategory(int xPos, int yPos, eTileCategory category);
 
+//private:
+	//void GenerateTiles();
+
 private:
 	//타일맵 크기(가로 X 세로)
 	Craft::Vector2 mapSize;

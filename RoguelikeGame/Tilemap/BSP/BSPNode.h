@@ -3,8 +3,10 @@
 #include "Math/Vector2.h"
 #include <memory>
 #include <functional>
+#include <vector>
 
 enum class eTileCategory;
+class Room;
 
 class BSPNode
 {
@@ -35,16 +37,21 @@ public:
 
 public:
 	void Divide();
-	void ForeachNode(std::function<void(const BSPNode&)> CallbackFunc);
+	void GeneratePaths();
+	void Foreach_Node(std::function<void(const BSPNode&)> CallbackFunc) const;
 
 private:
 	void GenerateRoom();
+	void GetRoomLists(std::vector<const Room*>& outRoomLists);
+	void GeneratePathBetweenRooms(const Room& leftRoom, const Room& rightRoom);
 
 public:
 	inline const Craft::Vector2& GetStartPosition() const { return StartPosition; }
 	inline int GetWidth() const { return Width; }
 	inline int GetHeight() const { return Height; }
 	inline eNodeCategory GetNodeCategory() const { return NodeCategory; }
+	const Room& GetRoom() const;
+	inline const std::vector<Craft::Vector2>& GetPaths() const { return pathTileIndices; }
 
 private:
 	//시작 위치
@@ -61,6 +68,12 @@ private:
 
 	//분할 방향
 	eDivideDirection DivideDirection = eDivideDirection::None;
+
+	//노드 공간 내 위치한 방 정보
+	std::unique_ptr<Room> room;
+
+	//통로인 경우 Left와 Right를 연결하는 경로 타일 인덱스
+	std::vector<Craft::Vector2> pathTileIndices;
 
 	//왼쪽 트리 노드
 	std::unique_ptr<BSPNode> LeftChild;

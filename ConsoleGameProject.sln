@@ -1,17 +1,29 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.37301.10
+# Visual Studio Version 18
+VisualStudioVersion = 18.8.12023.21 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CraftEngine", "CraftEngine\CraftEngine.vcxproj", "{23F8F569-B93A-4119-A598-1C005B99EA04}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FB8B434F-D32A-4A74-86BB-F255E0EDBEA1} = {FB8B434F-D32A-4A74-86BB-F255E0EDBEA1}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SokobanGame", "SokobanGame\SokobanGame.vcxproj", "{88B68EF2-4B31-4C45-A840-5D3052AEBCF3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{23F8F569-B93A-4119-A598-1C005B99EA04} = {23F8F569-B93A-4119-A598-1C005B99EA04}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShootingGame", "ShootingGame\ShootingGame.vcxproj", "{DA0F058E-CCD0-44DC-8C10-923107BEEDD0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{23F8F569-B93A-4119-A598-1C005B99EA04} = {23F8F569-B93A-4119-A598-1C005B99EA04}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SoundSystem", "SoundSystem\SoundSystem.vcxproj", "{FB8B434F-D32A-4A74-86BB-F255E0EDBEA1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RoguelikeGame", "RoguelikeGame\RoguelikeGame.vcxproj", "{A23B3244-F189-4296-AD13-11E71F4C2CE8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{23F8F569-B93A-4119-A598-1C005B99EA04} = {23F8F569-B93A-4119-A598-1C005B99EA04}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

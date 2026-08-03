@@ -1,5 +1,5 @@
 ﻿#include "Input.h"
-#include <assert.h>
+#include <cassert>
 #include <windows.h>
 
 namespace Craft
@@ -9,7 +9,7 @@ namespace Craft
 
 	Input::Input()
 	{
-		assert(!instance);
+		assert(!instance && "instance should be null here.");
 		instance = this;
 	}
 
@@ -30,7 +30,7 @@ namespace Craft
 
 	Input& Input::Get()
 	{
-		assert(instance);
+		assert(instance && "instance should not be null here.");
 		return *instance;
 	}
 

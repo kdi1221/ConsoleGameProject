@@ -1,0 +1,36 @@
+﻿#pragma once
+
+#include <Math/Vector2.h>
+#include <vector>
+#include <functional>
+
+class Room
+{
+public:
+	Room(const Craft::Vector2& inPositionLT, int inWidth, int inHeight);
+	virtual ~Room();
+
+public:
+	void InitializeRoom();
+	void Foreach_Tile(std::function<void(const Craft::Vector2&)> CallbackFunc) const;
+
+public:
+	const Craft::Vector2& GetPositionCenter() const { return positionCenter; }
+
+private:
+	//방의 시작 좌표(좌상단)
+	Craft::Vector2 positionLT = Craft::Vector2::Zero;
+
+	//방의 Width
+	int Width = 0;
+
+	//방의 Height
+	int Height = 0;
+
+	//방의 중심 좌표
+	Craft::Vector2 positionCenter = Craft::Vector2::Zero;
+
+	//방 안의 타일 인덱스들
+	std::vector<Craft::Vector2> tileIndices;
+};
+
