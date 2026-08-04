@@ -111,7 +111,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="TileMap\Room\Room.h" />
     <ClInclude Include="TileMap\Tile.h" />
     <ClInclude Include="Tilemap\Tilemap.h" />
-    <ClInclude Include="Types\Types.h" />
+    <ClInclude Include="Types\Enums.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

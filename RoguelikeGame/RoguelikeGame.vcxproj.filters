@@ -44,7 +44,7 @@
     <ClInclude Include="TileMap\Tile.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Types\Types.h">
+    <ClInclude Include="Types\Enums.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="TileMap\BSP\BSPNode.h">
