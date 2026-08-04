@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Types/Enums.h"
 #include <Math/Vector2.h>
 #include <vector>
 #include <functional>
@@ -7,15 +8,6 @@
 class Room
 {
 public:
-	enum class eRoomEdges
-	{
-		Left = 0,
-		Top,
-		Right,
-		Bottom,
-		MaxNum
-	};
-
 	using RoomTileIndices = std::vector<Craft::Vector2>;
 
 public:
@@ -27,7 +19,7 @@ public:
 	void Foreach_Tile(std::function<void(const Craft::Vector2&)> CallbackFunc) const;
 
 public:
-	const std::vector<Craft::Vector2>& GetDoorCandidateTiles(eRoomEdges edge) const;
+	const std::vector<Craft::Vector2>& GetDoorCandidateTiles(eRoomSides edge) const;
 
 public:
 	inline const Craft::Vector2& GetPositionCenter() const { return positionCenter; }
@@ -50,6 +42,8 @@ private:
 	RoomTileIndices tileIndices;
 
 	//방 주변의 입구 후보 타일들 (4면 따로 저장)
-	RoomTileIndices doorCandidateTiles[static_cast<int>(eRoomEdges::MaxNum)];
+	RoomTileIndices doorCandidates[static_cast<int>(eRoomSides::MaxNum)];
+
+
 };
 

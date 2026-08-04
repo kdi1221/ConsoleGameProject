@@ -40,7 +40,7 @@ void Room::InitializeRoom()
 		const int xPos = leftXPos;
 		const int yPos = leftYPos + addYPos;
 
-		doorCandidateTiles[eRoomEdges::Left].emplace_back(Vector2(xPos, yPos));
+		doorCandidates[static_cast<int>(eRoomSides::Left)].emplace_back(Vector2(xPos, yPos));
 	}
 
 	const int topXPos = positionLT.x;
@@ -50,7 +50,7 @@ void Room::InitializeRoom()
 		const int xPos = topXPos + addXPos;
 		const int yPos = topYPos;
 
-		doorCandidateTiles[eRoomEdges::Top].emplace_back(Vector2(xPos, yPos));
+		doorCandidates[static_cast<int>(eRoomSides::Top)].emplace_back(Vector2(xPos, yPos));
 	}
 
 	const int rightXPos = positionLT.x + Width;
@@ -60,7 +60,7 @@ void Room::InitializeRoom()
 		const int xPos = rightXPos;
 		const int yPos = rightYPos + addYPos;
 
-		doorCandidateTiles[eRoomEdges::Right].emplace_back(Vector2(xPos, yPos));
+		doorCandidates[static_cast<int>(eRoomSides::Right)].emplace_back(Vector2(xPos, yPos));
 	}
 
 	const int bottomXPos = positionLT.x;
@@ -70,7 +70,7 @@ void Room::InitializeRoom()
 		const int xPos = bottomXPos + addXPos;
 		const int yPos = bottomYPos;
 
-		doorCandidateTiles[eRoomEdges::Bottom].emplace_back(Vector2(xPos, yPos));
+		doorCandidates[static_cast<int>(eRoomSides::Bottom)].emplace_back(Vector2(xPos, yPos));
 	}
 }
 
@@ -82,7 +82,7 @@ void Room::Foreach_Tile(std::function<void(const Craft::Vector2&)> CallbackFunc)
 	}
 }
 
-const std::vector<Craft::Vector2>& Room::GetDoorCandidateTiles(eRoomEdges edge) const
+const std::vector<Craft::Vector2>& Room::GetDoorCandidateTiles(eRoomSides edge) const
 {
-	return doorCandidateTiles[edge];
+	return doorCandidates[static_cast<int>(edge)];
 }

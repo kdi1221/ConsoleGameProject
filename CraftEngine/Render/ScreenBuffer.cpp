@@ -46,13 +46,13 @@ namespace Craft
 		//생성된 기존 화면의 버퍼 크기를 확인해서 화면크기와 버퍼 크기 설정 순서를 조정한다.
 		CONSOLE_SCREEN_BUFFER_INFO ConsoleScreenBufferInfo;
 		GetConsoleScreenBufferInfo(screenBuffer, &ConsoleScreenBufferInfo);
-		//if ((screenSize.x > ConsoleScreenBufferInfo.dwSize.X) || (screenSize.y > ConsoleScreenBufferInfo.dwSize.Y))
-		//{
-		//	//원하는 설정의 화면 크기가 원래 콘솔화면 사이즈보다 큰 경우 버퍼부터 설정 후 화면창 크기를 결정한다.
-		//	SetConsoleWindowBufferSize();
-		//	SetConsoleWindowSize();
-		//}
-		//else
+		if ((screenSize.x > ConsoleScreenBufferInfo.dwSize.X) || (screenSize.y > ConsoleScreenBufferInfo.dwSize.Y))
+		{
+			//원하는 설정의 화면 크기가 원래 콘솔화면 사이즈보다 큰 경우 버퍼부터 설정 후 화면창 크기를 결정한다.
+			SetConsoleWindowBufferSize();
+			SetConsoleWindowSize();
+		}
+		else
 		{
 			//그렇지 않으면 화면창 크기 설정 후 버퍼 크기를 설정한다.
 			SetConsoleWindowSize();

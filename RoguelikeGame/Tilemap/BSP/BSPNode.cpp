@@ -16,23 +16,6 @@ namespace BSPRoomConsts
 
 	//방의 최소 길이 + 방의 양면 벽길이(상하 / 좌우) 
 	static constexpr int MinLength = MinRoomLength + (RoomWallLength * 2);
-
-	//방의 4방향 상수의 타입 정의
-	using DIRECTION_TYPE = unsigned char;
-
-	//방의 4방향 상수 정의
-	static constexpr DIRECTION_TYPE TOP = 1 << 0;
-	static constexpr DIRECTION_TYPE BOTTOM = 1 << 1;
-	static constexpr DIRECTION_TYPE LEFT = 1 << 2;
-	static constexpr DIRECTION_TYPE RIGHT = 1 << 3;
-
-	//방의 마주보는 방향 조합
-	static constexpr DIRECTION_TYPE LEFT_RIGHT = LEFT | RIGHT;
-	static constexpr DIRECTION_TYPE TOP_BOTTOM = TOP | BOTTOM;
-	static constexpr DIRECTION_TYPE LEFT_TOP = LEFT | TOP;
-	static constexpr DIRECTION_TYPE LEFT_BOTTOM = LEFT | BOTTOM;
-	static constexpr DIRECTION_TYPE RIGHT_TOP = RIGHT | TOP;
-	static constexpr DIRECTION_TYPE RIGHT_BOTTOM = RIGHT | BOTTOM;
 }
 
 using namespace Craft;
@@ -244,9 +227,9 @@ void BSPNode::GeneratePathBetweenRooms(const Room& leftRoom, const Room& rightRo
 	Vector2Float toLeftVectorDirection = toRightVectorDirection * -1.f;
 
 	//우선순위 큐를 이용하여 방의 4방향과 가장 가깝게 일치하는 면을 반환
-	auto GetFaceEdge = [](const Vector2Float& direction)
+	auto GetBetweenRoomFaceFlag = [](const Vector2Float& direction)
 		{
-			using EdgeDot = std::pair<BSPRoomConsts::DIRECTION_TYPE, float>;
+			using EdgeDot = std::pair<eRoomBetweenFace, float>;
 
 			auto compareDot = [](const EdgeDot& lhs, const EdgeDot& rhs)
 				{
@@ -258,51 +241,135 @@ void BSPNode::GeneratePathBetweenRooms(const Room& leftRoom, const Room& rightRo
 								std::function<bool(const EdgeDot&, const EdgeDot&)>> pQueue(compareDot);
 
 			//Room의 4면의 방향과 방향벡터 내적을 우선순위 큐에 삽입
-			pQueue.push(EdgeDot(BSPRoomConsts::TOP, Vector2Float::Up.DotProduct(direction)));
-			pQueue.push(EdgeDot(BSPRoomConsts::BOTTOM, Vector2Float::Down.DotProduct(direction)));
-			pQueue.push(EdgeDot(BSPRoomConsts::LEFT, Vector2Float::Left.DotProduct(direction)));
-			pQueue.push(EdgeDot(BSPRoomConsts::RIGHT, Vector2Float::Right.DotProduct(direction)));
+			pQueue.push(EdgeDot(eRoomBetweenFace::Up, Vector2Float::Up.DotProduct(direction)));
+			pQueue.push(EdgeDot(eRoomBetweenFace::Down, Vector2Float::Down.DotProduct(direction)));
+			pQueue.push(EdgeDot(eRoomBetweenFace::Left, Vector2Float::Left.DotProduct(direction)));
+			pQueue.push(EdgeDot(eRoomBetweenFace::Right, Vector2Float::Right.DotProduct(direction)));
 
+			//내적의 크기가 가장 큼 == 방향이 가장 일치하는 면을 반환
 			return pQueue.top().first;
 		};
 
-	const BSPRoomConsts::DIRECTION_TYPE leftRoomFaceEdge = GetFaceEdge(toRightVectorDirection);
-	const BSPRoomConsts::DIRECTION_TYPE rightRoomFaceEdge = GetFaceEdge(toLeftVectorDirection);
+	const eRoomBetweenFace leftRoomFaceFlag = GetBetweenRoomFaceFlag(toRightVectorDirection);
+	const eRoomBetweenFace rightRoomFaceFlag = GetBetweenRoomFaceFlag(toLeftVectorDirection);
 
-	const BSPRoomConsts::DIRECTION_TYPE DirectionCombination = leftRoomFaceEdge | rightRoomFaceEdge;
+	auto MappingRoomFaceToSide = [](const eRoomBetweenFace FaceFlag)
+		{
+			switch (FaceFlag)
+			{
+			case eRoomBetweenFace::Left:
+				return eRoomSides::Left;
+			case eRoomBetweenFace::Up:
+				return eRoomSides::Top;
+			case eRoomBetweenFace::Right:
+				return eRoomSides::Right;
+			case eRoomBetweenFace::Down:
+				return eRoomSides::Bottom;
+			}
+
+			//4면 중 하나의 케이스로 반드시 처리가 되어야 함
+			assert(false);
+			return eRoomSides::Left;
+		};
+
+	//왼쪽 방의 마주한면들의 방 후보 타일들
+	const Room::RoomTileIndices& leftRoomDoorCandiateTiles = leftRoom.GetDoorCandidateTiles(MappingRoomFaceToSide(leftRoomFaceFlag));
+
+	//오른쪽 방의 마주한면들의 방 후보 타일들
+	const Room::RoomTileIndices& rightRoomDoorCandiateTiles = rightRoom.GetDoorCandidateTiles(MappingRoomFaceToSide(rightRoomFaceFlag));
+
+	// 가장 거리가 짧은 문 후보 타일 셋을 가져온다.
+	const Vector2* bestLeftRoomTile = nullptr;
+	const Vector2* bestRightRoomTile = nullptr;
+	int bestTileDistance = INT_MAX;
+	for (const Vector2& leftRoomCandiateTile : leftRoomDoorCandiateTiles)
+	{
+		for (const Vector2& rightRoomCandiateTile : rightRoomDoorCandiateTiles)
+		{
+			const Vector2 betweenTileVector = rightRoomCandiateTile - leftRoomCandiateTile;
+			const int currentDistance = betweenTileVector.Length();
+			if (currentDistance < bestTileDistance)
+			{
+				bestTileDistance = currentDistance;
+				bestLeftRoomTile = &leftRoomCandiateTile;
+				bestRightRoomTile = &rightRoomCandiateTile;
+			}
+		}
+	}
+
+	assert(bestLeftRoomTile && "bestLeftRoomTile Invalid..");
+	assert(bestRightRoomTile && "bestRightRoomTile Invalid..");
+
+	// 두 방이 마주한 면의 조합별로 처리한다.
+	switch (leftRoomFaceFlag | rightRoomFaceFlag)
+	{
+	case eRoomBetweenFace::Left_Right:
+		{
+			if (eRoomBetweenFace::Right != leftRoomFaceFlag)
+			{
+				//Right => Left인 경우 Swap하여 Left=>Right상황으로 바꿈
+				std::swap(bestLeftRoomTile, bestRightRoomTile);
+			}
+		}
+		break;
+
+	case eRoomBetweenFace::Up_Down:
+		{
+			if (eRoomBetweenFace::Down != leftRoomFaceFlag)
+			{
+				//Down => Up인 경우 Swap하여 Up=>Down상황으로 바꿈
+				std::swap(bestLeftRoomTile, bestRightRoomTile);
+			}
+		}
+		break;
+
+	case eRoomBetweenFace::Left_Up:
+		{
+			if (eRoomBetweenFace::Right != leftRoomFaceFlag)
+			{
+				//Up => Left인 경우 Swap하여 Left=>Up상황으로 바꿈
+				std::swap(bestLeftRoomTile, bestRightRoomTile);
+			}
+		}
+		break;
+
+	case eRoomBetweenFace::Left_Down:
+		{
+			if (eRoomBetweenFace::Right != leftRoomFaceFlag)
+			{
+				//Down => Left인 경우 Swap하여 Left=>Down상황으로 바꿈
+				std::swap(bestLeftRoomTile, bestRightRoomTile);
+			}
+		}
+		break;
+
+	case eRoomBetweenFace::Right_Up:
+		{
+			if (eRoomBetweenFace::Left != leftRoomFaceFlag)
+			{
+				//Up => Right인 경우 Swap하여 Right=>Up상황으로 바꿈
+				std::swap(bestLeftRoomTile, bestRightRoomTile);
+			}
+		}
+		break;
+		
+	case eRoomBetweenFace::Right_Down:
+		{
+			if (eRoomBetweenFace::Left != leftRoomFaceFlag)
+			{
+				//Down => Right인 경우 Swap하여 Right=>Down상황으로 바꿈
+				std::swap(bestLeftRoomTile, bestRightRoomTile);
+			}
+		}
+		break;
+	}
 		
 	
 	int a = 10;
 	a = a;
 
 
-	//왼쪽 방의 마주한면들의 방 후보 타일들
-	//const Room::RoomTileIndices& leftRoomDoorCandiateTiles = leftRoom.GetDoorCandidateTiles(leftRoomFaceEdge);
-
-	////오른쪽 방의 마주한면들의 방 후보 타일들
-	//const Room::RoomTileIndices& rightRoomDoorCandiateTiles = rightRoom.GetDoorCandidateTiles(rightRoomFaceEdge);
-
-	//// 가장 거리가 짧은 문 후보 타일 셋을 가져온다.
-	//const Vector2* bestLeftRoomTile = nullptr;
-	//const Vector2* bestRightRoomTile = nullptr;
-	//int bestTileDistance = INT_MAX;
-	//for (const Vector2& leftRoomCandiateTile : leftRoomDoorCandiateTiles)
-	//{
-	//	for (const Vector2& rightRoomCandiateTile : rightRoomDoorCandiateTiles)
-	//	{
-	//		const Vector2 betweenTileVector = rightRoomCandiateTile - leftRoomCandiateTile;
-	//		const int currentDistance = betweenTileVector.Length();
-	//		if (currentDistance < bestTileDistance)
-	//		{
-	//			bestTileDistance = currentDistance;
-	//			bestLeftRoomTile = &leftRoomCandiateTile;
-	//			bestRightRoomTile = &rightRoomCandiateTile;
-	//		}
-	//	}
-	//}
-
-	//assert(bestLeftRoomTile && "bestLeftRoomTile Invalid..");
-	//assert(bestRightRoomTile && "bestRightRoomTile Invalid..");
+	
 
 
 	
