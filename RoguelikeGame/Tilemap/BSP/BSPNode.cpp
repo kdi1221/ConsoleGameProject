@@ -1,16 +1,39 @@
 #include "BSPNode.h"
 #include "Util/Util.h"
 #include "Tilemap/Room/Room.h"
+#include "Math/Vector2Float.h"
+#include "Types/Enums.h"
+#include <queue>
 #include <cassert>
 
-//방의 최소 가로/세로 길이
-static const int MinRoomLength = 10;
+namespace BSPRoomConsts
+{
+	//방의 최소 가로/세로 길이
+	static constexpr int MinRoomLength = 10;
 
-//방을 감싸는 벽 길이
-static const int RoomWallLength = 2;
+	//방을 감싸는 벽 길이
+	static constexpr int RoomWallLength = 2;
 
-//방의 최소 길이 + 방의 양면 벽길이(상하 / 좌우) 
-static const int MinLength = MinRoomLength + (RoomWallLength * 2);
+	//방의 최소 길이 + 방의 양면 벽길이(상하 / 좌우) 
+	static constexpr int MinLength = MinRoomLength + (RoomWallLength * 2);
+
+	//방의 4방향 상수의 타입 정의
+	using DIRECTION_TYPE = unsigned char;
+
+	//방의 4방향 상수 정의
+	static constexpr DIRECTION_TYPE TOP = 1 << 0;
+	static constexpr DIRECTION_TYPE BOTTOM = 1 << 1;
+	static constexpr DIRECTION_TYPE LEFT = 1 << 2;
+	static constexpr DIRECTION_TYPE RIGHT = 1 << 3;
+
+	//방의 마주보는 방향 조합
+	static constexpr DIRECTION_TYPE LEFT_RIGHT = LEFT | RIGHT;
+	static constexpr DIRECTION_TYPE TOP_BOTTOM = TOP | BOTTOM;
+	static constexpr DIRECTION_TYPE LEFT_TOP = LEFT | TOP;
+	static constexpr DIRECTION_TYPE LEFT_BOTTOM = LEFT | BOTTOM;
+	static constexpr DIRECTION_TYPE RIGHT_TOP = RIGHT | TOP;
+	static constexpr DIRECTION_TYPE RIGHT_BOTTOM = RIGHT | BOTTOM;
+}
 
 using namespace Craft;
 
@@ -43,7 +66,7 @@ void BSPNode::Divide()
 		const int RightWidth = Width - LeftWidth;
 
 		//분할될 공간 중 한쪽이 최소 길이보다 작은경우 분할하지 않고 반환
-		if (LeftWidth <= MinLength || RightWidth <= MinLength)
+		if (LeftWidth <= BSPRoomConsts::MinLength || RightWidth <= BSPRoomConsts::MinLength)
 		{
 			NodeCategory = eNodeCategory::Room;
 			GenerateRoom();
@@ -63,7 +86,7 @@ void BSPNode::Divide()
 		const int RightHeight = Height - LeftHeight;
 
 		//분할될 공간 중 한쪽이 최소 길이보다 작은경우 분할하지 않고 반환
-		if (LeftHeight <= MinLength || RightHeight <= MinLength)
+		if (LeftHeight <= BSPRoomConsts::MinLength || RightHeight <= BSPRoomConsts::MinLength)
 		{
 			NodeCategory = eNodeCategory::Room;
 			GenerateRoom();
@@ -110,11 +133,13 @@ void BSPNode::GeneratePaths()
 	{
 		for (const Room* rightRoom : rightRoomLists)
 		{
-			const Vector2 vectorBetweenRoom = leftRoom->GetPositionCenter() - rightRoom->GetPositionCenter();
+			const Vector2Float leftRoomCenter = static_cast<Vector2Float>(leftRoom->GetPositionCenter());
+			const Vector2Float rightRoomCenter = static_cast<Vector2Float>(rightRoom->GetPositionCenter());
+
+			const Vector2Float vectorBetweenRoom = rightRoomCenter - leftRoomCenter;
 			
 			//벡터길이 구하기(sqrt 생략)
-			const float Distance = static_cast<float>(vectorBetweenRoom.x * vectorBetweenRoom.x) + 
-													(vectorBetweenRoom.y * vectorBetweenRoom.y);
+			const float Distance = vectorBetweenRoom.Length();
 
 			if (MinDistance > Distance)
 			{
@@ -161,16 +186,16 @@ void BSPNode::Foreach_Node(std::function<void(const BSPNode&)> CallbackFunc) con
 void BSPNode::GenerateRoom()
 {
 	//방 생성 크기 랜덤 결정
-	const int RoomMaxWidth = Width - (RoomWallLength * 2);
-	const int RoomWidth = Util::RandomRange(MinRoomLength, RoomMaxWidth);
-	const int RoomMaxHeight = Height - (RoomWallLength * 2);
-	const int RoomHeight = Util::RandomRange(MinRoomLength, RoomMaxHeight);
+	const int RoomMaxWidth = Width - (BSPRoomConsts::RoomWallLength * 2);
+	const int RoomWidth = Util::RandomRange(BSPRoomConsts::MinRoomLength, RoomMaxWidth);
+	const int RoomMaxHeight = Height - (BSPRoomConsts::RoomWallLength * 2);
+	const int RoomHeight = Util::RandomRange(BSPRoomConsts::MinRoomLength, RoomMaxHeight);
 
 	//방 위치(좌상단) 랜덤 결정
-	const int xPosRangeMin = StartPosition.x + RoomWallLength;
+	const int xPosRangeMin = StartPosition.x + BSPRoomConsts::RoomWallLength;
 	const int xPosRangeMax = xPosRangeMin + (RoomMaxWidth - RoomWidth);
 	const int RoomStartXPos = Util::RandomRange(xPosRangeMin, xPosRangeMax);
-	const int yPosRangeMin = StartPosition.y + RoomWallLength;
+	const int yPosRangeMin = StartPosition.y + BSPRoomConsts::RoomWallLength;
 	const int yPosRangeMax = yPosRangeMin + (RoomMaxHeight - RoomHeight);
 	const int RoomStartYPos = Util::RandomRange(yPosRangeMin, yPosRangeMax);
 
@@ -209,87 +234,164 @@ void BSPNode::GetRoomLists(std::vector<const Room*>& outRoomLists)
 
 void BSPNode::GeneratePathBetweenRooms(const Room& leftRoom, const Room& rightRoom)
 {
-	static const auto& GetAddValue = [](int Length)
-		{
-			if (Length == 0)
-			{
-				return 0;
-			}
-			else
-			{
-				return Length > 0 ? 1 : -1;
-			}
-		};
-
 	const Vector2& leftRoomCenter = leftRoom.GetPositionCenter();
 	const Vector2& rightRoomCenter = rightRoom.GetPositionCenter();
-	
-	const int widthCurrenttoNext = rightRoomCenter.x - leftRoomCenter.x;
-	const int heightCurrenttoNext = rightRoomCenter.y - leftRoomCenter.y;
-	
-	const int addX = GetAddValue(widthCurrenttoNext);
-	const int addY = GetAddValue(heightCurrenttoNext);
-	
-	const int absWidth = abs(widthCurrenttoNext);
-	const int absHeight = abs(heightCurrenttoNext);
-	
-	int xPos = leftRoomCenter.x;
-	int yPos = leftRoomCenter.y;
-	
-	if (absWidth > absHeight)
-	{
-		//가로를 나눠서 경로 구성
-		const int absHalfWidth = absWidth >> 1;
-				
-		//첫 절반 경로 생성
-		const int DestinationXPos = leftRoomCenter.x + (absHalfWidth * addX);
-		for (; xPos != DestinationXPos; xPos += addX)
+
+	//두 방간의 방향을 구함(left => right)
+	const Vector2 betweenRoomVector = rightRoomCenter - leftRoomCenter;
+	Vector2Float toRightVectorDirection = static_cast<Vector2Float>(betweenRoomVector);
+	toRightVectorDirection.Normalize();
+	Vector2Float toLeftVectorDirection = toRightVectorDirection * -1.f;
+
+	//우선순위 큐를 이용하여 방의 4방향과 가장 가깝게 일치하는 면을 반환
+	auto GetFaceEdge = [](const Vector2Float& direction)
 		{
-			//경로내의 타일 뚫기
-			pathTileIndices.emplace_back(Vector2(xPos, yPos));
-		}
+			using EdgeDot = std::pair<BSPRoomConsts::DIRECTION_TYPE, float>;
+
+			auto compareDot = [](const EdgeDot& lhs, const EdgeDot& rhs)
+				{
+					return lhs.second < rhs.second;
+				};
+
+			//내적 결과 값이 가장큰 순서대로 정렬되는 우선순위 큐
+			std::priority_queue<EdgeDot, std::vector<EdgeDot>, 
+								std::function<bool(const EdgeDot&, const EdgeDot&)>> pQueue(compareDot);
+
+			//Room의 4면의 방향과 방향벡터 내적을 우선순위 큐에 삽입
+			pQueue.push(EdgeDot(BSPRoomConsts::TOP, Vector2Float::Up.DotProduct(direction)));
+			pQueue.push(EdgeDot(BSPRoomConsts::BOTTOM, Vector2Float::Down.DotProduct(direction)));
+			pQueue.push(EdgeDot(BSPRoomConsts::LEFT, Vector2Float::Left.DotProduct(direction)));
+			pQueue.push(EdgeDot(BSPRoomConsts::RIGHT, Vector2Float::Right.DotProduct(direction)));
+
+			return pQueue.top().first;
+		};
+
+	const BSPRoomConsts::DIRECTION_TYPE leftRoomFaceEdge = GetFaceEdge(toRightVectorDirection);
+	const BSPRoomConsts::DIRECTION_TYPE rightRoomFaceEdge = GetFaceEdge(toLeftVectorDirection);
+
+	const BSPRoomConsts::DIRECTION_TYPE DirectionCombination = leftRoomFaceEdge | rightRoomFaceEdge;
+		
 	
-		//상하 경로 생성
-		for (; yPos != rightRoomCenter.y; yPos += addY)
-		{
-			//경로내의 타일 뚫기
-			pathTileIndices.emplace_back(Vector2(xPos, yPos));
-		}
+	int a = 10;
+	a = a;
+
+
+	//왼쪽 방의 마주한면들의 방 후보 타일들
+	//const Room::RoomTileIndices& leftRoomDoorCandiateTiles = leftRoom.GetDoorCandidateTiles(leftRoomFaceEdge);
+
+	////오른쪽 방의 마주한면들의 방 후보 타일들
+	//const Room::RoomTileIndices& rightRoomDoorCandiateTiles = rightRoom.GetDoorCandidateTiles(rightRoomFaceEdge);
+
+	//// 가장 거리가 짧은 문 후보 타일 셋을 가져온다.
+	//const Vector2* bestLeftRoomTile = nullptr;
+	//const Vector2* bestRightRoomTile = nullptr;
+	//int bestTileDistance = INT_MAX;
+	//for (const Vector2& leftRoomCandiateTile : leftRoomDoorCandiateTiles)
+	//{
+	//	for (const Vector2& rightRoomCandiateTile : rightRoomDoorCandiateTiles)
+	//	{
+	//		const Vector2 betweenTileVector = rightRoomCandiateTile - leftRoomCandiateTile;
+	//		const int currentDistance = betweenTileVector.Length();
+	//		if (currentDistance < bestTileDistance)
+	//		{
+	//			bestTileDistance = currentDistance;
+	//			bestLeftRoomTile = &leftRoomCandiateTile;
+	//			bestRightRoomTile = &rightRoomCandiateTile;
+	//		}
+	//	}
+	//}
+
+	//assert(bestLeftRoomTile && "bestLeftRoomTile Invalid..");
+	//assert(bestRightRoomTile && "bestRightRoomTile Invalid..");
+
+
 	
-		//나머지 절반 경로 생성
-		for (; xPos != rightRoomCenter.x; xPos += addX)
-		{
-			//경로내의 타일 뚫기
-			pathTileIndices.emplace_back(Vector2(xPos, yPos));
-		}
-	}
-	else
-	{
-		//세로를 나눠서 경로 구성
-		const int absHalfHeight = absHeight >> 1;
+	//switch()
 	
-		//첫 절반 경로 생성
-		const int DestinationYPos = leftRoomCenter.y + (absHalfHeight * addY);
-		for (; yPos != DestinationYPos; yPos += addY)
-		{
-			//경로내의 타일 뚫기
-			pathTileIndices.emplace_back(Vector2(xPos, yPos));
-		}
+
 	
-		//좌우 경로 생성
-		for (; xPos != rightRoomCenter.x; xPos += addX)
-		{
-			//경로내의 타일 뚫기
-			pathTileIndices.emplace_back(Vector2(xPos, yPos));
-		}
-	
-		//나머지 절반 경로 생성
-		for (; yPos != rightRoomCenter.y; yPos += addY)
-		{
-			//경로내의 타일 뚫기
-			pathTileIndices.emplace_back(Vector2(xPos, yPos));
-		}
-	}
+
+	//static const auto& GetAddValue = [](int Length)
+	//	{
+	//		if (Length == 0)
+	//		{
+	//			return 0;
+	//		}
+	//		else
+	//		{
+	//			return Length > 0 ? 1 : -1;
+	//		}
+	//	};
+
+	//const Vector2& leftRoomCenter = leftRoom.GetPositionCenter();
+	//const Vector2& rightRoomCenter = rightRoom.GetPositionCenter();
+	//
+	//const int widthCurrenttoNext = rightRoomCenter.x - leftRoomCenter.x;
+	//const int heightCurrenttoNext = rightRoomCenter.y - leftRoomCenter.y;
+	//
+	//const int addX = GetAddValue(widthCurrenttoNext);
+	//const int addY = GetAddValue(heightCurrenttoNext);
+	//
+	//const int absWidth = abs(widthCurrenttoNext);
+	//const int absHeight = abs(heightCurrenttoNext);
+	//
+	//int xPos = leftRoomCenter.x;
+	//int yPos = leftRoomCenter.y;
+	//
+	//if (absWidth > absHeight)
+	//{
+	//	//가로를 나눠서 경로 구성
+	//	const int absHalfWidth = absWidth >> 1;
+	//			
+	//	//첫 절반 경로 생성
+	//	const int DestinationXPos = leftRoomCenter.x + (absHalfWidth * addX);
+	//	for (; xPos != DestinationXPos; xPos += addX)
+	//	{
+	//		//경로내의 타일 뚫기
+	//		pathTileIndices.emplace_back(Vector2(xPos, yPos));
+	//	}
+	//
+	//	//상하 경로 생성
+	//	for (; yPos != rightRoomCenter.y; yPos += addY)
+	//	{
+	//		//경로내의 타일 뚫기
+	//		pathTileIndices.emplace_back(Vector2(xPos, yPos));
+	//	}
+	//
+	//	//나머지 절반 경로 생성
+	//	for (; xPos != rightRoomCenter.x; xPos += addX)
+	//	{
+	//		//경로내의 타일 뚫기
+	//		pathTileIndices.emplace_back(Vector2(xPos, yPos));
+	//	}
+	//}
+	//else
+	//{
+	//	//세로를 나눠서 경로 구성
+	//	const int absHalfHeight = absHeight >> 1;
+	//
+	//	//첫 절반 경로 생성
+	//	const int DestinationYPos = leftRoomCenter.y + (absHalfHeight * addY);
+	//	for (; yPos != DestinationYPos; yPos += addY)
+	//	{
+	//		//경로내의 타일 뚫기
+	//		pathTileIndices.emplace_back(Vector2(xPos, yPos));
+	//	}
+	//
+	//	//좌우 경로 생성
+	//	for (; xPos != rightRoomCenter.x; xPos += addX)
+	//	{
+	//		//경로내의 타일 뚫기
+	//		pathTileIndices.emplace_back(Vector2(xPos, yPos));
+	//	}
+	//
+	//	//나머지 절반 경로 생성
+	//	for (; yPos != rightRoomCenter.y; yPos += addY)
+	//	{
+	//		//경로내의 타일 뚫기
+	//		pathTileIndices.emplace_back(Vector2(xPos, yPos));
+	//	}
+	//}
 }
 
 const Room& BSPNode::GetRoom() const

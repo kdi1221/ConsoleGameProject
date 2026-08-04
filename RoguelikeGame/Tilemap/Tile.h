@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Math/Vector2.h"
-#include "Types/Types.h"
+#include "Types/Enums.h"
 
 //타일맵 개별 타일 클래스
 class Tile

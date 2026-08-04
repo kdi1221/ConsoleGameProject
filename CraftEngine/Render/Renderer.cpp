@@ -105,7 +105,7 @@ namespace Craft
 
 	Renderer& Renderer::Get()
 	{
-		assert(instance);
+		assert(instance && "instance should not be null");
 		return *instance;
 	}
 

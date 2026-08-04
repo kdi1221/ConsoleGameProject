@@ -13,8 +13,11 @@ namespace Craft
 		Blue = FOREGROUND_BLUE,
 		Yellow = Red | Green,
 		Cyan = Green | Blue,
+		Purple = Red | Blue,
 		White = Red | Green | Blue,
 		BrightWhite = White | FOREGROUND_INTENSITY
+
+		//배경색 -> BACKGROUND_BLUE 등 BACKGROUND로 시작
 
 		/*Black = 0,
 		DarkBlue = FOREGROUND_BLUE,

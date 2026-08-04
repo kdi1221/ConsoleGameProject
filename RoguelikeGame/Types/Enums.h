@@ -1,5 +1,6 @@
 #pragma once
 
+//타일 종류
 enum class eTileCategory
 {
 	//기본값

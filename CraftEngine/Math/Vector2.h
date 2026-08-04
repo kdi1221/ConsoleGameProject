@@ -1,9 +1,12 @@
 ﻿#pragma once
 
 #include "Core/Core.h"
+#include <Windows.h>
 
 namespace Craft
 {
+	class Vector2Float;
+
 	class CRAFT_API Vector2
 	{
 	public:
@@ -21,7 +24,7 @@ namespace Craft
 
 	public:
 		Vector2(int x = 0, int y = 0);
-		~Vector2();
+		~Vector2() = default;
 
 	public:
 		//사칙 연산자 오버로딩.
@@ -37,6 +40,23 @@ namespace Craft
 		// 비교 연산자 오버로딩
 		bool operator==(const Vector2& other) const;
 		bool operator!=(const Vector2& other) const;
+
+		explicit operator Vector2Float() const;
+		explicit operator Vector2Float();
+
+		//Windows 콘솔 좌표계로 변환하는 연산자 오버로딩.
+		operator COORD() const;
+		operator COORD();
+
+	public:
+		//내적
+		int DotProduct(const Vector2& other) const;
+
+		//길이(sqrt 생략)
+		int Length() const;
+
+		//길이(sqrt 포함)
+		double LengthSqrt() const;
 	};
 }
 

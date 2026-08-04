@@ -7,6 +7,18 @@
 class Room
 {
 public:
+	enum class eRoomEdges
+	{
+		Left = 0,
+		Top,
+		Right,
+		Bottom,
+		MaxNum
+	};
+
+	using RoomTileIndices = std::vector<Craft::Vector2>;
+
+public:
 	Room(const Craft::Vector2& inPositionLT, int inWidth, int inHeight);
 	virtual ~Room();
 
@@ -15,7 +27,11 @@ public:
 	void Foreach_Tile(std::function<void(const Craft::Vector2&)> CallbackFunc) const;
 
 public:
-	const Craft::Vector2& GetPositionCenter() const { return positionCenter; }
+	const std::vector<Craft::Vector2>& GetDoorCandidateTiles(eRoomEdges edge) const;
+
+public:
+	inline const Craft::Vector2& GetPositionCenter() const { return positionCenter; }
+
 
 private:
 	//방의 시작 좌표(좌상단)
@@ -31,6 +47,9 @@ private:
 	Craft::Vector2 positionCenter = Craft::Vector2::Zero;
 
 	//방 안의 타일 인덱스들
-	std::vector<Craft::Vector2> tileIndices;
+	RoomTileIndices tileIndices;
+
+	//방 주변의 입구 후보 타일들 (4면 따로 저장)
+	RoomTileIndices doorCandidateTiles[static_cast<int>(eRoomEdges::MaxNum)];
 };
 

@@ -25,26 +25,26 @@ namespace Craft
 		{
 			return Is(T::TypeId());
 		}
-
-		// 스마트 포인터 형변환 유틸리티 함수
-		template<typename T, typename U>
-		std::shared_ptr<T> Cast(const std::shared_ptr<U>& object)
-		{
-			if (!object)
-			{
-				return nullptr;
-			}
-
-			// object의 실제 타입이 T(또는 T의 파생)인지 확인 후 캐스팅(형변환)
-			if (object->Is(T::TypeId()))
-			{
-				return std::static_pointer_cast<T>(object);
-			}
-
-			//형변환이 허용되지 않는 경우에는 null 반환.
-			return nullptr;
-		}
 	};
+}
+
+// 스마트 포인터 형변환 유틸리티 함수
+template<typename T, typename U>
+std::shared_ptr<T> Cast(const std::shared_ptr<U>& object)
+{
+	if (!object)
+	{
+		return nullptr;
+	}
+
+	// object의 실제 타입이 T(또는 T의 파생)인지 확인 후 캐스팅(형변환)
+	if (object->Is(T::TypeId()))
+	{
+		return std::static_pointer_cast<T>(object);
+	}
+
+	//형변환이 허용되지 않는 경우에는 null 반환.
+	return nullptr;
 }
 
 // 타입 시스템을 사용할 클래스(Actor 타입)에 추가할 매크로.
