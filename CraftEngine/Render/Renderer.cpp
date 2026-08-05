@@ -187,7 +187,7 @@ namespace Craft
 		// 렌더 큐 비우기
 		renderQueue.clear();
 
-		// 콘솔 초기화.
+		// 콘솔 색상 초기화.
 		SetConsoleTextAttribute(GetCurrentBuffer()->GetScreenBuffer(), static_cast<WORD>(Color::White));
 	}
 
