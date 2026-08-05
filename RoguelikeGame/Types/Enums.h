@@ -32,7 +32,7 @@ enum class eRoomSides
 };
 
 //두 방의 면이 마주보는 방향
-enum class eRoomBetweenFace : unsigned int
+enum class eRoomFacingFlags : unsigned int
 {
 	None = 0,
 
@@ -48,21 +48,21 @@ enum class eRoomBetweenFace : unsigned int
 	//방의 아래쪽
 	Down = 1 << 3,
 
-	Left_Right = Left | Right,
-	Up_Down = Up | Down,
-	Left_Up = Left | Up,
-	Left_Down = Left | Down,
-	Right_Up = Right | Up,
-	Right_Down = Right | Down
+	Right_Left = Left | Right,
+	Down_Up = Up | Down,
+	Up_Left = Left | Up,
+	Down_Left = Left | Down,
+	Up_Right = Right | Up,
+	Down_Right = Right | Down
 };
 
 //eRoomBetweenFace의 비트플래그동작을 위한 연산자 오버로딩
-inline constexpr eRoomBetweenFace operator|(eRoomBetweenFace lhs, eRoomBetweenFace rhs)
+inline constexpr eRoomFacingFlags operator|(eRoomFacingFlags lhs, eRoomFacingFlags rhs)
 {
-	return static_cast<eRoomBetweenFace>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
+	return static_cast<eRoomFacingFlags>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
 }
 
-inline constexpr eRoomBetweenFace operator&(eRoomBetweenFace lhs, eRoomBetweenFace rhs)
+inline constexpr eRoomFacingFlags operator&(eRoomFacingFlags lhs, eRoomFacingFlags rhs)
 {
-	return static_cast<eRoomBetweenFace>(static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs));
+	return static_cast<eRoomFacingFlags>(static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs));
 }

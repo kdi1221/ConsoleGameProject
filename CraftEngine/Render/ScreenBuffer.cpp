@@ -80,9 +80,11 @@ namespace Craft
 
 		// 커서 끄기(커서 깜빡임 방지).
 		CONSOLE_CURSOR_INFO info;
-		GetConsoleCursorInfo(screenBuffer, &info);
+		BOOL result = GetConsoleCursorInfo(screenBuffer, &info);
+		assert(result == TRUE);
 		info.bVisible = FALSE;
-		SetConsoleCursorInfo(screenBuffer, &info);
+		result = SetConsoleCursorInfo(screenBuffer, &info);
+		assert(result == TRUE);
 	}
 
 	ScreenBuffer::~ScreenBuffer()
@@ -106,7 +108,6 @@ namespace Craft
 
 		// 화면에 설정된 글자 수(출력용).
 		DWORD writtenCount = 0;
-
 		BOOL result = FillConsoleOutputCharacterA(
 			screenBuffer,
 			' ',
