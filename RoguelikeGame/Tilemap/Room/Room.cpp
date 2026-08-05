@@ -1,4 +1,6 @@
 ﻿#include "Room.h"
+#include <Util/Util.h>
+#include <cassert>
 
 using namespace Craft;
 
@@ -34,8 +36,8 @@ void Room::InitializeRoom()
 
 	//방 주변 문 후보 타일들 인덱스 계산
 	const int leftXPos = positionLT.x - 1;
-	const int leftYPos = positionLT.y;
-	for (int addYPos = 0; addYPos < Height; ++addYPos)
+	const int leftYPos = positionLT.y + 1;
+	for (int addYPos = 0; addYPos < Height - 2; ++addYPos)
 	{
 		const int xPos = leftXPos;
 		const int yPos = leftYPos + addYPos;
@@ -43,9 +45,9 @@ void Room::InitializeRoom()
 		outerTileIndices[static_cast<int>(eRoomSides::Left)].emplace_back(Vector2(xPos, yPos));
 	}
 
-	const int topXPos = positionLT.x;
+	const int topXPos = positionLT.x + 1;
 	const int topYPos = positionLT.y - 1;
-	for (int addXPos = 0; addXPos < Width; ++addXPos)
+	for (int addXPos = 0; addXPos < Width - 2; ++addXPos)
 	{
 		const int xPos = topXPos + addXPos;
 		const int yPos = topYPos;
@@ -54,8 +56,8 @@ void Room::InitializeRoom()
 	}
 
 	const int rightXPos = positionLT.x + Width;
-	const int rightYPos = positionLT.y;
-	for (int addYPos = 0; addYPos < Height; ++addYPos)
+	const int rightYPos = positionLT.y + 1;
+	for (int addYPos = 0; addYPos < Height - 2; ++addYPos)
 	{
 		const int xPos = rightXPos;
 		const int yPos = rightYPos + addYPos;
@@ -63,9 +65,9 @@ void Room::InitializeRoom()
 		outerTileIndices[static_cast<int>(eRoomSides::Right)].emplace_back(Vector2(xPos, yPos));
 	}
 
-	const int bottomXPos = positionLT.x;
+	const int bottomXPos = positionLT.x + 1;
 	const int bottomYPos = positionLT.y + Height;
-	for (int addXPos = 0; addXPos < Width; ++addXPos)
+	for (int addXPos = 0; addXPos < Width - 2; ++addXPos)
 	{
 		const int xPos = bottomXPos + addXPos;
 		const int yPos = bottomYPos;
@@ -82,7 +84,20 @@ void Room::Foreach_Tile(std::function<void(const Craft::Vector2&)> CallbackFunc)
 	}
 }
 
-const std::vector<Craft::Vector2>& Room::GetOuterTileIndices(eRoomSides edge) const
+Craft::Vector2 Room::SelectDoorTile(eRoomSides edge)
 {
-	return outerTileIndices[static_cast<int>(edge)];
+	std::vector<Vector2>& edgeOuterTileIndices = outerTileIndices[static_cast<int>(edge)];
+
+	assert(!edgeOuterTileIndices.empty() && "edgeOuterTileIndices empty..");
+
+	const int selectTileIndex = Util::RandomRange(0, static_cast<int>(edgeOuterTileIndices.size()) - 1);
+	Vector2 selectTile = edgeOuterTileIndices[selectTileIndex];
+
+	//선택된 외곽 타일 인덱스 제거
+	edgeOuterTileIndices.erase(edgeOuterTileIndices.begin() + selectTileIndex);
+
+	//문 타일로 저장한다.
+	doorTileIndices.emplace_back(selectTile);
+
+	return selectTile;
 }

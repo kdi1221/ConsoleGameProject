@@ -42,8 +42,8 @@ public:
 
 private:
 	void GenerateRoom();
-	void GetRoomLists(std::vector<const Room*>& outRoomLists);
-	void GeneratePathBetweenRooms(const Room& leftRoom, const Room& rightRoom);
+	void GetRoomLists(std::vector<Room*>& outRoomLists);
+	void GeneratePathBetweenRooms(Room& leftRoom, Room& rightRoom);
 
 public:
 	inline const Craft::Vector2& GetStartPosition() const { return StartPosition; }

@@ -17,6 +17,7 @@ public:
 
 public:
 	void InitializeTilemap(const Craft::Vector2& inMapSize);
+	void Tick(float deltaTime);
 	void Draw();
 
 	void SetTileCategory(int xPos, int yPos, eTileCategory category);

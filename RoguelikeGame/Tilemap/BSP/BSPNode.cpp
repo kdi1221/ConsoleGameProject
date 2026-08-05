@@ -99,22 +99,22 @@ void BSPNode::GeneratePaths()
 	}
 
 	//Left Child에 위치한 Room들
-	std::vector<const Room*> leftRoomLists;
+	std::vector<Room*> leftRoomLists;
 	assert(LeftChild && "LeftChild Invalid..");
 	LeftChild->GetRoomLists(leftRoomLists);
 
 	//Right Child에 위치한 Room들
-	std::vector<const Room*> rightRoomLists;
+	std::vector<Room*> rightRoomLists;
 	assert(RightChild && "RightChild Invalid..");
 	RightChild->GetRoomLists(rightRoomLists);
 
 	//LeftChild와 RightChild에서 가장 가까운 쌍을 찾는다.
 	float MinDistance = FLT_MAX;
-	const Room* bestLeftRoom = nullptr;
-	const Room* bestRightRoom = nullptr;
-	for (const Room* leftRoom : leftRoomLists)
+	Room* bestLeftRoom = nullptr;
+	Room* bestRightRoom = nullptr;
+	for (Room* leftRoom : leftRoomLists)
 	{
-		for (const Room* rightRoom : rightRoomLists)
+		for (Room* rightRoom : rightRoomLists)
 		{
 			const Vector2Float leftRoomCenter = static_cast<Vector2Float>(leftRoom->GetPositionCenter());
 			const Vector2Float rightRoomCenter = static_cast<Vector2Float>(rightRoom->GetPositionCenter());
@@ -187,7 +187,7 @@ void BSPNode::GenerateRoom()
 	room->InitializeRoom();
 }
 
-void BSPNode::GetRoomLists(std::vector<const Room*>& outRoomLists)
+void BSPNode::GetRoomLists(std::vector<Room*>& outRoomLists)
 {
 	switch (NodeCategory)
 	{
@@ -215,7 +215,7 @@ void BSPNode::GetRoomLists(std::vector<const Room*>& outRoomLists)
 	}
 }
 
-void BSPNode::GeneratePathBetweenRooms(const Room& leftRoom, const Room& rightRoom)
+void BSPNode::GeneratePathBetweenRooms(Room& leftRoom, Room& rightRoom)
 {
 	const Vector2& leftRoomCenter = leftRoom.GetPositionCenter();
 	const Vector2& rightRoomCenter = rightRoom.GetPositionCenter();
@@ -227,7 +227,7 @@ void BSPNode::GeneratePathBetweenRooms(const Room& leftRoom, const Room& rightRo
 	Vector2Float toLeftVectorDirection = toRightVectorDirection * -1.f;
 
 	//주어진 방향 벡터가 방의 4방향벡터와 가장 가깝게 일치하는 면을 반환
-	auto GetRoomsFacingFlags = [](const Vector2Float& direction)
+	auto getRoomsFacingFlags = [](const Vector2Float& direction)
 		{
 			using EdgeDot = std::pair<eRoomFacingFlags, float>;
 
@@ -250,11 +250,11 @@ void BSPNode::GeneratePathBetweenRooms(const Room& leftRoom, const Room& rightRo
 			return pQueue.top().first;
 		};
 
-	const eRoomFacingFlags leftRoomFaceFlag = GetRoomsFacingFlags(toRightVectorDirection);
-	const eRoomFacingFlags rightRoomFaceFlag = GetRoomsFacingFlags(toLeftVectorDirection);
+	const eRoomFacingFlags leftRoomFaceFlag = getRoomsFacingFlags(toRightVectorDirection);
+	const eRoomFacingFlags rightRoomFaceFlag = getRoomsFacingFlags(toLeftVectorDirection);
 
 	//eRoomBetweenFace -> eRoomSide 맵핑
-	auto MappingRoomFaceToSide = [](const eRoomFacingFlags FaceFlag)
+	auto mappingRoomFaceToSide = [](const eRoomFacingFlags FaceFlag)
 		{
 			switch (FaceFlag)
 			{
@@ -273,18 +273,11 @@ void BSPNode::GeneratePathBetweenRooms(const Room& leftRoom, const Room& rightRo
 			return eRoomSides::Left;
 		};
 
-	//왼쪽 자식 방의 마주한면들의 방 후보 타일들
-	const Room::RoomTileIndices& LeftRoomOuterTiles = leftRoom.GetOuterTileIndices(MappingRoomFaceToSide(leftRoomFaceFlag));
+	//왼쪽 자식 방의 외곽 타일 중 하나 선택
+	Vector2 selectLeftOuterTile = leftRoom.SelectDoorTile(mappingRoomFaceToSide(leftRoomFaceFlag));
 
-	//오른쪽 자식 방의 마주한면들의 방 후보 타일들
-	const Room::RoomTileIndices& RightRoomOuterTiles = rightRoom.GetOuterTileIndices(MappingRoomFaceToSide(rightRoomFaceFlag));
-
-	// 두 방의 문 후보 타일들 중 랜덤하게 하나씩 고른다.
-	const int selectLeftRoomIndex = Util::RandomRange(0, static_cast<int>(LeftRoomOuterTiles.size()) - 1);
-	const Vector2* selectLeftOuterTile = &LeftRoomOuterTiles[selectLeftRoomIndex];
-
-	const int selectRightRoomIndex = Util::RandomRange(0, static_cast<int>(RightRoomOuterTiles.size()) - 1);
-	const Vector2* selectRightOuterTile = &RightRoomOuterTiles[selectRightRoomIndex];
+	//오른쪽 자식 방의 외곽 타일 중 하나 선택
+	Vector2 selectRightOuterTile = rightRoom.SelectDoorTile(mappingRoomFaceToSide(rightRoomFaceFlag));
 
 	//Length의 양수, 음수, 0에 따른 증가 인덱스 반환
 	auto getAddValue = [](int Length)
@@ -300,8 +293,6 @@ void BSPNode::GeneratePathBetweenRooms(const Room& leftRoom, const Room& rightRo
 		};
 
 	// 두 방이 마주한 면의 조합별로 처리한다.
-	const Vector2& startTileIndex = *selectLeftOuterTile;
-	const Vector2& endTileIndex = *selectRightOuterTile;
 	switch (leftRoomFaceFlag | rightRoomFaceFlag)
 	{
 	case eRoomFacingFlags::Right_Left:
@@ -313,18 +304,17 @@ void BSPNode::GeneratePathBetweenRooms(const Room& leftRoom, const Room& rightRo
 				std::swap(selectLeftOuterTile, selectRightOuterTile);
 			}
 
-			const int widthTileNum = endTileIndex.x - startTileIndex.x;
-			const int heightTileNum = endTileIndex.y - startTileIndex.y;
+			const Vector2 TileNums = selectRightOuterTile - selectLeftOuterTile;
 
-			const int addX = getAddValue(widthTileNum);
-			const int addY = getAddValue(heightTileNum);
-			const int widthHalfNum = abs(widthTileNum) >> 1;
+			const int addX = getAddValue(TileNums.x);
+			const int addY = getAddValue(TileNums.y);
+			const int widthHalfNum = abs(TileNums.x) >> 1;
 
-			int xPos = startTileIndex.x;
-			int yPos = startTileIndex.y;
+			int xPos = selectLeftOuterTile.x;
+			int yPos = selectLeftOuterTile.y;
 
 			//첫 절반 x 경로 생성.
-			const int halfXDestinationPos = startTileIndex.x + (widthHalfNum * addX);
+			const int halfXDestinationPos = selectLeftOuterTile.x + (widthHalfNum * addX);
 			for (; xPos != halfXDestinationPos; xPos += addX)
 			{
 				//경로내의 타일 뚫기
@@ -332,14 +322,14 @@ void BSPNode::GeneratePathBetweenRooms(const Room& leftRoom, const Room& rightRo
 			}
 
 			//y 경로 생성
-			for (; yPos != endTileIndex.y; yPos += addY)
+			for (; yPos != selectRightOuterTile.y; yPos += addY)
 			{
 				//경로내의 타일 뚫기
 				pathTileIndices.emplace_back(Vector2(xPos, yPos));
 			}
 
 			//나머지 절반 x 경로 생성.
-			for (; xPos != endTileIndex.x; xPos += addX)
+			for (; xPos != selectRightOuterTile.x; xPos += addX)
 			{
 				//경로내의 타일 뚫기
 				pathTileIndices.emplace_back(Vector2(xPos, yPos));
@@ -359,18 +349,17 @@ void BSPNode::GeneratePathBetweenRooms(const Room& leftRoom, const Room& rightRo
 				std::swap(selectLeftOuterTile, selectRightOuterTile);
 			}
 
-			const int widthTileNum = endTileIndex.x - startTileIndex.x;
-			const int heightTileNum = endTileIndex.y - startTileIndex.y;
+			const Vector2 TileNums = selectRightOuterTile - selectLeftOuterTile;
 
-			const int addX = getAddValue(widthTileNum);
-			const int addY = getAddValue(heightTileNum);
-			const int heightHalfNum = abs(heightTileNum) >> 1;
+			const int addX = getAddValue(TileNums.x);
+			const int addY = getAddValue(TileNums.y);
+			const int heightHalfNum = abs(TileNums.y) >> 1;
 
-			int xPos = startTileIndex.x;
-			int yPos = startTileIndex.y;
+			int xPos = selectLeftOuterTile.x;
+			int yPos = selectLeftOuterTile.y;
 
 			//첫 절반 y 경로 생성.
-			const int halfYDestinationPos = startTileIndex.y + (heightHalfNum * addY);
+			const int halfYDestinationPos = selectLeftOuterTile.y + (heightHalfNum * addY);
 			for (; yPos != halfYDestinationPos; yPos += addY)
 			{
 				//경로내의 타일 뚫기
@@ -378,14 +367,14 @@ void BSPNode::GeneratePathBetweenRooms(const Room& leftRoom, const Room& rightRo
 			}
 
 			//x 경로 생성
-			for (; xPos != endTileIndex.x; xPos += addX)
+			for (; xPos != selectRightOuterTile.x; xPos += addX)
 			{
 				//경로내의 타일 뚫기
 				pathTileIndices.emplace_back(Vector2(xPos, yPos));
 			}
 
 			//나머지 절반 y 경로 생성.
-			for (; yPos != endTileIndex.y; yPos += addY)
+			for (; yPos != selectRightOuterTile.y; yPos += addY)
 			{
 				//경로내의 타일 뚫기
 				pathTileIndices.emplace_back(Vector2(xPos, yPos));
@@ -398,140 +387,45 @@ void BSPNode::GeneratePathBetweenRooms(const Room& leftRoom, const Room& rightRo
 		break;
 
 	case eRoomFacingFlags::Up_Left:
-		{
-			//왼쪽방에서 뻗어 나오는 방향이 위쪽이 아니라면
-			if (eRoomFacingFlags::Up != leftRoomFaceFlag)
-			{
-				//Swap하여 LeftRoom => RightRoom상황으로 바꿈
-				std::swap(selectLeftOuterTile, selectRightOuterTile);
-			}
-		}
-		break;
-
 	case eRoomFacingFlags::Down_Left:
-		{
-			//왼쪽방에서 뻗어 나오는 방향이 아래쪽이 아니라면
-			if (eRoomFacingFlags::Down != leftRoomFaceFlag)
-			{
-				//Swap하여 LeftRoom => RightRoom상황으로 바꿈
-				std::swap(selectLeftOuterTile, selectRightOuterTile);
-			}
-		}
-		break;
-
 	case eRoomFacingFlags::Up_Right:
-		{
-			//왼쪽방에서 뻗어 나오는 방향이 위쪽이 아니라면
-			if (eRoomFacingFlags::Up != leftRoomFaceFlag)
-			{
-				//Swap하여 LeftRoom => RightRoom상황으로 바꿈
-				std::swap(selectLeftOuterTile, selectRightOuterTile);
-			}
-		}
-		break;
-		
 	case eRoomFacingFlags::Down_Right:
 		{
-			//왼쪽방에서 뻗어 나오는 방향이 아래쪽이 아니라면
-			if (eRoomFacingFlags::Down != leftRoomFaceFlag)
+			//왼쪽방에서 뻗어 나오는 방향이 위, 아래 방향이 아니라면
+			if (eRoomFacingFlags::Up != leftRoomFaceFlag && eRoomFacingFlags::Down != leftRoomFaceFlag)
 			{
 				//Swap하여 LeftRoom => RightRoom상황으로 바꿈
 				std::swap(selectLeftOuterTile, selectRightOuterTile);
 			}
+
+			const Vector2 TileNums = selectRightOuterTile - selectLeftOuterTile;
+
+			const int addX = getAddValue(TileNums.x);
+			const int addY = getAddValue(TileNums.y);
+
+			int xPos = selectLeftOuterTile.x;
+			int yPos = selectLeftOuterTile.y;
+
+			//y 경로 생성.
+			for (; yPos != selectRightOuterTile.y; yPos += addY)
+			{
+				//경로내의 타일 뚫기
+				pathTileIndices.emplace_back(Vector2(xPos, yPos));
+			}
+
+			//x 경로 생성
+			for (; xPos != selectRightOuterTile.x; xPos += addX)
+			{
+				//경로내의 타일 뚫기
+				pathTileIndices.emplace_back(Vector2(xPos, yPos));
+			}
+
+			//마지막 타일 뚫기
+			pathTileIndices.emplace_back(Vector2(xPos, yPos));
+
 		}
 		break;
 	}
-		
-	
-	int a = 10;
-	a = a;
-
-
-	
-
-	
-
-	//static const auto& GetAddValue = [](int Length)
-	//	{
-	//		if (Length == 0)
-	//		{
-	//			return 0;
-	//		}
-	//		else
-	//		{
-	//			return Length > 0 ? 1 : -1;
-	//		}
-	//	};
-
-	//const Vector2& leftRoomCenter = leftRoom.GetPositionCenter();
-	//const Vector2& rightRoomCenter = rightRoom.GetPositionCenter();
-	//
-	//const int widthCurrenttoNext = rightRoomCenter.x - leftRoomCenter.x;
-	//const int heightCurrenttoNext = rightRoomCenter.y - leftRoomCenter.y;
-	//
-	//const int addX = GetAddValue(widthCurrenttoNext);
-	//const int addY = GetAddValue(heightCurrenttoNext);
-	//
-	//const int absWidth = abs(widthCurrenttoNext);
-	//const int absHeight = abs(heightCurrenttoNext);
-	//
-	//int xPos = leftRoomCenter.x;
-	//int yPos = leftRoomCenter.y;
-	//
-	//if (absWidth > absHeight)
-	//{
-	//	//가로를 나눠서 경로 구성
-	//	const int absHalfWidth = absWidth >> 1;
-	//			
-	//	//첫 절반 경로 생성
-	//	const int DestinationXPos = leftRoomCenter.x + (absHalfWidth * addX);
-	//	for (; xPos != DestinationXPos; xPos += addX)
-	//	{
-	//		//경로내의 타일 뚫기
-	//		pathTileIndices.emplace_back(Vector2(xPos, yPos));
-	//	}
-	//
-	//	//상하 경로 생성
-	//	for (; yPos != rightRoomCenter.y; yPos += addY)
-	//	{
-	//		//경로내의 타일 뚫기
-	//		pathTileIndices.emplace_back(Vector2(xPos, yPos));
-	//	}
-	//
-	//	//나머지 절반 경로 생성
-	//	for (; xPos != rightRoomCenter.x; xPos += addX)
-	//	{
-	//		//경로내의 타일 뚫기
-	//		pathTileIndices.emplace_back(Vector2(xPos, yPos));
-	//	}
-	//}
-	//else
-	//{
-	//	//세로를 나눠서 경로 구성
-	//	const int absHalfHeight = absHeight >> 1;
-	//
-	//	//첫 절반 경로 생성
-	//	const int DestinationYPos = leftRoomCenter.y + (absHalfHeight * addY);
-	//	for (; yPos != DestinationYPos; yPos += addY)
-	//	{
-	//		//경로내의 타일 뚫기
-	//		pathTileIndices.emplace_back(Vector2(xPos, yPos));
-	//	}
-	//
-	//	//좌우 경로 생성
-	//	for (; xPos != rightRoomCenter.x; xPos += addX)
-	//	{
-	//		//경로내의 타일 뚫기
-	//		pathTileIndices.emplace_back(Vector2(xPos, yPos));
-	//	}
-	//
-	//	//나머지 절반 경로 생성
-	//	for (; yPos != rightRoomCenter.y; yPos += addY)
-	//	{
-	//		//경로내의 타일 뚫기
-	//		pathTileIndices.emplace_back(Vector2(xPos, yPos));
-	//	}
-	//}
 }
 
 const Room& BSPNode::GetRoom() const

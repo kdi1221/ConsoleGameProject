@@ -1,6 +1,7 @@
 #include "TestLevel.h"
 #include "Render/Renderer.h"
 #include "Tilemap/Tilemap.h"
+#include "Core/Input.h"
 #include <cassert>
 
 using namespace Craft;
@@ -19,10 +20,22 @@ void TestLevel::OnInitialized()
 {
 	Level::OnInitialized();
 
-	tileMap = std::make_unique<Tilemap>();
-	assert(tileMap && "Fail Tilemap Alloc..");
+	BuildTilemapBSP();
+}
 
-	tileMap->InitializeTilemap(Vector2(150, 70));
+void TestLevel::Tick(float deltaTime)
+{
+	Level::Tick(deltaTime);
+
+	if (Input::Get().GetKeyDown('B'))
+	{
+		BuildTilemapBSP();
+	}
+
+	if (tileMap)
+	{
+		tileMap->Tick(deltaTime);
+	}
 }
 
 void TestLevel::Draw()
@@ -33,4 +46,16 @@ void TestLevel::Draw()
 	}
 
 	Level::Draw();
+}
+
+void TestLevel::BuildTilemapBSP()
+{
+	//이전 타일맵 정보 초기화
+	tileMap.reset();
+
+	//새로운 타일맵 생성
+	tileMap = std::make_unique<Tilemap>();
+	assert(tileMap && "Fail Tilemap Alloc..");
+
+	tileMap->InitializeTilemap(Vector2(150, 70));
 }

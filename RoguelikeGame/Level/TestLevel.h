@@ -14,7 +14,11 @@ public:
 
 private:
 	virtual void OnInitialized() override;
+	virtual void Tick(float deltaTime) override;
 	virtual void Draw() override;
+
+private:
+	void BuildTilemapBSP();
 
 private:
 	std::unique_ptr<Tilemap> tileMap;

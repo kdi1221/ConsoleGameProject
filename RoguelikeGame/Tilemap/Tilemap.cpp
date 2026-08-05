@@ -75,6 +75,11 @@ void Tilemap::InitializeTilemap(const Vector2& inMapSize)
 		});
 }
 
+void Tilemap::Tick(float deltaTime)
+{
+	
+}
+
 void Tilemap::Draw()
 {
 	for (const auto& iterTile : TileList)
@@ -118,112 +123,3 @@ void Tilemap::SetTileCategory(int xPos, int yPos, eTileCategory category)
 
 	TileList[TileIndex]->SetTileCategory(eTileCategory::Ground);
 }
-
-//void Tilemap::GenerateTiles()
-//{
-
-
-	//for (const auto& room : rooms)
-	//{
-	//	assert(room);
-
-	//	room->Foreach_Tile([this](const Vector2& tileIndex)
-	//		{
-	//			//방 안의 공간 타일 뚫기
-	//			SetTileCategory(tileIndex.x, tileIndex.y, eTileCategory::Ground);
-	//		});
-	//}
-//}
-
-//void Tilemap::GeneratePathTile()
-//{
-//	static const auto& GetAddValue = [](int Length)
-//	{
-//		if (Length == 0)
-//		{
-//			return 0;
-//		}
-//		else
-//		{
-//			return Length > 0 ? 1 : -1;
-//		}
-//	};
-//
-//	const size_t maxLoop = rooms.size() - 1;
-//	for (size_t i = 0; i < maxLoop; ++i)
-//	{
-//		//현재 방과 다음 방 사이를 연결한다.
-//		const Room& currentRoom = *rooms[i];
-//		const Room& nextRoom = *rooms[i + 1];
-//
-//		const Vector2& currentRoomCenter = currentRoom.GetPositionCenter();
-//		const Vector2& nextRoomCenter = nextRoom.GetPositionCenter();
-//
-//		const int widthCurrenttoNext = nextRoomCenter.x - currentRoomCenter.x;
-//		const int heightCurrenttoNext = nextRoomCenter.y - currentRoomCenter.y;
-//
-//		const int addX = GetAddValue(widthCurrenttoNext);
-//		const int addY = GetAddValue(heightCurrenttoNext);
-//
-//		const int absWidth = abs(widthCurrenttoNext);
-//		const int absHeight = abs(heightCurrenttoNext);
-//
-//		int xPos = currentRoomCenter.x;
-//		int yPos = currentRoomCenter.y;
-//
-//		if (absWidth > absHeight)
-//		{
-//			//가로를 나눠서 경로 구성
-//			const int absHalfWidth = absWidth >> 1;
-//			
-//			//첫 절반 경로 생성
-//			const int DestinationXPos = currentRoomCenter.x + (absHalfWidth * addX);
-//			for (; xPos != DestinationXPos; xPos += addX)
-//			{
-//				//경로내의 타일 뚫기
-//				SetTileCategory(xPos, yPos, eTileCategory::Ground);
-//			}
-//
-//			//상하 경로 생성
-//			for (; yPos != nextRoomCenter.y; yPos += addY)
-//			{
-//				//경로내의 타일 뚫기
-//				SetTileCategory(xPos, yPos, eTileCategory::Ground);
-//			}
-//
-//			//나머지 절반 경로 생성
-//			for (; xPos != nextRoomCenter.x; xPos += addX)
-//			{
-//				//경로내의 타일 뚫기
-//				SetTileCategory(xPos, yPos, eTileCategory::Ground);
-//			}
-//		}
-//		else
-//		{
-//			//세로를 나눠서 경로 구성
-//			const int absHalfHeight = absHeight >> 1;
-//
-//			//첫 절반 경로 생성
-//			const int DestinationYPos = currentRoomCenter.y + (absHalfHeight * addY);
-//			for (; yPos != DestinationYPos; yPos += addY)
-//			{
-//				//경로내의 타일 뚫기
-//				SetTileCategory(xPos, yPos, eTileCategory::Ground);
-//			}
-//
-//			//좌우 경로 생성
-//			for (; xPos != nextRoomCenter.x; xPos += addX)
-//			{
-//				//경로내의 타일 뚫기
-//				SetTileCategory(xPos, yPos, eTileCategory::Ground);
-//			}
-//
-//			//나머지 절반 경로 생성
-//			for (; yPos != nextRoomCenter.y; yPos += addY)
-//			{
-//				//경로내의 타일 뚫기
-//				SetTileCategory(xPos, yPos, eTileCategory::Ground);
-//			}
-//		}
-//	}
-//}
