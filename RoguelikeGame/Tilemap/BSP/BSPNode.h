@@ -5,8 +5,7 @@
 #include <functional>
 #include <vector>
 
-enum class eTileCategory;
-class Room;
+class RoomSpace;
 
 class BSPNode
 {
@@ -37,21 +36,27 @@ public:
 
 public:
 	void Divide();
-	void GeneratePaths();
-	void Foreach_Node(std::function<void(const BSPNode&)> CallbackFunc) const;
+	void ConnectRooms();
 
-private:
-	void GenerateRoom();
-	void GetRoomLists(std::vector<Room*>& outRoomLists);
-	void GeneratePathBetweenRooms(Room& leftRoom, Room& rightRoom);
+	/* 각 노드를 순회하면서 노드 종류(경로, 방)에 따라 */
+	void ExtractNodeContents(std::function<void(const std::vector<Craft::Vector2>&)> CorridorCallback,
+						std::function<void(std::unique_ptr<RoomSpace>)> RoomCallback);
 
 public:
 	inline const Craft::Vector2& GetStartPosition() const { return StartPosition; }
 	inline int GetWidth() const { return Width; }
 	inline int GetHeight() const { return Height; }
 	inline eNodeCategory GetNodeCategory() const { return NodeCategory; }
-	const Room& GetRoom() const;
-	inline const std::vector<Craft::Vector2>& GetPaths() const { return pathTileIndices; }
+
+private:
+	//방 내의 공간 계산 
+	void GenerateRoomSpace();
+
+	//자식노드들에 위치한 모든 방 리스트 반환 
+	void GetRoomLists(std::vector<RoomSpace*>& outRoomLists);
+
+	//두 방 사이의 경로 생성
+	void GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom);
 
 private:
 	//시작 위치
@@ -70,7 +75,7 @@ private:
 	eDivideDirection DivideDirection = eDivideDirection::None;
 
 	//노드 공간 내 위치한 방 정보
-	std::unique_ptr<Room> room;
+	std::unique_ptr<RoomSpace> roomSpace;
 
 	//통로인 경우 Left와 Right를 연결하는 경로 타일 인덱스
 	std::vector<Craft::Vector2> pathTileIndices;

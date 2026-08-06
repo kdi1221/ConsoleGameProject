@@ -21,7 +21,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -101,16 +101,19 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Level\TestLevel.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="TileMap\BSP\BSPNode.cpp" />
-    <ClCompile Include="TileMap\Room\Room.cpp" />
+    <ClCompile Include="Tilemap\BSP\RoomSpace\RoomSpace.cpp" />
+    <ClCompile Include="Tilemap\Room\Room.cpp" />
     <ClCompile Include="TileMap\Tile.cpp" />
     <ClCompile Include="Tilemap\Tilemap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Level\TestLevel.h" />
     <ClInclude Include="TileMap\BSP\BSPNode.h" />
-    <ClInclude Include="TileMap\Room\Room.h" />
+    <ClInclude Include="Tilemap\BSP\RoomSpace\RoomSpace.h" />
+    <ClInclude Include="Tilemap\Room\Room.h" />
     <ClInclude Include="TileMap\Tile.h" />
     <ClInclude Include="Tilemap\Tilemap.h" />
+    <ClInclude Include="Types\Defines.h" />
     <ClInclude Include="Types\Enums.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

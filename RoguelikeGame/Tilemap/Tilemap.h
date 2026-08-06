@@ -1,12 +1,17 @@
 #pragma once
 
+#include "Types/Defines.h"
 #include "Math/Vector2.h"
 #include <memory>
 #include <vector>
+#include <map>
 
 class Tile;
-enum class eTileCategory;
 class BSPNode;
+class Room;
+enum class eTileCategory;
+
+using namespace RoomDefines;
 
 //전체 Tile들을 관리하는 Tilemap 클래스
 class Tilemap
@@ -22,17 +27,14 @@ public:
 
 	void SetTileCategory(int xPos, int yPos, eTileCategory category);
 
-//private:
-	//void GenerateTiles();
-
 private:
 	//타일맵 크기(가로 X 세로)
 	Craft::Vector2 mapSize;
 
 	//타일맵 내의 타일들
-	std::vector<std::unique_ptr<Tile>> TileList;
+	std::vector<std::unique_ptr<Tile>> tileList;
 
-	//구성된 BSP 트리 정보
-	std::unique_ptr<BSPNode> BSPRoot;
+	//맵 내의 방 정보들
+	std::map<RoomDefines::UNIQUE_INDEX_TYPE, std::unique_ptr<Room>> mapRooms;
 };
 

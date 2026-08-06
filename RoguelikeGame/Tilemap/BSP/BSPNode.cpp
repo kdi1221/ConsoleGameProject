@@ -1,6 +1,6 @@
 #include "BSPNode.h"
 #include "Util/Util.h"
-#include "Tilemap/Room/Room.h"
+#include "RoomSpace/RoomSpace.h"
 #include "Math/Vector2Float.h"
 #include "Types/Enums.h"
 #include <queue>
@@ -52,7 +52,7 @@ void BSPNode::Divide()
 		if (LeftWidth <= BSPRoomConsts::MinLength || RightWidth <= BSPRoomConsts::MinLength)
 		{
 			NodeCategory = eNodeCategory::Room;
-			GenerateRoom();
+			GenerateRoomSpace();
 			return;
 		}
 		
@@ -72,7 +72,7 @@ void BSPNode::Divide()
 		if (LeftHeight <= BSPRoomConsts::MinLength || RightHeight <= BSPRoomConsts::MinLength)
 		{
 			NodeCategory = eNodeCategory::Room;
-			GenerateRoom();
+			GenerateRoomSpace();
 			return;
 		}
 		
@@ -90,7 +90,7 @@ void BSPNode::Divide()
 	RightChild->Divide();
 }
 
-void BSPNode::GeneratePaths()
+void BSPNode::ConnectRooms()
 {
 	//노드 종류가 방이면 경로 생성안함.
 	if (eNodeCategory::Room == NodeCategory)
@@ -99,22 +99,22 @@ void BSPNode::GeneratePaths()
 	}
 
 	//Left Child에 위치한 Room들
-	std::vector<Room*> leftRoomLists;
+	std::vector<RoomSpace*> leftRoomLists;
 	assert(LeftChild && "LeftChild Invalid..");
 	LeftChild->GetRoomLists(leftRoomLists);
 
 	//Right Child에 위치한 Room들
-	std::vector<Room*> rightRoomLists;
+	std::vector<RoomSpace*> rightRoomLists;
 	assert(RightChild && "RightChild Invalid..");
 	RightChild->GetRoomLists(rightRoomLists);
 
 	//LeftChild와 RightChild에서 가장 가까운 쌍을 찾는다.
 	float MinDistance = FLT_MAX;
-	Room* bestLeftRoom = nullptr;
-	Room* bestRightRoom = nullptr;
-	for (Room* leftRoom : leftRoomLists)
+	RoomSpace* bestLeftRoom = nullptr;
+	RoomSpace* bestRightRoom = nullptr;
+	for (RoomSpace* leftRoom : leftRoomLists)
 	{
-		for (Room* rightRoom : rightRoomLists)
+		for (RoomSpace* rightRoom : rightRoomLists)
 		{
 			const Vector2Float leftRoomCenter = static_cast<Vector2Float>(leftRoom->GetPositionCenter());
 			const Vector2Float rightRoomCenter = static_cast<Vector2Float>(rightRoom->GetPositionCenter());
@@ -141,32 +141,49 @@ void BSPNode::GeneratePaths()
 	//Left Child의 경로 생성
 	if (LeftChild)
 	{
-		LeftChild->GeneratePaths();
+		LeftChild->ConnectRooms();
 	}
 
 	//Right Child의 경로 생성
 	if (RightChild)
 	{
-		RightChild->GeneratePaths();
+		RightChild->ConnectRooms();
 	}	
 }
 
-void BSPNode::Foreach_Node(std::function<void(const BSPNode&)> CallbackFunc) const
+void BSPNode::ExtractNodeContents(std::function<void(const std::vector<Craft::Vector2>&)> CorridorCallback,
+								std::function<void(std::unique_ptr<RoomSpace>)> RoomCallback)
 {
-	CallbackFunc(*this);
+	switch (NodeCategory)
+	{
+	case eNodeCategory::Corridor:
+		{
+			CorridorCallback(pathTileIndices);
+		}
+		break;
+
+	case eNodeCategory::Room:
+		{
+			RoomCallback(std::move(roomSpace));
+
+			//roomSpace 무효화
+			roomSpace.reset();
+		}
+		break;
+	}
 
 	if (LeftChild)
 	{
-		LeftChild->Foreach_Node(CallbackFunc);
+		LeftChild->ExtractNodeContents(CorridorCallback, RoomCallback);
 	}
-
+		
 	if (RightChild)
 	{
-		RightChild->Foreach_Node(CallbackFunc);
+		RightChild->ExtractNodeContents(CorridorCallback, RoomCallback);
 	}
 }
 
-void BSPNode::GenerateRoom()
+void BSPNode::GenerateRoomSpace()
 {
 	//방 생성 크기 랜덤 결정
 	const int RoomMaxWidth = Width - (BSPRoomConsts::RoomWallLength * 2);
@@ -182,12 +199,12 @@ void BSPNode::GenerateRoom()
 	const int yPosRangeMax = yPosRangeMin + (RoomMaxHeight - RoomHeight);
 	const int RoomStartYPos = Util::RandomRange(yPosRangeMin, yPosRangeMax);
 
-	room = std::make_unique<Room>(Vector2(RoomStartXPos, RoomStartYPos), RoomWidth, RoomHeight);
-	assert(room);
-	room->InitializeRoom();
+	roomSpace = std::make_unique<RoomSpace>(Vector2(RoomStartXPos, RoomStartYPos), RoomWidth, RoomHeight);
+	assert(roomSpace);
+	roomSpace->InitializeRoomSpace();
 }
 
-void BSPNode::GetRoomLists(std::vector<Room*>& outRoomLists)
+void BSPNode::GetRoomLists(std::vector<RoomSpace*>& outRoomLists)
 {
 	switch (NodeCategory)
 	{
@@ -209,13 +226,13 @@ void BSPNode::GetRoomLists(std::vector<Room*>& outRoomLists)
 	case eNodeCategory::Room:
 		{
 			//방 노드는 자신의 Room을 outRoomLists에 담고 반환한다.
-			outRoomLists.emplace_back(room.get());
+			outRoomLists.emplace_back(roomSpace.get());
 		}
 		break;
 	}
 }
 
-void BSPNode::GeneratePathBetweenRooms(Room& leftRoom, Room& rightRoom)
+void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom)
 {
 	const Vector2& leftRoomCenter = leftRoom.GetPositionCenter();
 	const Vector2& rightRoomCenter = rightRoom.GetPositionCenter();
@@ -278,6 +295,26 @@ void BSPNode::GeneratePathBetweenRooms(Room& leftRoom, Room& rightRoom)
 
 	//오른쪽 자식 방의 외곽 타일 중 하나 선택
 	Vector2 selectRightOuterTile = rightRoom.SelectDoorTile(mappingRoomFaceToSide(rightRoomFaceFlag));
+
+	//두방의 외곽 타일들의 쌍 중 가장 거리가 가까운 쌍을 선택
+	/*const RoomSpace::RoomTileIndices& leftOuterTiles = leftRoom.GetOuterTileIndices(mappingRoomFaceToSide(leftRoomFaceFlag));
+	const RoomSpace::RoomTileIndices& rightOuterTiles = rightRoom.GetOuterTileIndices(mappingRoomFaceToSide(rightRoomFaceFlag));
+	int minTileLength = INT_MAX;
+	Vector2 selectLeftOuterTile, selectRightOuterTile;
+	for (const Vector2& leftTile : leftOuterTiles)
+	{
+		for (const Vector2& rightTile : rightOuterTiles)
+		{
+			const Vector2 distance = rightTile - leftTile;
+			const int distanceLength = distance.Length();
+			if (distanceLength < minTileLength)
+			{
+				selectLeftOuterTile = leftTile;
+				selectRightOuterTile = rightTile;
+				minTileLength = distanceLength;
+			}
+		}
+	}*/
 
 	//Length의 양수, 음수, 0에 따른 증가 인덱스 반환
 	auto getAddValue = [](int Length)
@@ -426,10 +463,4 @@ void BSPNode::GeneratePathBetweenRooms(Room& leftRoom, Room& rightRoom)
 		}
 		break;
 	}
-}
-
-const Room& BSPNode::GetRoom() const
-{
-	assert(room && "Invalid room..");
-	return *room;
 }

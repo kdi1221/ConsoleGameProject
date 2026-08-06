@@ -16,6 +16,8 @@ namespace Craft
 		// 전달된 타입 ID와 현재 객체 비교.
 		virtual bool Is(size_t id) const
 		{
+			//최상위 객체인 CraftObject의 함수까지 접근했다는 건 
+			//타입이 다르다는 것과 같은 의미.
 			return false;
 		}
 
@@ -25,6 +27,10 @@ namespace Craft
 		{
 			return Is(T::TypeId());
 		}
+
+	public:
+		//가상 소멸자
+		virtual ~CraftObject() = default;
 	};
 }
 

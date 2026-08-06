@@ -136,8 +136,8 @@ namespace Craft
 		SMALL_RECT writeRegion = {};
 		writeRegion.Top = 0;
 		writeRegion.Left = 0;
-		writeRegion.Right = static_cast<short>(screenSize.x);
-		writeRegion.Bottom = static_cast<short>(screenSize.y);
+		writeRegion.Right = static_cast<short>(screenSize.x - 1);
+		writeRegion.Bottom = static_cast<short>(screenSize.y - 1);
 
 		BOOL result = WriteConsoleOutputA(
 			screenBuffer,
