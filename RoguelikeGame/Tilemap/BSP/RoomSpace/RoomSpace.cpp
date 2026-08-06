@@ -4,10 +4,14 @@
 
 using namespace Craft;
 
-RoomSpace::RoomSpace(const Craft::Vector2& inPositionLT, int inWidth, int inHeight)
+RoomSpace::RoomSpace(const Craft::Vector2& inPositionLT, int inRoomWidth, int inRoomHeight,
+						const Craft::Vector2& inOuterPositionLT, int inOuterWidth, int inOuterHeight)
 	:positionLT(inPositionLT)
-	,Width(inWidth)
-	,Height(inHeight)
+	,Width(inRoomWidth)
+	,Height(inRoomHeight)
+	,outerPositionLT(inOuterPositionLT)
+	,outerWidth(inOuterWidth)
+	,outerHeight(inOuterHeight)
 {
 
 }

@@ -11,7 +11,8 @@ public:
 	using RoomTileIndices = std::vector<Craft::Vector2>;
 
 public:
-	RoomSpace(const Craft::Vector2& inPositionLT, int inWidth, int inHeight);
+	RoomSpace(const Craft::Vector2& inPositionLT, int inRoomWidth, int inRoomHeight, 
+				const Craft::Vector2& inOuterPositionLT, int inOuterWidth, int inOuterHeight);
 	virtual ~RoomSpace();
 
 public:
@@ -22,7 +23,13 @@ public:
 	Craft::Vector2 SelectDoorTile(eRoomSides edge);
 
 public:
+	inline const Craft::Vector2& GetPostionLT() const { return positionLT; }
 	inline const Craft::Vector2& GetPositionCenter() const { return positionCenter; }
+	inline int GetWidth() const { return Width; }
+	inline int GetHeight() const { return Height; }
+	inline const Craft::Vector2& GetOuterPostionLT() const { return outerPositionLT; }
+	inline int GetOuterWidth() const { return outerWidth; }
+	inline int GetOuterHeight() const { return outerHeight; }
 	inline const RoomTileIndices& GetInnerTileIndices() const { return innerTileIndices; }
 	inline const RoomTileIndices& GetOuterTileIndices(eRoomSides edge) const { return outerTileIndices[static_cast<int>(edge)]; }
 
@@ -38,6 +45,15 @@ private:
 
 	//방의 중심 좌표
 	Craft::Vector2 positionCenter = Craft::Vector2::Zero;
+
+	//방을 감싸는 외곽 영역의 시작 좌표(좌상단)
+	Craft::Vector2 outerPositionLT = Craft::Vector2::Zero;
+
+	//방을 감싸는 외곽 영역의 Width
+	int outerWidth = 0;
+
+	//방을 감싸는 외곽 영역의 Height
+	int outerHeight = 0;
 
 	//방 안의 타일 인덱스들
 	RoomTileIndices innerTileIndices;

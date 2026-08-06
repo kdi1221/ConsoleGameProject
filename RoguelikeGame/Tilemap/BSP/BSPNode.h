@@ -59,13 +59,13 @@ private:
 	void GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom);
 
 private:
-	//시작 위치
+	//분할된 공간의 시작 위치
 	Craft::Vector2 StartPosition = Craft::Vector2::Zero;
 
-	//가로 길이
+	//분할된 공간의 가로 길이
 	int Width = 0;
 
-	//세로 길이
+	//분할된 공간의 세로 길이
 	int Height = 0;
 
 	//노드 종류(통로 / 방)
