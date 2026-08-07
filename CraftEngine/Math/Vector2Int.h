@@ -7,7 +7,7 @@ namespace Craft
 {
 	class Vector2Float;
 
-	class CRAFT_API Vector2
+	class CRAFT_API Vector2Int
 	{
 	public:
 		//x좌표
@@ -17,29 +17,29 @@ namespace Craft
 		int y = 0;
 
 		// 자주 사용할 만한 값을 전역 변수로 선언.
-		static Vector2 Zero;
-		static Vector2 One;
-		static Vector2 Right;
-		static Vector2 Up;
+		static Vector2Int Zero;
+		static Vector2Int One;
+		static Vector2Int Right;
+		static Vector2Int Up;
 
 	public:
-		Vector2(int x = 0, int y = 0);
-		~Vector2() = default;
+		Vector2Int(int x = 0, int y = 0);
+		~Vector2Int() = default;
 
 	public:
 		//사칙 연산자 오버로딩.
-		Vector2 operator+(const Vector2& other) const;
-		Vector2 operator-(const Vector2& other) const;
-		Vector2 operator*(const Vector2& other) const;
-		Vector2 operator*(int value) const;
-		Vector2 operator/(const Vector2& other) const;
+		Vector2Int operator+(const Vector2Int& other) const;
+		Vector2Int operator-(const Vector2Int& other) const;
+		Vector2Int operator*(const Vector2Int& other) const;
+		Vector2Int operator*(int value) const;
+		Vector2Int operator/(const Vector2Int& other) const;
 
 		// 대입 연산자 오버로딩
-		Vector2& operator=(const Vector2& other);
+		Vector2Int& operator=(const Vector2Int& other);
 
 		// 비교 연산자 오버로딩
-		bool operator==(const Vector2& other) const;
-		bool operator!=(const Vector2& other) const;
+		bool operator==(const Vector2Int& other) const;
+		bool operator!=(const Vector2Int& other) const;
 
 		explicit operator Vector2Float() const;
 		explicit operator Vector2Float();
@@ -50,7 +50,7 @@ namespace Craft
 
 	public:
 		//내적
-		int DotProduct(const Vector2& other) const;
+		int DotProduct(const Vector2Int& other) const;
 
 		//길이(sqrt 생략)
 		int Length() const;

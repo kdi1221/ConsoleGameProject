@@ -1,6 +1,7 @@
 #include "DestroyEffect.h"
 #include "Engine/Engine.h"
 #include "Component/SpriteRendererComponent.h"
+#include "Engine/Config/ConfigBase.h"
 
 using namespace Craft;
 using EffectFrame = DestroyEffect::EffectFrame;
@@ -15,7 +16,7 @@ static const EffectFrame sequence[] =
 	{ "@@@@@", 0.5f, Color::Red },
 };
 
-DestroyEffect::DestroyEffect(const Craft::Vector2& position)
+DestroyEffect::DestroyEffect(const Craft::Vector2Int& position)
 	:super(position)
 {
 	//컴포넌트 추가
@@ -25,11 +26,11 @@ DestroyEffect::DestroyEffect(const Craft::Vector2& position)
 	int effectFrameImageLength = static_cast<int>(sequence[0].frame.size());
 
 	//화면 위치.
-	Vector2 tempPosition = GetPosition();
+	Vector2Int tempPosition = GetPosition();
 
 	// x위치 조정.
 	tempPosition.x = tempPosition.x < 0 ? effectFrameImageLength + tempPosition.x : tempPosition.x;
-	tempPosition.x = tempPosition.x + effectFrameImageLength > Engine::Get().GetWidth() ? tempPosition.x - effectFrameImageLength : tempPosition.x;
+	tempPosition.x = tempPosition.x + effectFrameImageLength > Engine::Get().GetConfig<ConfigBase>().GetDisplayWidth() ? tempPosition.x - effectFrameImageLength : tempPosition.x;
 
 	// 보정된 위치 설정
 	SetPosition(tempPosition);

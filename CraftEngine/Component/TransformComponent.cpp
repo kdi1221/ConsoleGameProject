@@ -2,7 +2,7 @@
 
 namespace Craft
 {
-	TransformComponent::TransformComponent(const Vector2& localPosition)
+	TransformComponent::TransformComponent(const Vector2Int& localPosition)
 		:localPosition(localPosition)
 		,previousWorldPosition(localPosition)
 	{
@@ -14,7 +14,7 @@ namespace Craft
 		previousWorldPosition = GetWorldPosition();
 	}
 
-	Vector2 TransformComponent::GetWorldPosition() const
+	Vector2Int TransformComponent::GetWorldPosition() const
 	{
 		//부모 트랜스폼
 		std::shared_ptr<TransformComponent> parentTransform = parent.lock();
@@ -29,7 +29,7 @@ namespace Craft
 		return parentTransform->GetWorldPosition() + localPosition;
 	}
 
-	void TransformComponent::SetWorldPosition(const Vector2& newPosition)
+	void TransformComponent::SetWorldPosition(const Vector2Int& newPosition)
 	{
 		//부모 트랜스폼
 		std::shared_ptr<TransformComponent> parentTransform = parent.lock();

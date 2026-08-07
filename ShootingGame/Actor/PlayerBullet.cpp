@@ -4,7 +4,7 @@
 
 using namespace Craft;
 
-PlayerBullet::PlayerBullet(const Craft::Vector2& position)
+PlayerBullet::PlayerBullet(const Craft::Vector2Int& position)
 	:super(position)
 	,yPosition(static_cast<float>(position.y))
 {
@@ -30,7 +30,7 @@ void PlayerBullet::Tick(float deltaTime)
 
 	//position.y = static_cast<int>(yPosition);
 	//위치 설정 - 컴포넌트 기반으로 동작하도록 처리
-	Vector2 newPosition = GetPosition();
+	Vector2Int newPosition = GetPosition();
 	newPosition.y = static_cast<int>(yPosition);
 	SetPosition(newPosition);
 }

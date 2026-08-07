@@ -9,6 +9,7 @@ using namespace Craft;
 int main(void)
 {
 	Engine engine;
+	engine.InitializeEngine();
 	engine.AddNewLevel<GameLevel>();
 	engine.Run();
 

@@ -1,4 +1,6 @@
 #include "TestLevel.h"
+#include "Engine/Engine.h"
+#include "Game/Config/Config.h"
 #include "Render/Renderer.h"
 #include "Tilemap/Tilemap.h"
 #include "Core/Input.h"
@@ -57,5 +59,6 @@ void TestLevel::BuildTilemapBSP()
 	tileMap = std::make_unique<Tilemap>();
 	assert(tileMap && "Fail Tilemap Alloc..");
 
-	tileMap->InitializeTilemap(Vector2(150, 70));
+	const Config& config = Engine::Get().GetConfig<Config>();
+	tileMap->InitializeTilemap(Vector2Int(config.GetTilemapWidth(), config.GetTilemapHeight()));
 }

@@ -21,7 +21,7 @@ public:
 	void RegisterOnPlayerDead(OnPlayerDead callback);
 
 	//플레이어가 죽을때 호출할 함수 - 플레이어 죽음 이벤트 발행
-	void SetPlayerDead(const Craft::Vector2& deadPosition);
+	void SetPlayerDead(const Craft::Vector2Int& deadPosition);
 
 	// 점수 Getter/Setter
 	int GetScore() const { return score; }
@@ -31,7 +31,7 @@ public:
 	inline bool IsPlayerDead() const { return isPlayerDead; }
 
 	//플레이어가 죽은 위치.
-	inline Craft::Vector2 GetPlayerDeadPosition() const { return playerDeadPosition; }
+	inline Craft::Vector2Int GetPlayerDeadPosition() const { return playerDeadPosition; }
 
 private:
 	// 점수.
@@ -41,7 +41,7 @@ private:
 	bool isPlayerDead = false;
 
 	//플레이어가 죽은 위치를 저장할 변수.
-	Craft::Vector2 playerDeadPosition;
+	Craft::Vector2Int playerDeadPosition;
 
 	// 플레이어 죽음 이벤트 콜백을 저장할 변수.
 	OnPlayerDead onPlayerDead = nullptr;

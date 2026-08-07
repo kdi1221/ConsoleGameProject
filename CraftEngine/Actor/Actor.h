@@ -4,7 +4,7 @@
 #include "Core/CraftObject.h"
 #include "Component/Component.h"
 #include "Component/TransformComponent.h"
-#include "Math/Vector2.h"
+#include "Math/Vector2Int.h"
 #include "Math/Color.h"
 #include <memory>
 #include <string>
@@ -28,7 +28,7 @@ namespace Craft
 		TYPE_DECLARATIONS(Actor, CraftObject)
 
 	public:
-		Actor(const Vector2& position = Vector2::Zero);
+		Actor(const Vector2Int& position = Vector2Int::Zero);
 		/*Actor(const std::string& image = "", 
 			const Vector2& position = Vector2::Zero, 
 			Color color = Color::White);*/
@@ -112,12 +112,12 @@ namespace Craft
 		inline std::shared_ptr<Level> GetOwner() const { return owner.lock(); }
 		void SetOwner(std::weak_ptr<Level> newOwner);
 
-		Vector2 GetPosition() const;
-		Vector2 GetWorldPosition() const;
-		void SetPosition(const Vector2& newPosition);
+		Vector2Int GetPosition() const;
+		Vector2Int GetWorldPosition() const;
+		void SetPosition(const Vector2Int& newPosition);
 
 		//이전 위치 반환 함수.
-		Vector2 GetPreviousPosition() const;
+		Vector2Int GetPreviousPosition() const;
 
 		//액터의 문자열 너비 반환 함수.
 		//inline int GetWidth() const { return width; }

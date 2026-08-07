@@ -3,7 +3,7 @@
 
 using namespace Craft;
 
-Target::Target(const Craft::Vector2& position)
+Target::Target(const Craft::Vector2Int& position)
 	:Actor(position)
 {
 	//필요한 컴포넌트 추가.

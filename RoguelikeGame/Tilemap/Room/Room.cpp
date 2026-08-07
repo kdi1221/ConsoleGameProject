@@ -1,7 +1,7 @@
 ﻿#include "Room.h"
 #include "Tilemap/Tilemap.h"
 #include "TileMap/BSP/RoomSpace/RoomSpace.h"
-#include "Math/Vector2.h"
+#include "Math/Vector2Int.h"
 #include <cassert>
 
 using namespace Craft;

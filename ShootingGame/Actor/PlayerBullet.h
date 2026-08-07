@@ -8,7 +8,7 @@ class PlayerBullet : public Craft::Actor
 	TYPE_DECLARATIONS(PlayerBullet, Actor)
 
 public:
-	PlayerBullet(const Craft::Vector2& position);
+	PlayerBullet(const Craft::Vector2Int& position);
 	~PlayerBullet() = default;
 
 public:

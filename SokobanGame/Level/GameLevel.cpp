@@ -5,7 +5,7 @@
 #include "Actor/Wall.h"
 #include "Actor/Target.h"
 #include "Render/Renderer.h"
-#include "Math/Vector2.h"
+#include "Math/Vector2Int.h"
 #include <fstream>
 #include <cassert>
 
@@ -26,7 +26,7 @@ void GameLevel::Draw()
 	// 게임을 클리어한 경우 메시지 표시
 	if (isGameClear)
 	{
-		Renderer::Get().Submit("Game Clear!", Vector2(30, 0));
+		Renderer::Get().Submit("Game Clear!", Vector2Int(30, 0));
 	}
 }
 
@@ -55,7 +55,7 @@ void GameLevel::LoadMap(const std::string& filename)
 
 	//문자열 buffer를 한 문자씩 읽으면서 처리.
 	int index = 0;
-	Vector2 position;
+	Vector2Int position;
 
 	while (true)
 	{
@@ -170,7 +170,7 @@ bool GameLevel::CheckGameClear()
 	return currentScore == targetScore;
 }
 
-bool GameLevel::CanMove(const Craft::Vector2& playerPosition, const Craft::Vector2& nextPosition)
+bool GameLevel::CanMove(const Craft::Vector2Int& playerPosition, const Craft::Vector2Int& nextPosition)
 {
 	//예외처리, 게임을 클리어한 경우에는 처리 안함.
 	if (isGameClear)
@@ -213,9 +213,9 @@ bool GameLevel::CanMove(const Craft::Vector2& playerPosition, const Craft::Vecto
 		// 박스의 다음 위치 구하기.
 		// 이를 위해 플레이어가 이동하는 방향 구하기.
 		// 이동 방향 : 다음위치 - 현재 위치
-		Vector2 direction = nextPosition - playerPosition;
+		Vector2Int direction = nextPosition - playerPosition;
 		//박스의 다음 위치 : 박스의 위치 + 이동 방향. 
-		Vector2 newPosition = boxActor->GetPosition() + direction;
+		Vector2Int newPosition = boxActor->GetPosition() + direction;
 
 		// 다른 박스가 있는지 확인.
 		for (const std::shared_ptr<Actor>& otherBox : boxList)

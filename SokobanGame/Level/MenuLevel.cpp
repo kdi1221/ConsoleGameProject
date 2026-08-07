@@ -70,7 +70,7 @@ void MenuLevel::Draw()
 	Level::Draw();
 
 	// 메뉴 제목.
-	Renderer::Get().Submit("Sokoban Game", Vector2::Zero);
+	Renderer::Get().Submit("Sokoban Game", Vector2Int::Zero);
 
 	// 메뉴 아이템 출력
 	const int count = static_cast<int>(itemList.size());
@@ -80,6 +80,6 @@ void MenuLevel::Draw()
 		Color textColor = (ix == currentIndex) ? selectedColor : unselectedColor;
 
 		// 메뉴 목록 그리기
-		Renderer::Get().Submit(itemList[ix]->text, Vector2(0, 2 + ix), textColor);
+		Renderer::Get().Submit(itemList[ix]->text, Vector2Int(0, 2 + ix), textColor);
 	}
 }

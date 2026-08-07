@@ -4,8 +4,8 @@
 
 using namespace Craft;
 
-RoomSpace::RoomSpace(const Craft::Vector2& inPositionLT, int inRoomWidth, int inRoomHeight,
-						const Craft::Vector2& inOuterPositionLT, int inOuterWidth, int inOuterHeight)
+RoomSpace::RoomSpace(const Craft::Vector2Int& inPositionLT, int inRoomWidth, int inRoomHeight,
+						const Craft::Vector2Int& inOuterPositionLT, int inOuterWidth, int inOuterHeight)
 	:positionLT(inPositionLT)
 	,Width(inRoomWidth)
 	,Height(inRoomHeight)
@@ -24,7 +24,7 @@ RoomSpace::~RoomSpace()
 void RoomSpace::InitializeRoomSpace()
 {
 	//positionCenter 계산
-	positionCenter = positionLT + Vector2(Width >> 1, Height >> 1);
+	positionCenter = positionLT + Vector2Int(Width >> 1, Height >> 1);
 
 	//tileIndices 계산
 	innerTileIndices.reserve(Width * Height);
@@ -34,7 +34,7 @@ void RoomSpace::InitializeRoomSpace()
 		{
 			const int XPos = positionLT.x + x;
 			const int YPos = positionLT.y + y;
-			innerTileIndices.emplace_back(Vector2(XPos, YPos));
+			innerTileIndices.emplace_back(Vector2Int(XPos, YPos));
 		}
 	}
 
@@ -46,7 +46,7 @@ void RoomSpace::InitializeRoomSpace()
 		const int xPos = leftXPos;
 		const int yPos = leftYPos + addYPos;
 
-		outerTileIndices[static_cast<int>(eRoomSides::Left)].emplace_back(Vector2(xPos, yPos));
+		outerTileIndices[static_cast<int>(eRoomSides::Left)].emplace_back(Vector2Int(xPos, yPos));
 	}
 
 	const int topXPos = positionLT.x + 1;
@@ -56,7 +56,7 @@ void RoomSpace::InitializeRoomSpace()
 		const int xPos = topXPos + addXPos;
 		const int yPos = topYPos;
 
-		outerTileIndices[static_cast<int>(eRoomSides::Top)].emplace_back(Vector2(xPos, yPos));
+		outerTileIndices[static_cast<int>(eRoomSides::Top)].emplace_back(Vector2Int(xPos, yPos));
 	}
 
 	const int rightXPos = positionLT.x + Width;
@@ -66,7 +66,7 @@ void RoomSpace::InitializeRoomSpace()
 		const int xPos = rightXPos;
 		const int yPos = rightYPos + addYPos;
 
-		outerTileIndices[static_cast<int>(eRoomSides::Right)].emplace_back(Vector2(xPos, yPos));
+		outerTileIndices[static_cast<int>(eRoomSides::Right)].emplace_back(Vector2Int(xPos, yPos));
 	}
 
 	const int bottomXPos = positionLT.x + 1;
@@ -76,18 +76,18 @@ void RoomSpace::InitializeRoomSpace()
 		const int xPos = bottomXPos + addXPos;
 		const int yPos = bottomYPos;
 
-		outerTileIndices[static_cast<int>(eRoomSides::Bottom)].emplace_back(Vector2(xPos, yPos));
+		outerTileIndices[static_cast<int>(eRoomSides::Bottom)].emplace_back(Vector2Int(xPos, yPos));
 	}
 }
 
-Craft::Vector2 RoomSpace::SelectDoorTile(eRoomSides edge)
+Craft::Vector2Int RoomSpace::SelectDoorTile(eRoomSides edge)
 {
-	std::vector<Vector2>& edgeOuterTileIndices = outerTileIndices[static_cast<int>(edge)];
+	std::vector<Vector2Int>& edgeOuterTileIndices = outerTileIndices[static_cast<int>(edge)];
 
 	assert(!edgeOuterTileIndices.empty() && "edgeOuterTileIndices empty..");
 
 	const int selectTileIndex = Util::RandomRange(0, static_cast<int>(edgeOuterTileIndices.size()) - 1);
-	Vector2 selectTile = edgeOuterTileIndices[selectTileIndex];
+	Vector2Int selectTile = edgeOuterTileIndices[selectTileIndex];
 
 	//선택된 외곽 타일 인덱스 제거
 	edgeOuterTileIndices.erase(edgeOuterTileIndices.begin() + selectTileIndex);

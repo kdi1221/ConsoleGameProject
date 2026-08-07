@@ -20,7 +20,7 @@ namespace Craft
 
 	}
 
-	void Renderer::Frame::Clear(const Vector2& screenSize)
+	void Renderer::Frame::Clear(const Vector2Int& screenSize)
 	{
 		// 이중 루프를 순회하면서 값 정리.
 		const int width = screenSize.x;
@@ -48,7 +48,7 @@ namespace Craft
 	//전역 변수 초기화
 	Renderer* Renderer::instance = nullptr;
 
-	Renderer::Renderer(const Vector2& screenSize)
+	Renderer::Renderer(const Vector2Int& screenSize)
 		:screenSize(screenSize)
 	{
 		assert(!instance);
@@ -78,7 +78,7 @@ namespace Craft
 		SetConsoleActiveScreenBuffer(GetStdHandle(STD_OUTPUT_HANDLE));
 	}
 
-	void Renderer::Submit(const std::string& image, const Vector2& position, Color color, int sortingOrder)
+	void Renderer::Submit(const std::string& image, const Vector2Int& position, Color color, int sortingOrder)
 	{
 		// 그릴 명령 객체 생성.
 		RenderCommand command;

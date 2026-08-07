@@ -29,6 +29,6 @@ private:
 
 public:
 	// 플레이어가 이동할 때 사용할 함수.
-	virtual bool CanMove(const Craft::Vector2& playerPosition, const Craft::Vector2& nextPosition) override;
+	virtual bool CanMove(const Craft::Vector2Int& playerPosition, const Craft::Vector2Int& nextPosition) override;
 };
 

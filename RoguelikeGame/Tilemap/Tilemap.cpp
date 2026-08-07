@@ -19,7 +19,7 @@ Tilemap::~Tilemap()
 
 }
 
-void Tilemap::InitializeTilemap(const Vector2& inMapSize)
+void Tilemap::InitializeTilemap(const Vector2Int& inMapSize)
 {
 	mapSize = inMapSize;
 
@@ -35,7 +35,7 @@ void Tilemap::InitializeTilemap(const Vector2& inMapSize)
 		const int PosX = static_cast<int>(TileIndex % mapSize.x);
 		const int PosY = static_cast<int>(TileIndex / mapSize.x);
 
-		tileList.emplace_back(std::make_unique<Tile>(eTileCategory::Wall, Vector2(PosX, PosY), TileIndex));
+		tileList.emplace_back(std::make_unique<Tile>(eTileCategory::Wall, Vector2Int(PosX, PosY), TileIndex));
 	}
 
 	//BSP알고리즘을 통한 공간 분할 및 방 생성, 경로 정보 생성
@@ -48,9 +48,9 @@ void Tilemap::InitializeTilemap(const Vector2& inMapSize)
 
 	//방, 경로 정보들을 바탕으로 Tile 구성
 	BSPRoot->ExtractNodeContents(
-		[this](const std::vector<Craft::Vector2>& pathTileIndices)
+		[this](const std::vector<Craft::Vector2Int>& pathTileIndices)
 		{
-			for (const Vector2& pathTileIndex : pathTileIndices)
+			for (const Vector2Int& pathTileIndex : pathTileIndices)
 			{
 				//경로상의 타일 뚫기
 				SetTileCategory(pathTileIndex.x, pathTileIndex.y, eTileCategory::Ground);
@@ -66,7 +66,7 @@ void Tilemap::InitializeTilemap(const Vector2& inMapSize)
 
 			//방 안의 타일들 생성
 			const RoomSpace::RoomTileIndices& newRoomInnerTiles = newRoom->GetRoomSpace().GetInnerTileIndices();
-			for (const Vector2& tileIndex : newRoomInnerTiles)
+			for (const Vector2Int& tileIndex : newRoomInnerTiles)
 			{
 				SetTileCategory(tileIndex.x, tileIndex.y, eTileCategory::Ground);
 			}

@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "Util/Util.h"
 #include "Engine/Engine.h"
+#include "Engine/Config/ConfigBase.h"
 #include "Level/Level.h"
 #include "EnemyBullet.h"
 #include "PlayerBullet.h"
@@ -23,7 +24,7 @@ namespace
 }
 
 Enemy::Enemy(const std::string& image, int yPosition)
-	:Actor(Vector2::Zero)
+	:Actor(Vector2Int::Zero)
 {
 	//필요한 컴포넌트 추가
 	AddComponent<SpriteRendererComponent>(image, Color::White, 2);
@@ -39,7 +40,7 @@ Enemy::Enemy(const std::string& image, int yPosition)
 		direction = MoveDirection::Left;
 
 		//x위치 설정
-		xPosition = static_cast<float>(Engine::Get().GetWidth() - 1 - GetCollisionWidth(*this));
+		xPosition = static_cast<float>(Engine::Get().GetConfig<ConfigBase>().GetDisplayWidth() - 1 - GetCollisionWidth(*this));
 	}
 	else
 	{
@@ -51,7 +52,7 @@ Enemy::Enemy(const std::string& image, int yPosition)
 	}
 
 	//이동 방향에 따른 적 위치 설정.
-	SetPosition(Vector2(static_cast<int>(xPosition), yPosition));
+	SetPosition(Vector2Int(static_cast<int>(xPosition), yPosition));
 	
 	//발사 타이머 목표시간 설정.
 	timer.SetTargetTime(Util::RandomRange(1.f, 3.f));
@@ -74,14 +75,14 @@ void Enemy::Tick(float deltaTime)
 	}
 
 	//화면 오른쪽을 완전히 벗어난 경우.
-	if (xPosition >= Engine::Get().GetWidth())
+	if (xPosition >= Engine::Get().GetConfig<ConfigBase>().GetDisplayWidth())
 	{
 		Destroy();
 		return;
 	}
 
 	// 위치 설정.
-	SetPosition(Vector2(static_cast<int>(xPosition), GetPosition().y));
+	SetPosition(Vector2Int(static_cast<int>(xPosition), GetPosition().y));
 
 	//발사 타이머 업데이트
 	timer.Tick(deltaTime);
@@ -94,8 +95,8 @@ void Enemy::Tick(float deltaTime)
 	timer.Reset();
 
 	//적 탄약 액터 생성 후 발사
-	Vector2 CurrentPosition = GetPosition();
-	Vector2 bulletPosition(CurrentPosition.x + (GetCollisionWidth(*this) / 2), CurrentPosition.y + 1);
+	Vector2Int CurrentPosition = GetPosition();
+	Vector2Int bulletPosition(CurrentPosition.x + (GetCollisionWidth(*this) / 2), CurrentPosition.y + 1);
 	GetOwner()->SpawnActor<EnemyBullet>(bulletPosition, Util::RandomRange(10.f, 20.f));
 }
 

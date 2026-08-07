@@ -3,6 +3,7 @@
 #include "Core/Core.h"
 #include <memory>
 #include <string>
+#include <cassert>
 
 class Sound;
 namespace Craft
@@ -12,30 +13,25 @@ namespace Craft
 	class Input;
 	class Renderer;
 	class CollisionSystem;
+	class ConfigBase;
 
 	//메인 엔진 클래스
 	//엔진 루프 제공
 	//게임 엔진의 핵심 기능 제공
 	class CRAFT_API Engine
 	{
-		//엔진 설정 구조체.
-		struct EngineSetting
-		{
-			// 목표 프레임 속도.
-			float framerate = 0.f;
-
-			// 화면 가로 크기
-			int width = 0;
-
-			// 화면 세로 크기
-			int height = 0;
-		};
+	private:
+		//엔진 설정 파일 경로
+		static const std::string configFilePath;
 
 	public:
 		Engine();
 		virtual ~Engine();
 
 	public:
+		//엔진 초기화 함수
+		void InitializeEngine();
+
 		// 게임 루프 실행 함수
 		void Run();
 
@@ -57,9 +53,15 @@ namespace Craft
 		// 싱글톤 접근 함수
 		static Engine& Get();
 
-		// Getter.
-		inline int GetWidth() const { return setting.width; }
-		inline int GetHeight() const { return setting.height; }
+		// 설정 반환
+		template<typename T, typename = std::enable_if_t<std::is_base_of<ConfigBase, T>::value>>
+		const T& GetConfig() const
+		{
+			const ConfigBase* ptrConfig = config.get();
+			assert(ptrConfig && "Invalid config..");
+
+			return static_cast<const T&>(*ptrConfig);
+		}
 
 	protected:
 		// 입력 처리 함수. (입력 폴링)
@@ -90,9 +92,9 @@ namespace Craft
 		void LoadEngineSetting();
 
 	protected:
-		// 엔진 설정.
-		EngineSetting setting;
+		virtual std::unique_ptr<ConfigBase> CreateConfig() const;
 
+	protected:
 		// 엔진 종료 플래그.
 		bool isQuit = false;
 
@@ -116,6 +118,9 @@ namespace Craft
 
 		//사운드 시스템 객체
 		std::unique_ptr<Sound> sound;
+
+		//엔진 설정 객체
+		std::unique_ptr<ConfigBase> config;
 	};
 }
 

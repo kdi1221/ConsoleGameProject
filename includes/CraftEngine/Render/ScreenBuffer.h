@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <Math/Vector2.h>
+#include <Math/Vector2Int.h>
 #include <Windows.h>
 
 namespace Craft
@@ -9,7 +9,7 @@ namespace Craft
 	class ScreenBuffer
 	{
 	public:
-		ScreenBuffer(const Vector2& InScreenSize);
+		ScreenBuffer(const Vector2Int& InScreenSize);
 		~ScreenBuffer();
 
 	public:
@@ -27,7 +27,7 @@ namespace Craft
 		HANDLE screenBuffer = nullptr;
 
 		// 화면의 크기
-		Vector2 screenSize;
+		Vector2Int screenSize;
 	};
 }
 

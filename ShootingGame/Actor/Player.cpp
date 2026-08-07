@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Engine/Engine.h"
+#include "Engine/Config/ConfigBase.h"
 #include "Core/Input.h"
 #include "PlayerBullet.h"
 #include "Level/Level.h"
@@ -26,7 +27,7 @@ namespace
 }
 
 Player::Player()
-	:Actor(Vector2::Zero)
+	:Actor(Vector2Int::Zero)
 	,fireMode(FireMode::OneShot)
 {
 	//필요한 컴포넌트 추가
@@ -34,9 +35,9 @@ Player::Player()
 	AddComponent<BoxCollisionComponent>(5);
 
 	// 생성 위치 설정.
-	int x = (Engine::Get().GetWidth() / 2) - (GetCollisionWidth(*this) / 2);
-	int y = Engine::Get().GetHeight() - 3;
-	SetPosition(Vector2(x, y));
+	int x = (Engine::Get().GetConfig<ConfigBase>().GetDisplayWidth() / 2) - (GetCollisionWidth(*this) / 2);
+	int y = Engine::Get().GetConfig<ConfigBase>().GetDisplayHeight() - 3;
+	SetPosition(Vector2Int(x, y));
 
 	// x위치 저장.
 	xPosition = static_cast<float>(x);
@@ -57,8 +58,8 @@ void Player::BeginPlay()
 	}
 
 	//플레이어 기준 로컬 좌표에 왼쪽/오른쪽에 총구 생성.
-	std::shared_ptr<PlayerGun> leftGun = level->SpawnActor<PlayerGun>(Vector2(1, -1));
-	std::shared_ptr<PlayerGun> rightGun = level->SpawnActor<PlayerGun>(Vector2(3, -1));
+	std::shared_ptr<PlayerGun> leftGun = level->SpawnActor<PlayerGun>(Vector2Int(1, -1));
+	std::shared_ptr<PlayerGun> rightGun = level->SpawnActor<PlayerGun>(Vector2Int(3, -1));
 
 	// 계층으로 연결.
 	leftGun->AttachTo(shared_from_this(), false);
@@ -69,7 +70,7 @@ void Player::BeginPlay()
 	gunList.emplace_back(rightGun);
 
 	//추진 효과 액터도 추가 및 계층 설정.
-	engineEffect = level->SpawnActor<PlayerEngineEffect>(Vector2(1, 1));
+	engineEffect = level->SpawnActor<PlayerEngineEffect>(Vector2Int(1, 1));
 	engineEffect->AttachTo(shared_from_this(), false);
 
 }
@@ -174,13 +175,13 @@ void Player::Move(float direction, float deltaTime)
 
 	// 화면 오른쪽 벗어나지 않도록 고정.
 	const int collisionWidth = GetCollisionWidth(*this);
-	if (xPosition + collisionWidth >= Engine::Get().GetWidth())
+	if (xPosition + collisionWidth >= Engine::Get().GetConfig<ConfigBase>().GetDisplayWidth())
 	{
-		xPosition = static_cast<float>(Engine::Get().GetWidth() - collisionWidth);
+		xPosition = static_cast<float>(Engine::Get().GetConfig<ConfigBase>().GetDisplayWidth() - collisionWidth);
 	}
 
 	// 위치 업데이트.
-	Vector2 newPosition = GetPosition();
+	Vector2Int newPosition = GetPosition();
 	newPosition.x = static_cast<int>(xPosition);
 	SetPosition(newPosition);
 }

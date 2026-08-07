@@ -8,6 +8,6 @@ class Ground : public Craft::Actor
 	TYPE_DECLARATIONS(Ground, Actor)
 
 public:
-	Ground(const Craft::Vector2& position);
+	Ground(const Craft::Vector2Int& position);
 };
 

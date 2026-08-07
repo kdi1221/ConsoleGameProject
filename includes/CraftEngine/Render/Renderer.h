@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Core/Core.h"
-#include "Math/Vector2.h"
+#include "Math/Vector2Int.h"
 #include "Math/Color.h"
 #include <vector>
 #include <string>
@@ -22,7 +22,7 @@ namespace Craft
 			std::string image;
 
 			// 위치.
-			Vector2 position;
+			Vector2Int position;
 
 			// 색상.
 			Color color = Color::White;
@@ -39,7 +39,7 @@ namespace Craft
 			~Frame();
 
 			// 프레임 초기화 함수.
-			void Clear(const Vector2& screenSize);
+			void Clear(const Vector2Int& screenSize);
 
 			// 문자 2차원 배열.
 			std::unique_ptr<CHAR_INFO[]> charInfoArray;
@@ -49,12 +49,12 @@ namespace Craft
 		};
 
 	public:
-		Renderer(const Vector2& screenSize);
+		Renderer(const Vector2Int& screenSize);
 		~Renderer();
 
 	public:
 		//장면을 구성하는 모든 객체(액터)가 화면에 그릴 데이터를 전달하는 함수.
-		void Submit(const std::string& image, const Vector2& position, Color color = Color::White, int sortingOrder = 0);
+		void Submit(const std::string& image, const Vector2Int& position, Color color = Color::White, int sortingOrder = 0);
 
 		// Draw 이벤트 함수(Engine에서 호출).
 		void Draw();
@@ -83,7 +83,7 @@ namespace Craft
 		std::vector<RenderCommand> renderQueue;
 
 		// 화면 크기.
-		Vector2 screenSize;
+		Vector2Int screenSize;
 
 		// 글자/그리기 순서 2차원 배열을 관리하는 프레임 객체.
 		std::unique_ptr<Frame> frame;

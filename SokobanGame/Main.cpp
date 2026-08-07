@@ -9,5 +9,6 @@ int main(void)
 	SetConsoleTitleA("Sokoban Game");
 
 	Game game;
+	game.InitializeEngine();
 	game.Run();
 }

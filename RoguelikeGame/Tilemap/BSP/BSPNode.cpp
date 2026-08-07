@@ -1,22 +1,12 @@
 #include "BSPNode.h"
+#include "Engine/Engine.h"
+#include "Game/Config/Config.h"
 #include "Util/Util.h"
 #include "RoomSpace/RoomSpace.h"
 #include "Math/Vector2Float.h"
 #include "Types/Enums.h"
 #include <queue>
 #include <cassert>
-
-namespace BSPRoomConsts
-{
-	//방의 최소 가로/세로 길이
-	static constexpr int MinRoomLength = 10;
-
-	//방을 감싸는 벽 길이
-	static constexpr int RoomWallLength = 2;
-
-	//방의 최소 길이 + 방의 양면 벽길이(상하 / 좌우) 
-	static constexpr int MinLength = MinRoomLength + (RoomWallLength * 2);
-}
 
 using namespace Craft;
 
@@ -36,6 +26,14 @@ BSPNode::~BSPNode()
 //BSP 맵 공간 분할
 void BSPNode::Divide()
 {
+	//설정에 지정된 방의 최소길이 및 두께 정보 가져오기
+	const Config& config = Engine::Get().GetConfig<Config>();
+	const int minRoomLength = config.GetBSPMinRoomLength();
+	const int wallThickness = config.GetBSPRoomWallThickness();
+
+	//방의 최소 길이 + 방의 양면 벽길이(상하 / 좌우) 
+	const int MinLength = minRoomLength + (wallThickness * 2);
+
 	//분할 비율 결정
 	const float DivideRatio = Util::RandomRange(4.f, 6.f);
 
@@ -49,10 +47,10 @@ void BSPNode::Divide()
 		const int RightWidth = Width - LeftWidth;
 
 		//분할될 공간 중 한쪽이 최소 길이보다 작은경우 분할하지 않고 반환
-		if (LeftWidth <= BSPRoomConsts::MinLength || RightWidth <= BSPRoomConsts::MinLength)
+		if (LeftWidth <= MinLength || RightWidth <= MinLength)
 		{
 			NodeCategory = eNodeCategory::Room;
-			GenerateRoomSpace();
+			GenerateRoomSpace(minRoomLength, wallThickness);
 			return;
 		}
 		
@@ -69,10 +67,10 @@ void BSPNode::Divide()
 		const int RightHeight = Height - LeftHeight;
 
 		//분할될 공간 중 한쪽이 최소 길이보다 작은경우 분할하지 않고 반환
-		if (LeftHeight <= BSPRoomConsts::MinLength || RightHeight <= BSPRoomConsts::MinLength)
+		if (LeftHeight <= MinLength || RightHeight <= MinLength)
 		{
 			NodeCategory = eNodeCategory::Room;
-			GenerateRoomSpace();
+			GenerateRoomSpace(minRoomLength, wallThickness);
 			return;
 		}
 		
@@ -151,7 +149,7 @@ void BSPNode::ConnectRooms()
 	}	
 }
 
-void BSPNode::ExtractNodeContents(std::function<void(const std::vector<Craft::Vector2>&)> CorridorCallback,
+void BSPNode::ExtractNodeContents(std::function<void(const std::vector<Craft::Vector2Int>&)> CorridorCallback,
 								std::function<void(std::unique_ptr<RoomSpace>)> RoomCallback)
 {
 	switch (NodeCategory)
@@ -183,23 +181,23 @@ void BSPNode::ExtractNodeContents(std::function<void(const std::vector<Craft::Ve
 	}
 }
 
-void BSPNode::GenerateRoomSpace()
+void BSPNode::GenerateRoomSpace(const int minRoomLength, const int wallThickness)
 {
 	//방 생성 크기 랜덤 결정
-	const int RoomMaxWidth = Width - (BSPRoomConsts::RoomWallLength * 2);
-	const int RoomWidth = Util::RandomRange(BSPRoomConsts::MinRoomLength, RoomMaxWidth);
-	const int RoomMaxHeight = Height - (BSPRoomConsts::RoomWallLength * 2);
-	const int RoomHeight = Util::RandomRange(BSPRoomConsts::MinRoomLength, RoomMaxHeight);
+	const int RoomMaxWidth = Width - (wallThickness * 2);
+	const int RoomWidth = Util::RandomRange(minRoomLength, RoomMaxWidth);
+	const int RoomMaxHeight = Height - (wallThickness * 2);
+	const int RoomHeight = Util::RandomRange(minRoomLength, RoomMaxHeight);
 
 	//방 위치(좌상단) 랜덤 결정
-	const int xPosRangeMin = StartPosition.x + BSPRoomConsts::RoomWallLength;
+	const int xPosRangeMin = StartPosition.x + wallThickness;
 	const int xPosRangeMax = xPosRangeMin + (RoomMaxWidth - RoomWidth);
 	const int RoomStartXPos = Util::RandomRange(xPosRangeMin, xPosRangeMax);
-	const int yPosRangeMin = StartPosition.y + BSPRoomConsts::RoomWallLength;
+	const int yPosRangeMin = StartPosition.y + wallThickness;
 	const int yPosRangeMax = yPosRangeMin + (RoomMaxHeight - RoomHeight);
 	const int RoomStartYPos = Util::RandomRange(yPosRangeMin, yPosRangeMax);
 
-	roomSpace = std::make_unique<RoomSpace>(Vector2(RoomStartXPos, RoomStartYPos), RoomWidth, RoomHeight, StartPosition, Width, Height);
+	roomSpace = std::make_unique<RoomSpace>(Vector2Int(RoomStartXPos, RoomStartYPos), RoomWidth, RoomHeight, StartPosition, Width, Height);
 	assert(roomSpace);
 	roomSpace->InitializeRoomSpace();
 }
@@ -234,11 +232,11 @@ void BSPNode::GetRoomLists(std::vector<RoomSpace*>& outRoomLists)
 
 void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom)
 {
-	const Vector2& leftRoomCenter = leftRoom.GetPositionCenter();
-	const Vector2& rightRoomCenter = rightRoom.GetPositionCenter();
+	const Vector2Int& leftRoomCenter = leftRoom.GetPositionCenter();
+	const Vector2Int& rightRoomCenter = rightRoom.GetPositionCenter();
 
 	//두 방간의 방향을 구함(left => right)
-	const Vector2 betweenRoomVector = rightRoomCenter - leftRoomCenter;
+	const Vector2Int betweenRoomVector = rightRoomCenter - leftRoomCenter;
 	Vector2Float toRightVectorDirection = static_cast<Vector2Float>(betweenRoomVector);
 	toRightVectorDirection.Normalize();
 
@@ -341,10 +339,10 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 			}
 
 			//왼쪽 자식 방의 외곽 타일 중 하나 선택
-			const Vector2 selectLeftOuterTile = selectLeftRoom->SelectDoorTile(mappingRoomFaceToSide(leftRoomFaceFlag));
+			const Vector2Int selectLeftOuterTile = selectLeftRoom->SelectDoorTile(mappingRoomFaceToSide(leftRoomFaceFlag));
 
 			//오른쪽 자식 방의 외곽 타일 중 하나 선택
-			const Vector2 selectRightOuterTile = selectRightRoom->SelectDoorTile(mappingRoomFaceToSide(rightRoomFaceFlag));
+			const Vector2Int selectRightOuterTile = selectRightRoom->SelectDoorTile(mappingRoomFaceToSide(rightRoomFaceFlag));
 
 			//leftRoom을 감싸는 외곽영역의 경계라인 x 인덱스
 			const int OuterBorderXPos = selectLeftRoom->GetOuterPostionLT().x + selectLeftRoom->GetOuterWidth() - 1;
@@ -359,25 +357,25 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 			for (; xPos != OuterBorderXPos; ++xPos)
 			{
 				//경로내의 타일 뚫기
-				pathTileIndices.emplace_back(Vector2(xPos, yPos));
+				pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
 			}
 
 			//y 경로 생성
 			for (; yPos != selectRightOuterTile.y; yPos += addY)
 			{
 				//경로내의 타일 뚫기
-				pathTileIndices.emplace_back(Vector2(xPos, yPos));
+				pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
 			}
 
 			//나머지 x 경로 생성.
 			for (; xPos != selectRightOuterTile.x; ++xPos)
 			{
 				//경로내의 타일 뚫기
-				pathTileIndices.emplace_back(Vector2(xPos, yPos));
+				pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
 			}
 
 			//마지막 타일 뚫기
-			pathTileIndices.emplace_back(Vector2(xPos, yPos));
+			pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
 		}
 		break;
 
@@ -392,10 +390,10 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 			}
 
 			//왼쪽 자식 방의 외곽 타일 중 하나 선택
-			const Vector2 selectLeftOuterTile = selectLeftRoom->SelectDoorTile(mappingRoomFaceToSide(leftRoomFaceFlag));
+			const Vector2Int selectLeftOuterTile = selectLeftRoom->SelectDoorTile(mappingRoomFaceToSide(leftRoomFaceFlag));
 
 			//오른쪽 자식 방의 외곽 타일 중 하나 선택
-			const Vector2 selectRightOuterTile = selectRightRoom->SelectDoorTile(mappingRoomFaceToSide(rightRoomFaceFlag));
+			const Vector2Int selectRightOuterTile = selectRightRoom->SelectDoorTile(mappingRoomFaceToSide(rightRoomFaceFlag));
 
 			//leftRoom을 감싸는 외곽영역의 경계라인 y 인덱스
 			const int OuterBorderYPos = selectLeftRoom->GetOuterPostionLT().y + selectLeftRoom->GetOuterHeight() - 1;
@@ -410,25 +408,25 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 			for (; yPos != OuterBorderYPos; ++yPos)
 			{
 				//경로내의 타일 뚫기
-				pathTileIndices.emplace_back(Vector2(xPos, yPos));
+				pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
 			}
 
 			//x 경로 생성
 			for (; xPos != selectRightOuterTile.x; xPos += addX)
 			{
 				//경로내의 타일 뚫기
-				pathTileIndices.emplace_back(Vector2(xPos, yPos));
+				pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
 			}
 
 			//나머지 절반 y 경로 생성.
 			for (; yPos != selectRightOuterTile.y; ++yPos)
 			{
 				//경로내의 타일 뚫기
-				pathTileIndices.emplace_back(Vector2(xPos, yPos));
+				pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
 			}
 
 			//마지막 타일 뚫기
-			pathTileIndices.emplace_back(Vector2(xPos, yPos));
+			pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
 
 		}
 		break;

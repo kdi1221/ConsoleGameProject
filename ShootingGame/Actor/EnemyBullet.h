@@ -8,7 +8,7 @@ class EnemyBullet : public Craft::Actor
 	TYPE_DECLARATIONS(EnemyBullet, Actor)
 
 public:
-	EnemyBullet(const Craft::Vector2& position, float moveSpeed = 15.f);
+	EnemyBullet(const Craft::Vector2Int& position, float moveSpeed = 15.f);
 	~EnemyBullet() = default;
 
 private:

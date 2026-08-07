@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Types/Defines.h"
-#include "Math/Vector2.h"
+#include "Math/Vector2Int.h"
 #include <memory>
 #include <vector>
 #include <map>
@@ -21,7 +21,7 @@ public:
 	virtual ~Tilemap();
 
 public:
-	void InitializeTilemap(const Craft::Vector2& inMapSize);
+	void InitializeTilemap(const Craft::Vector2Int& inMapSize);
 	void Tick(float deltaTime);
 	void Draw();
 
@@ -29,7 +29,7 @@ public:
 
 private:
 	//타일맵 크기(가로 X 세로)
-	Craft::Vector2 mapSize;
+	Craft::Vector2Int mapSize;
 
 	//타일맵 내의 타일들
 	std::vector<std::unique_ptr<Tile>> tileList;

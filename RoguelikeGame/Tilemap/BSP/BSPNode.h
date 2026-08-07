@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math/Vector2.h"
+#include "Math/Vector2Int.h"
 #include <memory>
 #include <functional>
 #include <vector>
@@ -39,19 +39,18 @@ public:
 	void ConnectRooms();
 
 	/* 각 노드를 순회하면서 노드 종류(경로, 방)에 따라 */
-	void ExtractNodeContents(std::function<void(const std::vector<Craft::Vector2>&)> CorridorCallback,
+	void ExtractNodeContents(std::function<void(const std::vector<Craft::Vector2Int>&)> CorridorCallback,
 						std::function<void(std::unique_ptr<RoomSpace>)> RoomCallback);
 
 public:
-	inline const Craft::Vector2& GetStartPosition() const { return StartPosition; }
+	inline const Craft::Vector2Int& GetStartPosition() const { return StartPosition; }
 	inline int GetWidth() const { return Width; }
 	inline int GetHeight() const { return Height; }
 	inline eNodeCategory GetNodeCategory() const { return NodeCategory; }
 
 private:
 	//방 내의 공간 계산 
-	void GenerateRoomSpace();
-
+	void GenerateRoomSpace(const int minRoomLength, const int wallThickness);
 	//자식노드들에 위치한 모든 방 리스트 반환 
 	void GetRoomLists(std::vector<RoomSpace*>& outRoomLists);
 
@@ -60,7 +59,7 @@ private:
 
 private:
 	//분할된 공간의 시작 위치
-	Craft::Vector2 StartPosition = Craft::Vector2::Zero;
+	Craft::Vector2Int StartPosition = Craft::Vector2Int::Zero;
 
 	//분할된 공간의 가로 길이
 	int Width = 0;
@@ -78,7 +77,7 @@ private:
 	std::unique_ptr<RoomSpace> roomSpace;
 
 	//통로인 경우 Left와 Right를 연결하는 경로 타일 인덱스
-	std::vector<Craft::Vector2> pathTileIndices;
+	std::vector<Craft::Vector2Int> pathTileIndices;
 
 	//왼쪽 트리 노드
 	std::unique_ptr<BSPNode> LeftChild;

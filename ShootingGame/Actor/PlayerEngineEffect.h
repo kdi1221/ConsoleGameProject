@@ -14,7 +14,7 @@ class PlayerEngineEffect : public Craft::Actor
 	TYPE_DECLARATIONS(PlayerEngineEffect, Actor)
 
 public:
-	PlayerEngineEffect(const Craft::Vector2& localPosition);
+	PlayerEngineEffect(const Craft::Vector2Int& localPosition);
 	~PlayerEngineEffect() = default;
 
 private:

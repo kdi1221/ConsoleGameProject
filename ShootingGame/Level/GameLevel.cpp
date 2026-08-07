@@ -3,6 +3,7 @@
 #include "Actor/EnemySpawner.h"
 #include "Actor/GameManager.h"
 #include "Engine/Engine.h"
+#include "Engine/Config/ConfigBase.h"
 #include "Render/Renderer.h"
 #include <sstream>
 
@@ -71,7 +72,7 @@ void GameLevel::ShowScore()
 	ss << gameManager->GetScore();
 
 	//렌더러에 점수 문자열을 전달.
-	Renderer::Get().Submit(ss.str(), Vector2(0, Engine::Get().GetHeight() - 1));
+	Renderer::Get().Submit(ss.str(), Vector2Int(0, Engine::Get().GetConfig<ConfigBase>().GetDisplayHeight() - 1));
 }
 
 void GameLevel::PlayerDied()

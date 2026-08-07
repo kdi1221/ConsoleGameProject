@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Core/Core.h"
+#include "Core/CraftObject.h"
 #include <Actor/Actor.h>
 #include <vector>
 #include <memory>
@@ -11,8 +12,12 @@ namespace Craft
 	// 게임에 배치되는 액터를 관리.
 	// 액터에 프레임 이벤트를 전달하는 기능.
 	// 액터에 필요한 부가 기능 제공.
-	class CRAFT_API Level : public std::enable_shared_from_this<Level>
+	class CRAFT_API Level : 
+		public CraftObject,
+		public std::enable_shared_from_this<Level>
 	{
+		TYPE_DECLARATIONS(Level, CraftObject)
+
 		//public std::enable_shared_from_this<Level>
 		//shared_from_this() : this 포인터를 shared_ptr로 변환
 		//weak_from_this() - this 포인터를 weak_ptr로 변환

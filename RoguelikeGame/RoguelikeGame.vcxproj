@@ -21,7 +21,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -98,6 +98,8 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Config\Config.cpp" />
+    <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Level\TestLevel.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="TileMap\BSP\BSPNode.cpp" />
@@ -107,6 +109,8 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Tilemap\Tilemap.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Config\Config.h" />
+    <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Level\TestLevel.h" />
     <ClInclude Include="TileMap\BSP\BSPNode.h" />
     <ClInclude Include="Tilemap\BSP\RoomSpace\RoomSpace.h" />

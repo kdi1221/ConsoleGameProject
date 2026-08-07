@@ -1,4 +1,4 @@
-#include "Engine/Engine.h"
+#include "Game/Game.h"
 #include "Level/TestLevel.h"
 
 using namespace Craft;
@@ -11,7 +11,8 @@ int main(void)
 
 	SetConsoleTitleA("Sokoban Game");*/
 
-	Engine engine;
-	engine.AddNewLevel<TestLevel>();
-	engine.Run();
+	Game game;
+	game.InitializeEngine();
+	game.AddNewLevel<TestLevel>();
+	game.Run();
 }

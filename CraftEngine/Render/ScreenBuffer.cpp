@@ -3,7 +3,7 @@
 
 namespace Craft
 {
-	ScreenBuffer::ScreenBuffer(const Vector2& screenSize)
+	ScreenBuffer::ScreenBuffer(const Vector2Int& screenSize)
 		:screenSize(screenSize)
 	{
 		//콘솔 버퍼 생성

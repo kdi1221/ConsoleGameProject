@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Level/Level.h"
-#include "Math/Vector2.h"
+#include "Math/Vector2Int.h"
 #include "Util/Timer.h"
 
 //전방 선언.
