@@ -27,7 +27,7 @@ namespace
 }
 
 Player::Player()
-	:Actor(Vector2Int::Zero)
+	:Actor(Vector2Float::Zero)
 	,fireMode(FireMode::OneShot)
 {
 	//필요한 컴포넌트 추가
@@ -35,9 +35,9 @@ Player::Player()
 	AddComponent<BoxCollisionComponent>(5);
 
 	// 생성 위치 설정.
-	int x = (Engine::Get().GetConfig<ConfigBase>().GetDisplayWidth() / 2) - (GetCollisionWidth(*this) / 2);
-	int y = Engine::Get().GetConfig<ConfigBase>().GetDisplayHeight() - 3;
-	SetPosition(Vector2Int(x, y));
+	float x = static_cast<float>((Engine::Get().GetConfig<ConfigBase>().GetDisplayWidth() / 2) - (GetCollisionWidth(*this) / 2));
+	float y = static_cast<float>(Engine::Get().GetConfig<ConfigBase>().GetDisplayHeight() - 3);
+	SetPosition(Vector2Float(x, y));
 
 	// x위치 저장.
 	xPosition = static_cast<float>(x);
@@ -58,8 +58,8 @@ void Player::BeginPlay()
 	}
 
 	//플레이어 기준 로컬 좌표에 왼쪽/오른쪽에 총구 생성.
-	std::shared_ptr<PlayerGun> leftGun = level->SpawnActor<PlayerGun>(Vector2Int(1, -1));
-	std::shared_ptr<PlayerGun> rightGun = level->SpawnActor<PlayerGun>(Vector2Int(3, -1));
+	std::shared_ptr<PlayerGun> leftGun = level->SpawnActor<PlayerGun>(Vector2Float(1.f, -1.f));
+	std::shared_ptr<PlayerGun> rightGun = level->SpawnActor<PlayerGun>(Vector2Float(3.f, -1.f));
 
 	// 계층으로 연결.
 	leftGun->AttachTo(shared_from_this(), false);
@@ -70,7 +70,7 @@ void Player::BeginPlay()
 	gunList.emplace_back(rightGun);
 
 	//추진 효과 액터도 추가 및 계층 설정.
-	engineEffect = level->SpawnActor<PlayerEngineEffect>(Vector2Int(1, 1));
+	engineEffect = level->SpawnActor<PlayerEngineEffect>(Vector2Float(1.f, 1.f));
 	engineEffect->AttachTo(shared_from_this(), false);
 
 }
@@ -181,8 +181,8 @@ void Player::Move(float direction, float deltaTime)
 	}
 
 	// 위치 업데이트.
-	Vector2Int newPosition = GetPosition();
-	newPosition.x = static_cast<int>(xPosition);
+	Vector2Float newPosition = GetPosition();
+	newPosition.x = xPosition;
 	SetPosition(newPosition);
 }
 

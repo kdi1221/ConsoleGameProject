@@ -4,6 +4,8 @@
 
 namespace Craft
 {
+	class Vector2Int;
+
 	class CRAFT_API Vector2Float
 	{
 	public:
@@ -40,6 +42,10 @@ namespace Craft
 		// 비교 연산자 오버로딩
 		bool operator==(const Vector2Float& other) const;
 		bool operator!=(const Vector2Float& other) const;
+
+		// Float => Int Casting
+		explicit operator Vector2Int() const;
+		explicit operator Vector2Int();
 
 	public:
 		//내적

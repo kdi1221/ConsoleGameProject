@@ -6,7 +6,7 @@ static const char* engineEffectFrames[] = {" * ", "***" };
 
 using namespace Craft;
 
-PlayerEngineEffect::PlayerEngineEffect(const Vector2Int& localPosition)
+PlayerEngineEffect::PlayerEngineEffect(const Vector2Float& localPosition)
 	:super(localPosition)
 {
 	//컴포넌트 추가.

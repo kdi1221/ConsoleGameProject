@@ -9,11 +9,11 @@ class PlayerGun : public Craft::Actor
 	TYPE_DECLARATIONS(PlayerGun, Actor)
 
 public:
-	PlayerGun(const Craft::Vector2Int& localPosition);
+	PlayerGun(const Craft::Vector2Float& localPosition);
 	~PlayerGun() = default;
 	
 public:
 	//총알이 실제로 생성될 월드 위치 반환 함수.
-	Craft::Vector2Int GetFirePosition() const;
+	Craft::Vector2Float GetFirePosition() const;
 };
 

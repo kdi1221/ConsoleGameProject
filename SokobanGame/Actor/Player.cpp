@@ -10,7 +10,7 @@
 
 using namespace Craft;
 
-Player::Player(const Craft::Vector2Int& position)
+Player::Player(const Craft::Vector2Float& position)
 	:Actor(position)
 {
 	// 필요한 컴포넌트 추가.
@@ -39,12 +39,12 @@ void Player::Tick(float deltaTime)
 	if (Input::Get().GetKeyDown(VK_LEFT))
 	{
 		//이동하려는 새 위치 구하기.
-		Vector2Int currentPosition = GetPosition();
-		Vector2Int newPosition = currentPosition;
-		newPosition.x -= 1;
+		Vector2Float currentPosition = GetPosition();
+		Vector2Float newPosition = currentPosition;
+		newPosition.x -= 1.f;
 
 		// 새 위치가 이동 가능한지 확인.
-		if(canPlayerMove->CanMove(currentPosition, newPosition))
+		if(canPlayerMove->CanMove(static_cast<Vector2Int>(currentPosition), static_cast<Vector2Int>(newPosition)))
 		{
 			//이동 가능한 경우에는 이동 처리
 			SetPosition(newPosition);
@@ -54,12 +54,12 @@ void Player::Tick(float deltaTime)
 	if (Input::Get().GetKeyDown(VK_RIGHT))
 	{
 		//이동하려는 새 위치 구하기.
-		Vector2Int currentPosition = GetPosition();
-		Vector2Int newPosition = currentPosition;
-		newPosition.x += 1;
+		Vector2Float currentPosition = GetPosition();
+		Vector2Float newPosition = currentPosition;
+		newPosition.x += 1.f;
 
 		// 새 위치가 이동 가능한지 확인.
-		if (canPlayerMove->CanMove(currentPosition, newPosition))
+		if (canPlayerMove->CanMove(static_cast<Vector2Int>(currentPosition), static_cast<Vector2Int>(newPosition)))
 		{
 			//이동 가능한 경우에는 이동 처리
 			SetPosition(newPosition);
@@ -69,12 +69,12 @@ void Player::Tick(float deltaTime)
 	if (Input::Get().GetKeyDown(VK_UP))
 	{
 		//이동하려는 새 위치 구하기.
-		Vector2Int currentPosition = GetPosition();
-		Vector2Int newPosition = currentPosition;
-		newPosition.y -= 1;
+		Vector2Float currentPosition = GetPosition();
+		Vector2Float newPosition = currentPosition;
+		newPosition.y -= 1.f;
 
 		// 새 위치가 이동 가능한지 확인.
-		if (canPlayerMove->CanMove(currentPosition, newPosition))
+		if (canPlayerMove->CanMove(static_cast<Vector2Int>(currentPosition), static_cast<Vector2Int>(newPosition)))
 		{
 			//이동 가능한 경우에는 이동 처리
 			SetPosition(newPosition);
@@ -84,12 +84,12 @@ void Player::Tick(float deltaTime)
 	if (Input::Get().GetKeyDown(VK_DOWN))
 	{
 		//이동하려는 새 위치 구하기.
-		Vector2Int currentPosition = GetPosition();
-		Vector2Int newPosition = currentPosition;
-		newPosition.y += 1;
+		Vector2Float currentPosition = GetPosition();
+		Vector2Float newPosition = currentPosition;
+		newPosition.y += 1.f;
 
 		// 새 위치가 이동 가능한지 확인.
-		if (canPlayerMove->CanMove(currentPosition, newPosition))
+		if (canPlayerMove->CanMove(static_cast<Vector2Int>(currentPosition), static_cast<Vector2Int>(newPosition)))
 		{
 			//이동 가능한 경우에는 이동 처리
 			SetPosition(newPosition);

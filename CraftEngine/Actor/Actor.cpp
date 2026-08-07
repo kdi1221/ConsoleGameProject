@@ -5,7 +5,7 @@
 
 namespace Craft
 {
-	Actor::Actor(const Vector2Int& position)
+	Actor::Actor(const Vector2Float& position)
 	{
 		transform = std::make_shared<TransformComponent>(position);
 	}
@@ -144,7 +144,7 @@ namespace Craft
 		if (transform && newParent->GetTransform())
 		{
 			//부모와 연결 전 월드 위치 저장.
-			Vector2Int worldPosition = transform->GetWorldPosition();
+			Vector2Float worldPosition = transform->GetWorldPosition();
 
 			// 트랜스폼의 부모 설정.
 			transform->SetParent(newParent->GetTransform());
@@ -187,7 +187,7 @@ namespace Craft
 		if (transform)
 		{
 			//부모와의 연결 해제 후에 화면 위치 유지
-			Vector2Int worldPosition = transform->GetWorldPosition();
+			Vector2Float worldPosition = transform->GetWorldPosition();
 			transform->SetParent(std::weak_ptr<TransformComponent>());
 			transform->SetWorldPosition(worldPosition);
 		}
@@ -201,19 +201,19 @@ namespace Craft
 		BindComponentOwners();
 	}
 
-	Vector2Int Actor::GetPosition() const
+	Vector2Float Actor::GetPosition() const
 	{ 
 		//트랜스폼의 위치 반환
-		return transform ? transform->GetLocalPosition() : Vector2Int::Zero; 
+		return transform ? transform->GetLocalPosition() : Vector2Float::Zero;
 	}
 
-	Vector2Int Actor::GetWorldPosition() const
+	Vector2Float Actor::GetWorldPosition() const
 	{
 		//트랜스폼의 위치 반환
-		return transform ? transform->GetWorldPosition() : Vector2Int::Zero;
+		return transform ? transform->GetWorldPosition() : Vector2Float::Zero;
 	}
 
-	void Actor::SetPosition(const Vector2Int& newPosition)
+	void Actor::SetPosition(const Vector2Float& newPosition)
 	{
 		// 변경하려는 위치 값이 현재 위치와 같은지 비교.
 		if (GetPosition() == newPosition)
@@ -228,10 +228,10 @@ namespace Craft
 		}
 	}
 
-	Vector2Int Actor::GetPreviousPosition() const
+	Vector2Float Actor::GetPreviousPosition() const
 	{
 		// 트랜스폼에서 관리하는 이전 프레임 위치 반환
-		return transform ? transform->GetPreviousWorldPosition() : Vector2Int::Zero;
+		return transform ? transform->GetPreviousWorldPosition() : Vector2Float::Zero;
 	}
 
 	void Actor::ProcessAddComponents()

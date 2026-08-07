@@ -72,7 +72,8 @@ void GameLevel::ShowScore()
 	ss << gameManager->GetScore();
 
 	//렌더러에 점수 문자열을 전달.
-	Renderer::Get().Submit(ss.str(), Vector2Int(0, Engine::Get().GetConfig<ConfigBase>().GetDisplayHeight() - 1));
+	Vector2Int drawStringPos(0, Engine::Get().GetConfig<ConfigBase>().GetDisplayHeight() - 1);
+	Renderer::Get().Submit(ss.str(), static_cast<Vector2Float>(drawStringPos));
 }
 
 void GameLevel::PlayerDied()

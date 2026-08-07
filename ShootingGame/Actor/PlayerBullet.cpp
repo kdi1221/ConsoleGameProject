@@ -4,9 +4,9 @@
 
 using namespace Craft;
 
-PlayerBullet::PlayerBullet(const Craft::Vector2Int& position)
+PlayerBullet::PlayerBullet(const Craft::Vector2Float& position)
 	:super(position)
-	,yPosition(static_cast<float>(position.y))
+	,yPosition(position.y)
 {
 	// 필요한 컴포넌트 추가.
 	AddComponent<SpriteRendererComponent>("@", Color::Blue, 4);
@@ -30,7 +30,7 @@ void PlayerBullet::Tick(float deltaTime)
 
 	//position.y = static_cast<int>(yPosition);
 	//위치 설정 - 컴포넌트 기반으로 동작하도록 처리
-	Vector2Int newPosition = GetPosition();
-	newPosition.y = static_cast<int>(yPosition);
+	Vector2Float newPosition = GetPosition();
+	newPosition.y = yPosition;
 	SetPosition(newPosition);
 }

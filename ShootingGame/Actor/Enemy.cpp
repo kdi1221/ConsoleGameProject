@@ -24,7 +24,7 @@ namespace
 }
 
 Enemy::Enemy(const std::string& image, int yPosition)
-	:Actor(Vector2Int::Zero)
+	:Actor(Vector2Float::Zero)
 {
 	//필요한 컴포넌트 추가
 	AddComponent<SpriteRendererComponent>(image, Color::White, 2);
@@ -52,7 +52,7 @@ Enemy::Enemy(const std::string& image, int yPosition)
 	}
 
 	//이동 방향에 따른 적 위치 설정.
-	SetPosition(Vector2Int(static_cast<int>(xPosition), yPosition));
+	SetPosition(Vector2Float(xPosition, static_cast<float>(yPosition)));
 	
 	//발사 타이머 목표시간 설정.
 	timer.SetTargetTime(Util::RandomRange(1.f, 3.f));
@@ -82,7 +82,7 @@ void Enemy::Tick(float deltaTime)
 	}
 
 	// 위치 설정.
-	SetPosition(Vector2Int(static_cast<int>(xPosition), GetPosition().y));
+	SetPosition(Vector2Float(xPosition, GetPosition().y));
 
 	//발사 타이머 업데이트
 	timer.Tick(deltaTime);
@@ -95,8 +95,8 @@ void Enemy::Tick(float deltaTime)
 	timer.Reset();
 
 	//적 탄약 액터 생성 후 발사
-	Vector2Int CurrentPosition = GetPosition();
-	Vector2Int bulletPosition(CurrentPosition.x + (GetCollisionWidth(*this) / 2), CurrentPosition.y + 1);
+	Vector2Float CurrentPosition = GetPosition();
+	Vector2Float bulletPosition(CurrentPosition.x + (GetCollisionWidth(*this) / 2), CurrentPosition.y + 1.f);
 	GetOwner()->SpawnActor<EnemyBullet>(bulletPosition, Util::RandomRange(10.f, 20.f));
 }
 

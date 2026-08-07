@@ -26,7 +26,7 @@ void GameLevel::Draw()
 	// 게임을 클리어한 경우 메시지 표시
 	if (isGameClear)
 	{
-		Renderer::Get().Submit("Game Clear!", Vector2Int(30, 0));
+		Renderer::Get().Submit("Game Clear!", Vector2Float(30, 0));
 	}
 }
 
@@ -90,29 +90,29 @@ void GameLevel::LoadMap(const std::string& filename)
 		{
 			// 벽 문자.
 		case '#':
-			SpawnActor<Wall>(position);
+			SpawnActor<Wall>(static_cast<Vector2Float>(position));
 			break;
 
 			// 땅
 		case '.':
-			SpawnActor<Ground>(position);
+			SpawnActor<Ground>(static_cast<Vector2Float>(position));
 			break;
 
 			// 플레이어
 		case 'p':
-			SpawnActor<Ground>(position);
-			SpawnActor<Player>(position);
+			SpawnActor<Ground>(static_cast<Vector2Float>(position));
+			SpawnActor<Player>(static_cast<Vector2Float>(position));
 			break;
 
 			// 박스
 		case 'b':
-			SpawnActor<Ground>(position);
-			SpawnActor<Box>(position);
+			SpawnActor<Ground>(static_cast<Vector2Float>(position));
+			SpawnActor<Box>(static_cast<Vector2Float>(position));
 			break;
 
 			//목표 지점
 		case 't':
-			SpawnActor<Target>(position);
+			SpawnActor<Target>(static_cast<Vector2Float>(position));
 
 			// 타겟의 수를 하나 늘려줌 -> 목표 점수.
 			++targetScore;
@@ -199,7 +199,7 @@ bool GameLevel::CanMove(const Craft::Vector2Int& playerPosition, const Craft::Ve
 	for (const std::shared_ptr<Actor>& box : boxList)
 	{
 		// 플레이어가 이동하려는 위치와 같은 위치의 박스가 있는지 확인.
-		if (box->GetPosition() == nextPosition)
+		if (static_cast<Vector2Int>(box->GetPosition()) == nextPosition)
 		{
 			boxActor = box;
 			break;
@@ -215,7 +215,7 @@ bool GameLevel::CanMove(const Craft::Vector2Int& playerPosition, const Craft::Ve
 		// 이동 방향 : 다음위치 - 현재 위치
 		Vector2Int direction = nextPosition - playerPosition;
 		//박스의 다음 위치 : 박스의 위치 + 이동 방향. 
-		Vector2Int newPosition = boxActor->GetPosition() + direction;
+		Vector2Int newPosition = static_cast<Vector2Int>(boxActor->GetPosition()) + direction;
 
 		// 다른 박스가 있는지 확인.
 		for (const std::shared_ptr<Actor>& otherBox : boxList)
@@ -227,7 +227,7 @@ bool GameLevel::CanMove(const Craft::Vector2Int& playerPosition, const Craft::Ve
 			}
 
 			//이동하려는 위치에 다른 박스가 있는 경우.
-			if (otherBox->GetPosition() == newPosition)
+			if (static_cast<Vector2Int>(otherBox->GetPosition()) == newPosition)
 			{
 				return false;
 			}
@@ -237,7 +237,7 @@ bool GameLevel::CanMove(const Craft::Vector2Int& playerPosition, const Craft::Ve
 		for (const std::shared_ptr<Actor>& actor : actorList)
 		{
 			// 박스가 이동하려는 위치에 있는 액터 검색.
-			if (actor->GetPosition() == newPosition)
+			if (static_cast<Vector2Int>(actor->GetPosition()) == newPosition)
 			{
 				//이 위치에 벽이 있으면 이동 불가.
 				if (actor->IsTypeOf<Wall>())
@@ -249,7 +249,7 @@ bool GameLevel::CanMove(const Craft::Vector2Int& playerPosition, const Craft::Ve
 				if (actor->IsTypeOf<Ground>() || actor->IsTypeOf<Target>())
 				{
 					// 박스 이동 처리(플레이어가 박스를 미는 효과).
-					boxActor->SetPosition(newPosition);
+					boxActor->SetPosition(static_cast<Vector2Float>(newPosition));
 
 					// 점수 확인 함수를 구현한 후 게임 클리어 확인
 					isGameClear = CheckGameClear();
@@ -265,7 +265,7 @@ bool GameLevel::CanMove(const Craft::Vector2Int& playerPosition, const Craft::Ve
 	for (const std::shared_ptr<Actor>& actor : actorList)
 	{
 		//플레이어가 이동하려는 위치의 액터 검색
-		if (actor->GetPosition() == nextPosition)
+		if (static_cast<Vector2Int>(actor->GetPosition()) == nextPosition)
 		{
 			//이 위치에 있는 액터가 벽이라면 이동 불가
 			if(actor->IsTypeOf<Wall>())

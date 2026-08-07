@@ -6,7 +6,7 @@
 
 using namespace Craft;
 
-EnemyBullet::EnemyBullet(const Craft::Vector2Int& position, float moveSpeed)
+EnemyBullet::EnemyBullet(const Craft::Vector2Float& position, float moveSpeed)
 	:Actor(position)
 	,moveSpeed(moveSpeed)
 	,yPosition(static_cast<float>(position.y))
@@ -32,7 +32,7 @@ void EnemyBullet::Tick(float deltaTime)
 
 	//위치 설정.
 	//SetPosition(Vector2(GetPosition().x, static_cast<int>(yPosition)));
-	Vector2Int newPosition = GetPosition();
-	newPosition.y = static_cast<int>(yPosition);
+	Vector2Float newPosition = GetPosition();
+	newPosition.y = yPosition;
 	SetPosition(newPosition);
 }

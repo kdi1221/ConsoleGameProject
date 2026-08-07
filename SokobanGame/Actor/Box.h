@@ -8,6 +8,6 @@ class Box : public Craft::Actor
 	TYPE_DECLARATIONS(Box, Actor)
 
 public:
-	Box(const Craft::Vector2Int& position);
+	Box(const Craft::Vector2Float& position);
 };
 

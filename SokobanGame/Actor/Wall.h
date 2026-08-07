@@ -8,6 +8,6 @@ class Wall : public Craft::Actor
 	TYPE_DECLARATIONS(Wall, Actor)
 
 public:
-	Wall(const Craft::Vector2Int& position);
+	Wall(const Craft::Vector2Float& position);
 };
 

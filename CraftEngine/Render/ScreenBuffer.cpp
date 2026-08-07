@@ -148,6 +148,6 @@ namespace Craft
 		);
 
 		//제대로 실행됐는지 여부 확인
-		assert(result == TRUE);
+		assert(result == TRUE);		
 	}
 }

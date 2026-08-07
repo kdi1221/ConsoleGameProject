@@ -40,7 +40,7 @@ class DestroyEffect : public Craft::Actor
 	};
 
 public:
-	DestroyEffect(const Craft::Vector2Int& position);
+	DestroyEffect(const Craft::Vector2Float& position);
 	~DestroyEffect() = default;
 
 private:

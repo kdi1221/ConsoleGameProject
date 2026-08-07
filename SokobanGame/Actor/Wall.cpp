@@ -4,7 +4,7 @@
 
 using namespace Craft;
 
-Wall::Wall(const Craft::Vector2Int& position)
+Wall::Wall(const Craft::Vector2Float& position)
 	: Actor(position)
 {
 	// 필요한 컴포넌트 추가.

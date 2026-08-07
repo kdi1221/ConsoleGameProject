@@ -1,6 +1,7 @@
 ﻿#include "Vector2Float.h"
 #include <cassert>
 #include <cmath>
+#include "Math/Vector2Int.h"
 
 namespace Craft
 {
@@ -62,6 +63,24 @@ namespace Craft
 	bool Vector2Float::operator!=(const Vector2Float& other) const
 	{
 		return (x != other.x) || (y != other.y);
+	}
+
+	Vector2Float::operator Vector2Int() const
+	{
+		Vector2Int vector2I = {};
+		vector2I.x = static_cast<int>(x);
+		vector2I.y = static_cast<int>(y);
+
+		return vector2I;
+	}
+
+	Vector2Float::operator Vector2Int()
+	{
+		Vector2Int vector2I = {};
+		vector2I.x = static_cast<int>(x);
+		vector2I.y = static_cast<int>(y);
+
+		return vector2I;
 	}
 
 	float Vector2Float::DotProduct(const Vector2Float& other) const

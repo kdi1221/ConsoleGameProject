@@ -28,7 +28,7 @@ namespace Craft
 		TYPE_DECLARATIONS(Actor, CraftObject)
 
 	public:
-		Actor(const Vector2Int& position = Vector2Int::Zero);
+		Actor(const Vector2Float& position = Vector2Float::Zero);
 		/*Actor(const std::string& image = "", 
 			const Vector2& position = Vector2::Zero, 
 			Color color = Color::White);*/
@@ -112,12 +112,12 @@ namespace Craft
 		inline std::shared_ptr<Level> GetOwner() const { return owner.lock(); }
 		void SetOwner(std::weak_ptr<Level> newOwner);
 
-		Vector2Int GetPosition() const;
-		Vector2Int GetWorldPosition() const;
-		void SetPosition(const Vector2Int& newPosition);
+		Vector2Float GetPosition() const;
+		Vector2Float GetWorldPosition() const;
+		void SetPosition(const Vector2Float& newPosition);
 
 		//이전 위치 반환 함수.
-		Vector2Int GetPreviousPosition() const;
+		Vector2Float GetPreviousPosition() const;
 
 		//액터의 문자열 너비 반환 함수.
 		//inline int GetWidth() const { return width; }

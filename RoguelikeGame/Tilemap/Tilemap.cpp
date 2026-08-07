@@ -106,7 +106,8 @@ void Tilemap::Draw()
 			break;
 		}
 
-		Renderer::Get().Submit(TileSprite, iterTile->GetTilePosition(), TileColor );
+		const Vector2Float tilePosition = static_cast<Vector2Float>(iterTile->GetTilePosition());
+		Renderer::Get().Submit(TileSprite, tilePosition, TileColor );
 	}
 }
 

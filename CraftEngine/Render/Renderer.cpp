@@ -78,7 +78,7 @@ namespace Craft
 		SetConsoleActiveScreenBuffer(GetStdHandle(STD_OUTPUT_HANDLE));
 	}
 
-	void Renderer::Submit(const std::string& image, const Vector2Int& position, Color color, int sortingOrder)
+	void Renderer::Submit(const std::string& image, const Vector2Float& position, Color color, int sortingOrder)
 	{
 		// 그릴 명령 객체 생성.
 		RenderCommand command;
@@ -132,8 +132,11 @@ namespace Craft
 				continue;
 			}
 
+			//콘솔 좌표계에서는 x, y int형으로 표시
+			const Vector2Int drawPosition = static_cast<Vector2Int>(command.position);
+
 			// y 위치가 화면을 벗어나면 건너뛰기.
-			if (command.position.y < 0 || command.position.y >= screenSize.y)
+			if (drawPosition.y < 0 || drawPosition.y >= screenSize.y)
 			{
 				continue;
 			}
@@ -142,7 +145,7 @@ namespace Craft
 			const int length = static_cast<int>(command.image.length());
 			
 			//글자의 시작 위치.
-			const int startX = command.position.x;
+			const int startX = drawPosition.x;
 
 			//글자의 마지막 위치.
 			const int endX = startX + length - 1;
@@ -164,7 +167,7 @@ namespace Craft
 				const int sourceIndex = x - startX;
 				
 				// 문자를 기록할 2차원 배열의 인덱스.
-				const int index = (command.position.y * screenSize.x) + x;
+				const int index = (drawPosition.y * screenSize.x) + x;
 
 				//그리기 정렬 순서 비교.(깊이 버퍼)
 				if (frame->sortingOrderArray[index] > command.sortingOrder)

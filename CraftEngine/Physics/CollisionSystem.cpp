@@ -96,12 +96,12 @@ namespace Craft
 		}
 
 		//left 액터의 현재/이전 위치.
-		const Vector2Int leftCurrent = left->GetWorldPosition();
-		const Vector2Int leftPrevious = left->GetPreviousPosition();
+		const Vector2Int leftCurrent = static_cast<Vector2Int>(left->GetWorldPosition());
+		const Vector2Int leftPrevious = static_cast<Vector2Int>(left->GetPreviousPosition());
 
 		//right 액터의 현재/이전 위치.
-		const Vector2Int rightCurrent = right->GetWorldPosition();
-		const Vector2Int rightPrevious = right->GetPreviousPosition();
+		const Vector2Int rightCurrent = static_cast<Vector2Int>(right->GetWorldPosition());
+		const Vector2Int rightPrevious = static_cast<Vector2Int>(right->GetPreviousPosition());
 
 		// 이전 프레임 위치와 현재 위치를 모두 포함하는 바운드(충돌 영역)계산.
 		const int leftXMin = (leftCurrent.x < leftPrevious.x) ? leftCurrent.x : leftPrevious.x;

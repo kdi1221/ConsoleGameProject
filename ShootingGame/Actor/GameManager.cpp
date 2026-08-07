@@ -8,7 +8,7 @@ void GameManager::RegisterOnPlayerDead(OnPlayerDead callback)
 	onPlayerDead = callback;
 }
 
-void GameManager::SetPlayerDead(const Vector2Int& deadPosition)
+void GameManager::SetPlayerDead(const Vector2Float& deadPosition)
 {
 	//예외 처리 - 이미 플레이어가 죽은 상태라면 종료.
 	if (isPlayerDead)

@@ -3,7 +3,7 @@
 
 using namespace Craft;
 
-Ground::Ground(const Craft::Vector2Int& position)
+Ground::Ground(const Craft::Vector2Float& position)
 	:Actor(position)
 {
 	//필요한 컴포넌트 추가.
