@@ -47,6 +47,14 @@ namespace Craft
 		return Vector2Float(x / other.x, y / other.y);
 	}
 
+	Vector2Float& Vector2Float::operator+=(const Vector2Float& other)
+	{
+		x += other.x;
+		y += other.y;
+
+		return *this;
+	}
+
 	Vector2Float& Vector2Float::operator=(const Vector2Float& other)
 	{
 		x = other.x;
@@ -104,6 +112,11 @@ namespace Craft
 
 		x /= Length;
 		y /= Length;
+	}
+
+	bool Vector2Float::IsNearlyZero() const
+	{
+		return !(Length() > 0.00001f);
 	}
 
 }

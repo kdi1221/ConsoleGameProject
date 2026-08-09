@@ -27,6 +27,34 @@ namespace Craft
 				assert(height > 0);
 				return height > 0;
 			});
+
+		AddLoadConfigCallback("viewWidth", [this](const std::string& inKey, const std::string& inValue)
+			{
+				viewWidth = static_cast<int>(atoi(inValue.c_str()));
+				assert(viewWidth > 0);
+				return viewWidth > 0;
+			});
+
+		AddLoadConfigCallback("viewHeight", [this](const std::string& inKey, const std::string& inValue)
+			{
+				viewHeight = static_cast<int>(atoi(inValue.c_str()));
+				assert(viewHeight > 0);
+				return viewHeight > 0;
+			});
+
+		AddLoadConfigCallback("viewSpaceMaxWidth", [this](const std::string& inKey, const std::string& inValue)
+			{
+				viewSpaceMaxWidth = static_cast<int>(atoi(inValue.c_str()));
+				assert(viewSpaceMaxWidth > 0);
+				return viewSpaceMaxWidth > 0;
+			});
+
+		AddLoadConfigCallback("viewSpaceMaxHeight", [this](const std::string& inKey, const std::string& inValue)
+			{
+				viewSpaceMaxHeight = static_cast<int>(atoi(inValue.c_str()));
+				assert(viewSpaceMaxHeight > 0);
+				return viewSpaceMaxHeight > 0;
+			});
 	}
 
 	ConfigBase::~ConfigBase()

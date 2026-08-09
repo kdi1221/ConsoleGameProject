@@ -7,14 +7,26 @@ width = 200
 # screen height
 height = 70
 
+# View Width
+viewWidth = 80
+
+# View Height
+viewHeight = 40
+
+# View Space Max Width
+viewSpaceMaxWidth = 200
+
+# View Space Max Height
+viewSpaceMaxHeight = 200
+
 # tilemap width
-tilemapWidth = 150
+tilemapWidth = 200
 
 # tilemap height
-tilemapHeight = 70
+tilemapHeight = 200
 
 # BSP room min length(min 10)
-bspMinRoomLength = 10;
+bspMinRoomLength = 15;
 
 # BSP room Wall Thickness(min 2)
 bspRoomWallThickness = 2;

@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Core/Core.h"
+
 // 원하는 시간(단위: 초)을 설정해 시간이 모두 지났는지 확인이 가능한 타이머
-class Timer
+class CRAFT_API Timer
 {
 public:
 	Timer(float targetTime = 1.f);

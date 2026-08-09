@@ -11,6 +11,7 @@
 namespace Craft
 {
 	//전방 선언.
+	class CameraManager;
 	class ScreenBuffer;
 
 	// 화면에 그리는 기능을 제공.
@@ -58,7 +59,7 @@ namespace Craft
 		void Submit(const std::string& image, const Vector2Float& position, Color color = Color::White, int sortingOrder = 0);
 
 		// Draw 이벤트 함수(Engine에서 호출).
-		void Draw();
+		void Draw(const CameraManager& cameraManager);
 
 		//전역 접근 함수.
 		static Renderer& Get();
@@ -68,7 +69,7 @@ namespace Craft
 		void Clear();
 
 		//전달 받은 그리기 명령을 활용해 그리는 함수.
-		void DrawRenderQueue();
+		void DrawRenderQueue(const CameraManager& cameraManager);
 
 		//이중 버퍼 구현 시 버퍼를 교환하는 함수.
 		void Present();

@@ -55,22 +55,22 @@ namespace Craft
 		}
 
 		//액터 검색 함수(템플릿).
-		template<typename T, typename = std::enable_if_t<std::is_base_of<Actor, T>::value>>
-		std::shared_ptr<T> FindActor()
-		{
-			// 검색 - 형변환.
-			for (const auto& actor : actorList)
-			{
-				// T 타입으로 형변환 시도.
-				std::shared_ptr<T> targetActor = std::dynamic_pointer_cast<T>(actor);
-				if (targetActor)
-				{
-					return targetActor;
-				}
-			}
+		//template<typename T, typename = std::enable_if_t<std::is_base_of<Actor, T>::value>>
+		//std::shared_ptr<T> FindActor()
+		//{
+		//	// 검색 - 형변환.
+		//	for (const auto& actor : actorList)
+		//	{
+		//		// T 타입으로 형변환 시도.
+		//		std::shared_ptr<T> targetActor = std::dynamic_pointer_cast<T>(actor);
+		//		if (targetActor)
+		//		{
+		//			return targetActor;
+		//		}
+		//	}
 
-			return nullptr;
-		}
+		//	return nullptr;
+		//}
 
 		// 특정 타입의 액터를 검색해 반환하는 함수.
 		template<typename T, typename = std::enable_if_t<std::is_base_of<Actor, T>::value>>
@@ -89,6 +89,9 @@ namespace Craft
 			//못 찾은 경우 null반환
 			return nullptr;
 		}
+
+		/* 다음 위치(nextPosition)로 actor가 이동할 수 있는지 확인 */
+		virtual bool CanNextMove(const Actor& checkActor, const Vector2Float& nextPosition);
 
 		// Getter.
 		inline bool HasInitialized() const { return hasInitialized; }

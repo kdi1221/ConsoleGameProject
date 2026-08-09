@@ -50,10 +50,10 @@ enum class eRoomFacingFlags : unsigned int
 
 	Right_Left = Left | Right,
 	Down_Up = Up | Down,
-	Up_Left = Left | Up,
+	/*Up_Left = Left | Up,
 	Down_Left = Left | Down,
 	Up_Right = Right | Up,
-	Down_Right = Right | Down
+	Down_Right = Right | Down*/
 };
 
 //eRoomBetweenFace의 비트플래그동작을 위한 연산자 오버로딩
@@ -66,3 +66,40 @@ inline constexpr eRoomFacingFlags operator&(eRoomFacingFlags lhs, eRoomFacingFla
 {
 	return static_cast<eRoomFacingFlags>(static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs));
 }
+
+//생성된 방 종류
+enum class eRoomType
+{
+	None = 0,
+	
+	//시작지점
+	Start,
+
+	//다음 레벨
+	NextLevel,
+
+	//출구(최종 목표)
+	Exit,
+
+	//보물창고(아이템)
+	Treasure,
+
+	//전투
+	Battle
+};
+
+//오브젝트 랜더링시 그릴 순서
+enum class eRenderSortingOrder : int
+{
+	//타일
+	Tile = 0,
+
+	//맵 상의 오브젝트
+	MapObject,
+
+	//폰
+	Pawn,
+
+	//탄환
+	Bullet
+};

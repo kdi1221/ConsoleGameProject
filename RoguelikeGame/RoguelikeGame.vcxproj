@@ -21,7 +21,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -98,9 +98,16 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Actor\MapObject\Exit.cpp" />
+    <ClCompile Include="Actor\MapObject\MapObject.cpp" />
+    <ClCompile Include="Actor\MapObject\NextLevel.cpp" />
+    <ClCompile Include="Actor\MapObject\PlayerStart.cpp" />
+    <ClCompile Include="Actor\Pawn\Pawn.cpp" />
+    <ClCompile Include="Actor\Pawn\PlayerPawn.cpp" />
     <ClCompile Include="Game\Config\Config.cpp" />
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Level\TestLevel.cpp" />
+    <ClCompile Include="Level\TilemapLevel.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="TileMap\BSP\BSPNode.cpp" />
     <ClCompile Include="Tilemap\BSP\RoomSpace\RoomSpace.cpp" />
@@ -109,9 +116,16 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Tilemap\Tilemap.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Actor\MapObject\Exit.h" />
+    <ClInclude Include="Actor\MapObject\MapObject.h" />
+    <ClInclude Include="Actor\MapObject\NextLevel.h" />
+    <ClInclude Include="Actor\MapObject\PlayerStart.h" />
+    <ClInclude Include="Actor\Pawn\Pawn.h" />
+    <ClInclude Include="Actor\Pawn\PlayerPawn.h" />
     <ClInclude Include="Game\Config\Config.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Level\TestLevel.h" />
+    <ClInclude Include="Level\TilemapLevel.h" />
     <ClInclude Include="TileMap\BSP\BSPNode.h" />
     <ClInclude Include="Tilemap\BSP\RoomSpace\RoomSpace.h" />
     <ClInclude Include="Tilemap\Room\Room.h" />

@@ -9,6 +9,8 @@ namespace Craft
 	Vector2Int Vector2Int::One(1, 1);
 	Vector2Int Vector2Int::Right(1, 0);
 	Vector2Int Vector2Int::Up(0, -1);
+	Vector2Int Vector2Int::Left(-1, 0);
+	Vector2Int Vector2Int::Down(0, 1);
 
 	Vector2Int::Vector2Int(int x, int y)
 		:x(x), y(y)
@@ -41,6 +43,14 @@ namespace Craft
 		assert(other.x != 0);
 		assert(other.y != 0);
 		return Vector2Int(x / other.x, y / other.y);
+	}
+
+	Vector2Int& Vector2Int::operator+=(const Vector2Int& other)
+	{
+		x += other.x;
+		y += other.y;
+
+		return *this;
 	}
 
 	Vector2Int& Vector2Int::operator=(const Vector2Int& other)

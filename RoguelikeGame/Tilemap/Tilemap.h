@@ -4,37 +4,51 @@
 #include "Math/Vector2Int.h"
 #include <memory>
 #include <vector>
-#include <map>
+#include <functional>
+
+namespace Craft
+{
+	class Level;
+}
 
 class Tile;
 class BSPNode;
-class Room;
+class RoomSpace;
 enum class eTileCategory;
-
-using namespace RoomDefines;
 
 //전체 Tile들을 관리하는 Tilemap 클래스
 class Tilemap
 {
 public:
-	Tilemap();
+	using TileListType = std::vector<std::unique_ptr<Tile>>;
+
+public:
+	Tilemap(Craft::Level& inOwnerLevel);
 	virtual ~Tilemap();
 
 public:
-	void InitializeTilemap(const Craft::Vector2Int& inMapSize);
+	void InitializeTilemap(const Craft::Vector2Int& inMapSize, 
+							std::function<void(const std::vector<Craft::Vector2Int>&)> CorridorCallback,
+							std::function<void(std::unique_ptr<RoomSpace>)> RoomCallback);
 	void Tick(float deltaTime);
 	void Draw();
 
 	void SetTileCategory(int xPos, int yPos, eTileCategory category);
 
+	/* 해당 위치에 존재하는 타일 종류 반환 */
+	eTileCategory GetTileCategory(const Craft::Vector2Float& position) const;
+
+public:
+	inline Craft::Level& GetOwnerLevel() const { return ownerLevel; }
+
 private:
+	//이 타일맵을 소유하는 Level;
+	Craft::Level& ownerLevel;
+
 	//타일맵 크기(가로 X 세로)
 	Craft::Vector2Int mapSize;
 
 	//타일맵 내의 타일들
-	std::vector<std::unique_ptr<Tile>> tileList;
-
-	//맵 내의 방 정보들
-	std::map<RoomDefines::UNIQUE_INDEX_TYPE, std::unique_ptr<Room>> mapRooms;
+	TileListType tileList;
 };
 

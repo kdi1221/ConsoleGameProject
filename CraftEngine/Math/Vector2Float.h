@@ -36,6 +36,9 @@ namespace Craft
 		Vector2Float operator*(float value) const;
 		Vector2Float operator/(const Vector2Float& other) const;
 
+		//복합 대입 연산자.
+		Vector2Float& operator+=(const Vector2Float& other);
+
 		// 대입 연산자 오버로딩
 		Vector2Float& operator=(const Vector2Float& other);
 
@@ -59,6 +62,9 @@ namespace Craft
 
 		//정규화
 		void Normalize();
+
+		//벡터 크기가 0에 가까운지 확인
+		bool IsNearlyZero() const;
 	};
 }
 

@@ -14,6 +14,7 @@ namespace Craft
 	class Renderer;
 	class CollisionSystem;
 	class ConfigBase;
+	class CameraManager;
 
 	//메인 엔진 클래스
 	//엔진 루프 제공
@@ -62,6 +63,9 @@ namespace Craft
 
 			return static_cast<const T&>(*ptrConfig);
 		}
+
+		//카메라 객체 반환
+		CameraManager& GetCameraManager() const;
 
 	protected:
 		// 입력 처리 함수. (입력 폴링)
@@ -121,6 +125,9 @@ namespace Craft
 
 		//엔진 설정 객체
 		std::unique_ptr<ConfigBase> config;
+
+		//엔진 카메라 객체
+		std::unique_ptr<CameraManager> cameraManager;
 	};
 }
 

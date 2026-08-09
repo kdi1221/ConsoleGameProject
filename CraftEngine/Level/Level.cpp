@@ -62,6 +62,11 @@ namespace Craft
 		}
 	}
 
+	bool Level::CanNextMove(const Actor& checkActor, const Vector2Float& nextPosition)
+	{
+		return true;
+	}
+
 	void Level::ProcessAddAndDestroyActors()
 	{
 		//액터의 컴포넌트 추가 처리 함수 호출.

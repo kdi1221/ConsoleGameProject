@@ -21,6 +21,8 @@ namespace Craft
 		static Vector2Int One;
 		static Vector2Int Right;
 		static Vector2Int Up;
+		static Vector2Int Left;
+		static Vector2Int Down;
 
 	public:
 		Vector2Int(int x = 0, int y = 0);
@@ -33,6 +35,9 @@ namespace Craft
 		Vector2Int operator*(const Vector2Int& other) const;
 		Vector2Int operator*(int value) const;
 		Vector2Int operator/(const Vector2Int& other) const;
+
+		//복합 대입 연산자.
+		Vector2Int& operator+=(const Vector2Int& other);
 
 		// 대입 연산자 오버로딩
 		Vector2Int& operator=(const Vector2Int& other);
@@ -57,6 +62,8 @@ namespace Craft
 
 		//길이(sqrt 포함)
 		double LengthSqrt() const;
+
+
 	};
 }
 

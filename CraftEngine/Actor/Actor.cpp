@@ -78,7 +78,7 @@ namespace Craft
 			return;
 		}
 
-		// Actor의 Draw 이벤트를 Component에 전달
+		// Actor의 Collision 이벤트를 Component에 전달
 		for (const std::shared_ptr<Component>& component : componentList)
 		{
 			component->OnCollision(other);

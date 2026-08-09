@@ -6,6 +6,7 @@
 #include "Util/Util.h"
 #include "SoundSystem/Sound.h"
 #include "Config/ConfigBase.h"
+#include "Camera/CameraManager.h"
 #include <Windows.h>
 #include <stdint.h>
 #include <iostream>
@@ -23,24 +24,6 @@ namespace Craft
 		// 엔진 객체가 생성될때 이전에 만든 엔진 객체가 없어야 함
 		assert(!instance && "instance is not null");
 		instance = this;
-
-		// 엔진 설정 로드.
-		//LoadEngineSetting();
-
-		////랜덤 시드 설정
-		//Util::SetRandomSeed();
-
-		//// 입력 객체 생성.
-		//input = std::make_unique<Input>();
-
-		//// 렌더러 객체 생성
-		//renderer = std::make_unique<Renderer>(Vector2(GetConfig<ConfigBase>().GetDisplayWidth(), GetConfig<ConfigBase>().GetDisplayHeight()));
-
-		////콜리전 시스템 객체 생성
-		//collisionSystem = std::make_unique<CollisionSystem>();
-
-		////사운드 시스템 객체 생성.
-		//sound = std::make_unique<Sound>();
 	}
 
 	Engine::~Engine()
@@ -52,6 +35,7 @@ namespace Craft
 	{
 		// 엔진 설정 로드.
 		LoadEngineSetting();
+		const ConfigBase& config = GetConfig<ConfigBase>();
 
 		//랜덤 시드 설정
 		Util::SetRandomSeed();
@@ -60,13 +44,17 @@ namespace Craft
 		input = std::make_unique<Input>();
 
 		// 렌더러 객체 생성
-		renderer = std::make_unique<Renderer>(Vector2Int(GetConfig<ConfigBase>().GetDisplayWidth(), GetConfig<ConfigBase>().GetDisplayHeight()));
+		renderer = std::make_unique<Renderer>(Vector2Int(config.GetDisplayWidth(), config.GetDisplayHeight()));
 
 		//콜리전 시스템 객체 생성
 		collisionSystem = std::make_unique<CollisionSystem>();
 
 		//사운드 시스템 객체 생성.
 		sound = std::make_unique<Sound>();
+
+		//카메라 객체 생성.
+		cameraManager = std::make_unique<CameraManager>(config.GetViewWidth(), config.GetViewHeight(), 
+														config.GetViewSpaceMaxWidth(), config.GetViewSpaceMaxHeight());
 	}
 
 	void Engine::Run()
@@ -207,6 +195,12 @@ namespace Craft
 		return *instance;
 	}
 
+	CameraManager& Engine::GetCameraManager() const
+	{
+		assert(cameraManager && "Invalid cameraManager");
+		return *cameraManager;
+	}
+
 	void Engine::ProcessInput()
 	{
 		assert(input && "input should not be null here.");
@@ -268,7 +262,7 @@ namespace Craft
 		mainLevel->Draw();
 
 		//렌더러의 Draw 이벤트 호출
-		renderer->Draw();
+		renderer->Draw(GetCameraManager());
 	}
 
 	void Engine::ProcessColiision()

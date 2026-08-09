@@ -1,26 +1,15 @@
 #pragma once
 
-#include "Level/Level.h"
-#include <Memory>
-
-class Tilemap;
+#include "TilemapLevel.h"
 
 //타일맵 테스트 및 개발용 레벨
-class TestLevel : public Craft::Level
+class TestLevel : public TilemapLevel
 {
 public:
-	TestLevel();
-	virtual ~TestLevel();
+	TestLevel() = default;
+	virtual ~TestLevel() = default;
 
 private:
-	virtual void OnInitialized() override;
 	virtual void Tick(float deltaTime) override;
-	virtual void Draw() override;
-
-private:
-	void BuildTilemapBSP();
-
-private:
-	std::unique_ptr<Tilemap> tileMap;
 };
 
