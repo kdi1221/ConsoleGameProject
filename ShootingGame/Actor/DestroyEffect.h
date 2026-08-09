@@ -17,7 +17,7 @@ class DestroyEffect : public Craft::Actor
 	struct EffectFrame
 	{
 		EffectFrame(
-			const std::string& frame,
+			const std::wstring& frame,
 			float playTime,
 			Craft::Color color)
 			:frame(frame)
@@ -30,7 +30,7 @@ class DestroyEffect : public Craft::Actor
 		~EffectFrame() = default;
 
 		// 문자열 변수(화면에 보여줄 문자열).
-		std::string frame;
+		std::wstring frame;
 
 		//재생 시간.
 		float playTime = 0.f;

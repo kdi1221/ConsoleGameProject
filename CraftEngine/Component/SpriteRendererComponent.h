@@ -12,15 +12,16 @@ namespace Craft
 		TYPE_DECLARATIONS(SpriteRendererComponent, Component)
 
 	public:
-		SpriteRendererComponent(const std::string& image = "", Color color = Color::White, int sortingOrder = 0);
+		SpriteRendererComponent(const std::wstring& image = L"", Color color = Color::White, int sortingOrder = 0);
 		virtual ~SpriteRendererComponent() = default;
 
 	public:
 		virtual void Draw() override;
 
 		//Getter/Setter
-		inline const std::string& GetImage() const { return image; }
-		inline void SetImage(const std::string& newImage) { image = newImage; }
+		inline const std::wstring& GetImage() const { return image; }
+		inline void SetImage(const std::wstring& newImage) { image = newImage; }
+		
 		inline int GetWidth() const { return static_cast<int>(image.size()); }
 
 		inline Color GetColor() const { return color; }
@@ -31,7 +32,7 @@ namespace Craft
 
 	protected:
 		//화면에 출력할 문자열.
-		std::string image;
+		std::wstring image;
 		
 		//글자 색상 값.
 		Color color = Color::White;

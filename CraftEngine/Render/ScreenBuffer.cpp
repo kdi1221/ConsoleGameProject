@@ -139,7 +139,7 @@ namespace Craft
 		writeRegion.Right = static_cast<short>(screenSize.x - 1);
 		writeRegion.Bottom = static_cast<short>(screenSize.y - 1);
 
-		BOOL result = WriteConsoleOutputA(
+		BOOL result = WriteConsoleOutputW(
 			screenBuffer,
 			charInfo,
 			bufferSize,

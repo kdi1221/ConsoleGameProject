@@ -1,4 +1,4 @@
-#include "Tilemap.h"
+ï»¿#include "Tilemap.h"
 #include "Engine/Engine.h"
 #include "Render/Renderer.h"
 #include "Tile.h"
@@ -28,13 +28,13 @@ void Tilemap::InitializeTilemap(const Vector2Int& inMapSize,
 {
 	mapSize = inMapSize;
 
-	//»ı¼ºÇÒ Å¸ÀÏ °¹¼ö
+	//ìƒì„±í•  íƒ€ì¼ ê°¯ìˆ˜
 	const size_t GenerateMapTileNum = mapSize.x * mapSize.y;
 
-	//º¤ÅÍ °ø°£ ¹Ì¸® È®º¸
+	//ë²¡í„° ê³µê°„ ë¯¸ë¦¬ í™•ë³´
 	tileList.reserve(GenerateMapTileNum);
 
-	//¸Ê ³»ÀÇ Å¸ÀÏ ÃÊ±âÈ­ ¹× º®À¸·Î Ã¤¿ì±â
+	//ë§µ ë‚´ì˜ íƒ€ì¼ ì´ˆê¸°í™” ë° ë²½ìœ¼ë¡œ ì±„ìš°ê¸°
 	for (size_t TileIndex = 0; TileIndex < GenerateMapTileNum; ++TileIndex)
 	{
 		const int PosX = static_cast<int>(TileIndex % mapSize.x);
@@ -43,15 +43,15 @@ void Tilemap::InitializeTilemap(const Vector2Int& inMapSize,
 		tileList.emplace_back(std::make_unique<Tile>(eTileCategory::Wall, Vector2Int(PosX, PosY), TileIndex));
 	}
 
-	//BSP¾Ë°í¸®ÁòÀ» ÅëÇÑ °ø°£ ºĞÇÒ ¹× ¹æ »ı¼º, °æ·Î Á¤º¸ »ı¼º
+	//BSPì•Œê³ ë¦¬ì¦˜ì„ í†µí•œ ê³µê°„ ë¶„í•  ë° ë°© ìƒì„±, ê²½ë¡œ ì •ë³´ ìƒì„±
 	std::unique_ptr<BSPNode> BSPRoot = std::make_unique<BSPNode>(0, 0, mapSize.x, mapSize.y);
 	assert(BSPRoot && "BSPRoot Alloc Failed..");
 	BSPRoot->Divide();
 
-	//ºĞÇÒµÈ °ø°£À» ¿¬°á
+	//ë¶„í• ëœ ê³µê°„ì„ ì—°ê²°
 	BSPRoot->ConnectRooms();
 
-	//¹æ, °æ·Î Á¤º¸µéÀ» ¹ÙÅÁÀ¸·Î Tile ±¸¼º
+	//ë°©, ê²½ë¡œ ì •ë³´ë“¤ì„ ë°”íƒ•ìœ¼ë¡œ Tile êµ¬ì„±
 	BSPRoot->ExtractNodeContents(CorridorCallback, RoomCallback);
 }
 
@@ -83,22 +83,22 @@ void Tilemap::Draw()
 			const Tile& tile = *tileList[tileIndex];
 
 			Color TileColor;
-			std::string TileSprite;
+			std::wstring TileSprite;
 			switch (tile.GetTileCategory())
 			{
 			case eTileCategory::Wall:
-				TileColor = Color::White;
-				TileSprite = "#";
+				TileColor = Color::DarkGray;
+				TileSprite = L"â–ˆ";
 				break;
 
 			case eTileCategory::Ground:
 				TileColor = Color::White;
-				TileSprite = " ";
+				TileSprite = L" ";
 				break;
 
 			default:
 				TileColor = Color::White;
-				TileSprite = "e";
+				TileSprite = L"e";
 				break;
 			}
 
@@ -106,33 +106,6 @@ void Tilemap::Draw()
 			Renderer::Get().Submit(TileSprite, tilePosition, TileColor);
 		}
 	}
-
-
-	/*for (const auto& iterTile : tileList)
-	{
-		Color TileColor;
-		std::string TileSprite;
-		switch (iterTile->GetTileCategory())
-		{
-		case eTileCategory::Wall:
-			TileColor = Color::White;
-			TileSprite = "#";
-			break;
-
-		case eTileCategory::Ground:
-			TileColor = Color::White;
-			TileSprite = " ";
-			break;
-
-		default:
-			TileColor = Color::White;
-			TileSprite = "e";
-			break;
-		}
-
-		const Vector2Float tilePosition = static_cast<Vector2Float>(iterTile->GetTilePosition());
-		Renderer::Get().Submit(TileSprite, tilePosition, TileColor);
-	}*/
 }
 
 void Tilemap::SetTileCategory(int xPos, int yPos, eTileCategory category)

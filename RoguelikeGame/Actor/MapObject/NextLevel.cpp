@@ -5,7 +5,7 @@
 #include "Level/TestLevel.h"
 
 NextLevel::NextLevel(const Craft::Vector2Float& position)
-	:super(position, "N", Craft::Color::Purple)
+	:super(position, L"⌂", Craft::Color::Purple)
 {
 }
 

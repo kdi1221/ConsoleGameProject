@@ -10,7 +10,7 @@ MenuLevel::MenuLevel()
 	// 메뉴 아이템 생성 및 배열에 추가.
 	itemList.emplace_back(
 		std::make_unique<MenuItem>(
-			"Resume Game",
+			L"Resume Game",
 			[]()
 			{
 				Game& game = dynamic_cast<Game&>(Engine::Get());
@@ -21,7 +21,7 @@ MenuLevel::MenuLevel()
 
 	itemList.emplace_back(
 		std::make_unique<MenuItem>(
-			"Quit Game",
+			L"Quit Game",
 			[]()
 			{
 				Engine::Get().Quit();
@@ -70,7 +70,7 @@ void MenuLevel::Draw()
 	Level::Draw();
 
 	// 메뉴 제목.
-	Renderer::Get().Submit("Sokoban Game", Vector2Float::Zero);
+	Renderer::Get().Submit(L"Sokoban Game", Vector2Float::Zero);
 
 	// 메뉴 아이템 출력
 	const int count = static_cast<int>(itemList.size());

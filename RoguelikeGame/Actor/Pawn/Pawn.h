@@ -9,7 +9,7 @@ class Pawn : public Craft::Actor
 
 public:
 	Pawn(const Craft::Vector2Float& position,
-		const std::string& image,
+		const std::wstring& image,
 		Craft::Color color,
 		int CollisionWidth,
 		float moveDelay);

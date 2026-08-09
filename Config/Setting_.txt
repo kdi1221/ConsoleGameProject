@@ -1,0 +1,32 @@
+# target frame rate
+framerate = 120
+
+# screen width
+width = 60
+
+# screen height
+height = 25
+
+# View Width
+viewWidth = 60
+
+# View Height
+viewHeight = 25
+
+# View Space Max Width
+viewSpaceMaxWidth = 60
+
+# View Space Max Height
+viewSpaceMaxHeight = 25
+
+# tilemap width
+tilemapWidth = 200
+
+# tilemap height
+tilemapHeight = 200
+
+# BSP room min length(min 10)
+bspMinRoomLength = 15;
+
+# BSP room Wall Thickness(min 2)
+bspRoomWallThickness = 2;

@@ -2,7 +2,7 @@
 #include "Component/SpriteRendererComponent.h"
 
 //엔진 이펙트에 사용할 애니메이션 프레임
-static const char* engineEffectFrames[] = {" * ", "***" };
+static const wchar_t* engineEffectFrames[] = {L" * ", L"***" };
 
 using namespace Craft;
 

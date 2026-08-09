@@ -23,7 +23,7 @@ namespace
 	}
 }
 
-Enemy::Enemy(const std::string& image, int yPosition)
+Enemy::Enemy(const std::wstring& image, int yPosition)
 	:Actor(Vector2Float::Zero)
 {
 	//필요한 컴포넌트 추가

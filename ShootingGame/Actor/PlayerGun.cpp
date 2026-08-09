@@ -8,7 +8,7 @@ PlayerGun::PlayerGun(const Vector2Float& localPosition)
 	:Actor(localPosition)
 {
 	// 컴포넌트 추가.
-	AddComponent<SpriteRendererComponent>("^", Color::Blue, 6);
+	AddComponent<SpriteRendererComponent>(L"^", Color::Blue, 6);
 }
 
 Vector2Float PlayerGun::GetFirePosition() const

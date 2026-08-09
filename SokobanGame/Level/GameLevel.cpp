@@ -26,7 +26,7 @@ void GameLevel::Draw()
 	// 게임을 클리어한 경우 메시지 표시
 	if (isGameClear)
 	{
-		Renderer::Get().Submit("Game Clear!", Vector2Float(30, 0));
+		Renderer::Get().Submit(L"Game Clear!", Vector2Float(30, 0));
 	}
 }
 

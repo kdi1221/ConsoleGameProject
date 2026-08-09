@@ -9,7 +9,7 @@
 using namespace Craft;
 
 PlayerPawn::PlayerPawn(const Craft::Vector2Float& position)
-	:super(position, "@", Color::Yellow, 1, 0.1f)
+	:super(position, L"☺", Color::Yellow, 1, 0.1f)
 {
 	std::shared_ptr<InputComponent> inputComponent = AddComponent<InputComponent>();
 	assert(inputComponent && "inputComponent create fail..");

@@ -9,7 +9,7 @@ PlayerBullet::PlayerBullet(const Craft::Vector2Float& position)
 	,yPosition(position.y)
 {
 	// 필요한 컴포넌트 추가.
-	AddComponent<SpriteRendererComponent>("@", Color::Blue, 4);
+	AddComponent<SpriteRendererComponent>(L"@", Color::Blue, 4);
 	AddComponent<BoxCollisionComponent>(1);
 }
 

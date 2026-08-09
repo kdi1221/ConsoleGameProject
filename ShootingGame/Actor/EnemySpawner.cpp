@@ -6,14 +6,14 @@
 using namespace Craft;
 
 //적 생성할 때 사용할 글자 값
-static std::string enemyType[] =
+static std::wstring enemyType[] =
 {
-	";:^:;",
-	"zZwZz",
-	"oO@Oo",
-	"<-=->",
-	")qOp(",
-	"(o0o)"
+	L";:^:;",
+	L"zZwZz",
+	L"oO@Oo",
+	L"<-=->",
+	L")qOp(",
+	L"(o0o)"
 };
 
 EnemySpawner::EnemySpawner()

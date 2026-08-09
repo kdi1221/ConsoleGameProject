@@ -31,7 +31,7 @@ Player::Player()
 	,fireMode(FireMode::OneShot)
 {
 	//필요한 컴포넌트 추가
-	AddComponent<SpriteRendererComponent>("<=A=>", Color::Green, 5);
+	AddComponent<SpriteRendererComponent>(L"<=A=>", Color::Green, 5);
 	AddComponent<BoxCollisionComponent>(5);
 
 	// 생성 위치 설정.

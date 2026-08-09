@@ -5,8 +5,8 @@
 
 using namespace Craft;
 
-MapObject::MapObject(const Craft::Vector2Float& position, 
-					const std::string& image, 
+MapObject::MapObject(const Craft::Vector2Float& position,
+					const std::wstring& image,
 					Craft::Color color)
 	:super(position)
 {

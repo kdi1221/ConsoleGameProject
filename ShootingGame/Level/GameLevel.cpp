@@ -60,15 +60,15 @@ void GameLevel::Draw()
 	if (gameState == GameState::GameOverWait)
 	{
 		//플레이어 죽음 메시지를 렌더러에 제출.
-		Renderer::Get().Submit("!Dead!", gameManager->GetPlayerDeadPosition());
+		Renderer::Get().Submit(L"!Dead!", gameManager->GetPlayerDeadPosition());
 	}
 }
 
 void GameLevel::ShowScore()
 {
 	//점수 문자열 조합. 10-> Score: 10.
-	std::stringstream ss;
-	ss << "Score: ";
+	std::wstringstream ss;
+	ss << L"Score: ";
 	ss << gameManager->GetScore();
 
 	//렌더러에 점수 문자열을 전달.

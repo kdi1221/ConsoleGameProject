@@ -17,7 +17,7 @@ class Enemy : public Craft::Actor
 	};
 
 public:
-	Enemy(const std::string& image = "(o0o)", int yPosition = 5);
+	Enemy(const std::wstring& image = L"(o0o)", int yPosition = 5);
 	~Enemy() = default;
 
 private:

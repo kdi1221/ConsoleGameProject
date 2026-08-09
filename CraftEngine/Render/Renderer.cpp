@@ -79,7 +79,7 @@ namespace Craft
 		SetConsoleActiveScreenBuffer(GetStdHandle(STD_OUTPUT_HANDLE));
 	}
 
-	void Renderer::Submit(const std::string& image, const Vector2Float& position, Color color, int sortingOrder)
+	void Renderer::Submit(const std::wstring& image, const Vector2Float& position, Color color, int sortingOrder)
 	{
 		// 그릴 명령 객체 생성.
 		RenderCommand command;
@@ -184,7 +184,7 @@ namespace Craft
 				}
 
 				// 2차원 배열에 글자 값 기록.
-				frame->charInfoArray[index].Char.AsciiChar = command.image[sourceIndex];
+				frame->charInfoArray[index].Char.UnicodeChar = command.image[sourceIndex];
 				frame->charInfoArray[index].Attributes = static_cast<WORD>(command.color);
 
 				// 그리기 정렬 순서 기록.

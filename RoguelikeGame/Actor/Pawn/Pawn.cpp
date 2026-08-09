@@ -6,8 +6,8 @@
 
 using namespace Craft;
 
-Pawn::Pawn(const Craft::Vector2Float& position, 
-			const std::string& image, 
+Pawn::Pawn(const Craft::Vector2Float& position,
+			const std::wstring& image,
 			Craft::Color color,
 			int CollisionWidth,
 			float moveDelay)

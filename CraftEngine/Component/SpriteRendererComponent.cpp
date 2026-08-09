@@ -5,7 +5,7 @@
 
 namespace Craft
 {
-	SpriteRendererComponent::SpriteRendererComponent(const std::string& image, Color color, int sortingOrder)
+	SpriteRendererComponent::SpriteRendererComponent(const std::wstring& image, Color color, int sortingOrder)
 		:image(image)
 		,color(color)
 		,sortingOrder(sortingOrder)

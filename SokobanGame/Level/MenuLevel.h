@@ -9,7 +9,7 @@ struct MenuItem
 	// 메뉴가 선택됐을 때 실행될 함수의 타입(함수 포인터).
 	using OnSelected = void(*)();
 
-	MenuItem(const std::string& text, OnSelected onSelected)
+	MenuItem(const std::wstring& text, OnSelected onSelected)
 		:text(text), onSelected(onSelected)
 	{
 
@@ -18,7 +18,7 @@ struct MenuItem
 	~MenuItem() = default;
 
 	// 속성(메뉴 텍스트)
-	std::string text;
+	std::wstring text;
 
 	//메뉴가 선택됐을 때 실행될 로직(함수).
 	OnSelected onSelected = nullptr;

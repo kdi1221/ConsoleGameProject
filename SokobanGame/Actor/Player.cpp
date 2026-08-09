@@ -14,7 +14,7 @@ Player::Player(const Craft::Vector2Float& position)
 	:Actor(position)
 {
 	// 필요한 컴포넌트 추가.
-	AddComponent<SpriteRendererComponent>("P", Color::Green, 5);
+	AddComponent<SpriteRendererComponent>(L"P", Color::Green, 5);
 	AddComponent<BoxCollisionComponent>(1);
 }
 

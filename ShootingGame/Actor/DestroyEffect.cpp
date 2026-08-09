@@ -9,11 +9,11 @@ using EffectFrame = DestroyEffect::EffectFrame;
 // 효과 재생에 사용할 이펙트 시퀀스(일종의 애니메이션 프레임 시퀀스)
 static const EffectFrame sequence[] =
 {
-	{ "  @  ", 0.08f, Color::Red },
-	{ " @@  ", 0.08f, Color::Blue },
-	{ " @@@ ", 0.08f, Color::Green },
-	{ "@@@@ ", 0.08f, Color::Blue },
-	{ "@@@@@", 0.5f, Color::Red },
+	{ L"  @  ", 0.08f, Color::Red },
+	{ L" @@  ", 0.08f, Color::Blue },
+	{ L" @@@ ", 0.08f, Color::Green },
+	{ L"@@@@ ", 0.08f, Color::Blue },
+	{ L"@@@@@", 0.5f, Color::Red },
 };
 
 DestroyEffect::DestroyEffect(const Craft::Vector2Float& position)

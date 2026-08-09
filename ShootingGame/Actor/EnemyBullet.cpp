@@ -12,7 +12,7 @@ EnemyBullet::EnemyBullet(const Craft::Vector2Float& position, float moveSpeed)
 	,yPosition(static_cast<float>(position.y))
 {
 	// 필요한 컴포넌트 추가.
-	AddComponent<SpriteRendererComponent>("#", Color::Red, 4);
+	AddComponent<SpriteRendererComponent>(L"#", Color::Red, 4);
 	AddComponent<BoxCollisionComponent>(1);
 }
 
