@@ -1,7 +1,6 @@
 ﻿#include "PlayerPawn.h"
 #include "Math/Color.h"
 #include "Component/TransformComponent.h"
-#include "Component/InputComponent.h"
 #include "Component/CameraComponent.h"
 #include <cassert>
 #include <Windows.h>
@@ -14,13 +13,21 @@ PlayerPawn::PlayerPawn(const Craft::Vector2Float& position)
 	std::shared_ptr<InputComponent> inputComponent = AddComponent<InputComponent>();
 	assert(inputComponent && "inputComponent create fail..");
 
-	InputComponent::FInputTrigger InputTrigger(InputComponent::eInputTrigger::Press,
-												std::bind(&PlayerPawn::OnMoveKeyInput, this, std::placeholders::_1));
+	InputComponent::FInputTrigger moveInputTrigger(eInputTrigger::Press,
+												std::bind(&PlayerPawn::OnMoveKeyInput, this, std::placeholders::_1, std::placeholders::_2));
 
-	inputComponent->AddInputCallback('W', InputTrigger);
-	inputComponent->AddInputCallback('S', InputTrigger);
-	inputComponent->AddInputCallback('A', InputTrigger);
-	inputComponent->AddInputCallback('D', InputTrigger);
+	inputComponent->AddInputCallback('W', moveInputTrigger);
+	inputComponent->AddInputCallback('S', moveInputTrigger);
+	inputComponent->AddInputCallback('A', moveInputTrigger);
+	inputComponent->AddInputCallback('D', moveInputTrigger);
+
+	InputComponent::FInputTrigger fireInputTrigger(eInputTrigger::Up | eInputTrigger::Down,
+												std::bind(&PlayerPawn::OnProjectileFireKeyInput, this, std::placeholders::_1, std::placeholders::_2));
+
+	inputComponent->AddInputCallback(VK_UP, fireInputTrigger);
+	inputComponent->AddInputCallback(VK_DOWN, fireInputTrigger);
+	inputComponent->AddInputCallback(VK_LEFT, fireInputTrigger);
+	inputComponent->AddInputCallback(VK_RIGHT, fireInputTrigger);
 
 	std::shared_ptr<TransformComponent> transformComponent = GetTransform();
 	assert(transformComponent && "transformComponent invalid..");
@@ -45,12 +52,32 @@ void PlayerPawn::Tick(float deltaTime)
 	if (moveInputValue != Vector2Int::Zero)
 	{
 		SetLastMoveDirection(moveInputValue);
-
 		moveInputValue = Vector2Int::Zero;
 	}
+
+	/* fire 입력 처리 */
+	if (prevFireInputValue != fireInputValue)
+	{
+		if (fireInputValue == Vector2Int::Zero)
+		{
+			OutputDebugStringA("TODO : Stop Fire\n");
+		}
+		else
+		{
+			SetLookDirection(static_cast<Vector2Float>(fireInputValue));
+
+			if (prevFireInputValue == Vector2Int::Zero)
+			{
+				OutputDebugStringA("TODO : Start Fire\n");
+			}
+		}
+
+		prevFireInputValue = fireInputValue;
+	}
+	
 }
 
-void PlayerPawn::OnMoveKeyInput(int keyCode)
+void PlayerPawn::OnMoveKeyInput(int keyCode, eInputTrigger inputTrigger)
 {
 	switch (keyCode)
 	{
@@ -78,6 +105,39 @@ void PlayerPawn::OnMoveKeyInput(int keyCode)
 		}
 		break;
 	}
+}
+
+void PlayerPawn::OnProjectileFireKeyInput(int keyCode, eInputTrigger inputTrigger)
+{
+	Vector2Int addInputValue = Vector2Int::Zero;
+	switch (keyCode)
+	{
+	case VK_UP:
+		{
+			addInputValue = eInputTrigger::None != (inputTrigger & eInputTrigger::Down) ? Vector2Int::Up : Vector2Int::Down;
+		}
+		break;
+
+	case VK_DOWN:
+		{
+			addInputValue = eInputTrigger::None != (inputTrigger & eInputTrigger::Down) ? Vector2Int::Down : Vector2Int::Up;
+		}
+		break;
+
+	case VK_LEFT:
+		{
+			addInputValue = eInputTrigger::None != (inputTrigger & eInputTrigger::Down) ? Vector2Int::Left : Vector2Int::Right;
+		}
+		break;
+
+	case VK_RIGHT:
+		{
+			addInputValue = eInputTrigger::None != (inputTrigger & eInputTrigger::Down) ? Vector2Int::Right : Vector2Int::Left;
+		}
+		break;
+	}
+
+	fireInputValue += addInputValue;
 }
 
 void PlayerPawn::OnUpdatePosition(const Vector2Float& localPosition, const Vector2Float& worldPosition)

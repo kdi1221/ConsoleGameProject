@@ -69,28 +69,28 @@ namespace Craft
 
 	protected:
 		// 입력 처리 함수. (입력 폴링)
-		void ProcessInput();
+		virtual void ProcessInput();
 
 		//레벨 초기화 함수
-		void OnInitialized();
+		virtual void OnInitialized();
 
 		// 게임 플레이 초기화 함수
-		void BeginPlay();
+		virtual void BeginPlay();
 		
 		// 게임 플레이 업데이트 함수.
-		void Tick(float deltaTime);
+		virtual void Tick(float deltaTime);
 
 		// 화면에 그리는 함수.
-		void Draw();
+		virtual void Draw();
 
 		// 충돌 처리 함수.
-		void ProcessColiision();
+		virtual void ProcessColiision();
 
 		// 이전 입력을 저장하는 함수.
-		void SavePreviousInputStates();
+		virtual void SavePreviousInputStates();
 
 		// 엔진 종료 시 정리 함수.
-		void Shutdown();
+		virtual void Shutdown();
 
 		// 엔진 설정 로드 함수.
 		void LoadEngineSetting();

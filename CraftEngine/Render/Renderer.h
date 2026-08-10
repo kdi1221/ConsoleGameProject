@@ -57,6 +57,9 @@ namespace Craft
 		//장면을 구성하는 모든 객체(액터)가 화면에 그릴 데이터를 전달하는 함수.
 		void Submit(const std::wstring& image, const Vector2Float& position, Color color = Color::White, int sortingOrder = 0);
 
+		//UI 구성하는 데이터를 전달하는 함수.
+		void SubmitUI(const std::wstring& image, const Vector2Float& position, Color color = Color::White, int sortingOrder = 0);
+
 		// Draw 이벤트 함수(Engine에서 호출).
 		void Draw(const CameraManager& cameraManager);
 
@@ -70,6 +73,13 @@ namespace Craft
 		//전달 받은 그리기 명령을 활용해 그리는 함수.
 		void DrawRenderQueue(const CameraManager& cameraManager);
 
+		//UI 그리기 명령을 활용해 그리는 함수
+		void DrawRenderQueueUI();
+
+		//백 버퍼에 2차원 배열 기록
+		void WriteToBackbuffer();
+
+
 		//이중 버퍼 구현 시 버퍼를 교환하는 함수.
 		void Present();
 
@@ -82,6 +92,9 @@ namespace Craft
 
 		// 이번 프레임에 화면에 그릴 데이터를 모아둔 동적 배열(큐)
 		std::vector<RenderCommand> renderQueue;
+
+		// 이번 프레임에 화면에 그릴 UI 데이터를 모아둔 동적 배열(큐)
+		std::vector<RenderCommand> renderQueueUI;
 
 		// 화면 크기.
 		Vector2Int screenSize;

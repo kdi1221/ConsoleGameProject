@@ -30,25 +30,28 @@ namespace Craft
 			const int keyCode = callbackInfo.first;
 			const FInputTrigger& inputTrigger = callbackInfo.second;
 
-			switch (inputTrigger.triggerCategory)
+			if (eInputTrigger::None != (inputTrigger.triggerCategory & eInputTrigger::Down))
 			{
-			case eInputTrigger::Down:
+				if (input.GetKeyDown(keyCode))
 				{
-					if (input.GetKeyDown(keyCode))
-					{
-						inputTrigger.triggerCallback(keyCode);
-					}
+					inputTrigger.triggerCallback(keyCode, eInputTrigger::Down);
 				}
-				break;
-				
-			case eInputTrigger::Press:
+			}
+
+			if (eInputTrigger::None != (inputTrigger.triggerCategory & eInputTrigger::Up))
+			{
+				if (input.GetKeyUp(keyCode))
 				{
-					if (input.GetKey(keyCode))
-					{
-						inputTrigger.triggerCallback(keyCode);
-					}
+					inputTrigger.triggerCallback(keyCode, eInputTrigger::Up);
 				}
-				break;
+			}
+
+			if (eInputTrigger::None != (inputTrigger.triggerCategory & eInputTrigger::Press))
+			{
+				if (input.GetKey(keyCode))
+				{
+					inputTrigger.triggerCallback(keyCode, eInputTrigger::Press);
+				}
 			}
 		}
 	}

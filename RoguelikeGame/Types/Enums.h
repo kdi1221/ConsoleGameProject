@@ -101,5 +101,8 @@ enum class eRenderSortingOrder : int
 	Pawn,
 
 	//źȯ
-	Bullet
+	Projectile,
+
+	//UI
+	UI
 };

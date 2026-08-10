@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Pawn.h"
+#include "Component/InputComponent.h"
 
 namespace Craft
 {
@@ -20,13 +21,20 @@ private:
 	virtual void Tick(float deltaTime) override;
 
 private:
-	void OnMoveKeyInput(int keyCode);
+	void OnMoveKeyInput(int keyCode, Craft::eInputTrigger inputTrigger);
+	void OnProjectileFireKeyInput(int keyCode, Craft::eInputTrigger inputTrigger);
 	void OnUpdatePosition(const Craft::Vector2Float & localPosition, const Craft::Vector2Float& worldPosition);
 	void UpdateViewCameraPosition(const Craft::Vector2Int& viewPosition);
 
 private:
 	/* 현재 프레임에서의 누적 이동 입력 값*/
 	Craft::Vector2Int moveInputValue = Craft::Vector2Int::Zero;
+
+	/* 현재 프레임에서의 공격 입력 누적 값*/
+	Craft::Vector2Int fireInputValue = Craft::Vector2Int::Zero;
+
+	/* 이전 프레임에서의 공격 입력 누적 값*/
+	Craft::Vector2Int prevFireInputValue = Craft::Vector2Int::Zero;
 
 	/* 플레이어 폰을 바라보는 카메라 컴포넌트 */
 	std::shared_ptr<Craft::CameraComponent> cameraComponent;

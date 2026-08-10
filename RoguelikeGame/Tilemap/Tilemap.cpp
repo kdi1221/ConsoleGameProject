@@ -57,15 +57,12 @@ void Tilemap::InitializeTilemap(const Vector2Int& inMapSize,
 
 void Tilemap::Tick(float deltaTime)
 {
-	char szTmp[256] = { 0 };
-
-	//std::cout << "DeltaTime: " << deltaTime << " | FPS: " << (1.f / deltaTime) << '\n';
-	sprintf_s(szTmp, "DeltaTime: %f, FPS : %f\n", deltaTime, (1.f / deltaTime));
-	OutputDebugStringA(szTmp);
+	
 }
 
 void Tilemap::Draw()
 {
+	//카메라에 표시되는 타일들만 출력한다. 
 	const CameraManager& cameraManager = Engine::Get().GetCameraManager();
 	const Vector2Int leftTopPosition = cameraManager.GetLeftTopPosition();
 	const Vector2Int rightDownPosition = cameraManager.GetRightDownPosition();
@@ -82,8 +79,19 @@ void Tilemap::Draw()
 
 			const Tile& tile = *tileList[tileIndex];
 
-			Color TileColor;
+			/* 벽타일과 방 입구 문 타일만 그린다. */
+			switch (tile.GetTileCategory())
+			{
+			case eTileCategory::Wall:
+				{
+					Renderer::Get().Submit(L"█", static_cast<Vector2Float>(tile.GetTilePosition()), Color::DarkGray);
+				}
+				break;
+			}
+
+			/*Color TileColor;
 			std::wstring TileSprite;
+
 			switch (tile.GetTileCategory())
 			{
 			case eTileCategory::Wall:
@@ -103,7 +111,7 @@ void Tilemap::Draw()
 			}
 
 			const Vector2Float tilePosition = static_cast<Vector2Float>(tile.GetTilePosition());
-			Renderer::Get().Submit(TileSprite, tilePosition, TileColor);
+			Renderer::Get().Submit(TileSprite, tilePosition, TileColor);*/
 		}
 	}
 }

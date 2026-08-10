@@ -77,7 +77,7 @@ namespace Craft
 		// 프레임 고정.
 		const float oneFrameTime = 1.f / GetConfig<ConfigBase>().GetFrameRate();
 
-		while(!isQuit)
+		while (!isQuit)
 		{
 			// 입력 처리.
 			ProcessInput();
@@ -254,12 +254,10 @@ namespace Craft
 	void Engine::Draw()
 	{
 		// 레벨에 이벤트 전달.
-		if (!mainLevel)
+		if (mainLevel)
 		{
-			return;
+			mainLevel->Draw();
 		}
-
-		mainLevel->Draw();
 
 		//렌더러의 Draw 이벤트 호출
 		renderer->Draw(GetCameraManager());

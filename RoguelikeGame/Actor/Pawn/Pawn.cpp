@@ -25,3 +25,13 @@ void Pawn::SetLastMoveDirection(const Craft::Vector2Int& moveDirection)
 
 	movementComponent->SetLastMoveDirection(moveDirection);
 }
+
+void Pawn::SetLookDirection(const Craft::Vector2Float& inDirection)
+{
+	lookDirection = inDirection;
+	lookDirection.Normalize();
+
+	char szTmp[256] = { 0 };
+	sprintf_s(szTmp, "Set Look Direction - x : %f, y : %f\n", lookDirection.x, lookDirection.y);
+	OutputDebugStringA(szTmp);
+}
