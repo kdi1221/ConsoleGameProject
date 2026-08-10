@@ -2,6 +2,8 @@
 #include "Math/Color.h"
 #include "Component/TransformComponent.h"
 #include "Component/CameraComponent.h"
+#include "Component/FireProjectileComponent.h"
+#include "Actor/Projectile/Projectile.h"
 #include <cassert>
 #include <Windows.h>
 
@@ -35,6 +37,9 @@ PlayerPawn::PlayerPawn(const Craft::Vector2Float& position)
 
 	cameraComponent = AddComponent<CameraComponent>();
 	assert(cameraComponent && "cameraComponent create fail..");
+
+	fireProjectileComponent = AddComponent<FireProjectileComponent>(0.5f, L"*", Color::Green, 0.03f);
+	assert(fireProjectileComponent && "fireProjectileComponent create fail..");
 }
 
 void PlayerPawn::BeginPlay()
@@ -60,15 +65,28 @@ void PlayerPawn::Tick(float deltaTime)
 	{
 		if (fireInputValue == Vector2Int::Zero)
 		{
-			OutputDebugStringA("TODO : Stop Fire\n");
+			/* 이전에 발사중이었다가 중지 됨 */
+			fireProjectileComponent->SetEnableFire(false);
 		}
 		else
 		{
-			SetLookDirection(static_cast<Vector2Float>(fireInputValue));
+			//SetLookDirection(static_cast<Vector2Float>(fireInputValue));
+			assert(fireProjectileComponent && "Invalid fireProjectileComponent");
+
+			/* 생성될 Projectile이 생성될 Offset 지정 */
+			const Vector2Float spawnOffset = static_cast<Vector2Float>(fireInputValue);
+			fireProjectileComponent->SetProjectileSpawnOffset(spawnOffset);
+
+			/* 생성될 Projectile의 목표 위치 지정(offset 위치로 향하는 방향 * Range) */
+			Vector2Float fireDirection = spawnOffset;
+			fireDirection.Normalize();
+			const Vector2Float AimingPosition = GetWorldPosition() + (fireDirection * ProjectileRange);
+			fireProjectileComponent->SetProjectileAimingPosition(AimingPosition);
 
 			if (prevFireInputValue == Vector2Int::Zero)
 			{
-				OutputDebugStringA("TODO : Start Fire\n");
+				/* 발사 중지 상태에서 발사 상태로 전환 */
+				fireProjectileComponent->SetEnableFire(true);
 			}
 		}
 

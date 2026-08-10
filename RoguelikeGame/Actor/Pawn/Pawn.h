@@ -21,14 +21,14 @@ protected:
 	void SetLastMoveDirection(const Craft::Vector2Int& moveDirection);
 
 	/* 바라보는 방향 지정 */
-	void SetLookDirection(const Craft::Vector2Float& inDirection);
+	//void SetLookDirection(const Craft::Vector2Float& inDirection);
 
 private:
 	/* 이동 컴포넌트 */
 	std::shared_ptr<Craft::MovementComponent> movementComponent;
 
-private:
-	/* 현재 바라보는 방향 */
-	Craft::Vector2Float lookDirection = Craft::Vector2Float::Up;
+//private:
+//	/* 현재 바라보는 방향 */
+//	Craft::Vector2Float lookDirection = Craft::Vector2Float::Up;
 };
 

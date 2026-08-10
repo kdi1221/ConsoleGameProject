@@ -1,29 +1,31 @@
 ﻿#pragma once
 
 #include "Actor/Actor.h"
+#include "Component/MovementComponent.h"
 
-namespace Craft
-{ 
-	/* 게임 내 폰들이 발사하는 Projectile */
-	class Projectile : public Actor
-	{
-		TYPE_DECLARATIONS(Projectile, Actor)
+/* 게임 내 폰들이 발사하는 Projectile */
+class Projectile : public Craft::Actor
+{
+	TYPE_DECLARATIONS(Projectile, Actor)
 
-	public:
-		Projectile(const Craft::Vector2Float& inPosition, 
-					const std::wstring& inImage, 
-					Craft::Color inColor, 
-					float inRange,
-					const Craft::Vector2Float& inDirection);
-		virtual ~Projectile() = default;
+public:
+	Projectile(const Craft::Vector2Float& inPosition, 
+				const std::wstring& inImage, 
+				Craft::Color inColor, 
+				const Craft::Vector2Float& inDestination,
+				float moveDelay);
+	virtual ~Projectile() = default;
 
-	public:
-		virtual void Tick(float deltaTime) override;
+public:
+	virtual void Tick(float deltaTime) override;
 
-	private:
-		float range = 0.f;
-		Craft::Vector2Float direction = Craft::Vector2Float::Zero;
-	};	
-}
+private:
+	/* Projectile의 조준 지점 */
+	Craft::Vector2Float destinationPos = Craft::Vector2Float::Zero;
+
+	/* 이동 컴포넌트 */
+	std::shared_ptr<Craft::MovementComponent> movementComponent;
+};	
+
 
 

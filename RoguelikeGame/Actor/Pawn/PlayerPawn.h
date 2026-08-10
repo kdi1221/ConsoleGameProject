@@ -8,6 +8,8 @@ namespace Craft
 	class CameraComponent;
 }
 
+class FireProjectileComponent;
+
 class PlayerPawn : public Pawn
 {
 	TYPE_DECLARATIONS(PlayerPawn, Pawn)
@@ -36,7 +38,14 @@ private:
 	/* 이전 프레임에서의 공격 입력 누적 값*/
 	Craft::Vector2Int prevFireInputValue = Craft::Vector2Int::Zero;
 
+	/* Projectile 발사 시 최대 Range */
+	float ProjectileRange = 3.f;
+
+private:
 	/* 플레이어 폰을 바라보는 카메라 컴포넌트 */
 	std::shared_ptr<Craft::CameraComponent> cameraComponent;
+
+	/* 탄환 발사 컴포넌트 */
+	std::shared_ptr<FireProjectileComponent> fireProjectileComponent;
 };
 
