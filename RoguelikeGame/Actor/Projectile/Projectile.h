@@ -1,12 +1,13 @@
 ﻿#pragma once
 
-#include "Actor/Actor.h"
-#include "Component/MovementComponent.h"
+#include "Actor/ActorOnTile.h"
+#include "Component/PathMoveComponent.h"
+
 
 /* 게임 내 폰들이 발사하는 Projectile */
-class Projectile : public Craft::Actor
+class Projectile : public ActorOnTile
 {
-	TYPE_DECLARATIONS(Projectile, Actor)
+	TYPE_DECLARATIONS(Projectile, ActorOnTile)
 
 public:
 	Projectile(const Craft::Vector2Float& inPosition, 
@@ -16,15 +17,19 @@ public:
 				float moveDelay);
 	virtual ~Projectile() = default;
 
-public:
-	virtual void Tick(float deltaTime) override;
+private:
+	virtual void BeginPlay() override;
+
+private:
+	void OnCallbackMoveFinish();
 
 private:
 	/* Projectile의 조준 지점 */
 	Craft::Vector2Float destinationPos = Craft::Vector2Float::Zero;
 
+private:
 	/* 이동 컴포넌트 */
-	std::shared_ptr<Craft::MovementComponent> movementComponent;
+	std::shared_ptr<Craft::PathMoveComponent> pathMoveComponent;
 };	
 
 

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Core/Core.h"
+#include <functional>
 #include <Windows.h>
 
 namespace Craft
@@ -62,8 +63,21 @@ namespace Craft
 
 		//길이(sqrt 포함)
 		double LengthSqrt() const;
+	};
+}
 
+namespace std
+{
+	template<>
+	struct hash<Craft::Vector2Int> 
+	{
+		size_t operator()(const Craft::Vector2Int& vector2Int) const
+		{
+			size_t h1 = hash<int>{}(vector2Int.x);
+			size_t h2 = hash<int>{}(vector2Int.y);
 
+			return h1 ^ (h2 + 0x9e3779b9 + (h1 << 6) + (h1 >> 2));
+		}
 	};
 }
 

@@ -94,14 +94,14 @@ enum class eRenderSortingOrder : int
 	//타일
 	Tile = 0,
 
+	//탄환
+	Projectile,
+
 	//맵 상의 오브젝트
 	MapObject,
 
 	//폰
 	Pawn,
-
-	//탄환
-	Projectile,
 
 	//UI
 	UI

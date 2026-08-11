@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -107,6 +107,7 @@ xcopy ..\Config\Setting.txt $(OutDir)..\Config\ /e /y /i</Command>
     <ClCompile Include="Component\Component.cpp" />
     <ClCompile Include="Component\InputComponent.cpp" />
     <ClCompile Include="Component\MovementComponent.cpp" />
+    <ClCompile Include="Component\PathMoveComponent.cpp" />
     <ClCompile Include="Component\SpriteRendererComponent.cpp" />
     <ClCompile Include="Component\TransformComponent.cpp" />
     <ClCompile Include="Engine\Config\ConfigBase.cpp" />
@@ -118,6 +119,7 @@ xcopy ..\Config\Setting.txt $(OutDir)..\Config\ /e /y /i</Command>
     <ClCompile Include="Physics\CollisionSystem.cpp" />
     <ClCompile Include="Render\Renderer.cpp" />
     <ClCompile Include="Render\ScreenBuffer.cpp" />
+    <ClCompile Include="StaticLibrary\StaticFunctionLibrary.cpp" />
     <ClCompile Include="Util\Timer.cpp" />
     <ClCompile Include="Util\Util.cpp" />
   </ItemGroup>
@@ -129,6 +131,7 @@ xcopy ..\Config\Setting.txt $(OutDir)..\Config\ /e /y /i</Command>
     <ClInclude Include="Component\Component.h" />
     <ClInclude Include="Component\InputComponent.h" />
     <ClInclude Include="Component\MovementComponent.h" />
+    <ClInclude Include="Component\PathMoveComponent.h" />
     <ClInclude Include="Component\SpriteRendererComponent.h" />
     <ClInclude Include="Component\TransformComponent.h" />
     <ClInclude Include="Engine\Config\ConfigBase.h" />
@@ -138,6 +141,7 @@ xcopy ..\Config\Setting.txt $(OutDir)..\Config\ /e /y /i</Command>
     <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Level\Level.h" />
     <ClInclude Include="Math\Color.h" />
+    <ClInclude Include="StaticLibrary\StaticFunctionLibrary.h" />
     <ClInclude Include="Math\Vector2Int.h" />
     <ClInclude Include="Math\Vector2Float.h" />
     <ClInclude Include="Physics\CollisionSystem.h" />

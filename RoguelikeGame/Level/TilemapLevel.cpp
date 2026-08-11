@@ -62,10 +62,124 @@ void TilemapLevel::Draw()
 	Level::Draw();
 }
 
+void TilemapLevel::OnSpawnedActor(std::shared_ptr<Actor> spawnedActor)
+{
+	super::OnSpawnedActor(spawnedActor);
+
+	/* 새로 생성된 Actor가 Tile위에 올라갈 수 있는 Actor일 때만 등록 */
+	std::shared_ptr<ActorOnTile> actorOnTile = Cast<ActorOnTile>(spawnedActor);
+	if (!actorOnTile)
+	{
+		return;
+	}
+
+	RegisterActorOnTilemap(actorOnTile);
+}
+
+void TilemapLevel::OnPositionUpdateActorInLevel(std::weak_ptr<Actor> updatedActor, 
+												const Vector2Float& prevWorldPosition, 
+												const Vector2Float& worldPosition)
+{
+	super::OnPositionUpdateActorInLevel(updatedActor, prevWorldPosition, worldPosition);
+
+	std::shared_ptr<ActorOnTile> actorOnTile = Cast<ActorOnTile>(updatedActor.lock());
+	if (!actorOnTile)
+	{
+		return;
+	}
+
+	/* 이전 위치에서 등록 해제*/
+	UnregisterActorOnTilemap(actorOnTile, static_cast<Vector2Int>(prevWorldPosition));
+
+	/* 새로운 위치에 등록 */
+	RegisterActorOnTilemap(actorOnTile);
+}
+
+void TilemapLevel::OnDestroyedActorInLevel(std::weak_ptr<Actor> destoryedActor)
+{
+	super::OnDestroyedActorInLevel(destoryedActor);
+
+	std::shared_ptr<ActorOnTile> actorOnTile = Cast<ActorOnTile>(destoryedActor.lock());
+	if (!actorOnTile)
+	{
+		return;
+	}
+
+	/* Destroy전 등록 해제 */
+	UnregisterActorOnTilemap(actorOnTile);
+}
+
 bool TilemapLevel::CanNextMove(const Actor& checkActor, const Vector2Float& nextPosition)
 {
 	const eTileCategory nextTileCategory = tileMap->GetTileCategory(nextPosition);
 	return eTileCategory::Ground == nextTileCategory;
+}
+
+void TilemapLevel::ProcessTilemapCollision()
+{
+	assert(tileMap && "Invalid tileMap");
+
+	using CollisionActorPair = std::pair<std::shared_ptr<ActorOnTile>, std::shared_ptr<ActorOnTile>>;
+
+	//타일맵 기반 충돌 처리 : 한 타일에 겹쳐있는 Actor들끼리만 처리한다.
+	for (auto& iterActorListOnTile : mapActorListOnTilemap)
+	{
+		const Vector2Int& tilePosition = iterActorListOnTile.first;
+		auto& actorListOnTile = iterActorListOnTile.second;
+		const size_t actorListNum = actorListOnTile.size();
+
+		//TODO : 벽 타일에 충돌된 Actor에 알림 보내야 함
+
+		//충돌 처리에 대한 알림을 보낼 Actor 쌍들
+		std::vector<CollisionActorPair> collidedActorList;
+
+		/* 타일 내 액터들을 순회하면서 충돌 쌍들 검출 */
+		for (size_t ix = 0; ix < actorListNum; ++ix)
+		{
+			std::shared_ptr<ActorOnTile> leftActor = actorListOnTile[ix].lock();
+
+			// 액터가 유효하지 않거나 비활성화 상태라면 건너뛰기
+			if (!leftActor || !leftActor->IsActive())
+			{
+				continue;
+			}
+
+			for (size_t jx = ix + 1; jx < actorListNum; ++jx)
+			{
+				std::shared_ptr<ActorOnTile> rightActor = actorListOnTile[jx].lock();
+
+				// 액터가 유효하지 않거나 비활성화 상태라면 건너뛰기
+				if (!rightActor || !rightActor->IsActive())
+				{
+					continue;
+				}
+
+				//같은 타일에 겹쳐있으면 충돌되었다고 판정하고 충돌 목록에 추가함
+				collidedActorList.emplace_back(CollisionActorPair(leftActor, rightActor));
+			}
+		}
+
+		if (collidedActorList.empty())
+		{
+			continue;
+		}
+
+		//충돌한 Actor 쌍들에 각각 이벤트 전달
+		for (const CollisionActorPair& pair : collidedActorList)
+		{
+			//앞선 충돌 체크등에서 이미 삭제되거나 비활성화된 Actor 제외
+			const std::shared_ptr<ActorOnTile>& leftActor = pair.first;
+			const std::shared_ptr<ActorOnTile>& rightActor = pair.second;
+			if (!leftActor->IsActive() || !rightActor->IsActive())
+			{
+				continue;
+			}
+
+			leftActor->OnCollision(rightActor);
+			rightActor->OnCollision(leftActor);
+		}
+	}
+	
 }
 
 void TilemapLevel::BuildTilemapBSP()
@@ -221,4 +335,67 @@ void TilemapLevel::PlayerPawnSpawn()
 	assert(playerStart && "playerStart Invalid..");
 	
 	playerPawn = SpawnActor<PlayerPawn>(playerStart->GetWorldPosition());
+}
+
+void TilemapLevel::RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile)
+{
+	if (!actorOnTile)
+	{
+		return;
+	}
+
+	RegisterActorOnTilemap(actorOnTile, static_cast<Vector2Int>(actorOnTile->GetWorldPosition()));
+}
+
+void TilemapLevel::RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Vector2Int& position)
+{
+	if (!actorOnTile)
+	{
+		return;
+	}
+
+	/* 해당 위치 타일의 Actor 리스트에 대상 Actor를 추가한다. */
+	auto& actorListOnTile = mapActorListOnTilemap[position];
+	actorListOnTile.emplace_back(actorOnTile);
+}
+
+void TilemapLevel::UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile)
+{
+	if (!actorOnTile)
+	{
+		return;
+	}
+
+	UnregisterActorOnTilemap(actorOnTile, static_cast<Vector2Int>(actorOnTile->GetWorldPosition()));
+}
+
+void TilemapLevel::UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Vector2Int& position)
+{
+	if (!actorOnTile)
+	{
+		return;
+	}
+
+	const auto& findActorListOnTile = mapActorListOnTilemap.find(position);
+	if (findActorListOnTile == mapActorListOnTilemap.end())
+	{
+		return;
+	}
+
+	auto& actorListOnTile = findActorListOnTile->second;
+
+	auto remove_pred = [&actorOnTile](const std::weak_ptr<Actor>& weakPtr)
+		{
+			auto ptr = weakPtr.lock();
+
+			//만료되었거나 대상 액터와 포인터 주소가 같은 경우 제거 대상
+			return weakPtr.lock() == actorOnTile;
+		};
+
+	actorListOnTile.erase(std::remove_if(actorListOnTile.begin(), actorListOnTile.end(), remove_pred), actorListOnTile.end());
+	if (actorListOnTile.empty())
+	{
+		/* Actor 리스트가 비었으면 map에서도 제거해준다. */
+		mapActorListOnTilemap.erase(position);
+	}
 }

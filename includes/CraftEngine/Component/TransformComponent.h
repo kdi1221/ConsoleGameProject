@@ -14,7 +14,8 @@ namespace Craft
 		TYPE_DECLARATIONS(TransformComponent, Component)
 
 	public:
-		using OnUpdatedPosition = std::function<void(const Vector2Float&, const Vector2Float&)>;
+		/* 이전 로컬, 월드 좌표 및 현재 로컬, 월드 좌표 전달 */
+		using OnUpdatedPosition = std::function<void(const Vector2Float&, const Vector2Float&, const Vector2Float&, const Vector2Float&)>;
 
 	public:
 		TransformComponent(const Vector2Float& localPosition = Vector2Float::Zero);

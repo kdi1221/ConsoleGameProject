@@ -37,13 +37,12 @@ namespace Craft
 		// 부모가 없는 경우에는 새 위치를 로컬 위치에 설정.
 		if (!parentTransform)
 		{
-			localPosition = newPosition;
+			SetLocalPosition(newPosition);
 			return;
 		}
 
 		//월드 위치에서 부모의 위치를 뺀 값을 로컬 위치에 저장.
 		SetLocalPosition(newPosition - parentTransform->GetWorldPosition());
-		//localPosition = newPosition - parentTransform->GetWorldPosition();
 	}
 
 	void TransformComponent::SetUpdatedPositionCallback(const OnUpdatedPosition& inCallback)
@@ -58,12 +57,16 @@ namespace Craft
 
 	void TransformComponent::SetLocalPosition(const Vector2Float& newPosition)
 	{ 
+		const Vector2Float previousLocalPosition = localPosition;
+		const Vector2Float previousWorldPosition = GetWorldPosition();
+
 		localPosition = newPosition; 
+		const Vector2Float currentWorldPosition = GetWorldPosition();
 
 		/* 위치 업데이트에 대한 콜백 호출 */
 		if (onUpdatePositionCallback)
 		{
-			onUpdatePositionCallback(GetLocalPosition(), GetWorldPosition());
+			onUpdatePositionCallback(previousLocalPosition, previousWorldPosition, localPosition, currentWorldPosition);
 		}
 	}
 }

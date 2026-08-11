@@ -8,6 +8,16 @@ namespace Craft
 	Actor::Actor(const Vector2Float& position)
 	{
 		transform = std::make_shared<TransformComponent>(position);
+		assert(transform && "transformComponent invalid..");
+	
+		//위치 변경시 호출되는 이벤트 대기
+		transform->SetUpdatedPositionCallback(
+			std::bind(&Actor::OnUpdatedPosition,
+				this,
+				std::placeholders::_1,
+				std::placeholders::_2,
+				std::placeholders::_3,
+				std::placeholders::_4));
 	}
 
 	//Actor::Actor(const std::string& image, const Vector2& position, Color color)
@@ -106,6 +116,12 @@ namespace Craft
 			{
 				childActor->Destroy();
 			}
+		}
+
+		/* Destroy될때 이벤트 호출 */
+		if (onDestroyed)
+		{
+			onDestroyed(weak_from_this());
 		}
 	}
 
@@ -234,6 +250,26 @@ namespace Craft
 		return transform ? transform->GetPreviousWorldPosition() : Vector2Float::Zero;
 	}
 
+	void Actor::SetUpdatedPositionCallback(const OnPositionUpdatedType& inCallback)
+	{
+		onPositionUpdated = inCallback;
+	}
+
+	void Actor::SetUpdatedPositionCallback(OnPositionUpdatedType&& inCallback)
+	{
+		onPositionUpdated = std::move(inCallback);
+	}
+
+	void Actor::SetOnDestroyedCallback(const OnDestroyCallbackType& inCallback)
+	{
+		onDestroyed = inCallback;
+	}
+
+	void Actor::SetOnDestroyedCallback(OnDestroyCallbackType&& inCallback)
+	{
+		onDestroyed = std::move(inCallback);
+	}
+
 	void Actor::ProcessAddComponents()
 	{
 		//추가 요청된 Component 목록이 있는지 확인.
@@ -297,6 +333,17 @@ namespace Craft
 			{
 				component->SetOwner(actor);
 			}
+		}
+	}
+
+	void Actor::OnUpdatedPosition(const Vector2Float& prevLocalPosition, 
+									const Vector2Float& prevWorldPosition, 
+									const Vector2Float& localPosition, 
+									const Vector2Float& worldPosition)
+	{
+		if (onPositionUpdated)
+		{
+			onPositionUpdated(weak_from_this(), prevWorldPosition, worldPosition);
 		}
 	}
 }

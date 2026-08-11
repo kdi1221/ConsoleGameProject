@@ -1,6 +1,7 @@
 ﻿#include "FireProjectileComponent.h"
 #include "Actor/Projectile/Projectile.h"
 #include "Level/Level.h"
+#include <Util/Util.h>
 #include <cassert>
 #include <windows.h>
 
@@ -9,10 +10,12 @@ using namespace Craft;
 FireProjectileComponent::FireProjectileComponent(float fireInterval,
 												const std::wstring& inProjectileImage,
 												Color inProjectileColor,
-												float inProjectileMoveDelay)
+												float inProjectileMoveDelayMin,
+												float inProjectileMoveDelayMax)
 	:projectileImage(inProjectileImage)
 	,projectileColor(inProjectileColor)
-	,projectileMoveDelay(inProjectileMoveDelay)
+	,projectileMoveDelayMin(inProjectileMoveDelayMin)
+	,projectileMoveDelayMax(inProjectileMoveDelayMax)
 {
 	timerFireInterval.SetTargetTime(fireInterval);
 }
@@ -67,6 +70,8 @@ void FireProjectileComponent::SpawnProjectile()
 	//Projectile Spawn Position Offset(Actor Pos + Offset)
 	const Vector2Float spawnPosition = ownerActor->GetWorldPosition() + projectileSpawnOffset;
 
+	//발사체의 이동 딜레이(랜덤 지정)
+	const float projectileMoveDelay = Util::RandomRange(projectileMoveDelayMin, projectileMoveDelayMax);
 	ownerLevel->SpawnActor<Projectile>(spawnPosition, projectileImage, projectileColor, projectileAimingPosition, projectileMoveDelay);
 }
 

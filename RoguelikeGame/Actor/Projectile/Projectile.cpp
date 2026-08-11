@@ -3,7 +3,8 @@
 #include "Component/BoxCollisionComponent.h"
 #include "Component/MovementComponent.h"
 #include "Types/Enums.h"
-
+#include <cassert>
+#include <StaticLibrary/StaticFunctionLibrary.h>
 
 using namespace Craft;
 
@@ -18,12 +19,22 @@ Projectile::Projectile(const Craft::Vector2Float& inPosition,
 	// 필요한 컴포넌트 추가.
 	AddComponent<SpriteRendererComponent>(inImage, inColor, static_cast<int>(eRenderSortingOrder::Projectile));
 	AddComponent<BoxCollisionComponent>(1);
-	movementComponent = AddComponent<MovementComponent>(moveDelay);
+	pathMoveComponent = AddComponent<PathMoveComponent>(moveDelay, std::bind(&Projectile::OnCallbackMoveFinish, this));
 }
 
-void Projectile::Tick(float deltaTime)
+void Projectile::BeginPlay()
 {
-	super::Tick(deltaTime);
+	super::BeginPlay();
 
-	//TODO : 브레젠험 알고리즘을 통해 얻은 경로대로 이동 필요..
+	assert(pathMoveComponent && "pathMoveComponent invalid..");
+
+	//TODO : 시작위치에서 충돌감지되었을때 Destory
+
+	pathMoveComponent->StartMoveToPosition(static_cast<Vector2Int>(destinationPos));
+}
+
+void Projectile::OnCallbackMoveFinish()
+{
+	/* 목적지에 도착했으면 Destory 처리 */
+	Destroy();
 }

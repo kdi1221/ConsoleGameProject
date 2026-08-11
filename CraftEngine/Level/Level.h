@@ -50,6 +50,9 @@ namespace Craft
 			//액터의 Owner 지정
 			newActor->SetOwner(weak_from_this());
 
+			//레벨에 특정 Actor가 스폰되었음을 알림
+			OnSpawnedActor(newActor);
+
 			//생성된 액터 반환.
 			return newActor;
 		}
@@ -102,6 +105,19 @@ namespace Craft
 
 		// 액터의 이전 프레임 상태 저장 함수.
 		void SavePreviousActorStates();
+
+	protected:
+		/* 특정 Actor가 레벨안에 스폰됨 */
+		virtual void OnSpawnedActor(std::shared_ptr<Actor> spawnedActor);
+
+		/* 레벨안의 특정 Actor의 위치 업데이트 */
+		virtual void OnPositionUpdateActorInLevel(std::weak_ptr<Actor> updatedActor, 
+													const Vector2Float& prevWorldPosition, 
+													const Vector2Float& worldPosition);
+
+		/* 레벨안의 특정 Actor Destroy */
+		virtual void OnDestroyedActorInLevel(std::weak_ptr<Actor> destoryedActor);
+
 
 	protected:
 		//레벨 초기화 여부 플래그

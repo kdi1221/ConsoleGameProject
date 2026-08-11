@@ -27,6 +27,10 @@ namespace Craft
 		// 타입 정보 설정을 위한 매크로 추가.
 		TYPE_DECLARATIONS(Actor, CraftObject)
 
+	private:
+		using OnPositionUpdatedType = std::function<void(std::weak_ptr<Actor>, const Vector2Float&, const Vector2Float&)>;
+		using OnDestroyCallbackType = std::function<void(std::weak_ptr<Actor>)>;
+
 	public:
 		Actor(const Vector2Float& position = Vector2Float::Zero);
 		/*Actor(const std::string& image = "", 
@@ -47,7 +51,7 @@ namespace Craft
 		//void ChangeImage(const std::string& newImage);
 
 		// 액터를 레벨에서 제거할 때 사용할 함수.
-		void Destroy();
+		virtual void Destroy();
 
 		// 게임(엔진)종료 요청 함수
 		void QuitGame();
@@ -131,12 +135,27 @@ namespace Craft
 		//자식 Actor 목록 반환 함수.
 		inline const std::vector<std::weak_ptr<Actor>>& GetChildren() const { return children; }
 
+	public:
+		/* 이벤트에 대해 호출되는 콜백 지정 */
+		void SetUpdatedPositionCallback(const OnPositionUpdatedType& inCallback);
+		void SetUpdatedPositionCallback(OnPositionUpdatedType&& inCallback);
+
+		void SetOnDestroyedCallback(const OnDestroyCallbackType& inCallback);
+		void SetOnDestroyedCallback(OnDestroyCallbackType&& inCallback);
+
 	protected:
 		//추가 요청된 Component를 실제 목록에 추가 처리하는 함수.
 		void ProcessAddComponents();
 
 		//Component에 오너십 설정하는 함수.
 		void BindComponentOwners();
+
+	protected:
+		/* 위치 변경시 호출되는 이벤트 */
+		virtual void OnUpdatedPosition(const Vector2Float& prevLocalPosition, 
+										const Vector2Float& prevWorldPosition,
+										const Vector2Float& localPosition,
+										const Vector2Float& worldPosition);
 
 	protected:
 		// BeginPlay 이벤트 처리 여부 플래그
@@ -183,6 +202,13 @@ namespace Craft
 
 		//// 이전 프레임 위치.
 		//Vector2 previousPosition;
+
+	private:
+		/* 위치 업데이트 시 호출되는 콜백 이벤트 */
+		OnPositionUpdatedType onPositionUpdated;
+
+		/* Destroy될때 호출되는 콜백 이벤트 */
+		OnDestroyCallbackType onDestroyed;
 	};
 }
 

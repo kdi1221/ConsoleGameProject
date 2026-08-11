@@ -15,7 +15,8 @@ public:
 	FireProjectileComponent(float fireInterval, 
 							const std::wstring& inProjectileImage, 
 							Craft::Color inProjectileColor,
-							float inProjectileMoveDelay);
+							float inProjectileMoveDelayMin,
+							float inProjectileMoveDelayMax);
 	virtual ~FireProjectileComponent() = default;
 
 public:
@@ -48,8 +49,11 @@ private:
 	/* 스폰할 Projectile Color */
 	Craft::Color projectileColor = Craft::Color::White;
 
-	/* 스폰할 Projectile의 이동 딜레이 */
-	float projectileMoveDelay = 0.f;
+	/* 스폰할 Projectile의 이동 딜레이(최소) */
+	float projectileMoveDelayMin = 0.f;
+
+	/* 스폰할 Projectile의 이동 딜레이(최대) */
+	float projectileMoveDelayMax = 0.f;
 
 	/* Projectile 스폰 시 Offset(타일 기반)*/
 	Craft::Vector2Float projectileSpawnOffset = Craft::Vector2Float::Up;

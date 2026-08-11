@@ -3,6 +3,8 @@
 #include "Render/Renderer.h"
 #include "Engine/Engine.h"
 #include "Types/Enums.h"
+#include <Level/TilemapLevel.h>
+#include <cassert>
 
 Game::Game()
 {
@@ -21,6 +23,18 @@ void Game::Draw()
 	DrawFPSString();
 
 	Engine::Draw();
+}
+
+void Game::ProcessColiision()
+{
+	//기존 AABB기반의 충돌처리가 아닌 타일 기반의 충돌처리
+	std::shared_ptr<TilemapLevel> tilemapLevel = Cast<TilemapLevel>(mainLevel);
+	if (!tilemapLevel)
+	{
+		return;
+	}
+
+	tilemapLevel->ProcessTilemapCollision();
 }
 
 std::unique_ptr<Craft::ConfigBase> Game::CreateConfig() const

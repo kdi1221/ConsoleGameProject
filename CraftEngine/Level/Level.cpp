@@ -1,5 +1,6 @@
 ﻿#include "Level.h"
 #include "Actor/Actor.h"
+#include <cassert>
 
 namespace Craft
 {
@@ -118,5 +119,30 @@ namespace Craft
 
 			actor->SavePreviousState();
 		}
+	}
+
+	void Level::OnSpawnedActor(std::shared_ptr<Actor> spawnedActor)
+	{
+		assert(spawnedActor && "Invalid spawnedActor");
+
+		/* 생성된 Actor의 위치 업데이트 이벤트에 대한 콜백을 등록한다. */
+		spawnedActor->SetUpdatedPositionCallback(std::bind(&Level::OnPositionUpdateActorInLevel, 
+															this, 
+															std::placeholders::_1, 
+															std::placeholders::_2, 
+															std::placeholders::_3));
+
+		/* 생성된 Actor의 Destory 이벤트에 대한 콜백을 등록한다. */
+		spawnedActor->SetOnDestroyedCallback(std::bind(&Level::OnDestroyedActorInLevel, this, std::placeholders::_1));
+	}
+
+	void Level::OnPositionUpdateActorInLevel(std::weak_ptr<Actor> updatedActor, const Vector2Float& prevWorldPosition, const Vector2Float& worldPosition)
+	{
+	
+	}
+
+	void Level::OnDestroyedActorInLevel(std::weak_ptr<Actor> destoryedActor)
+	{
+	
 	}
 }

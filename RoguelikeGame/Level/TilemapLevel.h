@@ -4,6 +4,7 @@
 #include "Types/Defines.h"
 #include <Memory>
 #include <map>
+#include <unordered_map>
 
 namespace Craft
 {
@@ -15,12 +16,16 @@ class Tilemap;
 class Room;
 class PlayerStart;
 class PlayerPawn;
+class ActorOnTile;
 
 //타일맵 기반 레벨
 class TilemapLevel : public Craft::Level
 {
+	TYPE_DECLARATIONS(TilemapLevel, Level)
+
 public:
 	using RoomMapType = std::map<RoomDefines::UNIQUE_INDEX_TYPE, std::unique_ptr<Room>>;
+	using TilemapActorListType = std::unordered_map<Craft::Vector2Int, std::vector<std::weak_ptr<ActorOnTile>>>;
 
 public:
 	TilemapLevel();
@@ -31,8 +36,25 @@ protected:
 	virtual void Tick(float deltaTime) override;
 	virtual void Draw() override;
 
+protected:
+	/* 특정 Actor가 레벨안에 스폰됨 */
+	virtual void OnSpawnedActor(std::shared_ptr<Craft::Actor> spawnedActor);
+
+	/* 레벨안의 특정 Actor의 위치 업데이트 */
+	virtual void OnPositionUpdateActorInLevel(std::weak_ptr<Craft::Actor> updatedActor,
+											const Craft::Vector2Float& prevWorldPosition,
+											const Craft::Vector2Float& worldPosition);
+
+	/* 레벨안의 특정 Actor Destroy */
+	virtual void OnDestroyedActorInLevel(std::weak_ptr<Craft::Actor> destoryedActor);
+
+protected:
 	/* 다음 위치(nextPosition)로 actor가 이동할 수 있는지 확인 */
 	virtual bool CanNextMove(const Craft::Actor& checkActor, const Craft::Vector2Float& nextPosition) override;
+
+public:
+	/* 타일맵 기반 충돌 처리 */
+	void ProcessTilemapCollision();
 
 private:
 	/* BSP를 활용한 랜덤타일맵 생성 */
@@ -47,6 +69,14 @@ private:
 	/* 플레이어 폰 스폰 */
 	void PlayerPawnSpawn();
 
+	/* 타일맵 인덱스별로 Actor 등록 */
+	void RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile);
+	void RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Craft::Vector2Int& position);
+
+	/* 타일맵 인덱스별로 Actor 등록 해제 */
+	void UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile);
+	void UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Craft::Vector2Int& position);
+
 private:
 	/* 맵 상의 존재하는 타일맵 객체 */
 	std::unique_ptr<Tilemap> tileMap;
@@ -59,5 +89,8 @@ private:
 
 	//생성된 플레이어 폰
 	std::shared_ptr<PlayerPawn> playerPawn;
+
+	//타일맵 내 타일 인덱스마다 존재하는 Actor 리스트들
+	TilemapActorListType mapActorListOnTilemap;
 };
 
