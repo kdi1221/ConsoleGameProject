@@ -3,7 +3,6 @@
 #include <memory>
 #include "Types/Defines.h"
 #include "Types/Enums.h"
-#include "Math/Vector2Float.h"
 
 class RoomSpace;
 
@@ -19,7 +18,6 @@ public:
 	void SetRoomType(eRoomType newType);
 
 public:
-	//Craft::Vector2Float GetRandomTilePositionInRoom() const;
 	const RoomSpace& GetRoomSpace() const;
 
 public:

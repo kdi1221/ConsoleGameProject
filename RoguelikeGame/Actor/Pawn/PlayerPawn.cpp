@@ -1,6 +1,5 @@
 ﻿#include "PlayerPawn.h"
 #include "Math/Color.h"
-//#include "Component/TransformComponent.h"
 #include "Component/CameraComponent.h"
 #include "Component/FireProjectileComponent.h"
 #include "Actor/Projectile/Projectile.h"
@@ -32,11 +31,6 @@ PlayerPawn::PlayerPawn(const Craft::Vector2Float& position)
 	inputComponent->AddInputCallback(VK_DOWN, fireInputTrigger);
 	inputComponent->AddInputCallback(VK_LEFT, fireInputTrigger);
 	inputComponent->AddInputCallback(VK_RIGHT, fireInputTrigger);
-
-	/* 위치 변경 시 호출 */
-	/*std::shared_ptr<TransformComponent> transformComponent = GetTransform();
-	assert(transformComponent && "transformComponent invalid..");
-	transformComponent->SetUpdatedPositionCallback(std::bind(&PlayerPawn::OnUpdatePosition, this, std::placeholders::_1, std::placeholders::_2));*/
 
 	/* 카메라 컴포넌트 */
 	cameraComponent = AddComponent<CameraComponent>();
@@ -142,11 +136,6 @@ void PlayerPawn::OnProjectileFireKeyInput(int keyCode, eInputTrigger inputTrigge
 
 	fireInputValue += addInputValue;
 }
-
-//void PlayerPawn::OnUpdatePosition(const Vector2Float& localPosition, const Vector2Float& worldPosition)
-//{
-//	UpdateViewCameraPosition(static_cast<Vector2Int>(worldPosition));
-//}
 
 void PlayerPawn::UpdateViewCameraPosition(const Craft::Vector2Int& viewPosition)
 {

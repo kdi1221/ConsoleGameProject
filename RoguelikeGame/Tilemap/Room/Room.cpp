@@ -25,17 +25,6 @@ void Room::SetRoomType(eRoomType newType)
 	roomType = newType;
 }
 
-//Vector2Float Room::GetRandomTilePositionInRoom() const
-//{
-//	const RoomSpace& roomSpace = GetRoomSpace();
-//	const RoomSpace::RoomTileIndices& roomTileIndices = roomSpace.GetInnerTileIndices();
-//
-//	const int randomTileIndex = Util::RandomRange(0, static_cast<int>(roomTileIndices.size() - 1));
-//	assert((randomTileIndex >= 0 && randomTileIndex < roomTileIndices.size()) && "Invalid Random Tile Index");
-//
-//	return static_cast<Vector2Float>(roomTileIndices[randomTileIndex]);
-//}
-
 const RoomSpace& Room::GetRoomSpace() const
 {
 	const RoomSpace* roomSpacePtr = roomSpace.get();

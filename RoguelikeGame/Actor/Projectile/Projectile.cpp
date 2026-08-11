@@ -26,11 +26,24 @@ void Projectile::BeginPlay()
 {
 	super::BeginPlay();
 
+	/* 지정된 목적지를 향해 경로를 생성하고 이동 시작 */
 	assert(pathMoveComponent && "pathMoveComponent invalid..");
-
-	//TODO : 시작위치에서 충돌감지되었을때 Destory
-
 	pathMoveComponent->StartMoveToPosition(static_cast<Vector2Int>(destinationPos));
+}
+
+void Projectile::OnTileOverlap(const eTileCategory tileCategory)
+{
+	super::OnTileOverlap(tileCategory);
+
+	switch (tileCategory)
+	{
+	case eTileCategory::Wall:
+		{
+			/* 현재 겹친 타일이 벽타일인 경우 => 제거 */
+			Destroy();
+		}
+		break;
+	}
 }
 
 void Projectile::OnCallbackMoveFinish()

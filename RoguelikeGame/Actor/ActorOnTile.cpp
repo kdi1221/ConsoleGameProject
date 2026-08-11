@@ -10,6 +10,11 @@ ActorOnTile::ActorOnTile(const Vector2Float& position)
 
 }
 
+void ActorOnTile::OnTileOverlap(const eTileCategory tileCategory)
+{
+
+}
+
 //void ActorOnTile::BeginPlay()
 //{
 //	super::BeginPlay();

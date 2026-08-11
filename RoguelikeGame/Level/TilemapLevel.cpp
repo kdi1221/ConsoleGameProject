@@ -119,67 +119,106 @@ void TilemapLevel::ProcessTilemapCollision()
 {
 	assert(tileMap && "Invalid tileMap");
 
-	using CollisionActorPair = std::pair<std::shared_ptr<ActorOnTile>, std::shared_ptr<ActorOnTile>>;
-
-	//타일맵 기반 충돌 처리 : 한 타일에 겹쳐있는 Actor들끼리만 처리한다.
+	// Actor가 위치한 타일의 종류에 따른 처리
+	using TileOverlapActorPair = std::pair<eTileCategory, std::shared_ptr<ActorOnTile>>;
+	std::vector<TileOverlapActorPair> tileOverlapActorList;
 	for (auto& iterActorListOnTile : mapActorListOnTilemap)
 	{
 		const Vector2Int& tilePosition = iterActorListOnTile.first;
 		auto& actorListOnTile = iterActorListOnTile.second;
-		const size_t actorListNum = actorListOnTile.size();
 
-		//TODO : 벽 타일에 충돌된 Actor에 알림 보내야 함
-
-		//충돌 처리에 대한 알림을 보낼 Actor 쌍들
-		std::vector<CollisionActorPair> collidedActorList;
-
-		/* 타일 내 액터들을 순회하면서 충돌 쌍들 검출 */
-		for (size_t ix = 0; ix < actorListNum; ++ix)
+		const eTileCategory tileCategory = tileMap->GetTileCategory(static_cast<Vector2Float>(tilePosition));
+		for (std::weak_ptr<ActorOnTile>& ptrActorOnTile : actorListOnTile)
 		{
-			std::shared_ptr<ActorOnTile> leftActor = actorListOnTile[ix].lock();
+			std::shared_ptr<ActorOnTile> actorOnTile = ptrActorOnTile.lock();
 
 			// 액터가 유효하지 않거나 비활성화 상태라면 건너뛰기
-			if (!leftActor || !leftActor->IsActive())
+			if (!actorOnTile || !actorOnTile->IsActive())
 			{
 				continue;
 			}
 
-			for (size_t jx = ix + 1; jx < actorListNum; ++jx)
+			tileOverlapActorList.emplace_back(TileOverlapActorPair(tileCategory, actorOnTile));
+		}
+	}
+
+	//수집된 타일별 Actor들에 대해 일괄적으로 TileOverlap 알림을 보낸다.
+	for (const TileOverlapActorPair& pair : tileOverlapActorList)
+	{
+		eTileCategory overlapTileCategory = pair.first;
+		const std::shared_ptr<ActorOnTile>& overlapActor = pair.second;
+
+		//앞선 충돌 체크등에서 이미 삭제되거나 비활성화된 Actor 제외
+		if (!overlapActor->IsActive())
+		{
+			continue;
+		}
+
+		overlapActor->OnTileOverlap(overlapTileCategory);
+	}
+
+	/* 타일 내 겹치는 Actor들의 충돌 쌍들 검출 */
+	using CollisionActorPair = std::pair<std::shared_ptr<ActorOnTile>, std::shared_ptr<ActorOnTile>>;
+	auto makeCollidedSet = [](std::vector<std::weak_ptr<ActorOnTile>>& inActorListOnTile, std::vector<CollisionActorPair>& outCollidedActorList)
+		{
+			const size_t actorListNum = inActorListOnTile.size();
+
+			/* 타일 내 액터들을 순회하면서 충돌 쌍들 검출 */
+			for (size_t ix = 0; ix < actorListNum; ++ix)
 			{
-				std::shared_ptr<ActorOnTile> rightActor = actorListOnTile[jx].lock();
+				std::shared_ptr<ActorOnTile> leftActor = inActorListOnTile[ix].lock();
 
 				// 액터가 유효하지 않거나 비활성화 상태라면 건너뛰기
-				if (!rightActor || !rightActor->IsActive())
+				if (!leftActor || !leftActor->IsActive())
 				{
 					continue;
 				}
 
-				//같은 타일에 겹쳐있으면 충돌되었다고 판정하고 충돌 목록에 추가함
-				collidedActorList.emplace_back(CollisionActorPair(leftActor, rightActor));
+				for (size_t jx = ix + 1; jx < actorListNum; ++jx)
+				{
+					std::shared_ptr<ActorOnTile> rightActor = inActorListOnTile[jx].lock();
+
+					// 액터가 유효하지 않거나 비활성화 상태라면 건너뛰기
+					if (!rightActor || !rightActor->IsActive())
+					{
+						continue;
+					}
+
+					//같은 타일에 겹쳐있으면 충돌되었다고 판정하고 충돌 목록에 추가함
+					outCollidedActorList.emplace_back(CollisionActorPair(leftActor, rightActor));
+				}
 			}
-		}
+		};
+
+
+	//충돌 처리에 대한 알림을 보낼 Actor 쌍들 생성
+	std::vector<CollisionActorPair> collidedActorList;
+
+	//타일맵 기반 충돌 처리 : 한 타일에 겹쳐있는 Actor들끼리만 처리한다.
+	for (auto& iterActorListOnTile : mapActorListOnTilemap)
+	{	
+		makeCollidedSet(iterActorListOnTile.second, collidedActorList);
 
 		if (collidedActorList.empty())
 		{
 			continue;
 		}
-
-		//충돌한 Actor 쌍들에 각각 이벤트 전달
-		for (const CollisionActorPair& pair : collidedActorList)
-		{
-			//앞선 충돌 체크등에서 이미 삭제되거나 비활성화된 Actor 제외
-			const std::shared_ptr<ActorOnTile>& leftActor = pair.first;
-			const std::shared_ptr<ActorOnTile>& rightActor = pair.second;
-			if (!leftActor->IsActive() || !rightActor->IsActive())
-			{
-				continue;
-			}
-
-			leftActor->OnCollision(rightActor);
-			rightActor->OnCollision(leftActor);
-		}
 	}
-	
+
+	//충돌한 Actor 쌍들에 각각 이벤트 전달
+	for (const CollisionActorPair& pair : collidedActorList)
+	{
+		//앞선 충돌 체크등에서 이미 삭제되거나 비활성화된 Actor 제외
+		const std::shared_ptr<ActorOnTile>& leftActor = pair.first;
+		const std::shared_ptr<ActorOnTile>& rightActor = pair.second;
+		if (!leftActor->IsActive() || !rightActor->IsActive())
+		{
+			continue;
+		}
+
+		leftActor->OnCollision(rightActor);
+		rightActor->OnCollision(leftActor);
+	}
 }
 
 void TilemapLevel::BuildTilemapBSP()
