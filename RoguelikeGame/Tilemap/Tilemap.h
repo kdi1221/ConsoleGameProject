@@ -33,13 +33,18 @@ public:
 	void Tick(float deltaTime);
 	void Draw();
 
+	void SetTileRoomIndex(int xPos, int yPos, RoomDefines::UNIQUE_INDEX_TYPE roomIndex);
 	void SetTileCategory(int xPos, int yPos, eTileCategory category);
 
 	/* 해당 위치에 존재하는 타일 종류 반환 */
-	eTileCategory GetTileCategory(const Craft::Vector2Float& position) const;
+	eTileCategory GetTileCategory(const Craft::Vector2Int& position) const;
+	RoomDefines::UNIQUE_INDEX_TYPE GetTileRoomIndex(const Craft::Vector2Int& position) const;
 
 public:
 	inline Craft::Level& GetOwnerLevel() const { return ownerLevel; }
+
+private:
+	Tile* GetTile(int xPos, int yPos) const;
 
 private:
 	//이 타일맵을 소유하는 Level;

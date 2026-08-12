@@ -28,11 +28,11 @@ namespace Craft
 		TYPE_DECLARATIONS(Actor, CraftObject)
 
 	private:
-		using OnPositionUpdatedType = std::function<void(std::weak_ptr<Actor>, const Vector2Float&, const Vector2Float&)>;
+		using OnPositionUpdatedType = std::function<void(std::weak_ptr<Actor>, const Vector2Int&, const Vector2Int&)>;
 		using OnDestroyCallbackType = std::function<void(std::weak_ptr<Actor>)>;
 
 	public:
-		Actor(const Vector2Float& position = Vector2Float::Zero);
+		Actor(const Vector2Int& position = Vector2Int::Zero);
 		/*Actor(const std::string& image = "", 
 			const Vector2& position = Vector2::Zero, 
 			Color color = Color::White);*/
@@ -116,12 +116,12 @@ namespace Craft
 		inline std::shared_ptr<Level> GetOwner() const { return owner.lock(); }
 		void SetOwner(std::weak_ptr<Level> newOwner);
 
-		Vector2Float GetPosition() const;
-		Vector2Float GetWorldPosition() const;
-		void SetPosition(const Vector2Float& newPosition);
+		Vector2Int GetPosition() const;
+		Vector2Int GetWorldPosition() const;
+		void SetPosition(const Vector2Int& newPosition);
 
 		//이전 위치 반환 함수.
-		Vector2Float GetPreviousPosition() const;
+		Vector2Int GetPreviousPosition() const;
 
 		//액터의 문자열 너비 반환 함수.
 		//inline int GetWidth() const { return width; }
@@ -152,10 +152,10 @@ namespace Craft
 
 	protected:
 		/* 위치 변경시 호출되는 이벤트 */
-		virtual void OnUpdatedPosition(const Vector2Float& prevLocalPosition, 
-										const Vector2Float& prevWorldPosition,
-										const Vector2Float& localPosition,
-										const Vector2Float& worldPosition);
+		virtual void OnUpdatedPosition(const Vector2Int& prevLocalPosition,
+										const Vector2Int& prevWorldPosition,
+										const Vector2Int& localPosition,
+										const Vector2Int& worldPosition);
 
 	protected:
 		// BeginPlay 이벤트 처리 여부 플래그

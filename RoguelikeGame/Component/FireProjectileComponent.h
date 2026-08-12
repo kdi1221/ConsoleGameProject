@@ -2,8 +2,9 @@
 
 #include "Component/Component.h"
 #include "Util/Timer.h"
-#include "Math/Color.h"
-#include "Math/Vector2Float.h"
+#include "Types/Enums.h"
+#include <Math/Color.h>
+#include <Math/Vector2Int.h>
 #include <string>
 
 /* Projectile 발사 컴포넌트 */
@@ -16,7 +17,9 @@ public:
 							const std::wstring& inProjectileImage, 
 							Craft::Color inProjectileColor,
 							float inProjectileMoveDelayMin,
-							float inProjectileMoveDelayMax);
+							float inProjectileMoveDelayMax,
+							eTeamID teamID,
+							int damage);
 	virtual ~FireProjectileComponent() = default;
 
 public:
@@ -24,10 +27,10 @@ public:
 	void SetEnableFire(bool enable);
 
 	/* projectile 스폰될 offset 지정 */
-	void SetProjectileSpawnOffset(const Craft::Vector2Float& offset);
+	void SetProjectileSpawnOffset(const Craft::Vector2Int& offset);
 
 	/* 조준 위치 지정 */
-	void SetProjectileAimingPosition(const Craft::Vector2Float& position);
+	void SetProjectileAimingPosition(const Craft::Vector2Int& position);
 
 private:
 	virtual void Tick(float deltaTime) override;
@@ -56,9 +59,15 @@ private:
 	float projectileMoveDelayMax = 0.f;
 
 	/* Projectile 스폰 시 Offset(타일 기반)*/
-	Craft::Vector2Float projectileSpawnOffset = Craft::Vector2Float::Up;
+	Craft::Vector2Int projectileSpawnOffset = Craft::Vector2Int::Up;
 
 	/* 조준 위치 */
-	Craft::Vector2Float projectileAimingPosition = Craft::Vector2Float::Zero;
+	Craft::Vector2Int projectileAimingPosition = Craft::Vector2Int::Zero;
+
+	/* 탄환을 발사하는 행위자의 Team ID */
+	eTeamID instigatorTeamID = eTeamID::None;
+
+	/* 생성할 탄환의 데미지*/
+	int projectileDamage = 0;
 };
 

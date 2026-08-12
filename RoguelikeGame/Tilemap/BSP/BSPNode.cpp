@@ -116,7 +116,6 @@ void BSPNode::ConnectRooms()
 		{
 			const Vector2Float leftRoomCenter = static_cast<Vector2Float>(leftRoom->GetPositionCenter());
 			const Vector2Float rightRoomCenter = static_cast<Vector2Float>(rightRoom->GetPositionCenter());
-
 			const Vector2Float vectorBetweenRoom = rightRoomCenter - leftRoomCenter;
 			
 			//벡터길이 구하기(sqrt 생략)
@@ -232,77 +231,6 @@ void BSPNode::GetRoomLists(std::vector<RoomSpace*>& outRoomLists)
 
 void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom)
 {
-	const Vector2Int& leftRoomCenter = leftRoom.GetPositionCenter();
-	const Vector2Int& rightRoomCenter = rightRoom.GetPositionCenter();
-
-	//두 방간의 방향을 구함(left => right)
-	const Vector2Int betweenRoomVector = rightRoomCenter - leftRoomCenter;
-	Vector2Float toRightVectorDirection = static_cast<Vector2Float>(betweenRoomVector);
-	toRightVectorDirection.Normalize();
-
-	//주어진 방향 벡터가 방의 4방향벡터와 가장 가깝게 일치하는 면을 반환
-	auto getRoomsFacingFlags = [](const Vector2Float& direction)
-		{
-			using EdgeDot = std::pair<eRoomFacingFlags, float>;
-
-			auto compareDot = [](const EdgeDot& lhs, const EdgeDot& rhs)
-				{
-					return lhs.second < rhs.second;
-				};
-
-			//내적 결과 값이 가장큰 순서대로 정렬되는 우선순위 큐
-			std::priority_queue<EdgeDot, std::vector<EdgeDot>, 
-								std::function<bool(const EdgeDot&, const EdgeDot&)>> pQueue(compareDot);
-
-			//Room의 4면의 방향과 방향벡터 내적을 우선순위 큐에 삽입
-			pQueue.push(EdgeDot(eRoomFacingFlags::Up, Vector2Float::Up.DotProduct(direction)));
-			pQueue.push(EdgeDot(eRoomFacingFlags::Down, Vector2Float::Down.DotProduct(direction)));
-			pQueue.push(EdgeDot(eRoomFacingFlags::Left, Vector2Float::Left.DotProduct(direction)));
-			pQueue.push(EdgeDot(eRoomFacingFlags::Right, Vector2Float::Right.DotProduct(direction)));
-
-			//내적의 크기가 가장 큼 == 방향이 가장 일치하는 면을 반환
-			return pQueue.top().first;
-		};
-
-	auto getRoomFacingFlagInverse = [](eRoomFacingFlags FaceFlag)
-		{
-			switch (FaceFlag)
-			{
-			case eRoomFacingFlags::Left:
-				return eRoomFacingFlags::Right;
-			case eRoomFacingFlags::Up:
-				return eRoomFacingFlags::Down;
-			case eRoomFacingFlags::Right:
-				return eRoomFacingFlags::Left;
-			case eRoomFacingFlags::Down:
-				return eRoomFacingFlags::Up;
-			default:
-				//4면 중 하나의 케이스로 반드시 처리가 되어야 함
-				assert(false);
-				return eRoomFacingFlags::None;
-			}
-		};
-
-	//eRoomBetweenFace -> eRoomSide 맵핑
-	auto mappingRoomFaceToSide = [](const eRoomFacingFlags FaceFlag)
-		{
-			switch (FaceFlag)
-			{
-			case eRoomFacingFlags::Left:
-				return eRoomSides::Left;
-			case eRoomFacingFlags::Up:
-				return eRoomSides::Top;
-			case eRoomFacingFlags::Right:
-				return eRoomSides::Right;
-			case eRoomFacingFlags::Down:
-				return eRoomSides::Bottom;
-			}
-
-			//4면 중 하나의 케이스로 반드시 처리가 되어야 함
-			assert(false);
-			return eRoomSides::Left;
-		};
-
 	//Length의 양수, 음수, 0에 따른 증가 인덱스 반환
 	auto getAddValue = [](int Length)
 		{
@@ -316,36 +244,19 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 			}
 		};
 
-	//왼쪽 방에서 오른쪽 방으로 향하는 방향
-	eRoomFacingFlags leftRoomFaceFlag = getRoomsFacingFlags(toRightVectorDirection);
-
-	//오른쪽 방에서 왼쪽 방으로 향하는 방향(왼쪽 -> 오른쪽 방으로 향하는 방향의 반대)
-	eRoomFacingFlags rightRoomFaceFlag = getRoomFacingFlagInverse(leftRoomFaceFlag);
-
-	RoomSpace* selectLeftRoom = &leftRoom;
-	RoomSpace* selectRightRoom = &rightRoom;
-
-	// 두 방이 마주한 면의 조합별로 처리한다.
-	switch (leftRoomFaceFlag | rightRoomFaceFlag)
+	switch (DivideDirection)
 	{
-	case eRoomFacingFlags::Right_Left:
+		//수직 분할한 상태면 좌-우 연결
+	case eDivideDirection::Vertical:
 		{
-			//왼쪽방에서 뻗어 나오는 방향이 오른쪽이 아니라면
-			if (eRoomFacingFlags::Right != leftRoomFaceFlag)
-			{
-				//Swap하여 LeftRoom(Left) => RightRoom(Right)상황으로 바꿈
-				std::swap(selectLeftRoom, selectRightRoom);
-				std::swap(leftRoomFaceFlag, rightRoomFaceFlag);
-			}
-
 			//왼쪽 자식 방의 외곽 타일 중 하나 선택
-			const Vector2Int selectLeftOuterTile = selectLeftRoom->SelectDoorTile(mappingRoomFaceToSide(leftRoomFaceFlag));
+			const Vector2Int selectLeftOuterTile = leftRoom.SelectDoorTile(eRoomSides::Right);
 
 			//오른쪽 자식 방의 외곽 타일 중 하나 선택
-			const Vector2Int selectRightOuterTile = selectRightRoom->SelectDoorTile(mappingRoomFaceToSide(rightRoomFaceFlag));
+			const Vector2Int selectRightOuterTile = rightRoom.SelectDoorTile(eRoomSides::Left);
 
 			//leftRoom을 감싸는 외곽영역의 경계라인 x 인덱스
-			const int OuterBorderXPos = selectLeftRoom->GetOuterPostionLT().x + selectLeftRoom->GetOuterWidth() - 1;
+			const int OuterBorderXPos = leftRoom.GetOuterPostionLT().x + leftRoom.GetOuterWidth() - 1;
 
 			//y 증가량 구하기
 			const int addY = getAddValue(selectRightOuterTile.y - selectLeftOuterTile.y);
@@ -379,24 +290,17 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 		}
 		break;
 
-	case eRoomFacingFlags::Down_Up:
+		//수평 분할한 상태면 상-하 연결
+	case eDivideDirection::Horizontal:
 		{
-			//왼쪽방에서 뻗어 나오는 방향이 아래쪽이 아니라면
-			if (eRoomFacingFlags::Down != leftRoomFaceFlag)
-			{
-				//Swap하여 LeftRoom(Top) => RightRoom(Bottom)상황으로 바꿈
-				std::swap(selectLeftRoom, selectRightRoom);
-				std::swap(leftRoomFaceFlag, rightRoomFaceFlag);
-			}
+			//왼쪽 자식 방(위쪽에 위치)의 외곽 타일 중 하나 선택
+			const Vector2Int selectLeftOuterTile = leftRoom.SelectDoorTile(eRoomSides::Bottom);
 
-			//왼쪽 자식 방의 외곽 타일 중 하나 선택
-			const Vector2Int selectLeftOuterTile = selectLeftRoom->SelectDoorTile(mappingRoomFaceToSide(leftRoomFaceFlag));
-
-			//오른쪽 자식 방의 외곽 타일 중 하나 선택
-			const Vector2Int selectRightOuterTile = selectRightRoom->SelectDoorTile(mappingRoomFaceToSide(rightRoomFaceFlag));
+			//오른쪽 자식 방(아래쪽에 위치)의 외곽 타일 중 하나 선택
+			const Vector2Int selectRightOuterTile = rightRoom.SelectDoorTile(eRoomSides::Top);
 
 			//leftRoom을 감싸는 외곽영역의 경계라인 y 인덱스
-			const int OuterBorderYPos = selectLeftRoom->GetOuterPostionLT().y + selectLeftRoom->GetOuterHeight() - 1;
+			const int OuterBorderYPos = leftRoom.GetOuterPostionLT().y + leftRoom.GetOuterHeight() - 1;
 
 			//x 증가량 구하기
 			const int addX = getAddValue(selectRightOuterTile.x - selectLeftOuterTile.x);
@@ -427,54 +331,7 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 
 			//마지막 타일 뚫기
 			pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
-
 		}
 		break;
-
-	default:
-		{
-			//위 두케이스만으로 처리가 되어야 한다.
-			assert(false);
-		}
-		break;
-
-	//case eRoomFacingFlags::Up_Left:
-	//case eRoomFacingFlags::Down_Left:
-	//case eRoomFacingFlags::Up_Right:
-	//case eRoomFacingFlags::Down_Right:
-	//	{
-	//		//왼쪽방에서 뻗어 나오는 방향이 위, 아래 방향이 아니라면
-	//		if (eRoomFacingFlags::Up != leftRoomFaceFlag && eRoomFacingFlags::Down != leftRoomFaceFlag)
-	//		{
-	//			//Swap하여 LeftRoom => RightRoom상황으로 바꿈
-	//			std::swap(selectLeftOuterTile, selectRightOuterTile);
-	//		}
-
-	//		const Vector2 TileNums = selectRightOuterTile - selectLeftOuterTile;
-
-	//		const int addX = getAddValue(TileNums.x);
-	//		const int addY = getAddValue(TileNums.y);
-
-	//		int xPos = selectLeftOuterTile.x;
-	//		int yPos = selectLeftOuterTile.y;
-
-	//		//y 경로 생성.
-	//		for (; yPos != selectRightOuterTile.y; yPos += addY)
-	//		{
-	//			//경로내의 타일 뚫기
-	//			pathTileIndices.emplace_back(Vector2(xPos, yPos));
-	//		}
-
-	//		//x 경로 생성
-	//		for (; xPos != selectRightOuterTile.x; xPos += addX)
-	//		{
-	//			//경로내의 타일 뚫기
-	//			pathTileIndices.emplace_back(Vector2(xPos, yPos));
-	//		}
-
-	//		//마지막 타일 뚫기
-	//		pathTileIndices.emplace_back(Vector2(xPos, yPos));
-	//	}
-	//	break;
 	}
 }

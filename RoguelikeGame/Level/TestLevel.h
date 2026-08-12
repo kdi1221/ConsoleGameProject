@@ -12,6 +12,7 @@ public:
 	virtual ~TestLevel() = default;
 
 private:
+	virtual void OnInitialized() override;
 	virtual void Tick(float deltaTime) override;
 };
 

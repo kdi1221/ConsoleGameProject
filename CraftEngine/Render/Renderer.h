@@ -2,7 +2,6 @@
 
 #include "Core/Core.h"
 #include "Math/Vector2Int.h"
-#include "Math/Vector2Float.h"
 #include "Math/Color.h"
 #include <vector>
 #include <string>
@@ -23,7 +22,7 @@ namespace Craft
 			std::wstring image;
 
 			// 위치.
-			Vector2Float position;
+			Vector2Int position;
 
 			// 색상.
 			Color color = Color::White;
@@ -55,10 +54,10 @@ namespace Craft
 
 	public:
 		//장면을 구성하는 모든 객체(액터)가 화면에 그릴 데이터를 전달하는 함수.
-		void Submit(const std::wstring& image, const Vector2Float& position, Color color = Color::White, int sortingOrder = 0);
+		void Submit(const std::wstring& image, const Vector2Int& position, Color color = Color::White, int sortingOrder = 0);
 
 		//UI 구성하는 데이터를 전달하는 함수.
-		void SubmitUI(const std::wstring& image, const Vector2Float& position, Color color = Color::White, int sortingOrder = 0);
+		void SubmitUI(const std::wstring& image, const Vector2Int& position, Color color = Color::White, int sortingOrder = 0);
 
 		// Draw 이벤트 함수(Engine에서 호출).
 		void Draw(const CameraManager& cameraManager);

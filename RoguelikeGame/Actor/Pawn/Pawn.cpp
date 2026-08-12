@@ -2,26 +2,66 @@
 #include "Types/Enums.h"
 #include "Component/SpriteRendererComponent.h"
 #include "Component/BoxCollisionComponent.h"
+#include "Component/AttributeComponent.h"
+#include "Actor/MapObject/RoomDoor.h"
 #include <cassert>
 
 using namespace Craft;
 
-Pawn::Pawn(const Craft::Vector2Float& position,
+Pawn::Pawn(const Craft::Vector2Int& position,
 			const std::wstring& image,
 			Craft::Color color,
 			int CollisionWidth,
-			float moveDelay)
+			int initialHealth,
+			eTeamID inTeamID)
 	:super(position)
+	,teamID(inTeamID)
 {
 	// 필요한 컴포넌트 추가.
 	AddComponent<SpriteRendererComponent>(image, color, static_cast<int>(eRenderSortingOrder::Pawn));
 	AddComponent<BoxCollisionComponent>(CollisionWidth);
-	movementComponent = AddComponent<MovementComponent>(moveDelay);
+
+	attributeComponent = AddComponent<AttributeComponent>(initialHealth);
+	assert(attributeComponent && "Invalid attributeComponent");
+	attributeComponent->AddOutofHealthCallback(std::bind(&Pawn::OnOutofHealth, this));
 }
 
-void Pawn::SetLastMoveDirection(const Craft::Vector2Int& moveDirection)
+bool Pawn::IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor)
 {
-	assert(movementComponent && "Invalid movementComponent");
+	assert(otherActor && "Invalid otherActor");
 
-	movementComponent->SetLastMoveDirection(moveDirection);
+	/* Pawn끼리는 Block */
+	if (otherActor->IsTypeOf<Pawn>())
+	{
+		return true;
+	}
+
+	/* 문 Actor와는 Block */
+	if (otherActor->IsTypeOf<RoomDoor>())
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void Pawn::TakeDamage(const int inDamage)
+{
+	if (!attributeComponent)
+	{
+		return;
+	}
+
+	attributeComponent->DecreaseCurrrentHealth(inDamage);
+}
+
+void Pawn::OnDeath()
+{
+	//TODO : Death 처리
+}
+
+void Pawn::OnOutofHealth()
+{
+	OnDeath();
+	Destroy();
 }

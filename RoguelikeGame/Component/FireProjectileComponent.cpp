@@ -11,11 +11,15 @@ FireProjectileComponent::FireProjectileComponent(float fireInterval,
 												const std::wstring& inProjectileImage,
 												Color inProjectileColor,
 												float inProjectileMoveDelayMin,
-												float inProjectileMoveDelayMax)
+												float inProjectileMoveDelayMax,
+												eTeamID teamID,
+												int damage)
 	:projectileImage(inProjectileImage)
 	,projectileColor(inProjectileColor)
 	,projectileMoveDelayMin(inProjectileMoveDelayMin)
 	,projectileMoveDelayMax(inProjectileMoveDelayMax)
+	,instigatorTeamID(teamID)
+	,projectileDamage(damage)
 {
 	timerFireInterval.SetTargetTime(fireInterval);
 }
@@ -33,12 +37,12 @@ void FireProjectileComponent::SetEnableFire(bool enable)
 	timerFireInterval.Reset();
 }
 
-void FireProjectileComponent::SetProjectileSpawnOffset(const Craft::Vector2Float& offset)
+void FireProjectileComponent::SetProjectileSpawnOffset(const Craft::Vector2Int& offset)
 {
 	projectileSpawnOffset = offset;
 }
 
-void FireProjectileComponent::SetProjectileAimingPosition(const Craft::Vector2Float& position)
+void FireProjectileComponent::SetProjectileAimingPosition(const Craft::Vector2Int& position)
 {
 	projectileAimingPosition = position;
 }
@@ -68,11 +72,17 @@ void FireProjectileComponent::SpawnProjectile()
 	assert(ownerLevel && "Invalid ownerLevel");
 
 	//Projectile Spawn Position Offset(Actor Pos + Offset)
-	const Vector2Float spawnPosition = ownerActor->GetWorldPosition() + projectileSpawnOffset;
+	const Vector2Int spawnPosition = ownerActor->GetWorldPosition() + projectileSpawnOffset;
 
 	//발사체의 이동 딜레이(랜덤 지정)
 	const float projectileMoveDelay = Util::RandomRange(projectileMoveDelayMin, projectileMoveDelayMax);
-	ownerLevel->SpawnActor<Projectile>(spawnPosition, projectileImage, projectileColor, projectileAimingPosition, projectileMoveDelay);
+	ownerLevel->SpawnActor<Projectile>(spawnPosition, 
+										projectileImage, 
+										projectileColor, 
+										projectileAimingPosition, 
+										projectileMoveDelay,
+										instigatorTeamID,
+										projectileDamage);
 }
 
 

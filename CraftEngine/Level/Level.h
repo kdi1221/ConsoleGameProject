@@ -94,7 +94,7 @@ namespace Craft
 		}
 
 		/* 다음 위치(nextPosition)로 actor가 이동할 수 있는지 확인 */
-		virtual bool CanNextMove(const Actor& checkActor, const Vector2Float& nextPosition);
+		virtual bool CanNextMove(std::shared_ptr<Actor> checkActor, const Vector2Int& nextPosition);
 
 		// Getter.
 		inline bool HasInitialized() const { return hasInitialized; }
@@ -112,8 +112,8 @@ namespace Craft
 
 		/* 레벨안의 특정 Actor의 위치 업데이트 */
 		virtual void OnPositionUpdateActorInLevel(std::weak_ptr<Actor> updatedActor, 
-													const Vector2Float& prevWorldPosition, 
-													const Vector2Float& worldPosition);
+													const Vector2Int& prevWorldPosition,
+													const Vector2Int& worldPosition);
 
 		/* 레벨안의 특정 Actor Destroy */
 		virtual void OnDestroyedActorInLevel(std::weak_ptr<Actor> destoryedActor);

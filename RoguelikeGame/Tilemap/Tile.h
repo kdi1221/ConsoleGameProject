@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Vector2Int.h"
+#include "Types/Defines.h"
 #include "Types/Enums.h"
 
 //타일맵 개별 타일 클래스
@@ -15,9 +16,11 @@ public:
 	inline eTileCategory GetTileCategory() const { return category; }
 	inline const Craft::Vector2Int& GetTilePosition() const { return position; }
 	inline size_t GetTileIndex() const { return index; }
+	inline RoomDefines::UNIQUE_INDEX_TYPE GetRoomIndex() const { return roomIndex; }
 
 	//Setter
 	inline void SetTileCategory(eTileCategory InCategory) { category = InCategory; }
+	inline void SetTileRoomIndex(RoomDefines::UNIQUE_INDEX_TYPE inIndex) { roomIndex = inIndex; }
 
 private:
 	//타일 종류
@@ -28,5 +31,8 @@ private:
 
 	//타일 인덱스(배열 상 고유 인덱스)
 	size_t index = -1;
+
+	//타일이 속해있는 방의 인덱스
+	RoomDefines::UNIQUE_INDEX_TYPE roomIndex = RoomDefines::ROOM_INDEX_INVALID;
 };
 

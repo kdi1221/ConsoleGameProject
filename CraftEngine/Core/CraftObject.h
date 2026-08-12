@@ -53,6 +53,24 @@ std::shared_ptr<T> Cast(const std::shared_ptr<U>& object)
 	return nullptr;
 }
 
+template<typename T, typename U>
+T* Cast(const std::unique_ptr<U>& object)
+{
+	if (!object)
+	{
+		return nullptr;
+	}
+
+	// object의 실제 타입이 T(또는 T의 파생)인지 확인 후 캐스팅(형변환)
+	if (object->Is(T::TypeId()))
+	{
+		return static_cast<T*>(object.get());
+	}
+
+	//형변환이 허용되지 않는 경우에는 null 반환.
+	return nullptr;
+}
+
 // 타입 시스템을 사용할 클래스(Actor 타입)에 추가할 매크로.
 #define TYPE_DECLARATIONS(Type, ParentType)							\
 	using super = ParentType;										\

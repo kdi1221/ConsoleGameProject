@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -103,12 +103,18 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Actor\MapObject\MapObject.cpp" />
     <ClCompile Include="Actor\MapObject\NextLevel.cpp" />
     <ClCompile Include="Actor\MapObject\PlayerStart.cpp" />
+    <ClCompile Include="Actor\Pawn\NPC\NPCBase.cpp" />
+    <ClCompile Include="Actor\Pawn\NPC\NPCSlime.cpp" />
     <ClCompile Include="Actor\Pawn\Pawn.cpp" />
-    <ClCompile Include="Actor\Pawn\PlayerPawn.cpp" />
+    <ClCompile Include="Actor\Pawn\Player\PlayerPawn.cpp" />
     <ClCompile Include="Actor\Projectile\Projectile.cpp" />
+    <ClCompile Include="Actor\MapObject\RoomDoor.cpp" />
+    <ClCompile Include="Component\AttributeComponent.cpp" />
     <ClCompile Include="Component\FireProjectileComponent.cpp" />
     <ClCompile Include="Game\Config\Config.cpp" />
     <ClCompile Include="Game\Game.cpp" />
+    <ClCompile Include="Game\State\GameMode\GM_Roguelike.cpp" />
+    <ClCompile Include="Game\State\PlayerState\PS_Roguelike.cpp" />
     <ClCompile Include="Level\TestLevel.cpp" />
     <ClCompile Include="Level\TilemapLevel.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -124,12 +130,18 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Actor\MapObject\MapObject.h" />
     <ClInclude Include="Actor\MapObject\NextLevel.h" />
     <ClInclude Include="Actor\MapObject\PlayerStart.h" />
+    <ClInclude Include="Actor\Pawn\NPC\NPCBase.h" />
+    <ClInclude Include="Actor\Pawn\NPC\NPCSlime.h" />
     <ClInclude Include="Actor\Pawn\Pawn.h" />
-    <ClInclude Include="Actor\Pawn\PlayerPawn.h" />
+    <ClInclude Include="Actor\Pawn\Player\PlayerPawn.h" />
     <ClInclude Include="Actor\Projectile\Projectile.h" />
+    <ClInclude Include="Actor\MapObject\RoomDoor.h" />
+    <ClInclude Include="Component\AttributeComponent.h" />
     <ClInclude Include="Component\FireProjectileComponent.h" />
     <ClInclude Include="Game\Config\Config.h" />
     <ClInclude Include="Game\Game.h" />
+    <ClInclude Include="Game\State\GameMode\GM_Roguelike.h" />
+    <ClInclude Include="Game\State\PlayerState\PS_Roguelike.h" />
     <ClInclude Include="Level\TestLevel.h" />
     <ClInclude Include="Level\TilemapLevel.h" />
     <ClInclude Include="TileMap\BSP\BSPNode.h" />

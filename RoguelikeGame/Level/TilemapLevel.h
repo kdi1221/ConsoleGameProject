@@ -9,7 +9,6 @@
 namespace Craft
 {
 	class Actor;
-	class Vector2Float;
 }
 
 class Tilemap;
@@ -42,15 +41,15 @@ protected:
 
 	/* 레벨안의 특정 Actor의 위치 업데이트 */
 	virtual void OnPositionUpdateActorInLevel(std::weak_ptr<Craft::Actor> updatedActor,
-											const Craft::Vector2Float& prevWorldPosition,
-											const Craft::Vector2Float& worldPosition);
+											const Craft::Vector2Int& prevWorldPosition,
+											const Craft::Vector2Int& worldPosition);
 
 	/* 레벨안의 특정 Actor Destroy */
 	virtual void OnDestroyedActorInLevel(std::weak_ptr<Craft::Actor> destoryedActor);
 
 protected:
 	/* 다음 위치(nextPosition)로 actor가 이동할 수 있는지 확인 */
-	virtual bool CanNextMove(const Craft::Actor& checkActor, const Craft::Vector2Float& nextPosition) override;
+	virtual bool CanNextMove(std::shared_ptr<Craft::Actor> checkActor, const Craft::Vector2Int& nextPosition) override;
 
 public:
 	/* 타일맵 기반 충돌 처리 */
@@ -76,6 +75,9 @@ private:
 	/* 타일맵 인덱스별로 Actor 등록 해제 */
 	void UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile);
 	void UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Craft::Vector2Int& position);
+
+	/* 플레이어 캐릭터의 이동에 따른 이벤트 구성 */
+	void OnMovePlayerEvent(const Craft::Vector2Int& prevWorldPosition, const Craft::Vector2Int& worldPosition);
 
 private:
 	/* 맵 상의 존재하는 타일맵 객체 */

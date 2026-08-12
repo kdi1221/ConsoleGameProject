@@ -79,7 +79,7 @@ namespace Craft
 		SetConsoleActiveScreenBuffer(GetStdHandle(STD_OUTPUT_HANDLE));
 	}
 
-	void Renderer::Submit(const std::wstring& image, const Vector2Float& position, Color color, int sortingOrder)
+	void Renderer::Submit(const std::wstring& image, const Vector2Int& position, Color color, int sortingOrder)
 	{
 		// 그릴 명령 객체 생성.
 		RenderCommand command;
@@ -92,7 +92,7 @@ namespace Craft
 		renderQueue.emplace_back(command);
 	}
 
-	void Renderer::SubmitUI(const std::wstring& image, const Vector2Float& position, Color color, int sortingOrder)
+	void Renderer::SubmitUI(const std::wstring& image, const Vector2Int& position, Color color, int sortingOrder)
 	{
 		// 그릴 명령 객체 생성.
 		RenderCommand command;
@@ -159,8 +159,7 @@ namespace Craft
 			}
 
 			//콘솔 좌표계에서는 x, y int형으로 표시
-			const Vector2Int worldPosition = static_cast<Vector2Int>(command.position);
-			const Vector2Int drawPosition = leftTopOrigin + (worldPosition - viewPosition);
+			const Vector2Int drawPosition = leftTopOrigin + (command.position - viewPosition);
 
 			// y 위치가 뷰 화면을 벗어나면 건너뛰기.
 			if (drawPosition.y < 0 || drawPosition.y >= viewHeight)
@@ -227,7 +226,7 @@ namespace Craft
 			}
 
 			//콘솔 좌표계에서는 x, y int형으로 표시
-			const Vector2Int drawPosition = static_cast<Vector2Int>(command.position);
+			const Vector2Int& drawPosition = command.position;
 
 			// y 위치가 화면을 벗어나면 건너뛰기.
 			if (drawPosition.y < 0 || drawPosition.y >= screenSize.y)

@@ -5,7 +5,7 @@
 
 namespace Craft
 {
-	Actor::Actor(const Vector2Float& position)
+	Actor::Actor(const Vector2Int& position)
 	{
 		transform = std::make_shared<TransformComponent>(position);
 		assert(transform && "transformComponent invalid..");
@@ -160,7 +160,7 @@ namespace Craft
 		if (transform && newParent->GetTransform())
 		{
 			//부모와 연결 전 월드 위치 저장.
-			Vector2Float worldPosition = transform->GetWorldPosition();
+			Vector2Int worldPosition = transform->GetWorldPosition();
 
 			// 트랜스폼의 부모 설정.
 			transform->SetParent(newParent->GetTransform());
@@ -203,7 +203,7 @@ namespace Craft
 		if (transform)
 		{
 			//부모와의 연결 해제 후에 화면 위치 유지
-			Vector2Float worldPosition = transform->GetWorldPosition();
+			Vector2Int worldPosition = transform->GetWorldPosition();
 			transform->SetParent(std::weak_ptr<TransformComponent>());
 			transform->SetWorldPosition(worldPosition);
 		}
@@ -217,19 +217,19 @@ namespace Craft
 		BindComponentOwners();
 	}
 
-	Vector2Float Actor::GetPosition() const
+	Vector2Int Actor::GetPosition() const
 	{ 
 		//트랜스폼의 위치 반환
-		return transform ? transform->GetLocalPosition() : Vector2Float::Zero;
+		return transform ? transform->GetLocalPosition() : Vector2Int::Zero;
 	}
 
-	Vector2Float Actor::GetWorldPosition() const
+	Vector2Int Actor::GetWorldPosition() const
 	{
 		//트랜스폼의 위치 반환
-		return transform ? transform->GetWorldPosition() : Vector2Float::Zero;
+		return transform ? transform->GetWorldPosition() : Vector2Int::Zero;
 	}
 
-	void Actor::SetPosition(const Vector2Float& newPosition)
+	void Actor::SetPosition(const Vector2Int& newPosition)
 	{
 		// 변경하려는 위치 값이 현재 위치와 같은지 비교.
 		if (GetPosition() == newPosition)
@@ -244,10 +244,10 @@ namespace Craft
 		}
 	}
 
-	Vector2Float Actor::GetPreviousPosition() const
+	Vector2Int Actor::GetPreviousPosition() const
 	{
 		// 트랜스폼에서 관리하는 이전 프레임 위치 반환
-		return transform ? transform->GetPreviousWorldPosition() : Vector2Float::Zero;
+		return transform ? transform->GetPreviousWorldPosition() : Vector2Int::Zero;
 	}
 
 	void Actor::SetUpdatedPositionCallback(const OnPositionUpdatedType& inCallback)
@@ -336,10 +336,10 @@ namespace Craft
 		}
 	}
 
-	void Actor::OnUpdatedPosition(const Vector2Float& prevLocalPosition, 
-									const Vector2Float& prevWorldPosition, 
-									const Vector2Float& localPosition, 
-									const Vector2Float& worldPosition)
+	void Actor::OnUpdatedPosition(const Vector2Int& prevLocalPosition,
+									const Vector2Int& prevWorldPosition,
+									const Vector2Int& localPosition,
+									const Vector2Int& worldPosition)
 	{
 		if (onPositionUpdated)
 		{

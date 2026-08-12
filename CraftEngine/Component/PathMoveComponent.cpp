@@ -1,6 +1,5 @@
 ﻿#include "PathMoveComponent.h"
 #include <Actor/Actor.h>
-#include <Math/Vector2Float.h>
 #include <cassert>
 #include <StaticLibrary/StaticFunctionLibrary.h>
 
@@ -64,7 +63,7 @@ namespace Craft
 		std::shared_ptr<Actor> ownerActor = GetOwner();
 		assert(ownerActor && "Invalid ownerActor");
 
-		ownerActor->SetPosition(static_cast<Vector2Float>(inPosition));
+		ownerActor->SetPosition(inPosition);
 	}
 
 	Vector2Int PathMoveComponent::GetOwnerPosition() const
@@ -72,6 +71,6 @@ namespace Craft
 		std::shared_ptr<Actor> ownerActor = GetOwner();
 		assert(ownerActor && "Invalid ownerActor");
 
-		return static_cast<Vector2Int>(ownerActor->GetWorldPosition());
+		return ownerActor->GetWorldPosition();
 	}
 }

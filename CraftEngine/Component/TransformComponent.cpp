@@ -2,7 +2,7 @@
 
 namespace Craft
 {
-	TransformComponent::TransformComponent(const Vector2Float& localPosition)
+	TransformComponent::TransformComponent(const Vector2Int& localPosition)
 		:localPosition(localPosition)
 		,previousWorldPosition(localPosition)
 	{
@@ -14,7 +14,7 @@ namespace Craft
 		previousWorldPosition = GetWorldPosition();
 	}
 
-	Vector2Float TransformComponent::GetWorldPosition() const
+	Vector2Int TransformComponent::GetWorldPosition() const
 	{
 		//부모 트랜스폼
 		std::shared_ptr<TransformComponent> parentTransform = parent.lock();
@@ -29,7 +29,7 @@ namespace Craft
 		return parentTransform->GetWorldPosition() + localPosition;
 	}
 
-	void TransformComponent::SetWorldPosition(const Vector2Float& newPosition)
+	void TransformComponent::SetWorldPosition(const Vector2Int& newPosition)
 	{
 		//부모 트랜스폼
 		std::shared_ptr<TransformComponent> parentTransform = parent.lock();
@@ -55,13 +55,13 @@ namespace Craft
 		onUpdatePositionCallback = std::move(inCallback);
 	}
 
-	void TransformComponent::SetLocalPosition(const Vector2Float& newPosition)
+	void TransformComponent::SetLocalPosition(const Vector2Int& newPosition)
 	{ 
-		const Vector2Float previousLocalPosition = localPosition;
-		const Vector2Float previousWorldPosition = GetWorldPosition();
+		const Vector2Int previousLocalPosition = localPosition;
+		const Vector2Int previousWorldPosition = GetWorldPosition();
 
 		localPosition = newPosition; 
-		const Vector2Float currentWorldPosition = GetWorldPosition();
+		const Vector2Int currentWorldPosition = GetWorldPosition();
 
 		/* 위치 업데이트에 대한 콜백 호출 */
 		if (onUpdatePositionCallback)

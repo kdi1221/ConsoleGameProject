@@ -8,7 +8,7 @@ class NextLevel : public MapObject
 	TYPE_DECLARATIONS(NextLevel, MapObject)
 
 public:
-	NextLevel(const Craft::Vector2Float& position);
+	NextLevel(const Craft::Vector2Int& position);
 
 private:
 	virtual void OnCollision(const std::shared_ptr<Actor>& other) override;

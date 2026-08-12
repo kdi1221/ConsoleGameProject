@@ -6,14 +6,16 @@
 #include "Tilemap/Room/Room.h"
 #include "Tilemap/BSP/RoomSpace/RoomSpace.h"
 #include "Util/Util.h"
+#include "Game/State/Gamemode/GM_Roguelike.h"
 #include "Actor/MapObject/PlayerStart.h"
 #include "Actor/MapObject/NextLevel.h"
 #include "Actor/MapObject/Exit.h"
-#include "Actor/Pawn/PlayerPawn.h"
+#include "Actor/Pawn/Player/PlayerPawn.h"
 #include <cassert>
 #include <Memory>
 
 using namespace Craft;
+using namespace RoomDefines;
 
 TilemapLevel::TilemapLevel()
 {
@@ -77,8 +79,8 @@ void TilemapLevel::OnSpawnedActor(std::shared_ptr<Actor> spawnedActor)
 }
 
 void TilemapLevel::OnPositionUpdateActorInLevel(std::weak_ptr<Actor> updatedActor, 
-												const Vector2Float& prevWorldPosition, 
-												const Vector2Float& worldPosition)
+												const Vector2Int& prevWorldPosition, 
+												const Vector2Int& worldPosition)
 {
 	super::OnPositionUpdateActorInLevel(updatedActor, prevWorldPosition, worldPosition);
 
@@ -89,10 +91,16 @@ void TilemapLevel::OnPositionUpdateActorInLevel(std::weak_ptr<Actor> updatedActo
 	}
 
 	/* 이전 위치에서 등록 해제*/
-	UnregisterActorOnTilemap(actorOnTile, static_cast<Vector2Int>(prevWorldPosition));
+	UnregisterActorOnTilemap(actorOnTile, prevWorldPosition);
 
 	/* 새로운 위치에 등록 */
 	RegisterActorOnTilemap(actorOnTile);
+
+	/* 플레이어의 이벤트 처리(특정 방에 진입) */
+	if (playerPawn == actorOnTile)
+	{
+		OnMovePlayerEvent(prevWorldPosition, worldPosition);
+	}
 }
 
 void TilemapLevel::OnDestroyedActorInLevel(std::weak_ptr<Actor> destoryedActor)
@@ -109,10 +117,57 @@ void TilemapLevel::OnDestroyedActorInLevel(std::weak_ptr<Actor> destoryedActor)
 	UnregisterActorOnTilemap(actorOnTile);
 }
 
-bool TilemapLevel::CanNextMove(const Actor& checkActor, const Vector2Float& nextPosition)
+bool TilemapLevel::CanNextMove(std::shared_ptr<Actor> checkActor, const Vector2Int& nextPosition)
 {
+	if (!checkActor || !checkActor->IsActive())
+	{
+		return false;
+	}
+
+	/* 같은 위치라면 이동 불가 */
+	if (checkActor->GetWorldPosition() == nextPosition)
+	{
+		return false;
+	}
+
+	/* 다음에 이동할 위치가 벽타일이면 이동 불가 */
 	const eTileCategory nextTileCategory = tileMap->GetTileCategory(nextPosition);
-	return eTileCategory::Ground == nextTileCategory;
+	if (eTileCategory::Wall == nextTileCategory)
+	{
+		return false;
+	}
+
+	/* 다음에 이동할 위치에 Block되는 Actor가 존재하는지 확인 */
+	std::shared_ptr<ActorOnTile> checkActorOnTile = Cast<ActorOnTile>(checkActor);
+	if (checkActorOnTile)
+	{
+		const auto& findActorListOnTile = mapActorListOnTilemap.find(nextPosition);
+
+		/* 해당 타일에 존재하는 Actor가 없는 경우 이동 가능 */
+		if (findActorListOnTile == mapActorListOnTilemap.end())
+		{
+			return true;
+		}
+
+		auto& actorListOnTile = findActorListOnTile->second;
+		auto find_blockActor = [&checkActorOnTile](std::weak_ptr<ActorOnTile> actorOnTile)
+			{
+				std::shared_ptr<ActorOnTile> checkBlockActor = actorOnTile.lock();
+
+				// 액터가 유효하지 않거나 비활성화 상태라면 건너뛰기
+				if (!checkBlockActor || !checkBlockActor->IsActive())
+				{
+					return false;
+				}
+
+				return checkBlockActor->IsBlockActorOnTile(checkActorOnTile);
+			};
+
+		/* 해당 위치 타일에 block되는 Actor가 존재하지 않으면 이동 가능 */
+		return actorListOnTile.end() == std::find_if(actorListOnTile.begin(), actorListOnTile.end(), find_blockActor);
+	}
+
+	return true;
 }
 
 void TilemapLevel::ProcessTilemapCollision()
@@ -127,7 +182,7 @@ void TilemapLevel::ProcessTilemapCollision()
 		const Vector2Int& tilePosition = iterActorListOnTile.first;
 		auto& actorListOnTile = iterActorListOnTile.second;
 
-		const eTileCategory tileCategory = tileMap->GetTileCategory(static_cast<Vector2Float>(tilePosition));
+		const eTileCategory tileCategory = tileMap->GetTileCategory(tilePosition);
 		for (std::weak_ptr<ActorOnTile>& ptrActorOnTile : actorListOnTile)
 		{
 			std::shared_ptr<ActorOnTile> actorOnTile = ptrActorOnTile.lock();
@@ -190,7 +245,6 @@ void TilemapLevel::ProcessTilemapCollision()
 			}
 		};
 
-
 	//충돌 처리에 대한 알림을 보낼 Actor 쌍들 생성
 	std::vector<CollisionActorPair> collidedActorList;
 
@@ -251,6 +305,7 @@ void TilemapLevel::BuildTilemapBSP()
 			const RoomSpace::RoomTileIndices& newRoomInnerTiles = newRoom->GetRoomSpace().GetInnerTileIndices();
 			for (const Vector2Int& tileIndex : newRoomInnerTiles)
 			{
+				tileMap->SetTileRoomIndex(tileIndex.x, tileIndex.y, newRoomIndex);
 				tileMap->SetTileCategory(tileIndex.x, tileIndex.y, eTileCategory::Ground);
 			}
 
@@ -326,7 +381,7 @@ void TilemapLevel::ReadyGame()
 		case eRoomType::Start:
 			{
 				//플레이어의 시작 위치 오브젝트 생성
-				const Vector2Float selectTilePos = static_cast<Vector2Float>(roomSpace.GetPositionCenter());
+				const Vector2Int& selectTilePos = roomSpace.GetPositionCenter();
 				spawnedPlayerStart = SpawnActor<PlayerStart>(selectTilePos);
 			}
 			break;
@@ -334,7 +389,7 @@ void TilemapLevel::ReadyGame()
 		case eRoomType::NextLevel:
 			{
 				//다음 층으로 이동할 입구 오브젝트 생성
-				const Vector2Float selectTilePos = static_cast<Vector2Float>(roomSpace.GetPositionCenter());
+				const Vector2Int& selectTilePos = roomSpace.GetPositionCenter();
 				SpawnActor<NextLevel>(selectTilePos);
 			}
 			break;
@@ -342,7 +397,7 @@ void TilemapLevel::ReadyGame()
 		case eRoomType::Exit:
 			{
 				//출구 오브젝트 랜덤한 위치에 생성
-				const Vector2Float selectTilePos = static_cast<Vector2Float>(roomSpace.GetPositionCenter());
+				const Vector2Int& selectTilePos = roomSpace.GetPositionCenter();
 				SpawnActor<Exit>(selectTilePos);
 			}
 			break;
@@ -374,6 +429,29 @@ void TilemapLevel::PlayerPawnSpawn()
 	assert(playerStart && "playerStart Invalid..");
 	
 	playerPawn = SpawnActor<PlayerPawn>(playerStart->GetWorldPosition());
+	assert(playerPawn && "spawn playerPawn fail..");
+
+	// 플레이어가 최조 스폰된 방에 대한 이벤트 처리
+	if(tileMap)
+	{
+		const Vector2Int& startPlayerPos = playerPawn->GetWorldPosition();
+		const UNIQUE_INDEX_TYPE currentPlayerRoomIndex = tileMap->GetTileRoomIndex(startPlayerPos);
+		RoomMapType::iterator iterStartRoom = mapRooms.find(currentPlayerRoomIndex);
+		assert(iterStartRoom != mapRooms.end() && "Invalid iterator Room");
+
+		Room* findStartRoom = iterStartRoom->second.get();
+		assert(findStartRoom && "Invalid Room");
+
+		//방의 종류에 따른 고유 이벤트 처리
+		if (GM_Roguelike* gmRoguelike = Engine::Get().GetGameMode<GM_Roguelike>())
+		{
+			//방의 종류에 따른 고유 이벤트 처리(게임모드에 알림)
+			gmRoguelike->OnPlayerVisitedRoom(currentPlayerRoomIndex, *findStartRoom, startPlayerPos);
+		}
+
+		/* 플레이어 방문 플래그 지정 */
+		findStartRoom->SetPlayerVisited(true);
+	}
 }
 
 void TilemapLevel::RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile)
@@ -383,7 +461,7 @@ void TilemapLevel::RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTi
 		return;
 	}
 
-	RegisterActorOnTilemap(actorOnTile, static_cast<Vector2Int>(actorOnTile->GetWorldPosition()));
+	RegisterActorOnTilemap(actorOnTile, actorOnTile->GetWorldPosition());
 }
 
 void TilemapLevel::RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Vector2Int& position)
@@ -405,7 +483,7 @@ void TilemapLevel::UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOn
 		return;
 	}
 
-	UnregisterActorOnTilemap(actorOnTile, static_cast<Vector2Int>(actorOnTile->GetWorldPosition()));
+	UnregisterActorOnTilemap(actorOnTile, actorOnTile->GetWorldPosition());
 }
 
 void TilemapLevel::UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Vector2Int& position)
@@ -436,5 +514,39 @@ void TilemapLevel::UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOn
 	{
 		/* Actor 리스트가 비었으면 map에서도 제거해준다. */
 		mapActorListOnTilemap.erase(position);
+	}
+}
+
+void TilemapLevel::OnMovePlayerEvent(const Vector2Int& prevWorldPosition, const Vector2Int& worldPosition)
+{
+	if (!tileMap)
+	{
+		return;
+	}
+
+	const UNIQUE_INDEX_TYPE prevRoomIndex = tileMap->GetTileRoomIndex(prevWorldPosition);
+	const UNIQUE_INDEX_TYPE currentRoomIndex = tileMap->GetTileRoomIndex(worldPosition);
+
+	/* 이전과 현재 위치해 있는 방이 서로 다른 경우 이벤트 발생 */
+	if (prevRoomIndex != currentRoomIndex && currentRoomIndex != ROOM_INDEX_INVALID)
+	{
+		RoomMapType::iterator iterRoom = mapRooms.find(currentRoomIndex);
+		assert(iterRoom != mapRooms.end() && "Invalid iterator Room");
+
+		Room* findRoom = iterRoom->second.get();
+		assert(findRoom && "Invalid Room");
+
+		//플레이어가 처음 방문한 방이면 이벤트 처리 필요
+		if (!findRoom->IsPlayerVisited())
+		{
+			if (GM_Roguelike* gmRoguelike = Engine::Get().GetGameMode<GM_Roguelike>())
+			{
+				//방의 종류에 따른 고유 이벤트 처리(게임모드에 알림)
+				gmRoguelike->OnPlayerVisitedRoom(currentRoomIndex, *findRoom, worldPosition);
+			}
+			
+			/* 플레이어 방문 플래그 지정 */
+			findRoom->SetPlayerVisited(true);
+		}
 	}
 }

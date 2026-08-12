@@ -60,7 +60,7 @@
     <ClCompile Include="Actor\Pawn\Pawn.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Actor\Pawn\PlayerPawn.cpp">
+    <ClCompile Include="Actor\Pawn\Player\PlayerPawn.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Actor\Projectile\Projectile.cpp">
@@ -70,6 +70,24 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Actor\ActorOnTile.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\MapObject\RoomDoor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Pawn\NPC\NPCBase.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Pawn\NPC\NPCSlime.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\State\GameMode\GM_Roguelike.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\State\PlayerState\PS_Roguelike.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\AttributeComponent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -125,7 +143,7 @@
     <ClInclude Include="Actor\Pawn\Pawn.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Actor\Pawn\PlayerPawn.h">
+    <ClInclude Include="Actor\Pawn\Player\PlayerPawn.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Actor\Projectile\Projectile.h">
@@ -135,6 +153,24 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Actor\ActorOnTile.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\MapObject\RoomDoor.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Pawn\NPC\NPCBase.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Pawn\NPC\NPCSlime.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\State\GameMode\GM_Roguelike.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\State\PlayerState\PS_Roguelike.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\AttributeComponent.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

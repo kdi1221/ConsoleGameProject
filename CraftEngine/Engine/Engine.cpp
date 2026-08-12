@@ -7,6 +7,8 @@
 #include "SoundSystem/Sound.h"
 #include "Config/ConfigBase.h"
 #include "Camera/CameraManager.h"
+#include "GameState/GameMode/GameMode.h"
+#include "GameState/PlayerState/PlayerState.h"
 #include <Windows.h>
 #include <stdint.h>
 #include <iostream>
@@ -110,20 +112,7 @@ namespace Craft
 				//--- 이 위까지 호출이 완료되면 프레임 처리 완료됨 ---//
 
 				// 레벨 전환 처리
-				if (nextLevel)
-				{
-					// 기존 레벨 정리
-					if (mainLevel)
-					{
-						mainLevel.reset();
-					}
-
-					// 이전 프레임에 전환 요청된 레벨을 메인 레벨로 설정
-					mainLevel = std::move(nextLevel);
-
-					//전환 후 Next Level 정리
-					nextLevel.reset();
-				}
+				TransitionLevel();
 
 				//레벨 정리.
 				if (mainLevel)
@@ -182,6 +171,23 @@ namespace Craft
 
 		// 사운드 시스템 함수 호출
 		sound->StopBackgroundMusic();
+	}
+
+	void Engine::InitializeGameSessionData()
+	{
+		gameMode = CreateGameMode();
+		assert(gameMode && "Create fail gameMode");
+		gameMode->SetCurrentLevel(mainLevel);
+
+		playerState = CreatePlayerState();
+		assert(playerState && "Create fail playerState");
+		playerState->SetCurrentLevel(mainLevel);
+	}
+
+	void Engine::DestroyGameSessionData()
+	{
+		gameMode.reset();
+		playerState.reset();
 	}
 
 	Engine& Engine::Get()
@@ -304,9 +310,50 @@ namespace Craft
 		//setting.width = min(setting.width, MaxConsoleSize.X);
 		//setting.height = min(setting.height, MaxConsoleSize.Y);
 	}
+
+	void Engine::TransitionLevel()
+	{
+		if (!nextLevel)
+		{
+			return;
+		}
+		
+		// 기존 레벨 정리
+		if (mainLevel)
+		{
+			mainLevel.reset();
+		}
+
+		// 이전 프레임에 전환 요청된 레벨을 메인 레벨로 설정
+		mainLevel = std::move(nextLevel);
+
+		//전환 후 Next Level 정리
+		nextLevel.reset();
+
+		//레벨 전환 후 유효한 세션 객체들에게 알리기
+		if (GameMode* currentGameMode = GetGameMode<GameMode>())
+		{
+			currentGameMode->SetCurrentLevel(mainLevel);
+		}
+
+		if (PlayerState* currentPlayerState = GetPlayerState<PlayerState>())
+		{
+			currentPlayerState->SetCurrentLevel(mainLevel);
+		}
+	}
 	
 	std::unique_ptr<ConfigBase> Engine::CreateConfig() const
 	{
 		return std::make_unique<ConfigBase>();
+	}
+
+	std::unique_ptr<GameMode> Engine::CreateGameMode() const
+	{
+		return std::make_unique<GameMode>();
+	}
+
+	std::unique_ptr<PlayerState> Engine::CreatePlayerState() const
+	{
+		return std::make_unique<PlayerState>();
 	}
 }

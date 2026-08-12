@@ -63,7 +63,7 @@ namespace Craft
 		}
 	}
 
-	bool Level::CanNextMove(const Actor& checkActor, const Vector2Float& nextPosition)
+	bool Level::CanNextMove(std::shared_ptr<Actor> checkActor, const Vector2Int& nextPosition)
 	{
 		return true;
 	}
@@ -136,7 +136,9 @@ namespace Craft
 		spawnedActor->SetOnDestroyedCallback(std::bind(&Level::OnDestroyedActorInLevel, this, std::placeholders::_1));
 	}
 
-	void Level::OnPositionUpdateActorInLevel(std::weak_ptr<Actor> updatedActor, const Vector2Float& prevWorldPosition, const Vector2Float& worldPosition)
+	void Level::OnPositionUpdateActorInLevel(std::weak_ptr<Actor> updatedActor, 
+											const Vector2Int& prevWorldPosition, 
+											const Vector2Int& worldPosition)
 	{
 	
 	}

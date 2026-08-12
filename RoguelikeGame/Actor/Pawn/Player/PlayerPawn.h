@@ -1,7 +1,8 @@
 ﻿#pragma once
 
-#include "Pawn.h"
+#include "Actor/Pawn/Pawn.h"
 #include "Component/InputComponent.h"
+#include "Component/MovementComponent.h"
 
 namespace Craft
 {
@@ -15,22 +16,31 @@ class PlayerPawn : public Pawn
 	TYPE_DECLARATIONS(PlayerPawn, Pawn)
 
 public:
-	PlayerPawn(const Craft::Vector2Float& position);
+	PlayerPawn(const Craft::Vector2Int& position);
 	~PlayerPawn() = default;
 
 private:
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
-	virtual void OnUpdatedPosition(const Craft::Vector2Float& prevLocalPosition,
-									const Craft::Vector2Float& prevWorldPosition,
-									const Craft::Vector2Float& localPosition,
-									const Craft::Vector2Float& worldPosition) override;
+	virtual void OnUpdatedPosition(const Craft::Vector2Int& prevLocalPosition,
+									const Craft::Vector2Int& prevWorldPosition,
+									const Craft::Vector2Int& localPosition,
+									const Craft::Vector2Int& worldPosition) override;
 
 private:
+	/* 키 입력 콜백 */
 	void OnMoveKeyInput(int keyCode, Craft::eInputTrigger inputTrigger);
 	void OnProjectileFireKeyInput(int keyCode, Craft::eInputTrigger inputTrigger);
+
+private:
+	/* 위치 이동 시 호출되는 카메라 뷰 위치 변경 함수 */
 	void UpdateViewCameraPosition(const Craft::Vector2Int& viewPosition);
+
+	/* 발사 입력 처리 */
 	void ProcessFireInput();
+
+	/* 이동 입력 처리 */
+	void ProcessMoveInput();
 
 private:
 	/* 현재 프레임에서의 누적 이동 입력 값*/
@@ -51,5 +61,8 @@ private:
 
 	/* 탄환 발사 컴포넌트 */
 	std::shared_ptr<FireProjectileComponent> fireProjectileComponent;
+
+	/* 이동 컴포넌트 */
+	std::shared_ptr<Craft::MovementComponent> movementComponent;
 };
 

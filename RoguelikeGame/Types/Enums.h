@@ -106,3 +106,11 @@ enum class eRenderSortingOrder : int
 	//UI
 	UI
 };
+
+//ÆÀ ID
+enum class eTeamID
+{
+	None = 0,
+	Player,
+	NPC
+};

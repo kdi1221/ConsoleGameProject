@@ -1,10 +1,14 @@
 ﻿#include "Game.h"
 #include "Config/Config.h"
+#include "Game/State/GameMode/GM_Roguelike.h"
+#include "Game/State/PlayerState/PS_Roguelike.h"
 #include "Render/Renderer.h"
 #include "Engine/Engine.h"
 #include "Types/Enums.h"
 #include <Level/TilemapLevel.h>
 #include <cassert>
+
+using namespace Craft;
 
 Game::Game()
 {
@@ -42,6 +46,16 @@ std::unique_ptr<Craft::ConfigBase> Game::CreateConfig() const
 	return std::make_unique<Config>();
 }
 
+std::unique_ptr<GameMode> Game::CreateGameMode() const
+{
+	return std::make_unique<GM_Roguelike>();
+}
+
+std::unique_ptr<PlayerState> Game::CreatePlayerState() const
+{
+	return std::make_unique<PS_Roguelike>();
+}
+
 void Game::FormatCurrentFPSString(const float deltaTime)
 {
 	wchar_t szFormat[256] = { 0 };
@@ -53,8 +67,8 @@ void Game::FormatCurrentFPSString(const float deltaTime)
 void Game::DrawFPSString()
 {
 	const Craft::ConfigBase& configBase = Engine::Get().GetConfig<Craft::ConfigBase>();
-	Craft::Vector2Float DrawPosition;
-	DrawPosition.x = static_cast<float>(configBase.GetViewWidth() + 1);
-	DrawPosition.y = 0.f;
+	Craft::Vector2Int DrawPosition;
+	DrawPosition.x = configBase.GetViewWidth() + 1;
+	DrawPosition.y = 0;
 	Craft::Renderer::Get().SubmitUI(szFPS, DrawPosition, Craft::Color::White, static_cast<int>(eRenderSortingOrder::UI));
 }

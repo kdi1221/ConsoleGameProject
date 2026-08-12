@@ -1,27 +1,44 @@
 ﻿#pragma once
 
 #include "Actor/ActorOnTile.h"
-#include "Component/MovementComponent.h"
 
+class AttributeComponent;
 class Pawn : public ActorOnTile
 {
 	TYPE_DECLARATIONS(Pawn, ActorOnTile)
 
 public:
-	Pawn(const Craft::Vector2Float& position,
+	Pawn(const Craft::Vector2Int& position,
 		const std::wstring& image,
 		Craft::Color color,
 		int CollisionWidth,
-		float moveDelay);
+		int initialHealth,
+		eTeamID inTeamID);
 
 	~Pawn() = default;
 
+public:
+	/* 다른 종류의 Actor와 Block되는지 체크 */
+	virtual bool IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor) override;
+
+public:
+	void TakeDamage(const int inDamage);
+
+public:
+	inline eTeamID GetTeamID() const { return teamID; }
+
 protected:
-	/* 다음 프레임에 처리할 이동방향 지정 */
-	void SetLastMoveDirection(const Craft::Vector2Int& moveDirection);
+	virtual void OnDeath();
 
 private:
-	/* 이동 컴포넌트 */
-	std::shared_ptr<Craft::MovementComponent> movementComponent;
+	void OnOutofHealth();
+
+private:
+	/* 소속된 팀 ID */
+	eTeamID teamID = eTeamID::None;
+
+private:
+	/* 속성값(Health) 관리 컴포넌트 */
+	std::shared_ptr<AttributeComponent> attributeComponent;
 };
 

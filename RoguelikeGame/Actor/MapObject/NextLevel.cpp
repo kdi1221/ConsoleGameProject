@@ -1,10 +1,10 @@
 ﻿#include "NextLevel.h"
 #include "Math/Color.h"
-#include "Actor/Pawn/PlayerPawn.h"
+#include "Actor/Pawn/Player/PlayerPawn.h"
 #include "Engine/Engine.h"
 #include "Level/TestLevel.h"
 
-NextLevel::NextLevel(const Craft::Vector2Float& position)
+NextLevel::NextLevel(const Craft::Vector2Int& position)
 	:super(position, L"⌂", Craft::Color::Purple)
 {
 }

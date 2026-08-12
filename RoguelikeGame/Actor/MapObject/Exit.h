@@ -8,6 +8,6 @@ class Exit : public MapObject
 	TYPE_DECLARATIONS(Exit, MapObject)
 
 public:
-	Exit(const Craft::Vector2Float& position);
+	Exit(const Craft::Vector2Int& position);
 };
 

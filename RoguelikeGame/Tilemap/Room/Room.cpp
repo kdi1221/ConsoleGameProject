@@ -25,6 +25,11 @@ void Room::SetRoomType(eRoomType newType)
 	roomType = newType;
 }
 
+void Room::SetPlayerVisited(bool inVisited)
+{
+	isPlayerVisited = inVisited;
+}
+
 const RoomSpace& Room::GetRoomSpace() const
 {
 	const RoomSpace* roomSpacePtr = roomSpace.get();

@@ -50,15 +50,15 @@ namespace Craft
 		assert(ownerActor && "ownerActor is invalid");
 
 		/* 현재 위치(Local 기준) */
-		const Vector2Float currentPosition = ownerActor->GetPosition();
+		const Vector2Int currentPosition = ownerActor->GetPosition();
 
 		/* 이동할 새로운 위치(Local 기준) */
-		const Vector2Float newPosition = currentPosition + static_cast<Vector2Float>(lastMoveDirection);
+		const Vector2Int newPosition = currentPosition + lastMoveDirection;
 
 		/* 이동이 실제 가능한지 점검 필요 */
 		std::shared_ptr<Level> level = ownerActor->GetOwner();
 		assert(level && "level is invalid");
-		if (level->CanNextMove(*ownerActor, newPosition))
+		if (level->CanNextMove(ownerActor, newPosition))
 		{
 			/* 이동할 새로운 위치 지정 */
 			ownerActor->SetPosition(newPosition);
@@ -66,10 +66,10 @@ namespace Craft
 		else if((lastMoveDirection.x != 0) && (lastMoveDirection.y != 0))
 		{
 			/* 대각 이동인 상태에서 이동이 막혔던 경우 막혀있지 않은 한쪽 축 방향으로 이동한다. */
-			const Vector2Float newXPosition = currentPosition + Vector2Float(static_cast<float>(lastMoveDirection.x), 0.f);
-			const Vector2Float newYPosition = currentPosition + Vector2Float(0.f, static_cast<float>(lastMoveDirection.y));
-			const bool canMoveXPos = level->CanNextMove(*ownerActor, newXPosition);
-			const bool canMoveYPos = level->CanNextMove(*ownerActor, newYPosition);
+			const Vector2Int newXPosition = currentPosition + Vector2Int(lastMoveDirection.x, 0);
+			const Vector2Int newYPosition = currentPosition + Vector2Int(0, lastMoveDirection.y);
+			const bool canMoveXPos = level->CanNextMove(ownerActor, newXPosition);
+			const bool canMoveYPos = level->CanNextMove(ownerActor, newYPosition);
 
 			if (canMoveXPos && !canMoveYPos)
 			{

@@ -9,9 +9,13 @@ class MapObject : public ActorOnTile
 	TYPE_DECLARATIONS(MapObject, ActorOnTile)
 
 public:
-	MapObject(const Craft::Vector2Float& position,
+	MapObject(const Craft::Vector2Int& position,
 			const std::wstring& image,
 			Craft::Color color);
 	~MapObject() = default;
+
+public:
+	/* 다른 종류의 Actor와 Block되는지 체크 */
+	virtual bool IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor) override;
 };
 

@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -113,6 +113,9 @@ xcopy ..\Config\Setting.txt $(OutDir)..\Config\ /e /y /i</Command>
     <ClCompile Include="Engine\Config\ConfigBase.cpp" />
     <ClCompile Include="Core\Input.cpp" />
     <ClCompile Include="Engine\Engine.cpp" />
+    <ClCompile Include="GameState\GameMode\GameMode.cpp" />
+    <ClCompile Include="GameState\PlayerState\PlayerState.cpp" />
+    <ClCompile Include="GameState\SessionData.cpp" />
     <ClCompile Include="Level\Level.cpp" />
     <ClCompile Include="Math\Vector2Int.cpp" />
     <ClCompile Include="Math\Vector2Float.cpp" />
@@ -139,6 +142,9 @@ xcopy ..\Config\Setting.txt $(OutDir)..\Config\ /e /y /i</Command>
     <ClInclude Include="Core\CraftObject.h" />
     <ClInclude Include="Core\Input.h" />
     <ClInclude Include="Engine\Engine.h" />
+    <ClInclude Include="GameState\GameMode\GameMode.h" />
+    <ClInclude Include="GameState\PlayerState\PlayerState.h" />
+    <ClInclude Include="GameState\SessionData.h" />
     <ClInclude Include="Level\Level.h" />
     <ClInclude Include="Math\Color.h" />
     <ClInclude Include="StaticLibrary\StaticFunctionLibrary.h" />

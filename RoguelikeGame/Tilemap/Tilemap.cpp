@@ -84,7 +84,7 @@ void Tilemap::Draw()
 			{
 			case eTileCategory::Wall:
 				{
-					Renderer::Get().Submit(L"█", static_cast<Vector2Float>(tile.GetTilePosition()), Color::DarkGray);
+					Renderer::Get().Submit(L"█", tile.GetTilePosition(), Color::DarkGray);
 				}
 				break;
 			}
@@ -110,37 +110,60 @@ void Tilemap::Draw()
 				break;
 			}
 
-			const Vector2Float tilePosition = static_cast<Vector2Float>(tile.GetTilePosition());
-			Renderer::Get().Submit(TileSprite, tilePosition, TileColor);*/
+			Renderer::Get().Submit(TileSprite, tile.GetTilePosition(), TileColor);*/
 		}
 	}
 }
 
+void Tilemap::SetTileRoomIndex(int xPos, int yPos, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
+{
+	Tile* findTile = GetTile(xPos, yPos);
+	if (!findTile)
+	{
+		return;
+	}
+
+	findTile->SetTileRoomIndex(roomIndex);
+}
+
 void Tilemap::SetTileCategory(int xPos, int yPos, eTileCategory category)
+{
+	Tile* findTile = GetTile(xPos, yPos);
+	if (!findTile)
+	{
+		return;
+	}
+
+	findTile->SetTileCategory(category);
+}
+
+eTileCategory Tilemap::GetTileCategory(const Craft::Vector2Int& position) const
+{
+	if (Tile* findTile = GetTile(position.x, position.y))
+	{
+		return findTile->GetTileCategory();
+	}
+	
+	return eTileCategory::None;
+}
+
+RoomDefines::UNIQUE_INDEX_TYPE Tilemap::GetTileRoomIndex(const Craft::Vector2Int& position) const
+{
+	if (Tile* findTile = GetTile(position.x, position.y))
+	{
+		return findTile->GetRoomIndex();
+	}
+
+	return RoomDefines::ROOM_INDEX_INVALID;
+}
+
+Tile* Tilemap::GetTile(int xPos, int yPos) const
 {
 	const size_t TileIndex = (yPos * mapSize.x) + xPos;
 	if (TileIndex < 0 || TileIndex >= tileList.size())
 	{
-		return;
+		return nullptr;
 	}
 
-	if (!tileList[TileIndex])
-	{
-		return;
-	}
-
-	tileList[TileIndex]->SetTileCategory(eTileCategory::Ground);
-}
-
-eTileCategory Tilemap::GetTileCategory(const Craft::Vector2Float& position) const
-{
-	const Vector2Int tile2dIndex = static_cast<Vector2Int>(position);
-	const int tileIndex = (tile2dIndex.y * mapSize.x) + tile2dIndex.x;
-
-	if (tileIndex >= 0 && tileIndex < tileList.size())
-	{
-		return tileList[tileIndex]->GetTileCategory();
-	}
-	
-	return eTileCategory::None;
+	return tileList[TileIndex].get();
 }

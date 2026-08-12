@@ -8,6 +8,6 @@ class PlayerStart : public MapObject
 	TYPE_DECLARATIONS(PlayerStart, MapObject)
 
 public:
-	PlayerStart(const Craft::Vector2Float& position);
+	PlayerStart(const Craft::Vector2Int& position);
 };
 

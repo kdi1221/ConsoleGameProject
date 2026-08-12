@@ -24,6 +24,12 @@ private:
 	// 설정 생성 반환 함수(별도의 커스텀 설정 반환)
 	virtual std::unique_ptr<Craft::ConfigBase> CreateConfig() const override;
 
+	/* 커스텀 게임 모드 객체 생성  */
+	virtual std::unique_ptr<Craft::GameMode> CreateGameMode() const override;
+
+	/* 커스텀 플레이어 상태 객체 생성 */
+	virtual std::unique_ptr<Craft::PlayerState> CreatePlayerState() const override;
+
 private:
 	void FormatCurrentFPSString(const float deltaTime);
 	void DrawFPSString();

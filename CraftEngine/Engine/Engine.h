@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Core/Core.h"
+#include "Core/CraftObject.h"
 #include <memory>
 #include <string>
 #include <cassert>
@@ -15,6 +16,8 @@ namespace Craft
 	class CollisionSystem;
 	class ConfigBase;
 	class CameraManager;
+	class GameMode;
+	class PlayerState;
 
 	//메인 엔진 클래스
 	//엔진 루프 제공
@@ -44,6 +47,12 @@ namespace Craft
 		void PlayBackgroundMusic(const std::string& filename);
 		void StopBackgroundMusic();
 
+		//게임 세션 상태 데이터(게임모드, 플레이어 상태 등) 생성
+		void InitializeGameSessionData();
+
+		//게임 세션 상태 데이터(게임모드, 플레이어 상태 등) 파기
+		void DestroyGameSessionData();
+
 		// 레벨 추가 요청 함수
 		template<typename T, typename = std::enable_if_t<std::is_base_of<Level, T>::value>>
 		void AddNewLevel()
@@ -64,6 +73,20 @@ namespace Craft
 			return static_cast<const T&>(*ptrConfig);
 		}
 
+		// GameMode 반환
+		template<typename T, typename = std::enable_if_t<std::is_base_of<GameMode, T>::value>>
+		T* GetGameMode() const
+		{
+			return Cast<T>(gameMode);
+		}
+
+		// PlayerState 반환
+		template<typename T, typename = std::enable_if_t<std::is_base_of<PlayerState, T>::value>>
+		T* GetPlayerState() const
+		{
+			return Cast<T>(playerState);
+		}
+
 		//카메라 객체 반환
 		CameraManager& GetCameraManager() const;
 
@@ -76,7 +99,7 @@ namespace Craft
 
 		// 게임 플레이 초기화 함수
 		virtual void BeginPlay();
-		
+
 		// 게임 플레이 업데이트 함수.
 		virtual void Tick(float deltaTime);
 
@@ -95,8 +118,18 @@ namespace Craft
 		// 엔진 설정 로드 함수.
 		void LoadEngineSetting();
 
+		// 레벨 전환(NextLevel) 함수
+		void TransitionLevel();
+
 	protected:
+		/* 설정 객체 생성(엔진을 상속받는 클래스마다 다르게 지정 가능 ) */
 		virtual std::unique_ptr<ConfigBase> CreateConfig() const;
+
+		/* 게임 모드 객체 생성 */
+		virtual std::unique_ptr<GameMode> CreateGameMode() const;
+
+		/* 플레이어 상태 객체 생성 */
+		virtual std::unique_ptr<PlayerState> CreatePlayerState() const;
 
 	protected:
 		// 엔진 종료 플래그.
@@ -128,6 +161,12 @@ namespace Craft
 
 		//엔진 카메라 객체
 		std::unique_ptr<CameraManager> cameraManager;
+
+		//현재 게임모드(Level과 별도 관리)
+		std::unique_ptr<GameMode> gameMode;
+
+		//현재 플레이어 상태(Level과 별도 관리)
+		std::unique_ptr<PlayerState> playerState;
 	};
 }
 

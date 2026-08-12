@@ -32,6 +32,7 @@ public:
 	inline int GetOuterHeight() const { return outerHeight; }
 	inline const RoomTileIndices& GetInnerTileIndices() const { return innerTileIndices; }
 	inline const RoomTileIndices& GetOuterTileIndices(eRoomSides edge) const { return outerTileIndices[static_cast<int>(edge)]; }
+	inline const RoomTileIndices& GetDoorTileIndices() const { return doorTileIndices; }
 
 private:
 	//방의 시작 좌표(좌상단)
