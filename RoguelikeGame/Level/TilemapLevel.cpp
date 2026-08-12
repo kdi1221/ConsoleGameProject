@@ -6,7 +6,6 @@
 #include "Tilemap/Room/Room.h"
 #include "Tilemap/BSP/RoomSpace/RoomSpace.h"
 #include "Util/Util.h"
-#include "Game/State/Gamemode/GM_Roguelike.h"
 #include "Actor/MapObject/PlayerStart.h"
 #include "Actor/MapObject/NextLevel.h"
 #include "Actor/MapObject/Exit.h"
@@ -275,6 +274,11 @@ void TilemapLevel::ProcessTilemapCollision()
 	}
 }
 
+void TilemapLevel::SetPlayerVisitedRoomEventCallback(PlayerVistedRoomEventType inCallback)
+{
+	onPlayerVisitedRoom = inCallback;
+}
+
 void TilemapLevel::BuildTilemapBSP()
 {
 	//이전 타일맵 정보 초기화
@@ -443,10 +447,9 @@ void TilemapLevel::PlayerPawnSpawn()
 		assert(findStartRoom && "Invalid Room");
 
 		//방의 종류에 따른 고유 이벤트 처리
-		if (GM_Roguelike* gmRoguelike = Engine::Get().GetGameMode<GM_Roguelike>())
+		if (onPlayerVisitedRoom)
 		{
-			//방의 종류에 따른 고유 이벤트 처리(게임모드에 알림)
-			gmRoguelike->OnPlayerVisitedRoom(currentPlayerRoomIndex, *findStartRoom, startPlayerPos);
+			onPlayerVisitedRoom(currentPlayerRoomIndex, *findStartRoom, startPlayerPos);
 		}
 
 		/* 플레이어 방문 플래그 지정 */
@@ -539,12 +542,11 @@ void TilemapLevel::OnMovePlayerEvent(const Vector2Int& prevWorldPosition, const 
 		//플레이어가 처음 방문한 방이면 이벤트 처리 필요
 		if (!findRoom->IsPlayerVisited())
 		{
-			if (GM_Roguelike* gmRoguelike = Engine::Get().GetGameMode<GM_Roguelike>())
+			if (onPlayerVisitedRoom)
 			{
-				//방의 종류에 따른 고유 이벤트 처리(게임모드에 알림)
-				gmRoguelike->OnPlayerVisitedRoom(currentRoomIndex, *findRoom, worldPosition);
+				onPlayerVisitedRoom(currentRoomIndex, *findRoom, worldPosition);
 			}
-			
+
 			/* 플레이어 방문 플래그 지정 */
 			findRoom->SetPlayerVisited(true);
 		}

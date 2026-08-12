@@ -1,11 +1,15 @@
 ﻿#pragma once
 
 #include "Actor/ActorOnTile.h"
+#include <functional>
 
 class AttributeComponent;
 class Pawn : public ActorOnTile
 {
 	TYPE_DECLARATIONS(Pawn, ActorOnTile)
+
+public:
+	using OnDeathEventType = std::function<void(std::shared_ptr<Pawn>)>;
 
 public:
 	Pawn(const Craft::Vector2Int& position,
@@ -22,6 +26,7 @@ public:
 	virtual bool IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor) override;
 
 public:
+	void SetDeathEventCallback(OnDeathEventType deathEventCallback);
 	void TakeDamage(const int inDamage);
 
 public:
@@ -31,11 +36,14 @@ protected:
 	virtual void OnDeath();
 
 private:
-	void OnOutofHealth();
+	void OnOutOfHealth();
 
 private:
 	/* 소속된 팀 ID */
 	eTeamID teamID = eTeamID::None;
+
+	/* 체력이 다 소모되어 사망할때 발생하는 이벤트 */
+	OnDeathEventType onDeathEvent;
 
 private:
 	/* 속성값(Health) 관리 컴포넌트 */

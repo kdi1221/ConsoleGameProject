@@ -3,8 +3,8 @@
 
 using namespace Craft;
 
-NPCSlime::NPCSlime(const Craft::Vector2Int& position)
-	:NPCBase(position, L"◎", Color::Blue, 1, 3)
+NPCSlime::NPCSlime(const Craft::Vector2Int& position, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
+	:NPCBase(position, L"◎", Color::Blue, 1, 3, roomIndex)
 {
 
 }

@@ -23,7 +23,7 @@ Pawn::Pawn(const Craft::Vector2Int& position,
 
 	attributeComponent = AddComponent<AttributeComponent>(initialHealth);
 	assert(attributeComponent && "Invalid attributeComponent");
-	attributeComponent->AddOutofHealthCallback(std::bind(&Pawn::OnOutofHealth, this));
+	attributeComponent->AddOutofHealthCallback(std::bind(&Pawn::OnOutOfHealth, this));
 }
 
 bool Pawn::IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor)
@@ -45,6 +45,11 @@ bool Pawn::IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor)
 	return false;
 }
 
+void Pawn::SetDeathEventCallback(OnDeathEventType deathEventCallback)
+{
+	onDeathEvent = deathEventCallback;
+}
+
 void Pawn::TakeDamage(const int inDamage)
 {
 	if (!attributeComponent)
@@ -57,11 +62,15 @@ void Pawn::TakeDamage(const int inDamage)
 
 void Pawn::OnDeath()
 {
-	//TODO : Death 처리
+	if (onDeathEvent)
+	{
+		onDeathEvent(std::static_pointer_cast<Pawn>(shared_from_this()));
+	}
 }
 
-void Pawn::OnOutofHealth()
+void Pawn::OnOutOfHealth()
 {
 	OnDeath();
+
 	Destroy();
 }

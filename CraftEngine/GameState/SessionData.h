@@ -16,7 +16,7 @@ namespace Craft
 		virtual ~SessionData();
 
 	public:
-		void SetCurrentLevel(std::weak_ptr<Level> level);
+		virtual void SetCurrentLevel(std::weak_ptr<Level> level);
 
 	protected:
 		// 현재 활성화된 레벨 캐스팅 반환

@@ -5,6 +5,7 @@
 #include <Memory>
 #include <map>
 #include <unordered_map>
+#include <functional>
 
 namespace Craft
 {
@@ -25,6 +26,7 @@ class TilemapLevel : public Craft::Level
 public:
 	using RoomMapType = std::map<RoomDefines::UNIQUE_INDEX_TYPE, std::unique_ptr<Room>>;
 	using TilemapActorListType = std::unordered_map<Craft::Vector2Int, std::vector<std::weak_ptr<ActorOnTile>>>;
+	using PlayerVistedRoomEventType = std::function<void(const RoomDefines::UNIQUE_INDEX_TYPE, const Room&, const Craft::Vector2Int&)>;
 
 public:
 	TilemapLevel();
@@ -54,6 +56,9 @@ protected:
 public:
 	/* 타일맵 기반 충돌 처리 */
 	void ProcessTilemapCollision();
+
+	/* 플레이어의 특정 방 진입 이벤트에 대한 콜백 등록 */
+	void SetPlayerVisitedRoomEventCallback(PlayerVistedRoomEventType inCallback);
 
 private:
 	/* BSP를 활용한 랜덤타일맵 생성 */
@@ -94,5 +99,8 @@ private:
 
 	//타일맵 내 타일 인덱스마다 존재하는 Actor 리스트들
 	TilemapActorListType mapActorListOnTilemap;
+
+	/* 플레이어가 특정 방을 최초로 방문했을때 호출되는 이벤트 */
+	PlayerVistedRoomEventType onPlayerVisitedRoom;
 };
 
