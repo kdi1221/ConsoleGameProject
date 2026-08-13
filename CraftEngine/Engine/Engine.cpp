@@ -7,6 +7,7 @@
 #include "SoundSystem/Sound.h"
 #include "Config/ConfigBase.h"
 #include "Camera/CameraManager.h"
+#include "Navigation/NavigationBase.h"
 #include "GameState/GameMode/GameMode.h"
 #include "GameState/PlayerState/PlayerState.h"
 #include <Windows.h>
@@ -57,6 +58,9 @@ namespace Craft
 		//카메라 객체 생성.
 		cameraManager = std::make_unique<CameraManager>(config.GetViewWidth(), config.GetViewHeight(), 
 														config.GetViewSpaceMaxWidth(), config.GetViewSpaceMaxHeight());
+
+		//네비게이션 시스템 객체 생성.
+		navigationSystem = CreateNavigationSystem();
 	}
 
 	void Engine::Run()
@@ -231,6 +235,13 @@ namespace Craft
 
 		//초기화 이벤트 호출
 		mainLevel->OnInitialized();
+
+		//TODO : GameMode, PlayerState에 Level이 초기화되었음을 알림
+		assert(gameMode && "Invalid gameMode");
+		gameMode->OnInitializeLevel();
+
+		assert(playerState && "Invalid playerState");
+		playerState->OnInitializeLevel();
 	}
 
 	void Engine::BeginPlay()
@@ -321,6 +332,17 @@ namespace Craft
 		// 기존 레벨 정리
 		if (mainLevel)
 		{
+			//기존 레벨이 정리되었음을 알림
+			if (GameMode* currentGameMode = GetGameMode<GameMode>())
+			{
+				currentGameMode->OnDestroyedCurrentLevel();
+			}
+
+			if (PlayerState* currentPlayerState = GetPlayerState<PlayerState>())
+			{
+				currentPlayerState->OnDestroyedCurrentLevel();
+			}
+
 			mainLevel.reset();
 		}
 
@@ -329,6 +351,12 @@ namespace Craft
 
 		//전환 후 Next Level 정리
 		nextLevel.reset();
+
+		//레벨 전환 후 네비게이션 시스템에 알림
+		if (navigationSystem)
+		{
+			navigationSystem->SetCurrentLevel(mainLevel);
+		}
 
 		//레벨 전환 후 유효한 세션 객체들에게 알리기
 		if (GameMode* currentGameMode = GetGameMode<GameMode>())
@@ -345,6 +373,11 @@ namespace Craft
 	std::unique_ptr<ConfigBase> Engine::CreateConfig() const
 	{
 		return std::make_unique<ConfigBase>();
+	}
+
+	std::unique_ptr<NavigationBase> Engine::CreateNavigationSystem() const
+	{
+		return std::make_unique<NavigationBase>();
 	}
 
 	std::unique_ptr<GameMode> Engine::CreateGameMode() const

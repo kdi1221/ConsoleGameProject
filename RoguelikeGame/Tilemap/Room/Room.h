@@ -23,7 +23,7 @@ public:
 
 public:
 	inline eRoomType GetRoomType() const { return roomType; }
-	inline bool IsPlayerVisited() const { return isPlayerVisited; }
+	inline UNIQUE_INDEX_TYPE GetRoomUniqueIndex() const { return UniqueIndex; }
 
 private:
 	//방의 고유 인덱스
@@ -34,8 +34,5 @@ private:
 
 	//방의 종류
 	eRoomType roomType = eRoomType::None;
-
-	//플레이어의 방문 여부
-	bool isPlayerVisited = false;
 };
 

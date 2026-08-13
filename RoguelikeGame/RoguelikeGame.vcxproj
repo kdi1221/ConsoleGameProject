@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -118,6 +118,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Level\TestLevel.cpp" />
     <ClCompile Include="Level\TilemapLevel.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Navigation\NavigationTilemap.cpp" />
     <ClCompile Include="TileMap\BSP\BSPNode.cpp" />
     <ClCompile Include="Tilemap\BSP\RoomSpace\RoomSpace.cpp" />
     <ClCompile Include="Tilemap\Room\Room.cpp" />
@@ -144,6 +145,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Game\State\PlayerState\PS_Roguelike.h" />
     <ClInclude Include="Level\TestLevel.h" />
     <ClInclude Include="Level\TilemapLevel.h" />
+    <ClInclude Include="Navigation\NavigationTilemap.h" />
     <ClInclude Include="TileMap\BSP\BSPNode.h" />
     <ClInclude Include="Tilemap\BSP\RoomSpace\RoomSpace.h" />
     <ClInclude Include="Tilemap\Room\Room.h" />

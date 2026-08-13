@@ -30,6 +30,9 @@ public:
 	void TakeDamage(const int inDamage);
 
 public:
+	bool IsDeath() const;
+
+public:
 	inline eTeamID GetTeamID() const { return teamID; }
 
 protected:

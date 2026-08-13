@@ -18,6 +18,7 @@ namespace Craft
 	class CameraManager;
 	class GameMode;
 	class PlayerState;
+	class NavigationBase;
 
 	//메인 엔진 클래스
 	//엔진 루프 제공
@@ -73,6 +74,16 @@ namespace Craft
 			return static_cast<const T&>(*ptrConfig);
 		}
 
+		//네비게이션 시스템 반환
+		template<typename T, typename = std::enable_if_t<std::is_base_of<NavigationBase, T>::value>>
+		const T& GetNavigationSystem() const
+		{
+			const NavigationBase* ptrNavigation = navigationSystem.get();
+			assert(ptrNavigation && "Invalid config..");
+
+			return static_cast<const T&>(*ptrNavigation);
+		}
+
 		// GameMode 반환
 		template<typename T, typename = std::enable_if_t<std::is_base_of<GameMode, T>::value>>
 		T* GetGameMode() const
@@ -125,6 +136,9 @@ namespace Craft
 		/* 설정 객체 생성(엔진을 상속받는 클래스마다 다르게 지정 가능 ) */
 		virtual std::unique_ptr<ConfigBase> CreateConfig() const;
 
+		/* 네비게이션 시스템 객체 생성 */
+		virtual std::unique_ptr<NavigationBase> CreateNavigationSystem() const;
+
 		/* 게임 모드 객체 생성 */
 		virtual std::unique_ptr<GameMode> CreateGameMode() const;
 
@@ -161,6 +175,9 @@ namespace Craft
 
 		//엔진 카메라 객체
 		std::unique_ptr<CameraManager> cameraManager;
+
+		//게임 내 네비게이션 시스템 객체
+		std::unique_ptr<NavigationBase> navigationSystem;
 
 		//현재 게임모드(Level과 별도 관리)
 		std::unique_ptr<GameMode> gameMode;

@@ -1,7 +1,7 @@
 ﻿#include "Projectile.h"
 #include "Component/SpriteRendererComponent.h"
 #include "Component/BoxCollisionComponent.h"
-#include "Component/MovementComponent.h"
+#include "Component/PathMoveComponent.h"
 #include "Types/Enums.h"
 #include "Actor/MapObject/RoomDoor.h"
 #include "Actor/Pawn/Pawn.h"
@@ -25,16 +25,22 @@ Projectile::Projectile(const Craft::Vector2Int& inPosition,
 	// 필요한 컴포넌트 추가.
 	AddComponent<SpriteRendererComponent>(inImage, inColor, static_cast<int>(eRenderSortingOrder::Projectile));
 	AddComponent<BoxCollisionComponent>(1);
-	pathMoveComponent = AddComponent<PathMoveComponent>(moveDelay, std::bind(&Projectile::OnCallbackMoveFinish, this));
+	pathMoveComponent = AddComponent<PathMoveComponent>(moveDelay, false);
+	pathMoveComponent->SetMoveFinishCallback(std::bind(&Projectile::OnCallbackMoveFinish, this));
 }
 
 void Projectile::BeginPlay()
 {
 	super::BeginPlay();
 
-	/* 지정된 목적지를 향해 경로를 생성하고 이동 시작 */
+	/* 브레젠험 알고리즘, 시작 지점과 끝 지점을 잇는 선 경로를 가져옴 */
+	const Vector2Int startPostion = GetWorldPosition();
+	std::vector<Vector2Int> movePaths;
+	StaticFunctionLibrary::GetBresenhamPath(startPostion, destinationPos, movePaths);
+
+	/* 지정된 목적지를 향해 경로를 지정하고 이동 시작 */
 	assert(pathMoveComponent && "pathMoveComponent invalid..");
-	pathMoveComponent->StartMoveToPosition(destinationPos);
+	pathMoveComponent->StartMove(std::move(movePaths));
 }
 
 void Projectile::OnTileOverlap(const eTileCategory tileCategory)

@@ -1,5 +1,6 @@
 ﻿#include "Game.h"
 #include "Config/Config.h"
+#include "Navigation/NavigationTilemap.h"
 #include "Game/State/GameMode/GM_Roguelike.h"
 #include "Game/State/PlayerState/PS_Roguelike.h"
 #include "Render/Renderer.h"
@@ -44,6 +45,11 @@ void Game::ProcessColiision()
 std::unique_ptr<Craft::ConfigBase> Game::CreateConfig() const
 {
 	return std::make_unique<Config>();
+}
+
+std::unique_ptr<Craft::NavigationBase> Game::CreateNavigationSystem() const
+{
+	return std::make_unique<NavigationTilemap>();
 }
 
 std::unique_ptr<GameMode> Game::CreateGameMode() const

@@ -42,7 +42,7 @@ PlayerPawn::PlayerPawn(const Craft::Vector2Int& position)
 	assert(fireProjectileComponent && "fireProjectileComponent create fail..");
 
 	/* 이동 컴포넌트 */
-	movementComponent = AddComponent<MovementComponent>(0.1f);
+	movementComponent = AddComponent<MovementComponent>(0.05f);
 	assert(movementComponent && "cameraComponent create fail..");
 }
 

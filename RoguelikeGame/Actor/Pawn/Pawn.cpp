@@ -60,6 +60,16 @@ void Pawn::TakeDamage(const int inDamage)
 	attributeComponent->DecreaseCurrrentHealth(inDamage);
 }
 
+bool Pawn::IsDeath() const
+{
+	if (!attributeComponent)
+	{
+		return false;
+	}
+
+	return attributeComponent->GetCurrentHealth() <= 0;
+}
+
 void Pawn::OnDeath()
 {
 	if (onDeathEvent)

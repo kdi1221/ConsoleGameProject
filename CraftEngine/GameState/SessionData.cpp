@@ -16,4 +16,14 @@ namespace Craft
 	{
 		currentLevel = level;
 	}
+
+	void SessionData::OnInitializeLevel()
+	{
+	
+	}
+
+	void SessionData::OnDestroyedCurrentLevel()
+	{
+		currentLevel.reset();
+	}
 }

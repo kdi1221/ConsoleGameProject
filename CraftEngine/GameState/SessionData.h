@@ -16,7 +16,14 @@ namespace Craft
 		virtual ~SessionData();
 
 	public:
+		/* 현재 활성화된 레벨 설정 */
 		virtual void SetCurrentLevel(std::weak_ptr<Level> level);
+
+		/* 현재 활성화된 레벨이 초기화될 때 호출됨 */
+		virtual void OnInitializeLevel();
+
+		/* 현재 활성화되어 있던 레벨이 지워지기전 호출됨 */
+		virtual void OnDestroyedCurrentLevel();
 
 	protected:
 		// 현재 활성화된 레벨 캐스팅 반환

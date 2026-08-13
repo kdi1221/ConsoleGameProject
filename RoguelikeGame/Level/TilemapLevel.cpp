@@ -6,9 +6,6 @@
 #include "Tilemap/Room/Room.h"
 #include "Tilemap/BSP/RoomSpace/RoomSpace.h"
 #include "Util/Util.h"
-#include "Actor/MapObject/PlayerStart.h"
-#include "Actor/MapObject/NextLevel.h"
-#include "Actor/MapObject/Exit.h"
 #include "Actor/Pawn/Player/PlayerPawn.h"
 #include <cassert>
 #include <Memory>
@@ -35,12 +32,6 @@ void TilemapLevel::OnInitialized()
 
 	/* 만들어진 방들의 종류 지정 */
 	AssignRoomType();
-
-	/* 게임 시작 전 필요한 액터 생성 */
-	ReadyGame();
-
-	/* 플레이어 생성 및 게임 시작 */
-	PlayerPawnSpawn();
 }
 
 void TilemapLevel::Tick(float deltaTime)
@@ -95,8 +86,8 @@ void TilemapLevel::OnPositionUpdateActorInLevel(std::weak_ptr<Actor> updatedActo
 	/* 새로운 위치에 등록 */
 	RegisterActorOnTilemap(actorOnTile);
 
-	/* 플레이어의 이벤트 처리(특정 방에 진입) */
-	if (playerPawn == actorOnTile)
+	/* 플레이어의 이동 이벤트 처리 */
+	if (actorOnTile->IsTypeOf<PlayerPawn>())
 	{
 		OnMovePlayerEvent(prevWorldPosition, worldPosition);
 	}
@@ -274,9 +265,56 @@ void TilemapLevel::ProcessTilemapCollision()
 	}
 }
 
-void TilemapLevel::SetPlayerVisitedRoomEventCallback(PlayerVistedRoomEventType inCallback)
+void TilemapLevel::SetPlayerVisitedRoomEventCallback(PlayerRoomEventType inCallback)
 {
 	onPlayerVisitedRoom = inCallback;
+}
+
+void TilemapLevel::SetPlayerLeavedRoomEventCallback(PlayerRoomEventType inCallback)
+{
+	onPlayerLeavedRoom = inCallback;
+}
+
+void TilemapLevel::Foreach_Rooms(std::function<void(const Room&)> callback)
+{
+	for (const auto& pairRoom : mapRooms)
+	{
+		if (!pairRoom.second)
+		{
+			continue;
+		}
+
+		callback(*pairRoom.second);
+	}
+}
+
+const Room* TilemapLevel::GetPostionInRoom(const Craft::Vector2Int& checkPosition) const
+{
+	if (!tileMap)
+	{
+		return nullptr;
+	}
+
+	tileMap->GetTileRoomIndex(checkPosition);
+
+	const UNIQUE_INDEX_TYPE findRoomIndex = tileMap->GetTileRoomIndex(checkPosition);
+	auto iterStartRoom = mapRooms.find(findRoomIndex);
+	if (iterStartRoom == mapRooms.end())
+	{
+		return nullptr;
+	}
+
+	return iterStartRoom->second.get();
+}
+
+eTileCategory TilemapLevel::GetTileCategory(const Craft::Vector2Int& position) const
+{
+	if (!tileMap)
+	{
+		return eTileCategory::None;
+	}
+
+	return tileMap->GetTileCategory(position);
 }
 
 void TilemapLevel::BuildTilemapBSP()
@@ -368,95 +406,6 @@ void TilemapLevel::AssignRoomType()
 	}
 }
 
-void TilemapLevel::ReadyGame()
-{
-	for (const auto& pairRoom : mapRooms)
-	{
-		if (!pairRoom.second)
-		{
-			continue;
-		}
-
-		const Room& room = *pairRoom.second;
-		const RoomSpace& roomSpace = room.GetRoomSpace();
-
-		switch (pairRoom.second->GetRoomType())
-		{
-		case eRoomType::Start:
-			{
-				//플레이어의 시작 위치 오브젝트 생성
-				const Vector2Int& selectTilePos = roomSpace.GetPositionCenter();
-				spawnedPlayerStart = SpawnActor<PlayerStart>(selectTilePos);
-			}
-			break;
-
-		case eRoomType::NextLevel:
-			{
-				//다음 층으로 이동할 입구 오브젝트 생성
-				const Vector2Int& selectTilePos = roomSpace.GetPositionCenter();
-				SpawnActor<NextLevel>(selectTilePos);
-			}
-			break;
-
-		case eRoomType::Exit:
-			{
-				//출구 오브젝트 랜덤한 위치에 생성
-				const Vector2Int& selectTilePos = roomSpace.GetPositionCenter();
-				SpawnActor<Exit>(selectTilePos);
-			}
-			break;
-
-		case eRoomType::Treasure:
-			{
-				//랜덤하게 아이템 오브젝트 생성
-			}
-			break;
-
-		case eRoomType::Battle:
-			{
-				//랜덤하게 생성할 몬스터의 위치 결정
-			}
-			break;
-
-		default:
-			{
-
-			}
-			break;
-		}
-	}
-}
-
-void TilemapLevel::PlayerPawnSpawn()
-{
-	PlayerStart* playerStart = spawnedPlayerStart.get();
-	assert(playerStart && "playerStart Invalid..");
-	
-	playerPawn = SpawnActor<PlayerPawn>(playerStart->GetWorldPosition());
-	assert(playerPawn && "spawn playerPawn fail..");
-
-	// 플레이어가 최조 스폰된 방에 대한 이벤트 처리
-	if(tileMap)
-	{
-		const Vector2Int& startPlayerPos = playerPawn->GetWorldPosition();
-		const UNIQUE_INDEX_TYPE currentPlayerRoomIndex = tileMap->GetTileRoomIndex(startPlayerPos);
-		RoomMapType::iterator iterStartRoom = mapRooms.find(currentPlayerRoomIndex);
-		assert(iterStartRoom != mapRooms.end() && "Invalid iterator Room");
-
-		Room* findStartRoom = iterStartRoom->second.get();
-		assert(findStartRoom && "Invalid Room");
-
-		//방의 종류에 따른 고유 이벤트 처리
-		if (onPlayerVisitedRoom)
-		{
-			onPlayerVisitedRoom(currentPlayerRoomIndex, *findStartRoom, startPlayerPos);
-		}
-
-		/* 플레이어 방문 플래그 지정 */
-		findStartRoom->SetPlayerVisited(true);
-	}
-}
-
 void TilemapLevel::RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile)
 {
 	if (!actorOnTile)
@@ -531,24 +480,35 @@ void TilemapLevel::OnMovePlayerEvent(const Vector2Int& prevWorldPosition, const 
 	const UNIQUE_INDEX_TYPE currentRoomIndex = tileMap->GetTileRoomIndex(worldPosition);
 
 	/* 이전과 현재 위치해 있는 방이 서로 다른 경우 이벤트 발생 */
-	if (prevRoomIndex != currentRoomIndex && currentRoomIndex != ROOM_INDEX_INVALID)
+	if (prevRoomIndex != currentRoomIndex)
 	{
-		RoomMapType::iterator iterRoom = mapRooms.find(currentRoomIndex);
-		assert(iterRoom != mapRooms.end() && "Invalid iterator Room");
-
-		Room* findRoom = iterRoom->second.get();
-		assert(findRoom && "Invalid Room");
-
-		//플레이어가 처음 방문한 방이면 이벤트 처리 필요
-		if (!findRoom->IsPlayerVisited())
+		/* 현재 위치의 방 인덱스가 유효 => 특정 방에 진입했다는 것을 의미 */
+		if (currentRoomIndex != ROOM_INDEX_INVALID)
 		{
 			if (onPlayerVisitedRoom)
 			{
-				onPlayerVisitedRoom(currentRoomIndex, *findRoom, worldPosition);
-			}
+				RoomMapType::iterator iterRoom = mapRooms.find(currentRoomIndex);
+				assert(iterRoom != mapRooms.end() && "Invalid iterator Room");
 
-			/* 플레이어 방문 플래그 지정 */
-			findRoom->SetPlayerVisited(true);
+				const Room* findRoom = iterRoom->second.get();
+				assert(findRoom && "Invalid Room");
+
+				onPlayerVisitedRoom(*findRoom, worldPosition);
+			}
+		}
+		else if (prevRoomIndex != ROOM_INDEX_INVALID && currentRoomIndex == ROOM_INDEX_INVALID)
+		{
+			/* 이전 위치의 방 인덱스가 유효했으나 현재 유효하지않으면 => 특정 방에서 빠져나왔다는것을 의미 */
+			if (onPlayerLeavedRoom)
+			{
+				RoomMapType::iterator iterRoom = mapRooms.find(prevRoomIndex);
+				assert(iterRoom != mapRooms.end() && "Invalid iterator Room");
+
+				const Room* findRoom = iterRoom->second.get();
+				assert(findRoom && "Invalid Room");
+
+				onPlayerLeavedRoom(*findRoom, worldPosition);
+			}
 		}
 	}
 }
