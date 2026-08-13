@@ -10,7 +10,7 @@
 using namespace Craft;
 
 PlayerPawn::PlayerPawn(const Craft::Vector2Int& position)
-	:super(position, L"☺", Color::Yellow, 1, 5, eTeamID::Player)
+	:super(position, L"☺", Color::Yellow, 5, eTeamID::Player)
 {
 	std::shared_ptr<InputComponent> inputComponent = AddComponent<InputComponent>();
 	assert(inputComponent && "inputComponent create fail..");

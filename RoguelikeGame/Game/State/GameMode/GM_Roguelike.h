@@ -55,6 +55,9 @@ private:
 	/* 특정 몬스터의 사망 이벤트 수신 */
 	void OnEventNPCDeath(std::shared_ptr<Pawn> deathPawn);
 
+	/* 플레이어의 사망 이벤트 수신 */
+	void OnEventPlayerDeath(std::shared_ptr<Pawn> deathPawn);
+
 private:
 	/* 배틀이 진행되는 방 처리 */
 	void OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft::Vector2Int& playerPosition);

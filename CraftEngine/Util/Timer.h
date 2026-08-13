@@ -14,6 +14,9 @@ public:
 	//경과 시간 리셋 함수.
 	void Reset();
 
+	//다음 프레임에서 발동할 수 있도록 예약거는 함수
+	void ReserveNextTick();
+
 	// 목표 시간 재설정 함수.
 	void SetTargetTime(float newTargetTime);
 

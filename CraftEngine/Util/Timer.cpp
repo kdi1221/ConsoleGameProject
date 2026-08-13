@@ -22,6 +22,11 @@ void Timer::Reset()
 	elapsedTime = 0.f;
 }
 
+void Timer::ReserveNextTick()
+{
+	elapsedTime = targetTime;
+}
+
 void Timer::SetTargetTime(float newTargetTime)
 {
 	targetTime = newTargetTime;

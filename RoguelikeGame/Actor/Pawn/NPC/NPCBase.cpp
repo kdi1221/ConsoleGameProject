@@ -10,19 +10,20 @@ using namespace Craft;
 NPCBase::NPCBase(const Craft::Vector2Int& position, 
 				const std::wstring& image, 
 				Craft::Color color, 
-				int CollisionWidth,
 				int initialHealth,
 				RoomDefines::UNIQUE_INDEX_TYPE roomIndex,
 				float moveDelay,
-				float ChaseDelay)
-	:super(position, image, color, CollisionWidth, initialHealth, eTeamID::NPC)
+				float chaseDelay,
+				float attackDelay)
+	:super(position, image, color, initialHealth, eTeamID::NPC)
 	,spawnedRoomIndex(roomIndex)
 {
 	pathMoveComponent = AddComponent<PathMoveComponent>(moveDelay, true);
 	pathMoveComponent->SetMoveFinishCallback(std::bind(&NPCBase::OnMoveFinish, this));
 	pathMoveComponent->SetMoveAbortCallback(std::bind(&NPCBase::OnMoveAbort, this));
 
-	timerFindChasePathDelay.SetTargetTime(ChaseDelay);
+	timerFindChasePathDelay.SetTargetTime(chaseDelay);
+	timerAttackDelay.SetTargetTime(attackDelay);
 }
 
 void NPCBase::Tick(float deltaTime)
@@ -94,7 +95,7 @@ void NPCBase::SetBehaviorState(eMonsterBehavior newState)
 
 		case eMonsterBehavior::Attack:
 			{
-				
+				timerAttackDelay.Reset();
 			}
 			break;
 		}
@@ -110,7 +111,7 @@ void NPCBase::SetBehaviorState(eMonsterBehavior newState)
 
 		case eMonsterBehavior::TargetChase:
 			{
-				timerFindChasePathDelay.Reset();
+				
 			}
 			break;
 
@@ -128,34 +129,15 @@ void NPCBase::BeginPathfindingToTarget()
 	std::shared_ptr<Pawn> target = chaseTarget.lock();
 	assert(target && "Invalid target");
 
-	const NavigationTilemap& navigationSystem = Engine::Get().GetNavigationSystem<NavigationTilemap>();
-
 	const Vector2Int& startPos = GetWorldPosition();
 	const Vector2Int& targetPos = target->GetWorldPosition();
 
 	//Target 주위 위치 중 갈수 있는 위치 구하기
 	std::vector<Vector2Int> availablePosition;
-	for (int y = -1; y != 1; ++y)
-	{
-		for (int x = -1; x != 1; ++x)
-		{
-			if (y == 0 && x == 0)
-			{
-				continue;
-			}
-
-			const Vector2Int checkPos(targetPos + Vector2Int(x, y));
-			if (!navigationSystem.CanNextMove(shared_from_this(), checkPos))
-			{
-				continue;
-			}
-
-			availablePosition.emplace_back(checkPos);
-		}
-	}
-
+	GetAvailableChaseTargetPosition(targetPos, availablePosition);
 	if (availablePosition.empty())
 	{
+		//타겟 주변에 이동할 곳이 없는경우 정지
 		return;
 	}
 
@@ -170,8 +152,10 @@ void NPCBase::BeginPathfindingToTarget()
 
 	/* 타겟 주변위치를 향한 경로를 탐색한다. */
 	std::vector<Craft::Vector2Int> movePaths;
+	const NavigationTilemap& navigationSystem = Engine::Get().GetNavigationSystem<NavigationTilemap>();
 	if (!navigationSystem.FindPath(shared_from_this(), startPos, availablePosition[0], movePaths))
 	{
+		// 이동할 경로를 찾지 못하면 정지
 		return;
 	}
 
@@ -189,50 +173,120 @@ void NPCBase::StopMove()
 	pathMoveComponent->StopPathMove();
 }
 
-void NPCBase::OnBehaviorIdle(float deltaTime)
+void NPCBase::CheckTargetWhileChase()
 {
-	// TODO : 현재로써는 타겟 사망외에 따로 처리할 부분 없음
-}
-
-void NPCBase::OnBehaviorChaseTarget(float deltaTime)
-{
-	/* 타겟이 더이상 유효하지 않거나 사망했으면 */
+	//이동이 끝난뒤 Target이 살아있는지 확인 
 	std::shared_ptr<Pawn> targetPawn = chaseTarget.lock();
 	if (!targetPawn || targetPawn->IsDeath())
 	{
 		//Idle 상태로 전환한다.
 		SetBehaviorState(eMonsterBehavior::Idle);
-		return;
 	}
+	else
+	{
+		//사정거리 안에있는지 확인
+		if (IsTargetAttackRange(targetPawn))
+		{
+			//공격 실행
+			SetBehaviorState(eMonsterBehavior::Attack);
+		}
+		else
+		{
+			//다시 이동 시작
+			BeginPathfindingToTarget();
+			timerFindChasePathDelay.Reset();
+		}
+	}
+}
 
-	/* TODO : 타겟이 공격범위 안에 있는경우 이동 중단 후 공격으로 전환 */
+void NPCBase::OnBehaviorIdle(float deltaTime)
+{
+	// TODO : 현재로써는 타겟 사망이후에나 들어오므로 따로 처리할 부분 없음
+}
 
-	/* 타겟 추적 타이머 딜레이 갱신 */
+void NPCBase::OnBehaviorChaseTarget(float deltaTime)
+{
+	/* 타겟 추적 타이머 딜레이 갱신(일정 딜레이마다 타겟과 주변의 환경변화를 인지해서 경로를 새로 잡는다) */
 	timerFindChasePathDelay.Tick(deltaTime);
 	if (timerFindChasePathDelay.IsTimeOut())
 	{
-		BeginPathfindingToTarget();
-		timerFindChasePathDelay.Reset();
+		/* 일정 딜레이마다 타겟과 주변 환경 변화를 인지해서 경로를 새로잡거나 공격범위 안에 있으면 공격한다. */
+		CheckTargetWhileChase();
 	}
 }
 
 void NPCBase::OnBehaviorAttack(float deltaTime)
 {
-	//TODO : 공격 도중 Target이 사정거리 밖으로 벗어나면 Chase를 시작한다.
+	timerAttackDelay.Tick(deltaTime);
+
+	//이동이 끝난뒤 Target이 살아있는지 확인 
+	std::shared_ptr<Pawn> targetPawn = chaseTarget.lock();
+	if (!targetPawn || targetPawn->IsDeath())
+	{
+		//Idle 상태로 전환한다.
+		SetBehaviorState(eMonsterBehavior::Idle);
+	}
+	else if (!IsTargetAttackRange(targetPawn)) //사정거리 안에있는지 확인
+	{
+		//사정거리 밖이면 다시 타겟 추적
+		SetBehaviorState(eMonsterBehavior::TargetChase);
+	}
+
+	if (timerAttackDelay.IsTimeOut())
+	{
+		//사정거리 안에있으면 공격실행
+		targetPawn->TakeDamage(1);
+		OutputDebugStringA("TODO : Attack\n");
+		timerAttackDelay.Reset();
+	}
 }
 
 void NPCBase::OnMoveFinish()
 {
-	OutputDebugStringA("Move Finish\n");
-
-	//TODO : 이동이 끝난뒤 Target이 사정거리 안에있는지 확인해서 공격 또는 다시 Chase를 시작한다.
+	//목적지 도착 : 타겟이 거리에 있으므로 타겟과의 거리 및 상태 체크
+	CheckTargetWhileChase();
 }
 
 void NPCBase::OnMoveAbort()
 {
-	//OutputDebugStringA("Move Abort\n");
+	//다른 객체에 충돌하여 멈춘경우 : 그 객체가 타겟일수 있으므로 타겟과의 거리 및 상태 체크
+	CheckTargetWhileChase();
+}
 
-	// TODO : 다른 객체에 충돌된 경우 Target이 사정거리 안에 있는지 확인해서 공격 또는 다시 Chase를 시작한다.
-	BeginPathfindingToTarget();
-	timerFindChasePathDelay.Reset();
+void NPCBase::GetAvailableChaseTargetPosition(const Craft::Vector2Int& targetPos, std::vector<Vector2Int>& availablePosition)
+{
+	const NavigationTilemap& navigationSystem = Engine::Get().GetNavigationSystem<NavigationTilemap>();
+
+	for (int y = -1; y <= 1; ++y)
+	{
+		for (int x = -1; x <= 1; ++x)
+		{
+			if (y == 0 && x == 0)
+			{
+				continue;
+			}
+
+			const Vector2Int checkPos(targetPos + Vector2Int(x, y));
+			if (!navigationSystem.CanNextMove(shared_from_this(), checkPos))
+			{
+				continue;
+			}
+
+			availablePosition.emplace_back(checkPos);
+		}
+	}
+}
+
+bool NPCBase::IsTargetAttackRange(std::shared_ptr<Pawn> targetPawn) const
+{
+	if (!targetPawn)
+	{
+		return false;
+	}
+
+	const Vector2Int& targetPos = targetPawn->GetWorldPosition();
+	const Vector2Int& worldPos = GetWorldPosition();
+	const Vector2Int distance = targetPos - worldPos;
+	
+	return abs(distance.x) <= 1 && abs(distance.y) <= 1;
 }

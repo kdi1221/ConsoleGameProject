@@ -11,7 +11,6 @@ using namespace Craft;
 Pawn::Pawn(const Craft::Vector2Int& position,
 			const std::wstring& image,
 			Craft::Color color,
-			int CollisionWidth,
 			int initialHealth,
 			eTeamID inTeamID)
 	:super(position)
@@ -19,7 +18,6 @@ Pawn::Pawn(const Craft::Vector2Int& position,
 {
 	// 필요한 컴포넌트 추가.
 	AddComponent<SpriteRendererComponent>(image, color, static_cast<int>(eRenderSortingOrder::Pawn));
-	AddComponent<BoxCollisionComponent>(CollisionWidth);
 
 	attributeComponent = AddComponent<AttributeComponent>(initialHealth);
 	assert(attributeComponent && "Invalid attributeComponent");

@@ -26,11 +26,11 @@ public:
 	NPCBase(const Craft::Vector2Int& position,
 		const std::wstring& image,
 		Craft::Color color,
-		int CollisionWidth,
 		int initialHealth,
 		RoomDefines::UNIQUE_INDEX_TYPE roomIndex,
 		float moveDelay,
-		float ChaseDelay);
+		float chaseDelay,
+		float attackDelay);
 
 	~NPCBase() = default;
 
@@ -55,6 +55,9 @@ private:
 	/* 이동 중단 */
 	void StopMove();
 
+	/* 타겟 추적 중 타겟과의 거리 및 상태 확인 */
+	void CheckTargetWhileChase();
+
 private:
 	void OnBehaviorIdle(float deltaTime);
 	void OnBehaviorChaseTarget(float deltaTime);
@@ -63,6 +66,13 @@ private:
 private:
 	void OnMoveFinish();
 	void OnMoveAbort();
+
+private:
+	/* 타겟을 추적할때 추적 목적지 반환 */
+	virtual void GetAvailableChaseTargetPosition(const Craft::Vector2Int& targetPos, std::vector<Craft::Vector2Int>& availablePosition);
+
+	/* 타겟이 공격 범위 안에 있는지 확인 */
+	virtual bool IsTargetAttackRange(std::shared_ptr<Pawn> targetPawn) const;
 
 private:
 	/* 이동 컴포넌트 */
@@ -81,7 +91,11 @@ private:
 	//현재 추적중인 대상
 	std::weak_ptr<Pawn> chaseTarget;
 
-	//현재 이동중인 경로
+	//현재 이동중인 경로(디버깅용)
 	std::vector<Craft::Vector2Int> debugMovePaths;
+
+	/* 공격 딜레이 타이머 */
+	Timer timerAttackDelay;
+
 };
 

@@ -118,6 +118,7 @@ void GM_Roguelike::PlayerPawnSpawn()
 
 	std::shared_ptr<PlayerPawn> spawnedPlayerPawn = level->SpawnActor<PlayerPawn>(playerStart->GetWorldPosition());
 	assert(spawnedPlayerPawn && "spawn playerPawn fail..");
+	spawnedPlayerPawn->SetDeathEventCallback(std::bind(&GM_Roguelike::OnEventPlayerDeath, this, std::placeholders::_1));
 	playerPawn = spawnedPlayerPawn;
 
 	// 플레이어가 최조 스폰된 방에 대한 이벤트 처리
@@ -287,4 +288,11 @@ void GM_Roguelike::OnEventNPCDeath(std::shared_ptr<Pawn> deathPawn)
 			OnRoomBattleEnd();
 		}
 	}
+}
+
+void GM_Roguelike::OnEventPlayerDeath(std::shared_ptr<Pawn> deathPawn)
+{
+	OutputDebugStringA("TODO : Player Death Process\n");
+
+
 }
