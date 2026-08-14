@@ -20,10 +20,6 @@ public:
 	virtual void Tick(float deltaTime) override;
 
 public:
-	void AbilityTriggerOn();
-	void AbilityTriggerOff();
-
-public:
 	template<typename T, typename... Args, typename = std::enable_if_t<std::is_base_of<AbilityObject, T>::value>>
 	AbilityObject::ABILITY_ID_TYPE AddNewAbility(Args&& ...args)
 	{

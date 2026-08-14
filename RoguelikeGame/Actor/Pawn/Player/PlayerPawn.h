@@ -43,9 +43,14 @@ private:
 	/* 이동 입력 처리 */
 	void ProcessMoveInput();
 
+	/* Projectile 발사 Offset 지정 */
 	void SetProjectileSpawnOffset(const Craft::Vector2Int& spawnOffset);
 
+	/* Projectile 목표 지점 설정 */
 	void SetAimingPostion(const Craft::Vector2Int& position);
+
+	/* Projectile Ability의 트리거 ON/OFF*/
+	void SetProjectileAbilityTrigger(bool bTrigger);
 
 private:
 	/* 현재 프레임에서의 누적 이동 입력 값*/

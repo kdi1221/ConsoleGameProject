@@ -7,6 +7,8 @@
 
 using namespace Craft;
 
+const Vector2Int NPCBase::INVALID_LAST_POS = Vector2Int(-1, -1);
+
 NPCBase::NPCBase(const Craft::Vector2Int& position, 
 				const std::wstring& image, 
 				Craft::Color color, 
@@ -109,7 +111,8 @@ void NPCBase::SetBehaviorState(eMonsterBehavior newState)
 
 		case eMonsterBehavior::TargetChase:
 			{
-				
+				//다음 프레임에 바로 대상을 쫓을 수 있도록 함
+				timerFindChasePathDelay.ReserveNextTick();
 			}
 			break;
 
@@ -160,6 +163,9 @@ void NPCBase::BeginPathfindingToTarget()
 	//디버깅용
 	debugMovePaths = movePaths;
 
+	//마지막에 추적한 타겟의 위치를 기록해둔다.
+	lastChaseTargetPos = targetPos;
+
 	//movePaths기반으로 이동 시작
 	assert(pathMoveComponent && "Invalid pathMoveComponent");
 	pathMoveComponent->StartMove(std::move(movePaths));
@@ -171,8 +177,10 @@ void NPCBase::StopMove()
 	pathMoveComponent->StopPathMove();
 }
 
-void NPCBase::CheckTargetWhileChase()
+void NPCBase::CheckTargetWhileChase(bool bForcePathUpdate)
 {
+	assert(pathMoveComponent && "Invalid pathMoveComponent");
+
 	//이동이 끝난뒤 Target이 살아있는지 확인 
 	std::shared_ptr<Pawn> targetPawn = chaseTarget.lock();
 	if (!targetPawn || targetPawn->IsDeath())
@@ -190,8 +198,15 @@ void NPCBase::CheckTargetWhileChase()
 		}
 		else
 		{
-			//다시 이동 시작
-			BeginPathfindingToTarget();
+			/* 강제 경로업데이트 또는 기존에 이동하려는 목적지가 타겟의 위치가 아닌경우에만 경로 새로 업데이트*/
+			const bool isPathUpdate = bForcePathUpdate || lastChaseTargetPos != targetPawn->GetWorldPosition();
+
+			if (isPathUpdate)
+			{
+				//다시 이동 시작
+				BeginPathfindingToTarget();
+			}
+
 			timerFindChasePathDelay.Reset();
 		}
 	}
@@ -209,7 +224,7 @@ void NPCBase::OnBehaviorChaseTarget(float deltaTime)
 	if (timerFindChasePathDelay.IsTimeOut())
 	{
 		/* 일정 딜레이마다 타겟과 주변 환경 변화를 인지해서 경로를 새로잡거나 공격범위 안에 있으면 공격한다. */
-		CheckTargetWhileChase();
+		CheckTargetWhileChase(false);
 	}
 }
 
@@ -232,11 +247,11 @@ void NPCBase::OnBehaviorAttack(float deltaTime)
 void NPCBase::OnMoveFinish()
 {
 	//목적지 도착 : 타겟이 거리에 있으므로 타겟과의 거리 및 상태 체크
-	CheckTargetWhileChase();
+	CheckTargetWhileChase(true);
 }
 
 void NPCBase::OnMoveAbort()
 {
 	//다른 객체에 충돌하여 멈춘경우 : 그 객체가 타겟일수 있으므로 타겟과의 거리 및 상태 체크
-	CheckTargetWhileChase();
+	CheckTargetWhileChase(true);
 }

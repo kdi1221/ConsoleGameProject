@@ -15,6 +15,9 @@ class NPCBase : public Pawn
 {
 	TYPE_DECLARATIONS(NPCBase, Pawn)
 
+private:
+	static const Craft::Vector2Int INVALID_LAST_POS;
+
 public:
 	enum class eMonsterBehavior
 	{
@@ -60,7 +63,7 @@ private:
 	void StopMove();
 
 	/* 타겟 추적 중 타겟과의 거리 및 상태 확인 */
-	void CheckTargetWhileChase();
+	void CheckTargetWhileChase(bool bForcePathUpdate);
 
 protected:
 	virtual void OnBehaviorIdle(float deltaTime);
@@ -101,6 +104,9 @@ private:
 
 	//현재 추적중인 대상
 	std::weak_ptr<Pawn> chaseTarget;
+
+	//마지막에 추적한 대상의 위치
+	Craft::Vector2Int lastChaseTargetPos = INVALID_LAST_POS;
 
 	//현재 이동중인 경로(디버깅용)
 	std::vector<Craft::Vector2Int> debugMovePaths;

@@ -200,23 +200,21 @@ void NPCRangeBase::AdjustAimDirection()
 
 	/* 타겟을 향해 발사할때 가장 적절한 Offset 선택 */
 	projectileAbility->SetProjectileSpawnOffset(bestOffset);
+	projectileAbility->SetAimingPostion(targetPosition);
 
 	/* offset 위치에서 타겟까지의 방향을 확인해서 조준 위치 설정 */
-	const Vector2Int firePosition = currentPosition + bestOffset;
+	//const Vector2Int firePosition = currentPosition + bestOffset;
 
-	if (targetPosition == firePosition)
-	{
-		/* 타겟의 위치와 발사할 위치가 동일한 경우 타겟의 위치로 조준위치를 설정한다. */
-		projectileAbility->SetAimingPostion(targetPosition);
-	}
-	else
-	{
-		Vector2Float offsetToTargetDistance = static_cast<Vector2Float>(targetPosition - firePosition);
-		offsetToTargetDistance.Normalize();
-		const Vector2Int aimingPosition = firePosition + static_cast<Vector2Int>(offsetToTargetDistance * attackRange);
-		projectileAbility->SetAimingPostion(aimingPosition);
-	}
-
-
-	
+	//if (targetPosition == firePosition)
+	//{
+	//	/* 타겟의 위치와 발사할 위치가 동일한 경우 타겟의 위치로 조준위치를 설정한다. */
+	//	projectileAbility->SetAimingPostion(targetPosition);
+	//}
+	//else
+	//{
+	//	Vector2Float offsetToTargetDistance = static_cast<Vector2Float>(targetPosition - firePosition);
+	//	offsetToTargetDistance.Normalize();
+	//	const Vector2Int aimingPosition = firePosition + static_cast<Vector2Int>(offsetToTargetDistance * attackRange);
+	//	projectileAbility->SetAimingPostion(aimingPosition);
+	//}
 }

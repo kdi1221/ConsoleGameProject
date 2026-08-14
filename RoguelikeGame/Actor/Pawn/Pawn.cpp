@@ -101,26 +101,6 @@ void Pawn::OnDeath()
 	}
 }
 
-void Pawn::AbilitiesTriggerOn()
-{
-	if (!abilitySystemComponent)
-	{
-		return;
-	}
-
-	abilitySystemComponent->AbilityTriggerOn();
-}
-
-void Pawn::AbilitiesTriggerOff()
-{
-	if (!abilitySystemComponent)
-	{
-		return;
-	}
-
-	abilitySystemComponent->AbilityTriggerOff();
-}
-
 void Pawn::OnOutOfHealth()
 {
 	OnDeath();

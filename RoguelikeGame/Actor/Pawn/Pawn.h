@@ -49,10 +49,6 @@ protected:
 	/* Pawn의 Death 이벤트 */
 	virtual void OnDeath();
 
-protected:
-	void AbilitiesTriggerOn();
-	void AbilitiesTriggerOff();
-
 private:
 	/* Health가 0이하일때 호출되는 이벤트 */
 	void OnOutOfHealth();

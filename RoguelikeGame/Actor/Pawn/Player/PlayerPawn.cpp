@@ -165,12 +165,12 @@ void PlayerPawn::ProcessFireInput()
 		if (fireInputValue == Vector2Int::Zero)
 		{
 			/* 이전에 발사중이었다가 중지 됨 */
-			AbilitiesTriggerOff();
+			SetProjectileAbilityTrigger(false);
 		}
 		else if (prevFireInputValue == Vector2Int::Zero)
 		{
 			/* 발사 중지 상태에서 발사 상태로 전환 */
-			AbilitiesTriggerOn();
+			SetProjectileAbilityTrigger(true);
 		}
 
 		prevFireInputValue = fireInputValue;
@@ -227,6 +227,30 @@ void PlayerPawn::SetAimingPostion(const Vector2Int& position)
 		if (abilityProjectile)
 		{
 			abilityProjectile->SetAimingPostion(position);
+		}
+	}
+}
+
+void PlayerPawn::SetProjectileAbilityTrigger(bool bTrigger)
+{
+	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
+	assert(abilitySystemComponent && "Invalid abilitySystemComponent");
+
+	for (AbilityObject::ABILITY_ID_TYPE grantProjectileAbilityID : grantProjectileAbilities)
+	{
+		AbilityProjectile* abilityProjectile = abilitySystemComponent->GetAbility<AbilityProjectile>(grantProjectileAbilityID);
+		if (!abilityProjectile)
+		{
+			continue;
+		}
+
+		if(bTrigger)
+		{
+			abilityProjectile->TriggerOn();
+		}
+		else
+		{
+			abilityProjectile->TriggerOff();
 		}
 	}
 }
