@@ -9,8 +9,6 @@ namespace Craft
 	class CameraComponent;
 }
 
-class FireProjectileComponent;
-
 class PlayerPawn : public Pawn
 {
 	TYPE_DECLARATIONS(PlayerPawn, Pawn)
@@ -27,6 +25,9 @@ private:
 									const Craft::Vector2Int& localPosition,
 									const Craft::Vector2Int& worldPosition) override;
 
+	/* Pawn의 초기 Ability 구성 */
+	virtual void InitializeAbility() override;
+
 private:
 	/* 키 입력 콜백 */
 	void OnMoveKeyInput(int keyCode, Craft::eInputTrigger inputTrigger);
@@ -42,6 +43,10 @@ private:
 	/* 이동 입력 처리 */
 	void ProcessMoveInput();
 
+	void SetProjectileSpawnOffset(const Craft::Vector2Int& spawnOffset);
+
+	void SetAimingPostion(const Craft::Vector2Int& position);
+
 private:
 	/* 현재 프레임에서의 누적 이동 입력 값*/
 	Craft::Vector2Int moveInputValue = Craft::Vector2Int::Zero;
@@ -54,13 +59,13 @@ private:
 
 	/* Projectile 발사 시 최대 Range */
 	float ProjectileRange = 10.f;
+	
+	/* 부여된 Projectile Ability ID들 */
+	std::vector<AbilityObject::ABILITY_ID_TYPE> grantProjectileAbilities;
 
 private:
 	/* 플레이어 폰을 바라보는 카메라 컴포넌트 */
 	std::shared_ptr<Craft::CameraComponent> cameraComponent;
-
-	/* 탄환 발사 컴포넌트 */
-	std::shared_ptr<FireProjectileComponent> fireProjectileComponent;
 
 	/* 이동 컴포넌트 */
 	std::shared_ptr<Craft::MovementComponent> movementComponent;

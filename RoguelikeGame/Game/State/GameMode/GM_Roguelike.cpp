@@ -9,7 +9,8 @@
 #include "Actor/MapObject/NextLevel.h"
 #include "Actor/MapObject/Exit.h"
 #include "Actor/Pawn/Player/PlayerPawn.h"
-#include "Actor/Pawn/NPC/NPCSlime.h"
+#include "Actor/Pawn/NPC/Slime/NPCSlime.h"
+#include "Actor/Pawn/NPC/GoblinArcher/NPCGoblinArcher.h"
 #include <Math/Vector2Int.h>
 
 using namespace Craft;
@@ -223,6 +224,24 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 	int spawnMonsterNum = Util::RandomRange(spawnMinRange, spawnMaxRange);
 	int currentIndex = 0;
 
+	auto spawnRandomNPC = [level](const Vector2Int& spawnTilePos, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
+		{
+			const int randomValue = Util::RandomRange(0, 99);
+
+			std::shared_ptr<NPCBase> spawnedNPC = nullptr;
+
+			if (randomValue < 30)
+			{
+				spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnTilePos, roomIndex);
+			}
+			else
+			{
+				spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
+			}
+
+			return spawnedNPC;
+		};
+
 	while (spawnMonsterNum > 0 && 
 		currentIndex < static_cast<int>(shuffleSpawnIndex.size()))
 	{
@@ -230,7 +249,7 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 		const Vector2Int& spawnTilePos = spawnTileIndices[spawnTileIndex];
 
 		//랜덤으로 결정된 위치에 몬스터 스폰
-		std::shared_ptr<NPCBase> spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, currentPlayerVisitRoomIndex);
+		std::shared_ptr<NPCBase> spawnedNPC = spawnRandomNPC(spawnTilePos, currentPlayerVisitRoomIndex);
 		assert(spawnedNPC && "Spawn NPC Fail..");
 
 		/* 생성된 NPC가 사망했을때의 이벤트 설정 */

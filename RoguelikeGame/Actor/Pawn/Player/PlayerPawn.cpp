@@ -1,8 +1,8 @@
 ﻿#include "PlayerPawn.h"
 #include "Math/Color.h"
 #include "Component/CameraComponent.h"
-#include "Component/FireProjectileComponent.h"
-#include "Actor/Projectile/Projectile.h"
+#include "Component/AbilitySystemComponent.h"
+#include "Ability/Shooter/AbilityProjectile.h"
 #include <Math/Vector2Float.h>
 #include <cassert>
 #include <Windows.h>
@@ -10,7 +10,7 @@
 using namespace Craft;
 
 PlayerPawn::PlayerPawn(const Craft::Vector2Int& position)
-	:super(position, L"☺", Color::Yellow, 5, eTeamID::Player)
+	:super(position, L"☺", Color::Yellow, 100.f, eTeamID::Player)
 {
 	std::shared_ptr<InputComponent> inputComponent = AddComponent<InputComponent>();
 	assert(inputComponent && "inputComponent create fail..");
@@ -37,10 +37,6 @@ PlayerPawn::PlayerPawn(const Craft::Vector2Int& position)
 	cameraComponent = AddComponent<CameraComponent>();
 	assert(cameraComponent && "cameraComponent create fail..");
 
-	/* 투사체 발사 컴포넌트 */
-	fireProjectileComponent = AddComponent<FireProjectileComponent>(0.5f, L"*", Color::Green, 0.04f, 0.06f, GetTeamID(), 1);
-	assert(fireProjectileComponent && "fireProjectileComponent create fail..");
-
 	/* 이동 컴포넌트 */
 	movementComponent = AddComponent<MovementComponent>(0.05f);
 	assert(movementComponent && "cameraComponent create fail..");
@@ -60,7 +56,6 @@ void PlayerPawn::Tick(float deltaTime)
 	/* 이동 입력 처리 */
 	ProcessMoveInput();
 
-
 	/* fire 입력 처리 */
 	ProcessFireInput();
 }
@@ -74,6 +69,24 @@ void PlayerPawn::OnUpdatedPosition(const Craft::Vector2Int& prevLocalPosition,
 
 	/* 위치 업데이트 시 카메라의 View Position도 업데이트 한다. */
 	UpdateViewCameraPosition(worldPosition);
+}
+
+void PlayerPawn::InitializeAbility()
+{
+	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
+	assert(abilitySystemComponent && "Invalid abilitySystemComponent");
+
+	/* 기본 탄환 발사 Ability 부여 */
+	AbilityObject::ABILITY_ID_TYPE grantAbilityProjectilID = 
+		abilitySystemComponent->AddNewAbility<AbilityProjectile>(0.5f,
+																L"*",
+																Color::Green,
+																0.035f,
+																0.045f,
+																GetTeamID(),
+																15.f);
+
+	grantProjectileAbilities.emplace_back(grantAbilityProjectilID);
 }
 
 void PlayerPawn::OnMoveKeyInput(int keyCode, eInputTrigger inputTrigger)
@@ -147,19 +160,17 @@ void PlayerPawn::UpdateViewCameraPosition(const Craft::Vector2Int& viewPosition)
 
 void PlayerPawn::ProcessFireInput()
 {
-	assert(fireProjectileComponent && "Invalid fireProjectileComponent");
-
 	if (prevFireInputValue != fireInputValue)
 	{
 		if (fireInputValue == Vector2Int::Zero)
 		{
 			/* 이전에 발사중이었다가 중지 됨 */
-			fireProjectileComponent->SetEnableFire(false);
+			AbilitiesTriggerOff();
 		}
 		else if (prevFireInputValue == Vector2Int::Zero)
 		{
 			/* 발사 중지 상태에서 발사 상태로 전환 */
-			fireProjectileComponent->SetEnableFire(true);
+			AbilitiesTriggerOn();
 		}
 
 		prevFireInputValue = fireInputValue;
@@ -168,15 +179,15 @@ void PlayerPawn::ProcessFireInput()
 	/* Projectile이 생성될 Offset 지정 */
 	if (fireInputValue != Vector2Int::Zero)
 	{
-		/* 생성될 Projectile이 생성될 Offset 지정 */
+		/* Projectile이 생성될 Offset 지정 */
 		const Vector2Int& spawnOffset = fireInputValue;
-		fireProjectileComponent->SetProjectileSpawnOffset(spawnOffset);
+		SetProjectileSpawnOffset(spawnOffset);
 
-		/* 생성될 Projectile의 목표 위치 지정(offset 위치로 향하는 방향 * Range) */
+		/* 조준 위치 지정(offset 위치로 향하는 방향 * Range) */
 		Vector2Float fireDirection = static_cast<Vector2Float>(spawnOffset);
 		fireDirection.Normalize();
 		const Vector2Float aimingPosition = static_cast<Vector2Float>(GetWorldPosition()) + (fireDirection * ProjectileRange);
-		fireProjectileComponent->SetProjectileAimingPosition(Vector2Int(static_cast<int>(round(aimingPosition.x)), static_cast<int>(round(aimingPosition.y))));
+		SetAimingPostion(Vector2Int(static_cast<int>(round(aimingPosition.x)), static_cast<int>(round(aimingPosition.y))));
 	}
 }
 
@@ -186,4 +197,36 @@ void PlayerPawn::ProcessMoveInput()
 
 	movementComponent->SetLastMoveDirection(moveInputValue);
 	moveInputValue = Vector2Int::Zero;
+}
+
+void PlayerPawn::SetProjectileSpawnOffset(const Vector2Int& spawnOffset)
+{
+	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
+	assert(abilitySystemComponent && "Invalid abilitySystemComponent");
+
+	/* 보유하고 있는 Projectile Ability에 SpwnOffset을 설정한다. */
+	for (AbilityObject::ABILITY_ID_TYPE grantProjectileAbilityID : grantProjectileAbilities)
+	{
+		AbilityProjectile* abilityProjectile = abilitySystemComponent->GetAbility<AbilityProjectile>(grantProjectileAbilityID);
+		if (abilityProjectile)
+		{
+			abilityProjectile->SetProjectileSpawnOffset(spawnOffset);
+		}
+	}
+}
+
+void PlayerPawn::SetAimingPostion(const Vector2Int& position)
+{
+	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
+	assert(abilitySystemComponent && "Invalid abilitySystemComponent");
+
+	/* 보유하고 있는 Projectile Ability에 AimingPostion을 설정한다. */
+	for (AbilityObject::ABILITY_ID_TYPE grantProjectileAbilityID : grantProjectileAbilities)
+	{
+		AbilityProjectile* abilityProjectile = abilitySystemComponent->GetAbility<AbilityProjectile>(grantProjectileAbilityID);
+		if (abilityProjectile)
+		{
+			abilityProjectile->SetAimingPostion(position);
+		}
+	}
 }

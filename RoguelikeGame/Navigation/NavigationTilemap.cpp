@@ -168,3 +168,14 @@ bool NavigationTilemap::CanNextMove(std::shared_ptr<Actor> agent, const Vector2I
 
 	return tilemapLevel->CanNextMove(agent, checkPos);
 }
+
+RoomDefines::UNIQUE_INDEX_TYPE NavigationTilemap::GetRoomIndexInTile(const Craft::Vector2Int& tileCoord) const
+{
+	std::shared_ptr<TilemapLevel> tilemapLevel = GetCurrentLevel<TilemapLevel>();
+	if (!tilemapLevel)
+	{
+		return RoomDefines::ROOM_INDEX_INVALID;
+	}
+
+	return tilemapLevel->GetRoomIndexInTile(tileCoord);
+}

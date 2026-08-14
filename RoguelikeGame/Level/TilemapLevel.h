@@ -74,6 +74,9 @@ public:
 	/* 해당 위치의 타일 종류 반환 */
 	eTileCategory GetTileCategory(const Craft::Vector2Int& position) const;
 
+	/* 해당 위치의 타일이 속한 방 인덱스 반환 */
+	RoomDefines::UNIQUE_INDEX_TYPE GetRoomIndexInTile(const Craft::Vector2Int& position) const;
+
 private:
 	/* BSP를 활용한 랜덤타일맵 생성 */
 	void BuildTilemapBSP();

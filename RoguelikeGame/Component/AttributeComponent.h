@@ -12,26 +12,30 @@ public:
 	using OnOutOfHealth = std::function<void()>;
 
 public:
-	AttributeComponent(int initialHealth);
+	AttributeComponent(float initialHealth);
 	virtual ~AttributeComponent() = default;
 
 public:
 	void AddOutofHealthCallback(const OnOutOfHealth& inCallback);
 	void AddOutofHealthCallback(OnOutOfHealth&& inCallback);
-	void DecreaseCurrrentHealth(int decreaseValue);
+	void DecreaseCurrrentHealth(float decreaseValue);
 
 public:
-	inline int GetCurrentHealth() const { return currentHealth; }
-	inline int GetMaxHealth() const { return maxHealth; }
+	inline float GetCurrentHealth() const { return currentHealth; }
+	inline float GetMaxHealth() const { return maxHealth; }
+	inline bool IsDeath() const { return isDeath; }
 
 private:
 	std::function<void()> onOutofHealth;
 
 private:
 	/* 현재 체력 */
-	int currentHealth = 0;
+	float currentHealth = 0.f;
 
 	/* 최대 체력 */
-	int maxHealth = 0;
+	float maxHealth = 0.f;
+
+	/* 사망 여부 */
+	bool isDeath = false;
 };
 

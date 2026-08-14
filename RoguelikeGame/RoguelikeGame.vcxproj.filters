@@ -66,9 +66,6 @@
     <ClCompile Include="Actor\Projectile\Projectile.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Component\FireProjectileComponent.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Actor\ActorOnTile.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -78,7 +75,7 @@
     <ClCompile Include="Actor\Pawn\NPC\NPCBase.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Actor\Pawn\NPC\NPCSlime.cpp">
+    <ClCompile Include="Actor\Pawn\NPC\Slime\NPCSlime.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Game\State\GameMode\GM_Roguelike.cpp">
@@ -91,6 +88,33 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Navigation\NavigationTilemap.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability\AbilityObject.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability\Shooter\AbilityShooter.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability\Shooter\AbilityProjectile.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\AbilitySystemComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability\AbilityPeriodicDelay.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability\Melee\AbilityMelee.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Pawn\NPC\NPCMeleeBase.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Pawn\NPC\NPCRangeBase.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Pawn\NPC\GoblinArcher\NPCGoblinArcher.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -152,9 +176,6 @@
     <ClInclude Include="Actor\Projectile\Projectile.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Component\FireProjectileComponent.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Actor\ActorOnTile.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -164,7 +185,7 @@
     <ClInclude Include="Actor\Pawn\NPC\NPCBase.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Actor\Pawn\NPC\NPCSlime.h">
+    <ClInclude Include="Actor\Pawn\NPC\Slime\NPCSlime.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Game\State\GameMode\GM_Roguelike.h">
@@ -177,6 +198,33 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Navigation\NavigationTilemap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\AbilityObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\Shooter\AbilityShooter.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\Shooter\AbilityProjectile.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\AbilitySystemComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\AbilityPeriodicDelay.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\Melee\AbilityMelee.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Pawn\NPC\NPCMeleeBase.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Pawn\NPC\NPCRangeBase.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Pawn\NPC\GoblinArcher\NPCGoblinArcher.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

@@ -16,7 +16,7 @@ public:
 				const Craft::Vector2Int& inDestination,
 				float moveDelay,
 				eTeamID teamID,
-				int damage);
+				float damage);
 	virtual ~Projectile() = default;
 
 private:
@@ -42,7 +42,7 @@ private:
 	eTeamID instigatorTeamID = eTeamID::None;
 
 	/* 탄환의 데미지 */
-	int damageValue = 0;
+	float damageValue = 0;
 
 private:
 	/* 이동 컴포넌트 */

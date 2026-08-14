@@ -3,6 +3,7 @@
 #include "Actor/Pawn/Pawn.h"
 #include <Util/Timer.h>
 #include "Types/Defines.h"
+#include "Component/AbilitySystemComponent.h"
 
 namespace Craft
 {
@@ -26,11 +27,10 @@ public:
 	NPCBase(const Craft::Vector2Int& position,
 		const std::wstring& image,
 		Craft::Color color,
-		int initialHealth,
+		float initialHealth,
 		RoomDefines::UNIQUE_INDEX_TYPE roomIndex,
 		float moveDelay,
-		float chaseDelay,
-		float attackDelay);
+		float chaseDelay);
 
 	~NPCBase() = default;
 
@@ -43,7 +43,11 @@ public:
 	void SetChaseTarget(std::weak_ptr<Pawn> target);
 
 public:
+	inline std::weak_ptr<Pawn> GetChaseTarget() const { return chaseTarget; }
 	inline RoomDefines::UNIQUE_INDEX_TYPE GetSpawnedRoomIndex() const { return spawnedRoomIndex; }
+
+protected:
+	inline eMonsterBehavior GetBehaviorState() const { return behaviorState; }
 
 private:
 	/* 비헤이비어 상태 설정 */
@@ -58,21 +62,28 @@ private:
 	/* 타겟 추적 중 타겟과의 거리 및 상태 확인 */
 	void CheckTargetWhileChase();
 
-private:
-	void OnBehaviorIdle(float deltaTime);
-	void OnBehaviorChaseTarget(float deltaTime);
-	void OnBehaviorAttack(float deltaTime);
+protected:
+	virtual void OnBehaviorIdle(float deltaTime);
+	virtual void OnBehaviorChaseTarget(float deltaTime);
+	virtual void OnBehaviorAttack(float deltaTime);
 
 private:
 	void OnMoveFinish();
 	void OnMoveAbort();
 
-private:
+protected:
 	/* 타겟을 추적할때 추적 목적지 반환 */
-	virtual void GetAvailableChaseTargetPosition(const Craft::Vector2Int& targetPos, std::vector<Craft::Vector2Int>& availablePosition);
+	virtual void GetAvailableChaseTargetPosition(const Craft::Vector2Int& targetPos, 
+												std::vector<Craft::Vector2Int>& availablePosition) = 0;
 
 	/* 타겟이 공격 범위 안에 있는지 확인 */
-	virtual bool IsTargetAttackRange(std::shared_ptr<Pawn> targetPawn) const;
+	virtual bool IsTargetAttackRange(std::shared_ptr<Pawn> targetPawn) const = 0;
+
+	/* 공격 Ability Trigger On */
+	virtual void AttackAbilitiesTriggerON() = 0;
+
+	/* 공격 Ability Trigger Off */
+	virtual void AttackAbilitiesTriggerOFF() = 0;
 
 private:
 	/* 이동 컴포넌트 */
@@ -93,9 +104,5 @@ private:
 
 	//현재 이동중인 경로(디버깅용)
 	std::vector<Craft::Vector2Int> debugMovePaths;
-
-	/* 공격 딜레이 타이머 */
-	Timer timerAttackDelay;
-
 };
 

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Navigation/NavigationBase.h"
+#include "Types/Defines.h"
 
 namespace Craft
 {
@@ -74,5 +75,9 @@ public:
 						std::vector<Craft::Vector2Int>& resultPath) const override;
 
 	virtual bool CanNextMove(std::shared_ptr<Craft::Actor> agent, const Craft::Vector2Int& checkPos) const override;
+
+public:
+	/* 해당 위치의 타일이 속한 방 인덱스 반환 */
+	RoomDefines::UNIQUE_INDEX_TYPE GetRoomIndexInTile(const Craft::Vector2Int& tileCoord) const;
 };
 

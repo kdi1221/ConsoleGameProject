@@ -16,7 +16,7 @@ Projectile::Projectile(const Craft::Vector2Int& inPosition,
 						const Craft::Vector2Int& inDestination,
 						float moveDelay,
 						eTeamID teamID,
-						int damage)
+						float damage)
 	:super(inPosition)
 	,destinationPos(inDestination)
 	,instigatorTeamID(teamID)

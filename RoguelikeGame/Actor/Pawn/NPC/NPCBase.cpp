@@ -10,11 +10,10 @@ using namespace Craft;
 NPCBase::NPCBase(const Craft::Vector2Int& position, 
 				const std::wstring& image, 
 				Craft::Color color, 
-				int initialHealth,
+				float initialHealth,
 				RoomDefines::UNIQUE_INDEX_TYPE roomIndex,
 				float moveDelay,
-				float chaseDelay,
-				float attackDelay)
+				float chaseDelay)
 	:super(position, image, color, initialHealth, eTeamID::NPC)
 	,spawnedRoomIndex(roomIndex)
 {
@@ -23,7 +22,6 @@ NPCBase::NPCBase(const Craft::Vector2Int& position,
 	pathMoveComponent->SetMoveAbortCallback(std::bind(&NPCBase::OnMoveAbort, this));
 
 	timerFindChasePathDelay.SetTargetTime(chaseDelay);
-	timerAttackDelay.SetTargetTime(attackDelay);
 }
 
 void NPCBase::Tick(float deltaTime)
@@ -57,10 +55,10 @@ void NPCBase::Draw()
 	super::Draw();
 
 	/* 경로 확인 테스트용 */
-	for (const Vector2Int& pathCoord : debugMovePaths)
+	/*for (const Vector2Int& pathCoord : debugMovePaths)
 	{
 		Renderer::Get().Submit(L" ", pathCoord, Color::BG_LightGreen, static_cast<int>(eRenderSortingOrder::MapObject));
-	}
+	}*/
 }
 
 void NPCBase::SetChaseTarget(std::weak_ptr<Pawn> target)
@@ -95,7 +93,7 @@ void NPCBase::SetBehaviorState(eMonsterBehavior newState)
 
 		case eMonsterBehavior::Attack:
 			{
-				timerAttackDelay.Reset();
+				AttackAbilitiesTriggerOFF();
 			}
 			break;
 		}
@@ -117,7 +115,7 @@ void NPCBase::SetBehaviorState(eMonsterBehavior newState)
 
 		case eMonsterBehavior::Attack:
 			{
-				
+				AttackAbilitiesTriggerON();
 			}
 			break;
 		}
@@ -217,9 +215,7 @@ void NPCBase::OnBehaviorChaseTarget(float deltaTime)
 
 void NPCBase::OnBehaviorAttack(float deltaTime)
 {
-	timerAttackDelay.Tick(deltaTime);
-
-	//이동이 끝난뒤 Target이 살아있는지 확인 
+	//Target이 살아있는지 확인 
 	std::shared_ptr<Pawn> targetPawn = chaseTarget.lock();
 	if (!targetPawn || targetPawn->IsDeath())
 	{
@@ -230,14 +226,6 @@ void NPCBase::OnBehaviorAttack(float deltaTime)
 	{
 		//사정거리 밖이면 다시 타겟 추적
 		SetBehaviorState(eMonsterBehavior::TargetChase);
-	}
-
-	if (timerAttackDelay.IsTimeOut())
-	{
-		//사정거리 안에있으면 공격실행
-		targetPawn->TakeDamage(1);
-		OutputDebugStringA("TODO : Attack\n");
-		timerAttackDelay.Reset();
 	}
 }
 
@@ -251,42 +239,4 @@ void NPCBase::OnMoveAbort()
 {
 	//다른 객체에 충돌하여 멈춘경우 : 그 객체가 타겟일수 있으므로 타겟과의 거리 및 상태 체크
 	CheckTargetWhileChase();
-}
-
-void NPCBase::GetAvailableChaseTargetPosition(const Craft::Vector2Int& targetPos, std::vector<Vector2Int>& availablePosition)
-{
-	const NavigationTilemap& navigationSystem = Engine::Get().GetNavigationSystem<NavigationTilemap>();
-
-	for (int y = -1; y <= 1; ++y)
-	{
-		for (int x = -1; x <= 1; ++x)
-		{
-			if (y == 0 && x == 0)
-			{
-				continue;
-			}
-
-			const Vector2Int checkPos(targetPos + Vector2Int(x, y));
-			if (!navigationSystem.CanNextMove(shared_from_this(), checkPos))
-			{
-				continue;
-			}
-
-			availablePosition.emplace_back(checkPos);
-		}
-	}
-}
-
-bool NPCBase::IsTargetAttackRange(std::shared_ptr<Pawn> targetPawn) const
-{
-	if (!targetPawn)
-	{
-		return false;
-	}
-
-	const Vector2Int& targetPos = targetPawn->GetWorldPosition();
-	const Vector2Int& worldPos = GetWorldPosition();
-	const Vector2Int distance = targetPos - worldPos;
-	
-	return abs(distance.x) <= 1 && abs(distance.y) <= 1;
 }

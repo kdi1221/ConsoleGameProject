@@ -317,6 +317,16 @@ eTileCategory TilemapLevel::GetTileCategory(const Craft::Vector2Int& position) c
 	return tileMap->GetTileCategory(position);
 }
 
+RoomDefines::UNIQUE_INDEX_TYPE TilemapLevel::GetRoomIndexInTile(const Craft::Vector2Int& position) const
+{
+	if (!tileMap)
+	{
+		return RoomDefines::ROOM_INDEX_INVALID;
+	}
+
+	return tileMap->GetTileRoomIndex(position);
+}
+
 void TilemapLevel::BuildTilemapBSP()
 {
 	//이전 타일맵 정보 초기화
