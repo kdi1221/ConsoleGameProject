@@ -9,7 +9,6 @@
 #include "Camera/CameraManager.h"
 #include "Navigation/NavigationBase.h"
 #include "GameState/GameMode/GameMode.h"
-#include "GameState/PlayerState/PlayerState.h"
 #include <Windows.h>
 #include <stdint.h>
 #include <iostream>
@@ -181,17 +180,12 @@ namespace Craft
 	{
 		gameMode = CreateGameMode();
 		assert(gameMode && "Create fail gameMode");
-		gameMode->SetCurrentLevel(mainLevel);
-
-		playerState = CreatePlayerState();
-		assert(playerState && "Create fail playerState");
-		playerState->SetCurrentLevel(mainLevel);
+		gameMode->Initlaize();
 	}
 
 	void Engine::DestroyGameSessionData()
 	{
 		gameMode.reset();
-		playerState.reset();
 	}
 
 	Engine& Engine::Get()
@@ -236,12 +230,9 @@ namespace Craft
 		//초기화 이벤트 호출
 		mainLevel->OnInitialized();
 
-		//TODO : GameMode, PlayerState에 Level이 초기화되었음을 알림
+		// GameMode에 Level이 초기화되었음을 알림
 		assert(gameMode && "Invalid gameMode");
-		gameMode->OnInitializeLevel();
-
-		assert(playerState && "Invalid playerState");
-		playerState->OnInitializeLevel();
+		gameMode->OnInitializeLevel(mainLevel);
 	}
 
 	void Engine::BeginPlay()
@@ -338,11 +329,6 @@ namespace Craft
 				currentGameMode->OnDestroyedCurrentLevel();
 			}
 
-			if (PlayerState* currentPlayerState = GetPlayerState<PlayerState>())
-			{
-				currentPlayerState->OnDestroyedCurrentLevel();
-			}
-
 			mainLevel.reset();
 		}
 
@@ -356,17 +342,6 @@ namespace Craft
 		if (navigationSystem)
 		{
 			navigationSystem->SetCurrentLevel(mainLevel);
-		}
-
-		//레벨 전환 후 유효한 세션 객체들에게 알리기
-		if (GameMode* currentGameMode = GetGameMode<GameMode>())
-		{
-			currentGameMode->SetCurrentLevel(mainLevel);
-		}
-
-		if (PlayerState* currentPlayerState = GetPlayerState<PlayerState>())
-		{
-			currentPlayerState->SetCurrentLevel(mainLevel);
 		}
 	}
 	
@@ -383,10 +358,5 @@ namespace Craft
 	std::unique_ptr<GameMode> Engine::CreateGameMode() const
 	{
 		return std::make_unique<GameMode>();
-	}
-
-	std::unique_ptr<PlayerState> Engine::CreatePlayerState() const
-	{
-		return std::make_unique<PlayerState>();
 	}
 }

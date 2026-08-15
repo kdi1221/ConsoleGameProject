@@ -94,6 +94,9 @@ enum class eRenderSortingOrder : int
 	//타일
 	Tile = 0,
 
+	//필드 내 존재하는 아이템
+	FieldItem,
+
 	//탄환
 	Projectile,
 

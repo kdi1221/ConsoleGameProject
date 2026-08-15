@@ -9,6 +9,6 @@ NPCGoblinArcher::NPCGoblinArcher(const Vector2Int& position, RoomDefines::UNIQUE
 	projectileColor = Color::Red;
 	projectileMoveDelayMin = 0.04f;
 	projectileMoveDelayMax = 0.06f;
-	projectileDamageValue = 3.f;
+	projectileDamageValue = 2.f;
 	attackRange = 8.f;
 }

@@ -12,14 +12,9 @@ namespace Craft
 
 	}
 
-	void SessionData::SetCurrentLevel(std::weak_ptr<Level> level)
+	void SessionData::OnInitializeLevel(std::weak_ptr<Level> level)
 	{
 		currentLevel = level;
-	}
-
-	void SessionData::OnInitializeLevel()
-	{
-	
 	}
 
 	void SessionData::OnDestroyedCurrentLevel()

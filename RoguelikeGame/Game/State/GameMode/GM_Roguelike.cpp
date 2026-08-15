@@ -1,9 +1,9 @@
 ﻿#include "GM_Roguelike.h"
-#include "Engine/Engine.h"
 #include "Util/Util.h"
 #include "Level/TilemapLevel.h"
 #include "TileMap/Room/Room.h"
 #include "Tilemap/BSP/RoomSpace/RoomSpace.h"
+#include "Game/State/PlayerState/PS_Roguelike.h"
 #include "Actor/MapObject/RoomDoor.h"
 #include "Actor/MapObject/PlayerStart.h"
 #include "Actor/MapObject/NextLevel.h"
@@ -11,7 +11,9 @@
 #include "Actor/Pawn/Player/PlayerPawn.h"
 #include "Actor/Pawn/NPC/Slime/NPCSlime.h"
 #include "Actor/Pawn/NPC/GoblinArcher/NPCGoblinArcher.h"
+#include "Actor/FieldItem/HealthPotion.h"
 #include <Math/Vector2Int.h>
+#include <cassert>
 
 using namespace Craft;
 
@@ -25,32 +27,28 @@ GM_Roguelike::~GM_Roguelike()
 
 }
 
-void GM_Roguelike::SetCurrentLevel(std::weak_ptr<Level> level)
+void GM_Roguelike::OnInitializeLevel(std::weak_ptr<Craft::Level> level)
 {
-	super::SetCurrentLevel(level);
+	super::OnInitializeLevel(level);
 
 	if (std::shared_ptr<TilemapLevel> currentTileMap = GetCurrentLevel<TilemapLevel>())
 	{
 		/* 타일맵 레벨 내에서 발생하는 이벤트들을 대기한다. */
-		currentTileMap->SetPlayerVisitedRoomEventCallback(std::bind(&GM_Roguelike::OnPlayerVisitedRoom, 
-																	this, 
-																	std::placeholders::_1, 
-																	std::placeholders::_2));
+		currentTileMap->SetPlayerVisitedRoomEventCallback(std::bind(&GM_Roguelike::OnPlayerVisitedRoom,
+			this,
+			std::placeholders::_1,
+			std::placeholders::_2));
 
 		currentTileMap->SetPlayerLeavedRoomEventCallback(std::bind(&GM_Roguelike::OnPlayerLeavedRoom,
-																	this,
-																	std::placeholders::_1,
-																	std::placeholders::_2));
+			this,
+			std::placeholders::_1,
+			std::placeholders::_2));
 	}
-	
-}
-
-void GM_Roguelike::OnInitializeLevel()
-{
-	super::OnInitializeLevel();
 
 	ReadyGameActorSpawn();
 	PlayerPawnSpawn();
+
+	IncrementFloorLevel();
 }
 
 void GM_Roguelike::OnDestroyedCurrentLevel()
@@ -66,6 +64,11 @@ void GM_Roguelike::OnDestroyedCurrentLevel()
 	spawnedRoomDoors.clear();
 
 	super::OnDestroyedCurrentLevel();
+}
+
+std::unique_ptr<PlayerState> GM_Roguelike::CreatePlayerState() const
+{
+	return std::make_unique<PS_Roguelike>();
 }
 
 void GM_Roguelike::ReadyGameActorSpawn()
@@ -127,6 +130,23 @@ void GM_Roguelike::PlayerPawnSpawn()
 	const Room* spawnedRoom = level->GetPostionInRoom(spawnedPlayerPawn->GetWorldPosition());
 	assert(spawnedRoom && "Spawn room Invalid");
 	OnPlayerVisitedRoom(*spawnedRoom, playerPosition);
+
+	/* PlayerState에 알림 */
+	PS_Roguelike* currentPlayerState = GetPlayerState<PS_Roguelike>();
+	assert(currentPlayerState && "currentPlayerState Invalid");
+
+	currentPlayerState->OnSpawnedPlayerPawn(playerPawn);
+}
+
+void GM_Roguelike::IncrementFloorLevel()
+{
+	++currentFloorLevel;
+
+	PS_Roguelike* playerState = GetPlayerState<PS_Roguelike>();
+	if (playerState)
+	{
+		playerState->ChangeFloorLevel(currentFloorLevel);
+	}
 }
 
 void GM_Roguelike::OnPlayerVisitedRoom(const Room& visitRoom, const Craft::Vector2Int& playerPosition)
@@ -150,8 +170,7 @@ void GM_Roguelike::OnPlayerVisitedRoom(const Room& visitRoom, const Craft::Vecto
 
 	case eRoomType::Treasure:
 		{
-			/* TODO : 랜덤한 위치에 임의의 아이템 생성 */
-			OutputDebugStringA("Enter Treasure Room\n");
+			OnPlayerVisitedTreasureRoom(visitRoom, playerPosition);
 		}
 		break;
 
@@ -219,8 +238,8 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 	}
 
 	/* 스폰할 몬스터 수 결정 */
-	const int spawnMinRange = min(6, maxSpawnNum);
-	const int spawnMaxRange = min(12, maxSpawnNum);
+	const int spawnMinRange = min(8, maxSpawnNum);
+	const int spawnMaxRange = min(14, maxSpawnNum);
 	int spawnMonsterNum = Util::RandomRange(spawnMinRange, spawnMaxRange);
 	int currentIndex = 0;
 
@@ -277,6 +296,86 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 	}
 }
 
+void GM_Roguelike::OnPlayerVisitedTreasureRoom(const Room& visitRoom, const Craft::Vector2Int& playerPosition)
+{
+	std::shared_ptr<Level> level = GetCurrentLevel<Level>();
+	if (!level)
+	{
+		return;
+	}
+
+	const RoomSpace& visitRoomSpace = visitRoom.GetRoomSpace();
+
+	/* 방안의 랜덤한 위치에 아이템들 생성 */
+	const RoomSpace::RoomTileIndices spawnTileIndices = visitRoomSpace.GetInnerTileIndices();
+	std::vector<size_t> shuffleSpawnIndex;
+	for (size_t tileIndex = 0; tileIndex < spawnTileIndices.size(); ++tileIndex)
+	{
+		/* 플레이어가 위치한 Tile은 제외한다. */
+		if (spawnTileIndices[tileIndex] == playerPosition)
+		{
+			continue;
+		}
+
+		shuffleSpawnIndex.emplace_back(tileIndex);
+	}
+
+	/* 현재 플레이어가 위치한 타일 갯수를 제외한 나머지 갯수 = 스폰 가능 지점 갯수 */
+	const int maxSpawnNum = static_cast<int>(shuffleSpawnIndex.size());
+	if (maxSpawnNum <= 0)
+	{
+		/* 방 안에 플레이어 제외 아이템이 위치할 타일들이 존재하지 않으면 반환 */
+		return;
+	}
+
+	/* Spawn Index 리스트를 뒤섞는다. */
+	for (size_t i = shuffleSpawnIndex.size() - 1; i > 0; --i)
+	{
+		//0 ~ i 까지 인덱스 중 랜덤하게 선택
+		const int j = Util::RandomRange(0, static_cast<int>(i));
+
+		//현재 방 인덱스와 랜덤하게 결정된 방 인덱스를 교환해서 뒤섞는다.
+		std::swap(shuffleSpawnIndex[i], shuffleSpawnIndex[j]);
+	}
+
+	/* 스폰할 아이템 갯수 결정 */
+	const int spawnMinRange = min(3, maxSpawnNum);
+	const int spawnMaxRange = min(6, maxSpawnNum);
+	int spawnItemNum = Util::RandomRange(spawnMinRange, spawnMaxRange);
+	int currentIndex = 0;
+
+	auto spawnRandomItem = [level](const Vector2Int& spawnTilePos, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
+		{
+			const int randomValue = Util::RandomRange(0, 99);
+
+			std::shared_ptr<FieldItem> spawnedItem = nullptr;
+
+			/*if (randomValue < 30)
+			{
+				spawnedItem = level->SpawnActor<HealthPotion>(spawnTilePos, roomIndex);
+			}
+			else*/
+			{
+				spawnedItem = level->SpawnActor<HealthPotion>(spawnTilePos, Util::RandomRange(1.f, 10.f));
+			}
+
+			return spawnedItem;
+		};
+
+	while (spawnItemNum > 0 &&
+		currentIndex < static_cast<int>(shuffleSpawnIndex.size()))
+	{
+		const size_t spawnTileIndex = shuffleSpawnIndex[currentIndex++];
+		const Vector2Int& spawnTilePos = spawnTileIndices[spawnTileIndex];
+
+		//랜덤으로 결정된 위치에 아이템 스폰
+		std::shared_ptr<FieldItem> spawnedItem = spawnRandomItem(spawnTilePos, currentPlayerVisitRoomIndex);
+		assert(spawnedItem && "Spawn Item Fail..");
+
+		--spawnItemNum;
+	}
+}
+
 void GM_Roguelike::OnRoomBattleEnd()
 {
 	/* 생성되어있던 문 Actor Destroy */
@@ -306,6 +405,13 @@ void GM_Roguelike::OnEventNPCDeath(std::shared_ptr<Pawn> deathPawn)
 			/* 모든 NPC가 죽었으면 현재 방에서의 전투가 끝났다고 간주 */
 			OnRoomBattleEnd();
 		}
+	}
+
+	/* 플레이어의 킬 수 증가 */
+	PS_Roguelike* playerState = GetPlayerState<PS_Roguelike>();
+	if (playerState)
+	{
+		playerState->IncrementMonsterKillNum();
 	}
 }
 

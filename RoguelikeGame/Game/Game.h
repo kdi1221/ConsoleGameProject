@@ -13,10 +13,10 @@ public:
 
 private:
 	// 게임 플레이 업데이트 함수.
-	virtual void Tick(float deltaTime);
+	//virtual void Tick(float deltaTime);
 
 	// 화면에 그리는 함수.
-	virtual void Draw();
+	//virtual void Draw();
 
 	// 충돌 처리 함수
 	virtual void ProcessColiision() override;
@@ -30,15 +30,12 @@ private:
 	/* 커스텀 게임 모드 객체 생성  */
 	virtual std::unique_ptr<Craft::GameMode> CreateGameMode() const override;
 
-	/* 커스텀 플레이어 상태 객체 생성 */
-	virtual std::unique_ptr<Craft::PlayerState> CreatePlayerState() const override;
+//private:
+//	void FormatCurrentFPSString(const float deltaTime);
+//	void DrawFPSString();
 
-private:
-	void FormatCurrentFPSString(const float deltaTime);
-	void DrawFPSString();
-
-private:
-	/* 출력할 FPS 문자열 */
-	std::wstring szFPS;
+//private:
+//	/* 출력할 FPS 문자열 */
+//	std::wstring szFPS;
 };
 

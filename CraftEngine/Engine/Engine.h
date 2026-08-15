@@ -17,7 +17,6 @@ namespace Craft
 	class ConfigBase;
 	class CameraManager;
 	class GameMode;
-	class PlayerState;
 	class NavigationBase;
 
 	//메인 엔진 클래스
@@ -91,13 +90,6 @@ namespace Craft
 			return Cast<T>(gameMode);
 		}
 
-		// PlayerState 반환
-		template<typename T, typename = std::enable_if_t<std::is_base_of<PlayerState, T>::value>>
-		T* GetPlayerState() const
-		{
-			return Cast<T>(playerState);
-		}
-
 		//카메라 객체 반환
 		CameraManager& GetCameraManager() const;
 
@@ -142,9 +134,6 @@ namespace Craft
 		/* 게임 모드 객체 생성 */
 		virtual std::unique_ptr<GameMode> CreateGameMode() const;
 
-		/* 플레이어 상태 객체 생성 */
-		virtual std::unique_ptr<PlayerState> CreatePlayerState() const;
-
 	protected:
 		// 엔진 종료 플래그.
 		bool isQuit = false;
@@ -181,9 +170,6 @@ namespace Craft
 
 		//현재 게임모드(Level과 별도 관리)
 		std::unique_ptr<GameMode> gameMode;
-
-		//현재 플레이어 상태(Level과 별도 관리)
-		std::unique_ptr<PlayerState> playerState;
 	};
 }
 

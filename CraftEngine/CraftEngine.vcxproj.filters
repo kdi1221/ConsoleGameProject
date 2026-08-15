@@ -93,6 +93,21 @@
     <ClCompile Include="Navigation\NavigationBase.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="UI\Widget\Widget.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Widget\TextBlock\TextBlock.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\HUD.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Widget\Image\ImageWidget.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Widget\ProgressBar\ProgressBar.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Engine.h">
@@ -180,6 +195,21 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Navigation\NavigationBase.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Widget\Widget.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Widget\TextBlock\TextBlock.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\HUD.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Widget\Image\ImageWidget.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Widget\ProgressBar\ProgressBar.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

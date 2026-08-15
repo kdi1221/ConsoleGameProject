@@ -21,6 +21,7 @@ public:
 
 private:
 	virtual void BeginPlay() override;
+	virtual void Tick(float deltaTime) override;
 
 	/* 특정 타일 위에 있는 동안 호출되는 함수 */
 	virtual void OnTileOverlap(const eTileCategory tileCategory) override;
@@ -43,6 +44,9 @@ private:
 
 	/* 탄환의 데미지 */
 	float damageValue = 0;
+
+	/* 목적지에 도착한뒤 Destroy 예약 */
+	bool reserveDestroy = false;
 
 private:
 	/* 이동 컴포넌트 */

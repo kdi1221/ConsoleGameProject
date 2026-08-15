@@ -107,8 +107,5 @@ private:
 
 	//마지막에 추적한 대상의 위치
 	Craft::Vector2Int lastChaseTargetPos = INVALID_LAST_POS;
-
-	//현재 이동중인 경로(디버깅용)
-	std::vector<Craft::Vector2Int> debugMovePaths;
 };
 

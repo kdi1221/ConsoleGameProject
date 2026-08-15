@@ -12,7 +12,7 @@ public:
 	MapObject(const Craft::Vector2Int& position,
 			const std::wstring& image,
 			Craft::Color color);
-	~MapObject() = default;
+	virtual ~MapObject() = default;
 
 public:
 	/* 다른 종류의 Actor와 Block되는지 체크 */

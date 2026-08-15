@@ -10,6 +10,7 @@ namespace Craft
 {
 	class Vector2Int;
 	class Level;
+	class PlayerState;
 }
 
 class Room;
@@ -29,14 +30,15 @@ public:
 	virtual ~GM_Roguelike();
 
 public:
-	/* 레벨이 설정될때 호출 */
-	virtual void SetCurrentLevel(std::weak_ptr<Craft::Level> level) override;
-
 	/* 현재 활성화된 레벨이 초기화될 때 호출됨 */
-	virtual void OnInitializeLevel() override;
+	virtual void OnInitializeLevel(std::weak_ptr<Craft::Level> level) override;
 
 	/* 현재 활성화되어 있던 레벨이 지워지기전 호출됨 */
 	virtual void OnDestroyedCurrentLevel() override;
+
+private:
+	/* 플레이어 상태 객체 생성 */
+	virtual std::unique_ptr<Craft::PlayerState> CreatePlayerState() const override;
 
 private:
 	/* 구성된 맵 정보를 바탕으로 Game 진행에 필요한 Actor 스폰 및 준비 */
@@ -44,6 +46,9 @@ private:
 
 	/* 플레이어 폰 스폰 */
 	void PlayerPawnSpawn();
+
+	/* 레벨 전환하면서 던전 진행 층수 증가*/
+	void IncrementFloorLevel();
 
 private:
 	/* 플레이어가 맵 내의 특정 방에 진입 했을 때 호출되는 이벤트 콜백 */
@@ -61,6 +66,9 @@ private:
 private:
 	/* 배틀이 진행되는 방 처리 */
 	void OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft::Vector2Int& playerPosition);
+
+	/* 보물창고 방 처리 */
+	void OnPlayerVisitedTreasureRoom(const Room& visitRoom, const Craft::Vector2Int& playerPosition);
 
 	/* 배틀 종료 처리 */
 	void OnRoomBattleEnd();
@@ -87,6 +95,9 @@ private:
 
 	/* BattleRoom에서 진행중일때 방 입구에 배치된 Door */
 	std::vector<std::shared_ptr<RoomDoor>> spawnedRoomDoors;
+
+	/* 현재 진행 층수 */
+	int currentFloorLevel = 0;
 	
 };
 

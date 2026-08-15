@@ -52,6 +52,12 @@ void NPCMeleeBase::GetAvailableChaseTargetPosition(const Vector2Int& targetPos,
 				continue;
 			}
 
+			//생성된 방 내의 타일이어야만 가능
+			if (GetSpawnedRoomIndex() != navigationSystem.GetRoomIndexInTile(checkPos))
+			{
+				continue;
+			}
+
 			availablePosition.emplace_back(checkPos);
 		}
 	}

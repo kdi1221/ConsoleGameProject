@@ -33,6 +33,17 @@ namespace Craft
 
 			actor->BeginPlay();
 		}
+
+		for (std::shared_ptr<Widget>& widget : widgetList)
+		{
+			//이미 BeginPlay가 호출된 Widget 건너뛰기
+			if (widget->HasBeganPlay())
+			{
+				continue;
+			}
+
+			widget->BeginPlay();
+		}
 	}
 
 	void Level::Tick(float deltaTime)
@@ -47,6 +58,17 @@ namespace Craft
 
 			actor->Tick(deltaTime);
 		}
+
+		for (std::shared_ptr<Widget>& widget : widgetList)
+		{
+			//비활성화 위젯 건너뛰기
+			if (!widget->IsActive())
+			{
+				continue;
+			}
+
+			widget->Tick(deltaTime);
+		}
 	}
 
 	void Level::Draw()
@@ -60,6 +82,17 @@ namespace Craft
 			}
 
 			actor->Draw();
+		}
+
+		for (std::shared_ptr<Widget>& widget : widgetList)
+		{
+			//비활성화 위젯 건너뛰기
+			if (!widget->IsActive())
+			{
+				continue;
+			}
+
+			widget->Draw();
 		}
 	}
 
@@ -106,6 +139,31 @@ namespace Craft
 			actorList.emplace_back(actor);
 		}
 		addRequestedActorList.clear();
+
+
+		//위젯 제거 처리
+		for(auto iterator = widgetList.begin();
+			iterator != widgetList.end();)
+		{
+			//제거 요청 여부 확인
+			auto actor = *iterator;
+			if (actor->HasExpired())
+			{
+				iterator = widgetList.erase(iterator);
+				continue;
+			}
+
+			++iterator;
+		}
+
+		if (!addRequestedwidgetList.empty())
+		{
+			for (const std::shared_ptr<Widget>& widget : addRequestedwidgetList)
+			{
+				widgetList.emplace_back(widget);
+			}
+			addRequestedwidgetList.clear();
+		}
 	}
 
 	void Level::SavePreviousActorStates()

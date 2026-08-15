@@ -104,6 +104,8 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Ability\Shooter\AbilityProjectile.cpp" />
     <ClCompile Include="Ability\Shooter\AbilityShooter.cpp" />
     <ClCompile Include="Actor\ActorOnTile.cpp" />
+    <ClCompile Include="Actor\FieldItem\FieldItem.cpp" />
+    <ClCompile Include="Actor\FieldItem\HealthPotion.cpp" />
     <ClCompile Include="Actor\MapObject\Exit.cpp" />
     <ClCompile Include="Actor\MapObject\MapObject.cpp" />
     <ClCompile Include="Actor\MapObject\NextLevel.cpp" />
@@ -123,6 +125,9 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Game\State\GameMode\GM_Roguelike.cpp" />
     <ClCompile Include="Game\State\PlayerState\PS_Roguelike.cpp" />
+    <ClCompile Include="Item\ItemBase.cpp" />
+    <ClCompile Include="UI\BackgroundWidget.cpp" />
+    <ClCompile Include="UI\HUD\HUDPlayer.cpp" />
     <ClCompile Include="Level\TestLevel.cpp" />
     <ClCompile Include="Level\TilemapLevel.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -132,6 +137,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Tilemap\Room\Room.cpp" />
     <ClCompile Include="TileMap\Tile.cpp" />
     <ClCompile Include="Tilemap\Tilemap.cpp" />
+    <ClCompile Include="UI\TextBlockFPS.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ability\AbilityObject.h" />
@@ -140,6 +146,8 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Ability\Shooter\AbilityProjectile.h" />
     <ClInclude Include="Ability\Shooter\AbilityShooter.h" />
     <ClInclude Include="Actor\ActorOnTile.h" />
+    <ClInclude Include="Actor\FieldItem\FieldItem.h" />
+    <ClInclude Include="Actor\FieldItem\HealthPotion.h" />
     <ClInclude Include="Actor\MapObject\Exit.h" />
     <ClInclude Include="Actor\MapObject\MapObject.h" />
     <ClInclude Include="Actor\MapObject\NextLevel.h" />
@@ -159,6 +167,10 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Game\State\GameMode\GM_Roguelike.h" />
     <ClInclude Include="Game\State\PlayerState\PS_Roguelike.h" />
+    <ClInclude Include="Item\ItemBase.h" />
+    <ClInclude Include="Item\ItemData\ItemDataTable.h" />
+    <ClInclude Include="UI\BackgroundWidget.h" />
+    <ClInclude Include="UI\HUD\HUDPlayer.h" />
     <ClInclude Include="Level\TestLevel.h" />
     <ClInclude Include="Level\TilemapLevel.h" />
     <ClInclude Include="Navigation\NavigationTilemap.h" />
@@ -170,6 +182,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Types\Defines.h" />
     <ClInclude Include="Types\Enums.h" />
     <ClInclude Include="Types\Structs.h" />
+    <ClInclude Include="UI\TextBlockFPS.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

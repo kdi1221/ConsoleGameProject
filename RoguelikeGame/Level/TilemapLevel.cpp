@@ -7,6 +7,7 @@
 #include "Tilemap/BSP/RoomSpace/RoomSpace.h"
 #include "Util/Util.h"
 #include "Actor/Pawn/Player/PlayerPawn.h"
+#include "Actor/Projectile/Projectile.h"
 #include <cassert>
 #include <Memory>
 
@@ -423,7 +424,8 @@ void TilemapLevel::RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTi
 		return;
 	}
 
-	RegisterActorOnTilemap(actorOnTile, actorOnTile->GetWorldPosition());
+	const Vector2Int& newWorldPosition = actorOnTile->GetWorldPosition();
+	RegisterActorOnTilemap(actorOnTile, newWorldPosition);
 }
 
 void TilemapLevel::RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Vector2Int& position)

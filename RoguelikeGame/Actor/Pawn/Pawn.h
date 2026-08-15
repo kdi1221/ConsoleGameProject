@@ -12,6 +12,7 @@ class Pawn : public ActorOnTile
 
 public:
 	using OnDeathEventType = std::function<void(std::shared_ptr<Pawn>)>;
+	using OnChangeHealthType = std::function<void(float, float)>;
 
 public:
 	Pawn(const Craft::Vector2Int& position,
@@ -30,8 +31,12 @@ public:
 	virtual bool IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor) override;
 
 public:
+	/* 체력 초기화 */
+	void InitializeHealthValue(const float currentHealth, const float maxHealth);
+	void SetHealthChangeEventCallback(OnChangeHealthType callback);
 	void SetDeathEventCallback(OnDeathEventType deathEventCallback);
 	void TakeDamage(const float inDamage);
+	void AddHealthValue(const float inHealValue);
 
 public:
 	bool IsDeath() const;
@@ -53,9 +58,15 @@ private:
 	/* Health가 0이하일때 호출되는 이벤트 */
 	void OnOutOfHealth();
 
+	/* Health 값 업데이트 이벤트 */
+	void OnChangeHealthValue(float currentValue, float maxValue);
+
 private:
 	/* 소속된 팀 ID */
 	eTeamID teamID = eTeamID::None;
+
+	/* 체력 수치 변경시 호출되는 이벤트 */
+	OnChangeHealthType onChangeHealthEvent;
 
 	/* 체력이 다 소모되어 사망할때 발생하는 이벤트 */
 	OnDeathEventType onDeathEvent;

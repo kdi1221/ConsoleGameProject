@@ -21,7 +21,8 @@ Pawn::Pawn(const Craft::Vector2Int& position,
 
 	attributeComponent = AddComponent<AttributeComponent>(initialHealth);
 	assert(attributeComponent && "Invalid attributeComponent");
-	attributeComponent->AddOutofHealthCallback(std::bind(&Pawn::OnOutOfHealth, this));
+	attributeComponent->SetOutofHealthCallback(std::bind(&Pawn::OnOutOfHealth, this));
+	attributeComponent->SetChangeHealthValueCallback(std::bind(&Pawn::OnChangeHealthValue, this, std::placeholders::_1, std::placeholders::_2));
 
 	abilitySystemComponent = AddComponent<AbilitySystemComponent>();
 	assert(abilitySystemComponent && "Invalid AbilitySystemComponent");
@@ -63,6 +64,21 @@ bool Pawn::IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor)
 	return false;
 }
 
+void Pawn::InitializeHealthValue(const float currentHealth, const float maxHealth)
+{
+	if (!attributeComponent)
+	{
+		return;
+	}
+
+	attributeComponent->InitializeHealthValue(currentHealth, maxHealth);
+}
+
+void Pawn::SetHealthChangeEventCallback(OnChangeHealthType callback)
+{
+	onChangeHealthEvent = callback;
+}
+
 void Pawn::SetDeathEventCallback(OnDeathEventType deathEventCallback)
 {
 	onDeathEvent = deathEventCallback;
@@ -76,6 +92,16 @@ void Pawn::TakeDamage(const float inDamage)
 	}
 
 	attributeComponent->DecreaseCurrrentHealth(inDamage);
+}
+
+void Pawn::AddHealthValue(const float inHealValue)
+{
+	if (!attributeComponent)
+	{
+		return;
+	}
+
+	attributeComponent->IncreaseCurrrentHealth(inHealValue);
 }
 
 bool Pawn::IsDeath() const
@@ -106,4 +132,12 @@ void Pawn::OnOutOfHealth()
 	OnDeath();
 
 	Destroy();
+}
+
+void Pawn::OnChangeHealthValue(float currentValue, float maxValue)
+{
+	if (onChangeHealthEvent)
+	{
+		onChangeHealthEvent(currentValue, maxValue);
+	}
 }

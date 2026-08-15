@@ -16,19 +16,19 @@ Game::Game()
 
 }
 
-void Game::Tick(float deltaTime)
-{
-	FormatCurrentFPSString(deltaTime);
+//void Game::Tick(float deltaTime)
+//{
+//	FormatCurrentFPSString(deltaTime);
+//
+//	Engine::Tick(deltaTime);
+//}
 
-	Engine::Tick(deltaTime);
-}
-
-void Game::Draw()
-{
-	DrawFPSString();
-
-	Engine::Draw();
-}
+//void Game::Draw()
+//{
+//	DrawFPSString();
+//
+//	Engine::Draw();
+//}
 
 void Game::ProcessColiision()
 {
@@ -57,24 +57,19 @@ std::unique_ptr<GameMode> Game::CreateGameMode() const
 	return std::make_unique<GM_Roguelike>();
 }
 
-std::unique_ptr<PlayerState> Game::CreatePlayerState() const
-{
-	return std::make_unique<PS_Roguelike>();
-}
+//void Game::FormatCurrentFPSString(const float deltaTime)
+//{
+//	wchar_t szFormat[256] = { 0 };
+//	const float fps = 1.f / deltaTime;
+//	swprintf_s(szFormat, L"DeltaTime: %f, FPS : %f", deltaTime, fps);
+//	szFPS = szFormat;
+//}
 
-void Game::FormatCurrentFPSString(const float deltaTime)
-{
-	wchar_t szFormat[256] = { 0 };
-	const float fps = 1.f / deltaTime;
-	swprintf_s(szFormat, L"DeltaTime: %f, FPS : %f", deltaTime, fps);
-	szFPS = szFormat;
-}
-
-void Game::DrawFPSString()
-{
-	const Craft::ConfigBase& configBase = Engine::Get().GetConfig<Craft::ConfigBase>();
-	Craft::Vector2Int DrawPosition;
-	DrawPosition.x = configBase.GetViewWidth() + 1;
-	DrawPosition.y = 0;
-	Craft::Renderer::Get().SubmitUI(szFPS, DrawPosition, Craft::Color::White, static_cast<int>(eRenderSortingOrder::UI));
-}
+//void Game::DrawFPSString()
+//{
+//	const Craft::ConfigBase& configBase = Engine::Get().GetConfig<Craft::ConfigBase>();
+//	Craft::Vector2Int DrawPosition;
+//	DrawPosition.x = configBase.GetViewWidth() + 1;
+//	DrawPosition.y = 0;
+//	Craft::Renderer::Get().SubmitUI(szFPS, DrawPosition, Craft::Color::White, static_cast<int>(eRenderSortingOrder::UI));
+//}

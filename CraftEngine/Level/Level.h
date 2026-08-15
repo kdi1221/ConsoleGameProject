@@ -3,6 +3,7 @@
 #include "Core/Core.h"
 #include "Core/CraftObject.h"
 #include <Actor/Actor.h>
+#include <UI/Widget/Widget.h>
 #include <vector>
 #include <memory>
 
@@ -56,6 +57,18 @@ namespace Craft
 			//생성된 액터 반환.
 			return newActor;
 		}
+
+		//레벨에 표시될 위젯 생성 
+		template<typename T, typename... Args, typename = std::enable_if_t<std::is_base_of<Widget, T>::value>>
+		std::shared_ptr<T> CreateWidget(Args&& ...args)
+		{
+			std::shared_ptr<T> createdWidget = std::make_shared<T>(std::forward<Args>(args)...);
+
+			addRequestedwidgetList.emplace_back(createdWidget);
+
+			return createdWidget;
+		}
+
 
 		//액터 검색 함수(템플릿).
 		//template<typename T, typename = std::enable_if_t<std::is_base_of<Actor, T>::value>>
@@ -129,6 +142,12 @@ namespace Craft
 		//이번 프레임에 레벨에 추가 요청된 액터 리스트
 		//현재 프레임을 안정적으로 처리 후 액터 추가 처리.
 		std::vector<std::shared_ptr<Actor>> addRequestedActorList;
+
+		//레벨에 표시되는 위젯 리스트
+		std::vector<std::shared_ptr<Widget>> widgetList;
+
+		//현재 프레임에 레벨에 추가요청된 위젯 리스트
+		std::vector<std::shared_ptr<Widget>> addRequestedwidgetList;
 	};
 }
 

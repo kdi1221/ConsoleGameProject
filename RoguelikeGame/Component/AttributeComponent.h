@@ -10,15 +10,18 @@ class AttributeComponent : public Craft::Component
 
 public:
 	using OnOutOfHealth = std::function<void()>;
+	using OnChangeHeatlhValue = std::function<void(float, float)>;
 
 public:
 	AttributeComponent(float initialHealth);
 	virtual ~AttributeComponent() = default;
 
 public:
-	void AddOutofHealthCallback(const OnOutOfHealth& inCallback);
-	void AddOutofHealthCallback(OnOutOfHealth&& inCallback);
+	void SetOutofHealthCallback(OnOutOfHealth inCallback);
+	void SetChangeHealthValueCallback(OnChangeHeatlhValue inCallback);
+	void InitializeHealthValue(float currentValue, float maxValue);
 	void DecreaseCurrrentHealth(float decreaseValue);
+	void IncreaseCurrrentHealth(float increaseValue);
 
 public:
 	inline float GetCurrentHealth() const { return currentHealth; }
@@ -26,7 +29,8 @@ public:
 	inline bool IsDeath() const { return isDeath; }
 
 private:
-	std::function<void()> onOutofHealth;
+	OnOutOfHealth onOutofHealth;
+	OnChangeHeatlhValue onChangeHealth;
 
 private:
 	/* 현재 체력 */

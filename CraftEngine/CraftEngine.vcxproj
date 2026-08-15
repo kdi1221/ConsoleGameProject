@@ -124,6 +124,11 @@ xcopy ..\Config\Setting.txt $(OutDir)..\Config\ /e /y /i</Command>
     <ClCompile Include="Render\Renderer.cpp" />
     <ClCompile Include="Render\ScreenBuffer.cpp" />
     <ClCompile Include="StaticLibrary\StaticFunctionLibrary.cpp" />
+    <ClCompile Include="UI\HUD.cpp" />
+    <ClCompile Include="UI\Widget\Image\ImageWidget.cpp" />
+    <ClCompile Include="UI\Widget\ProgressBar\ProgressBar.cpp" />
+    <ClCompile Include="UI\Widget\TextBlock\TextBlock.cpp" />
+    <ClCompile Include="UI\Widget\Widget.cpp" />
     <ClCompile Include="Util\Timer.cpp" />
     <ClCompile Include="Util\Util.cpp" />
   </ItemGroup>
@@ -155,6 +160,11 @@ xcopy ..\Config\Setting.txt $(OutDir)..\Config\ /e /y /i</Command>
     <ClInclude Include="Physics\CollisionSystem.h" />
     <ClInclude Include="Render\Renderer.h" />
     <ClInclude Include="Render\ScreenBuffer.h" />
+    <ClInclude Include="UI\HUD.h" />
+    <ClInclude Include="UI\Widget\Image\ImageWidget.h" />
+    <ClInclude Include="UI\Widget\ProgressBar\ProgressBar.h" />
+    <ClInclude Include="UI\Widget\TextBlock\TextBlock.h" />
+    <ClInclude Include="UI\Widget\Widget.h" />
     <ClInclude Include="Util\Timer.h" />
     <ClInclude Include="Util\Util.h" />
   </ItemGroup>

@@ -43,6 +43,18 @@ void Projectile::BeginPlay()
 	pathMoveComponent->StartMove(std::move(movePaths));
 }
 
+void Projectile::Tick(float deltaTime)
+{
+	/* 이전에 목적지에 도착하여 Destroy되어야 할 때 */
+	if (reserveDestroy)
+	{
+		Destroy();
+		return;
+	}
+
+	super::Tick(deltaTime);
+}
+
 void Projectile::OnTileOverlap(const eTileCategory tileCategory)
 {
 	super::OnTileOverlap(tileCategory);
@@ -87,6 +99,6 @@ void Projectile::OnCollision(const std::shared_ptr<Actor>& other)
 
 void Projectile::OnCallbackMoveFinish()
 {
-	/* 목적지에 도착했으면 Destory 처리 */
-	Destroy();
+	/* 목적지에 도착했으면 다음턴에 Destroy 처리 */
+	reserveDestroy = true;
 }

@@ -52,6 +52,14 @@ namespace Craft
 		iterCurrentPath = movePaths.end();
 	}
 
+	void PathMoveComponent::Foreach_Path(std::function<void(const Vector2Int&)> callback)
+	{
+		for (const auto& path : movePaths)
+		{
+			callback(path);
+		}
+	}
+
 	void PathMoveComponent::Tick(float deltaTime)
 	{
 		super::Tick(deltaTime);
@@ -74,12 +82,12 @@ namespace Craft
 		//더이상 이동 경로 없으면 종료
 		if (iterCurrentPath == movePaths.end())
 		{
+			StopPathMove();
+
 			if (onMoveFinish)
 			{
 				onMoveFinish();
 			}
-
-			StopPathMove();
 		}
 		else
 		{

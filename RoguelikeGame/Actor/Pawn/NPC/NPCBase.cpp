@@ -57,10 +57,11 @@ void NPCBase::Draw()
 	super::Draw();
 
 	/* 경로 확인 테스트용 */
-	/*for (const Vector2Int& pathCoord : debugMovePaths)
-	{
-		Renderer::Get().Submit(L" ", pathCoord, Color::BG_LightGreen, static_cast<int>(eRenderSortingOrder::MapObject));
-	}*/
+	/*pathMoveComponent->Foreach_Path([&](const Vector2Int& path)
+		{
+			Renderer::Get().Submit(L" ", path, Color::BG_LightGreen, static_cast<int>(eRenderSortingOrder::MapObject));
+		}
+	);*/
 }
 
 void NPCBase::SetChaseTarget(std::weak_ptr<Pawn> target)
@@ -159,9 +160,6 @@ void NPCBase::BeginPathfindingToTarget()
 		// 이동할 경로를 찾지 못하면 정지
 		return;
 	}
-
-	//디버깅용
-	debugMovePaths = movePaths;
 
 	//마지막에 추적한 타겟의 위치를 기록해둔다.
 	lastChaseTargetPos = targetPos;

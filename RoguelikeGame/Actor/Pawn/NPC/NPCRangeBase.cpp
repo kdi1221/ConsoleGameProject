@@ -99,7 +99,9 @@ bool NPCRangeBase::IsTargetAttackRange(std::shared_ptr<Pawn> targetPawn) const
 	const Vector2Int& worldPos = GetWorldPosition();
 	const Vector2Int distance = targetPos - worldPos;
 
-	return (attackRange * attackRange) >= distance.Length();
+	const bool Result = (attackRange * attackRange) >= distance.Length();
+
+	return Result;
 }
 
 void NPCRangeBase::AttackAbilitiesTriggerON()

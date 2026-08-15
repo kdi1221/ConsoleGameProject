@@ -26,6 +26,10 @@ namespace Craft
 		void SetMoveAbortCallback(OnMoveAbort callback);
 		void StartMove(std::vector<Vector2Int>&& srcPaths);
 		void StopPathMove();
+		void Foreach_Path(std::function<void(const Vector2Int&)> callback);
+
+	public:
+		inline bool IsMoveProcess() const { return isMoveProcess; }
 
 	private:
 		virtual void Tick(float deltaTime) override;
