@@ -179,3 +179,14 @@ RoomDefines::UNIQUE_INDEX_TYPE NavigationTilemap::GetRoomIndexInTile(const Craft
 
 	return tilemapLevel->GetRoomIndexInTile(tileCoord);
 }
+
+eTileCategory NavigationTilemap::GetTileCategory(const Craft::Vector2Int& tileCoord) const
+{
+	std::shared_ptr<TilemapLevel> tilemapLevel = GetCurrentLevel<TilemapLevel>();
+	if (!tilemapLevel)
+	{
+		return eTileCategory::None;
+	}
+
+	return tilemapLevel->GetTileCategory(tileCoord);
+}

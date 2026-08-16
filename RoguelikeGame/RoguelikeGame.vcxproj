@@ -98,13 +98,17 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Ability\AbilityBeam.cpp" />
     <ClCompile Include="Ability\AbilityObject.cpp" />
     <ClCompile Include="Ability\AbilityPeriodicDelay.cpp" />
     <ClCompile Include="Ability\Melee\AbilityMelee.cpp" />
-    <ClCompile Include="Ability\Shooter\AbilityProjectile.cpp" />
+    <ClCompile Include="Ability\Shooter\Projectile\AbilityGoblinArrow.cpp" />
+    <ClCompile Include="Ability\Shooter\Projectile\AbilityProjectile.cpp" />
     <ClCompile Include="Ability\Shooter\AbilityShooter.cpp" />
+    <ClCompile Include="Ability\Shooter\Projectile\AbilitySpiritBall.cpp" />
     <ClCompile Include="Actor\ActorOnTile.cpp" />
     <ClCompile Include="Actor\FieldItem\FieldItem.cpp" />
+    <ClCompile Include="Actor\FieldItem\FieldSkillItem.cpp" />
     <ClCompile Include="Actor\FieldItem\HealthPotion.cpp" />
     <ClCompile Include="Actor\MapObject\Exit.cpp" />
     <ClCompile Include="Actor\MapObject\MapObject.cpp" />
@@ -126,6 +130,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Game\State\GameMode\GM_Roguelike.cpp" />
     <ClCompile Include="Game\State\PlayerState\PS_Roguelike.cpp" />
     <ClCompile Include="Item\ItemBase.cpp" />
+    <ClCompile Include="UI\TextBlockElapsedTime.cpp" />
     <ClCompile Include="UI\BackgroundWidget.cpp" />
     <ClCompile Include="UI\HUD\HUDPlayer.cpp" />
     <ClCompile Include="Level\TestLevel.cpp" />
@@ -140,13 +145,17 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="UI\TextBlockFPS.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Ability\AbilityBeam.h" />
     <ClInclude Include="Ability\AbilityObject.h" />
     <ClInclude Include="Ability\AbilityPeriodicDelay.h" />
     <ClInclude Include="Ability\Melee\AbilityMelee.h" />
-    <ClInclude Include="Ability\Shooter\AbilityProjectile.h" />
+    <ClInclude Include="Ability\Shooter\Projectile\AbilityGoblinArrow.h" />
+    <ClInclude Include="Ability\Shooter\Projectile\AbilityProjectile.h" />
     <ClInclude Include="Ability\Shooter\AbilityShooter.h" />
+    <ClInclude Include="Ability\Shooter\Projectile\AbilitySpiritBall.h" />
     <ClInclude Include="Actor\ActorOnTile.h" />
     <ClInclude Include="Actor\FieldItem\FieldItem.h" />
+    <ClInclude Include="Actor\FieldItem\FieldSkillItem.h" />
     <ClInclude Include="Actor\FieldItem\HealthPotion.h" />
     <ClInclude Include="Actor\MapObject\Exit.h" />
     <ClInclude Include="Actor\MapObject\MapObject.h" />
@@ -169,6 +178,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Game\State\PlayerState\PS_Roguelike.h" />
     <ClInclude Include="Item\ItemBase.h" />
     <ClInclude Include="Item\ItemData\ItemDataTable.h" />
+    <ClInclude Include="UI\TextBlockElapsedTime.h" />
     <ClInclude Include="UI\BackgroundWidget.h" />
     <ClInclude Include="UI\HUD\HUDPlayer.h" />
     <ClInclude Include="Level\TestLevel.h" />

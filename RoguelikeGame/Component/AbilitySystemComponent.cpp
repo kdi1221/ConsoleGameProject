@@ -6,10 +6,40 @@ AbilitySystemComponent::AbilitySystemComponent()
 
 }
 
-void AbilitySystemComponent::Tick(float deltaTime)
+void AbilitySystemComponent::PostTick(float deltaTime)
 {
-	super::Tick(deltaTime);
+	super::PostTick(deltaTime);
 
+	for (auto& iterMapAbility : mapAbilities)
+	{
+		AbilityObject* ability = iterMapAbility.second.get();
+		if (!ability || !ability->IsTrigger())
+		{
+			continue;
+		}
+
+		ability->Tick(deltaTime);
+	}
+}
+
+void AbilitySystemComponent::Draw()
+{
+	super::Draw();
+
+	for (auto& iterMapAbility : mapAbilities)
+	{
+		AbilityObject* ability = iterMapAbility.second.get();
+		if (!ability || !ability->IsTrigger())
+		{
+			continue;
+		}
+
+		ability->Draw();
+	}
+}
+
+void AbilitySystemComponent::AllAbilitiesTriggerOff()
+{
 	for (auto& iterMapAbility : mapAbilities)
 	{
 		AbilityObject* ability = iterMapAbility.second.get();
@@ -18,7 +48,7 @@ void AbilitySystemComponent::Tick(float deltaTime)
 			continue;
 		}
 
-		ability->Tick(deltaTime);
+		ability->TriggerOff();
 	}
 }
 

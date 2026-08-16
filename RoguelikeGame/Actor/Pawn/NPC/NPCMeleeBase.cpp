@@ -29,7 +29,7 @@ void NPCMeleeBase::InitializeAbility()
 	assert(abilitySystemComponent && "Invalid abilitySystemComponent");
 
 	/* 근접 공격 Ability 추가 */
-	grantMeleeAttackID = abilitySystemComponent->AddNewAbility<AbilityMelee>(attackDelayInterval, attackDamage);
+	grantMeleeAttackID = abilitySystemComponent->AddNewAbility<AbilityMelee>(1, attackDelayInterval, attackDamage);
 }
 
 void NPCMeleeBase::GetAvailableChaseTargetPosition(const Vector2Int& targetPos,

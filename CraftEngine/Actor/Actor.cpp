@@ -47,6 +47,21 @@ namespace Craft
 		}
 	}
 
+	void Actor::PreTick(float deltaTime)
+	{
+		//비활성화 상태라면 처리 안함.
+		if (!IsActive())
+		{
+			return;
+		}
+
+		// Actor의 Tick 이벤트를 Component에 전달
+		for (const std::shared_ptr<Component>& component : componentList)
+		{
+			component->PreTick(deltaTime);
+		}
+	}
+
 	void Actor::Tick(float deltaTime)
 	{
 		//비활성화 상태라면 처리 안함.
@@ -59,6 +74,21 @@ namespace Craft
 		for (const std::shared_ptr<Component>& component : componentList)
 		{
 			component->Tick(deltaTime);
+		}
+	}
+
+	void Actor::PostTick(float deltaTime)
+	{
+		//비활성화 상태라면 처리 안함.
+		if (!IsActive())
+		{
+			return;
+		}
+
+		// Actor의 Tick 이벤트를 Component에 전달
+		for (const std::shared_ptr<Component>& component : componentList)
+		{
+			component->PostTick(deltaTime);
 		}
 	}
 

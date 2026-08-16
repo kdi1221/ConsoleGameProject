@@ -3,15 +3,21 @@
 #include "Actor/Pawn/Pawn.h"
 #include "Component/InputComponent.h"
 #include "Component/MovementComponent.h"
+#include <unordered_set>
 
 namespace Craft
 {
 	class CameraComponent;
 }
 
+class FieldSkillItem;
+
 class PlayerPawn : public Pawn
 {
 	TYPE_DECLARATIONS(PlayerPawn, Pawn)
+
+public:
+	using OnItemGainEventType = std::function<void(int)>;
 
 public:
 	PlayerPawn(const Craft::Vector2Int& position);
@@ -19,14 +25,22 @@ public:
 
 private:
 	virtual void BeginPlay() override;
+	virtual void PreTick(float deltaTime) override;
 	virtual void Tick(float deltaTime) override;
 	virtual void OnUpdatedPosition(const Craft::Vector2Int& prevLocalPosition,
 									const Craft::Vector2Int& prevWorldPosition,
 									const Craft::Vector2Int& localPosition,
 									const Craft::Vector2Int& worldPosition) override;
 
-	/* Pawn의 초기 Ability 구성 */
-	virtual void InitializeAbility() override;
+public:
+	/* 플레이어가 특정 스킬 아이템 획득 */
+	void GainSkillItem(std::shared_ptr<FieldSkillItem> gainItem);
+
+	/* 플레이어가 특정 스킬 아이템 획득시 호출되는 이벤트 콜백 설정 */
+	void SetOnItemGainEvent(OnItemGainEventType callback);
+
+	/* 플레이어에 특정 스킬 부여 */
+	void GrantAbility(int abilityID, int abilityLevel);
 
 private:
 	/* 키 입력 콜백 */
@@ -43,12 +57,6 @@ private:
 	/* 이동 입력 처리 */
 	void ProcessMoveInput();
 
-	/* Projectile 발사 Offset 지정 */
-	void SetProjectileSpawnOffset(const Craft::Vector2Int& spawnOffset);
-
-	/* Projectile 목표 지점 설정 */
-	void SetAimingPostion(const Craft::Vector2Int& position);
-
 	/* Projectile Ability의 트리거 ON/OFF*/
 	void SetProjectileAbilityTrigger(bool bTrigger);
 
@@ -61,12 +69,12 @@ private:
 
 	/* 이전 프레임에서의 공격 입력 누적 값*/
 	Craft::Vector2Int prevFireInputValue = Craft::Vector2Int::Zero;
-
-	/* Projectile 발사 시 최대 Range */
-	float ProjectileRange = 10.f;
 	
 	/* 부여된 Projectile Ability ID들 */
-	std::vector<AbilityObject::ABILITY_ID_TYPE> grantProjectileAbilities;
+	std::unordered_set<AbilityObject::ABILITY_ID_TYPE> grantProjectileAbilities;
+
+private:
+	OnItemGainEventType onItemGainEvent;
 
 private:
 	/* 플레이어 폰을 바라보는 카메라 컴포넌트 */

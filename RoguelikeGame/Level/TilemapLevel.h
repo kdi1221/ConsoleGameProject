@@ -24,10 +24,30 @@ class TilemapLevel : public Craft::Level
 {
 	TYPE_DECLARATIONS(TilemapLevel, Level)
 
+private:
+	struct FTilemapDamageInfo
+	{
+		float damageValue = 0.f;
+		eTeamID teamID = eTeamID::None;
+
+		FTilemapDamageInfo()
+		{
+
+		}
+
+		FTilemapDamageInfo(float damage, eTeamID team)
+			:damageValue(damage)
+			,teamID(team)
+		{
+
+		}
+	};
+
 public:
 	using RoomMapType = std::map<RoomDefines::UNIQUE_INDEX_TYPE, std::unique_ptr<Room>>;
 	using TilemapActorListType = std::unordered_map<Craft::Vector2Int, std::vector<std::weak_ptr<ActorOnTile>>>;
 	using PlayerRoomEventType = std::function<void(const Room&, const Craft::Vector2Int&)>;
+	using TilemapDamageListType = std::unordered_map<Craft::Vector2Int, std::vector<FTilemapDamageInfo>>;
 
 public:
 	TilemapLevel();
@@ -66,6 +86,9 @@ public:
 
 	/* 현재 생성된 방들 정보 조회 */
 	void Foreach_Rooms(std::function<void(const Room&)> callback);
+
+	/* 지정된 타일에 데미지 처리 추가 */
+	void AddDamageInfoToTile(const Craft::Vector2Int& tileCoord, float damageValue, eTeamID teamID);
 
 public:
 	/* 해당 위치가 속한 방 반환 */
@@ -110,5 +133,8 @@ private:
 
 	/* 플레이어가 특정 방을 떠났을 때 호출되는 이벤트 */
 	PlayerRoomEventType onPlayerLeavedRoom;
+
+	//타일맵 내 타일 인덱스마다 체크할 데미지 정보(Ability)
+	TilemapDamageListType mapDamageListOnTilemap;
 };
 

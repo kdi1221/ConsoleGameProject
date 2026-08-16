@@ -35,14 +35,14 @@ void Pawn::BeginPlay()
 	InitializeAbility();
 }
 
-void Pawn::Tick(float deltaTime)
+void Pawn::Destroy()
 {
-	super::Tick(deltaTime);
-
 	if (abilitySystemComponent)
 	{
-		abilitySystemComponent->Tick(deltaTime);
+		abilitySystemComponent->AllAbilitiesTriggerOff();
 	}
+
+	super::Destroy();
 }
 
 bool Pawn::IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor)
@@ -114,6 +114,31 @@ bool Pawn::IsDeath() const
 	return attributeComponent->GetCurrentHealth() <= 0;
 }
 
+/* 원거리 공격 범위 지정 */
+void Pawn::SetFireRange(float range)
+{
+	fireRange = range;
+}
+
+/* 투사체 Spawn Offset 지정 */
+void Pawn::SetProjectileSpawnOffset(const Craft::Vector2Int& spawnOffset)
+{
+	projectileSpawnOffset = spawnOffset;
+}
+
+/* 조준 위치 지정 */
+void Pawn::SetAimingPostion(const Craft::Vector2Int& position)
+{
+	aimingPosition = position;
+}
+
+/* 조준 방향 지정 */
+void Pawn::SetAimingDirection(const Craft::Vector2Float& direction)
+{
+	aimingDirection = direction;
+	aimingDirection.Normalize();
+}
+
 void Pawn::InitializeAbility()
 {
 
@@ -124,6 +149,12 @@ void Pawn::OnDeath()
 	if (onDeathEvent)
 	{
 		onDeathEvent(std::static_pointer_cast<Pawn>(shared_from_this()));
+	}
+
+	/* 모든 Ability Trigger OFF */
+	if (abilitySystemComponent)
+	{
+		abilitySystemComponent->AllAbilitiesTriggerOff();
 	}
 }
 

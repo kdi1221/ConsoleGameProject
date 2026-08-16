@@ -50,7 +50,7 @@ namespace Craft
 		virtual ~InputComponent() = default;
 
 	private:
-		virtual void Tick(float deltaTime) override;
+		virtual void PreTick(float deltaTime) override;
 
 	public:
 		void AddInputCallback(const int keyCode, const FInputTrigger& triggerInfo);

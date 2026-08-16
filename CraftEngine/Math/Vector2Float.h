@@ -65,6 +65,9 @@ namespace Craft
 
 		//벡터 크기가 0에 가까운지 확인
 		bool IsNearlyZero() const;
+
+	public:
+		static Vector2Float RotateVector(const Vector2Float& dir, float angleDegree);
 	};
 }
 

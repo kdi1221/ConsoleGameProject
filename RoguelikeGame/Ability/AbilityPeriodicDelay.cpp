@@ -1,44 +1,33 @@
 ﻿#include "AbilityPeriodicDelay.h"
 
-AbilityPeriodicDelay::AbilityPeriodicDelay(float interval)
+AbilityPeriodicDelay::AbilityPeriodicDelay(ABILITY_ID_TYPE id, int level, float interval)
+	:super(id, level)
 {
 	timerInterval.SetTargetTime(interval);
 }
 
 void AbilityPeriodicDelay::Tick(float deltaTime)
 {
-	if (isTimerActive)
+	timerInterval.Tick(deltaTime);
+
+	if (timerInterval.IsTimeOut())
 	{
-		timerInterval.Tick(deltaTime);
+		OnIntervalTrigger();
 
-		if (timerInterval.IsTimeOut())
-		{
-			OnIntervalTrigger();
-
-			timerInterval.Reset();
-		}
+		timerInterval.Reset();
 	}
 }
 
 void AbilityPeriodicDelay::TriggerOn()
 {
-	SetEnableTimer(true);
+	super::TriggerOn();
+
+	timerInterval.Reset();
 }
 
 void AbilityPeriodicDelay::TriggerOff()
 {
-	SetEnableTimer(false);
-}
+	super::TriggerOff();
 
-void AbilityPeriodicDelay::SetEnableTimer(bool enable)
-{
-	if (enable == isTimerActive)
-	{
-		return;
-	}
-
-	isTimerActive = enable;
-
-	/* 타이머 리셋 */
 	timerInterval.Reset();
 }

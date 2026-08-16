@@ -9,7 +9,7 @@ class AbilityShooter : public AbilityPeriodicDelay
 	TYPE_DECLARATIONS(AbilityShooter, AbilityPeriodicDelay)
 
 public:
-	AbilityShooter(float fireDelay);
+	AbilityShooter(ABILITY_ID_TYPE id, int level, float fireDelay);
 	virtual ~AbilityShooter() = default;
 };
 

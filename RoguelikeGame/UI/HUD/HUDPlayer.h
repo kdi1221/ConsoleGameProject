@@ -2,6 +2,7 @@
 
 #include <UI/HUD.h>
 #include <unordered_map>
+#include <windows.h>
 
 namespace Craft
 {
@@ -11,6 +12,7 @@ namespace Craft
 }
 
 class TextBlockFPS;
+class TextBlockElapsedTime;
 class BackgroundWidget;
 class ItemBase;
 
@@ -36,10 +38,13 @@ public:
 	void ChangeMonsterKillNum(int newKillNum);
 	void ChangePlayerHealthValue(float current, float maxValue);
 	void UpdateItemListIcon(const ItemBase& item);
+	void SetStartPlayTime(LARGE_INTEGER startTime);
 
 private:
 	std::weak_ptr<TextBlockFPS> textBlockFPS;
 	std::weak_ptr<BackgroundWidget> hudBackground;
+	std::weak_ptr<Craft::ImageWidget> imageTimeIcon;
+	std::weak_ptr<TextBlockElapsedTime> textBlockTime;
 	std::weak_ptr<Craft::ImageWidget> imageFloorIcon;
 	std::weak_ptr<Craft::TextBlock> textBlockFloor;
 	std::weak_ptr<Craft::ImageWidget> imageKillNumIcon;
@@ -48,6 +53,10 @@ private:
 	std::weak_ptr<Craft::ProgressBar> healthProgressBar;
 	std::weak_ptr<Craft::ImageWidget> imageItemIcon;
 	std::weak_ptr<Craft::TextBlock> textBlockItemList;
+	std::weak_ptr<Craft::ImageWidget> imageControlIcon;
+	std::weak_ptr<Craft::TextBlock> textBlockControl;
+	std::weak_ptr<Craft::TextBlock> textBlockControlMove;
+	std::weak_ptr<Craft::TextBlock> textBlockControlAttack;
 	
 	std::unordered_map<int, FItemWidget> mapItemWidgets;
 

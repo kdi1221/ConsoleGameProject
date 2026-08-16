@@ -38,17 +38,11 @@ private:
 	/* 공격 도중 호출 */
 	virtual void OnBehaviorAttack(float deltaTime) override;
 
+protected:
+	virtual AbilityObject::ABILITY_ID_TYPE grantRangeAttackAbility() = 0;
+
 private:
 	void AdjustAimDirection();
-
-protected:
-	float projectileFireDelay = 0.f;
-	std::wstring projectileImage = L"";
-	Craft::Color projectileColor = Craft::Color::White;
-	float projectileMoveDelayMin = 0.f;
-	float projectileMoveDelayMax = 0.f;
-	float projectileDamageValue = 0.f;
-	float attackRange = 0.f; 
 
 private:
 	/* 부여된 원거리 공격 Ability */

@@ -4,8 +4,8 @@
 
 using namespace Craft;
 
-AbilityMelee::AbilityMelee(float interval, float damage)
-	:super(interval)
+AbilityMelee::AbilityMelee(int level, float interval, float damage)
+	:super(2, level, interval)
 	,damageValue(damage)
 {
 	

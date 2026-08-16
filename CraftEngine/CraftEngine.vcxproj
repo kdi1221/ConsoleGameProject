@@ -153,6 +153,7 @@ xcopy ..\Config\Setting.txt $(OutDir)..\Config\ /e /y /i</Command>
     <ClInclude Include="GameState\SessionData.h" />
     <ClInclude Include="Level\Level.h" />
     <ClInclude Include="Math\Color.h" />
+    <ClInclude Include="Math\Define.h" />
     <ClInclude Include="Navigation\NavigationBase.h" />
     <ClInclude Include="StaticLibrary\StaticFunctionLibrary.h" />
     <ClInclude Include="Math\Vector2Int.h" />

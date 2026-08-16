@@ -2,6 +2,7 @@
 
 #include "GameState/PlayerState/PlayerState.h"
 #include <unordered_map>
+#include <windows.h>
 
 class PlayerPawn;
 class ItemBase;
@@ -51,6 +52,9 @@ private:
 	/* 특정 아이템 아이콘 및 텍스트 업데이트 */
 	void UpdateItemListIconText(const ItemBase& updateItem);
 
+	/* 경과 시간 카운트 시작 */
+	void BeginGameElapsedTimeCount();
+
 private:
 	/* HUD 객체 생성 */
 	virtual std::unique_ptr<Craft::HUD> CreateHUD() const;
@@ -70,5 +74,11 @@ private:
 
 	/* 플레이어가 소유중인 아이템 */
 	std::unordered_map<int, std::unique_ptr<ItemBase>> mapItemlist;
+
+	/* 경과 시간 누적 시작 여부 */
+	bool isCountTime = false;
+
+	/* 플레이어의 게임 시작 시간 */
+	LARGE_INTEGER startPlayTime;
 };
 

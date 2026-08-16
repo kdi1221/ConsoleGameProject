@@ -2,6 +2,7 @@
 
 #include "Actor/ActorOnTile.h"
 #include "Component/AbilitySystemComponent.h"
+#include <Math/Vector2Float.h>
 #include <functional>
 
 class AttributeComponent;
@@ -25,7 +26,7 @@ public:
 
 public:
 	virtual void BeginPlay() override;
-	virtual void Tick(float deltaTime) override;
+	virtual void Destroy() override;
 
 	/* 다른 종류의 Actor와 Block되는지 체크 */
 	virtual bool IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor) override;
@@ -43,9 +44,26 @@ public:
 
 public:
 	inline eTeamID GetTeamID() const { return teamID; }
+	inline float GetFireRange() const { return fireRange; }
+	inline const Craft::Vector2Int& GetProjectileSpawnOffset() const { return projectileSpawnOffset; }
+	inline const Craft::Vector2Int& GetAimingPosition() const { return aimingPosition; }
+	inline const Craft::Vector2Float& GetAimingDirection() const { return aimingDirection; }
 
 protected:
 	inline std::shared_ptr<AbilitySystemComponent> GetAbilitySystemComponent() const { return abilitySystemComponent; }
+
+protected:
+	/* 원거리 공격 범위 지정 */
+	void SetFireRange(float range);
+
+	/* 투사체 Spawn Offset 지정 */
+	virtual void SetProjectileSpawnOffset(const Craft::Vector2Int& spawnOffset);
+
+	/* 조준 위치 지정 */
+	virtual void SetAimingPostion(const Craft::Vector2Int& position);
+
+	/* 조준 방향 지정 */
+	virtual void SetAimingDirection(const Craft::Vector2Float& direction);
 
 protected:
 	/* Pawn의 초기 Ability 구성 */
@@ -64,14 +82,27 @@ private:
 private:
 	/* 소속된 팀 ID */
 	eTeamID teamID = eTeamID::None;
+	
+	/* 원거리 공격 범위 */
+	float fireRange = 0.f;
 
+	/* Projectile 스폰 시 Offset(타일 기반)*/
+	Craft::Vector2Int projectileSpawnOffset = Craft::Vector2Int::Up;
+
+	/* 조준 위치 */
+	Craft::Vector2Int aimingPosition = Craft::Vector2Int::Zero;
+
+	/* 조준 방향 */
+	Craft::Vector2Float aimingDirection = Craft::Vector2Float::Zero;
+
+private:
 	/* 체력 수치 변경시 호출되는 이벤트 */
 	OnChangeHealthType onChangeHealthEvent;
 
 	/* 체력이 다 소모되어 사망할때 발생하는 이벤트 */
 	OnDeathEventType onDeathEvent;
 
-private:
+protected:
 	/* 속성값(Health) 관리 컴포넌트 */
 	std::shared_ptr<AttributeComponent> attributeComponent;
 

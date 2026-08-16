@@ -18,9 +18,17 @@ namespace Craft
 		hasBeganPlay = true;
 	}
 
+	void Component::PreTick(float deltaTime)
+	{
+	}
+
 	void Component::Tick(float deltaTime)
 	{
 
+	}
+
+	void Component::PostTick(float deltaTime)
+	{
 	}
 
 	void Component::Draw()

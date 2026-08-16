@@ -20,7 +20,11 @@ namespace Craft
 	public:
 		//프레임 이벤트 함수.
 		virtual void BeginPlay();
+
+		virtual void PreTick(float deltaTime);
 		virtual void Tick(float deltaTime);
+		virtual void PostTick(float deltaTime);
+
 		virtual void Draw();
 
 		//충돌 시 호출될 충돌 이벤트 함수.

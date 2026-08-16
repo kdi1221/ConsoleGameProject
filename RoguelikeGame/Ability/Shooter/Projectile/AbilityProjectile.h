@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "AbilityShooter.h"
+#include "Ability/Shooter/AbilityShooter.h"
 #include "Types/Enums.h"
 #include <string>
 #include <Math/Color.h>
@@ -12,7 +12,9 @@ class AbilityProjectile : public AbilityShooter
 	TYPE_DECLARATIONS(AbilityProjectile, AbilityShooter)
 
 public:
-	AbilityProjectile(float fireDelay,
+	AbilityProjectile( int id,
+						int level,
+						float fireDelay,
 						const std::wstring image,
 						const Craft::Color color,
 						float moveDelayMin,
@@ -21,10 +23,6 @@ public:
 						float damageValue);
 
 	virtual ~AbilityProjectile() = default;
-
-public:
-	void SetProjectileSpawnOffset(const Craft::Vector2Int& spawnOffset);
-	void SetAimingPostion(const Craft::Vector2Int& position);
 
 private:
 	/* 딜레이 타이머 동작 */
@@ -48,11 +46,5 @@ private:
 
 	/* 생성할 탄환의 데미지*/
 	float projectileDamage = 0;
-
-	/* Projectile 스폰 시 Offset(타일 기반)*/
-	Craft::Vector2Int projectileSpawnOffset = Craft::Vector2Int::Up;
-
-	/* 조준 위치 */
-	Craft::Vector2Int aimingPosition = Craft::Vector2Int::Zero;
 };
 

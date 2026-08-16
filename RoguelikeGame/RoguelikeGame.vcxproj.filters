@@ -96,7 +96,7 @@
     <ClCompile Include="Ability\Shooter\AbilityShooter.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Ability\Shooter\AbilityProjectile.cpp">
+    <ClCompile Include="Ability\Shooter\Projectile\AbilityProjectile.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Component\AbilitySystemComponent.cpp">
@@ -133,6 +133,21 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Item\ItemBase.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\FieldItem\FieldSkillItem.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability\Shooter\Projectile\AbilitySpiritBall.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability\Shooter\Projectile\AbilityGoblinArrow.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability\AbilityBeam.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\TextBlockElapsedTime.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -224,7 +239,7 @@
     <ClInclude Include="Ability\Shooter\AbilityShooter.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Ability\Shooter\AbilityProjectile.h">
+    <ClInclude Include="Ability\Shooter\Projectile\AbilityProjectile.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Component\AbilitySystemComponent.h">
@@ -264,6 +279,21 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Item\ItemData\ItemDataTable.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\FieldItem\FieldSkillItem.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\Shooter\Projectile\AbilitySpiritBall.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\Shooter\Projectile\AbilityGoblinArrow.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\AbilityBeam.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\TextBlockElapsedTime.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

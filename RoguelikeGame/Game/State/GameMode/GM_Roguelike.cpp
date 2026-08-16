@@ -12,6 +12,7 @@
 #include "Actor/Pawn/NPC/Slime/NPCSlime.h"
 #include "Actor/Pawn/NPC/GoblinArcher/NPCGoblinArcher.h"
 #include "Actor/FieldItem/HealthPotion.h"
+#include "Actor/FieldItem/FieldSkillItem.h"
 #include <Math/Vector2Int.h>
 #include <cassert>
 
@@ -350,11 +351,15 @@ void GM_Roguelike::OnPlayerVisitedTreasureRoom(const Room& visitRoom, const Craf
 
 			std::shared_ptr<FieldItem> spawnedItem = nullptr;
 
-			/*if (randomValue < 30)
+			if (randomValue < 20)
 			{
-				spawnedItem = level->SpawnActor<HealthPotion>(spawnTilePos, roomIndex);
+				spawnedItem = level->SpawnActor<FieldSkillItem>(spawnTilePos, 1);
 			}
-			else*/
+			else if (randomValue < 40)
+			{
+				spawnedItem = level->SpawnActor<FieldSkillItem>(spawnTilePos, 2);
+			}
+			else
 			{
 				spawnedItem = level->SpawnActor<HealthPotion>(spawnTilePos, Util::RandomRange(1.f, 10.f));
 			}

@@ -1,5 +1,6 @@
 ﻿#include "HUDPlayer.h"
 #include "UI/TextBlockFPS.h"
+#include "UI/TextBlockElapsedTime.h"
 #include "UI/BackgroundWidget.h"
 #include "Item/ItemBase.h"
 #include "Item/ItemData/ItemDataTable.h"
@@ -36,62 +37,105 @@ void HUDPlayer::InitializeHUD(std::weak_ptr<Craft::Level> activeLevel)
 	const Vector2Int positionWidgetBackground(ViewWidth, 3);
 	const int backgroundWidth = configBase.GetDisplayWidth() - ViewWidth;
 	const int backgroundHeight = configBase.GetViewHeight() - positionWidgetBackground.y - 1;
-	hudBackground = currentLevel->CreateWidget<BackgroundWidget>(positionWidgetBackground, backgroundWidth, backgroundHeight, Color::DarkYellow);
+	hudBackground = currentLevel->CreateWidget<BackgroundWidget>(positionWidgetBackground, backgroundWidth, backgroundHeight, Color::Yellow);
+
+	/* 경과 시간 아이콘 */
+	const Vector2Int positionTimeIcon(ViewWidth + 2, 5);
+	std::shared_ptr<ImageWidget> timeIcon = currentLevel->CreateWidget<ImageWidget>(positionTimeIcon, L"⏲️", Color::BrightWhite);
+	assert(timeIcon && "floorIcon Invalid..");
+	imageTimeIcon = timeIcon;
+
+	/* 경과시간 텍스트 */
+	const Vector2Int positionWidgetTime(ViewWidth + 5, 5);
+	std::shared_ptr<TextBlockElapsedTime> createdTimeText = currentLevel->CreateWidget<TextBlockElapsedTime>(positionWidgetTime);
+	assert(createdTimeText && "Time Text Invalid..");
+	createdTimeText->SetTextValue(L"Time : 00:00:00");
+	textBlockTime = createdTimeText;
 
 	/* 현재 층수 아이콘 표시 */
-	const Vector2Int positionFloorIcon(ViewWidth + 2, 5);
+	const Vector2Int positionFloorIcon(ViewWidth + 2, 8);
 	std::shared_ptr<ImageWidget> floorIcon = currentLevel->CreateWidget<ImageWidget>(positionFloorIcon, L"🏰", Color::LightGreen);
 	assert(floorIcon && "floorIcon Invalid..");
 	imageFloorIcon = floorIcon;
 
 	/* 현재 층수 위젯 생성 */
 	const int widthWidgetFloor = 16;
-	const Vector2Int positionWidgetFloor(ViewWidth + 5, 5);
+	const Vector2Int positionWidgetFloor(ViewWidth + 5, 8);
 	std::shared_ptr<TextBlock> createdFloorText = currentLevel->CreateWidget<TextBlock>(positionWidgetFloor, widthWidgetFloor);
 	assert(createdFloorText && "Floor Text Invalid..");
 	createdFloorText->SetTextValue(L"CurrentFloor : 01");
 	textBlockFloor = createdFloorText;
 
 	/* 현재 킬수 아이콘 표시 */
-	const Vector2Int positionKillIcon(ViewWidth + 2, 8);
+	const Vector2Int positionKillIcon(ViewWidth + 2, 11);
 	std::shared_ptr<ImageWidget> killIcon = currentLevel->CreateWidget<ImageWidget>(positionKillIcon, L"💀", Color::LightBlue);
 	assert(killIcon && "killIcon Invalid..");
 	imageKillNumIcon = killIcon;
 
 	/* 현재 킬수 표시 위젯 생성 */
 	const int widthWidgetKillNum = 21;
-	const Vector2Int positionWidgetKillNum(ViewWidth + 5, 8);
+	const Vector2Int positionWidgetKillNum(ViewWidth + 5, 11);
 	std::shared_ptr<TextBlock> createdKillNumText = currentLevel->CreateWidget<TextBlock>(positionWidgetKillNum, widthWidgetKillNum);
 	assert(createdKillNumText && "Kill Num Text Invalid..");
 	createdKillNumText->SetTextValue(L"Kill Count : 0");
 	textBlockKillNum = createdKillNumText;
 
 	/* 현재 플레이어 체력 아이콘 표시 */
-	const Vector2Int positionHealthIcon(ViewWidth + 2, 11);
+	const Vector2Int positionHealthIcon(ViewWidth + 2, 14);
 	std::shared_ptr<ImageWidget> healthIcon = currentLevel->CreateWidget<ImageWidget>(positionHealthIcon, L"💖", Color::LightRed);
 	assert(healthIcon && "healthIcon Invalid..");
 	imageHealthIcon = healthIcon;
 
 	/* 현재 플레이어 체력 바 표시 */
-	const Vector2Int positionHealthProgressbar(ViewWidth + 5, 11);
+	const Vector2Int positionHealthProgressbar(ViewWidth + 5, 14);
 	const int ProgressbarWidth = configBase.GetDisplayWidth() - ViewWidth - 7;
 	std::shared_ptr<ProgressBar> healthBar = currentLevel->CreateWidget<ProgressBar>(positionHealthProgressbar, ProgressbarWidth, Color::DarkGray, Color::LightRed);
 	assert(healthBar && "healthBar invalid..");
 	healthProgressBar = healthBar;
 
 	/* 아이템 리스트 아이콘 */
-	const Vector2Int positionItemIcon(ViewWidth + 2, 14);
-	std::shared_ptr<ImageWidget> itemIcon = currentLevel->CreateWidget<ImageWidget>(positionItemIcon, L"🎒", Color::Purple);
+	const Vector2Int positionItemIcon(ViewWidth + 2, 17);
+	std::shared_ptr<ImageWidget> itemIcon = currentLevel->CreateWidget<ImageWidget>(positionItemIcon, L"✨", Color::BrightYellow);
 	assert(itemIcon && "ItemIcon Invalid..");
 	imageItemIcon = itemIcon;
 
 	/* 아이템 리스트 이름 표시 */
-	const int widthWidgetItemList = 9;
-	const Vector2Int positionWidgetItemList(ViewWidth + 5, 14);
+	const int widthWidgetItemList = 12;
+	const Vector2Int positionWidgetItemList(ViewWidth + 5, 17);
 	std::shared_ptr<TextBlock> createdItemListText = currentLevel->CreateWidget<TextBlock>(positionWidgetItemList, widthWidgetItemList);
 	assert(createdItemListText && "Item List Text Invalid..");
-	createdItemListText->SetTextValue(L"Item List");
+	createdItemListText->SetTextValue(L"Ability List");
 	textBlockItemList = createdItemListText;
+
+	/* 컨트롤러 아이콘 */
+	const Vector2Int positionControlIcon(ViewWidth + 2, 30);
+	std::shared_ptr<ImageWidget> ControlIcon = currentLevel->CreateWidget<ImageWidget>(positionControlIcon, L"🎮", Color::Purple);
+	assert(itemIcon && "ItemIcon Invalid..");
+	imageControlIcon = ControlIcon;
+
+	/* 컨트롤러 텍스트 */
+	const int widthWidgetControl = 9;
+	const Vector2Int positionWidgetControl(ViewWidth + 5, 30);
+	std::shared_ptr<TextBlock> createdControlText = currentLevel->CreateWidget<TextBlock>(positionWidgetControl, widthWidgetControl);
+	assert(createdControlText && "Control Text Invalid..");
+	createdControlText->SetTextValue(L"[Control]");
+	textBlockControl = createdControlText;
+
+	/* 이동 컨트롤 텍스트 */
+	const int widthWidgetControlMove = 14;
+	const Vector2Int positionWidgetControlMove(ViewWidth + 8, 32);
+	std::shared_ptr<TextBlock> createdControlMoveText = currentLevel->CreateWidget<TextBlock>(positionWidgetControlMove, widthWidgetControlMove);
+	assert(createdControlMoveText && "Control Move Text Invalid..");
+	createdControlMoveText->SetTextValue(L"Move : W A S D");
+	textBlockControlMove = createdControlMoveText;
+
+	/* 이동 컨트롤 텍스트 */
+	const int widthWidgetControlAttack = 16;
+	const Vector2Int positionWidgetControlAttack(ViewWidth + 8, 34);
+	std::shared_ptr<TextBlock> createdControlAttackText = currentLevel->CreateWidget<TextBlock>(positionWidgetControlAttack, widthWidgetControlAttack);
+	assert(createdControlAttackText && "Control Attack Text Invalid..");
+	createdControlAttackText->SetTextValue(L"Attack : ↑ ← ↓ →");
+	textBlockControlAttack = createdControlAttackText;
 }
 
 void HUDPlayer::ChangeFloorLevel(int newFloorLevel)
@@ -159,9 +203,9 @@ void HUDPlayer::UpdateItemListIcon(const ItemBase& item)
 		const int ViewWidth = configBase.GetViewWidth();
 		const int currentItemIconNum = static_cast<int>(mapItemWidgets.size());
 
-		const int addYPos = 17 + (currentItemIconNum * 2);
+		const int addYPos = 20 + (currentItemIconNum * 2);
 		const Vector2Int positionItemIcon(ViewWidth + 5, addYPos);
-		std::shared_ptr<ImageWidget> itemIcon = currentLevel->CreateWidget<ImageWidget>(positionItemIcon, findItemData.itemIconImage, Color::White);
+		std::shared_ptr<ImageWidget> itemIcon = currentLevel->CreateWidget<ImageWidget>(positionItemIcon, findItemData.itemIconImage, findItemData.color);
 		assert(itemIcon && "ItemIcon Invalid..");
 
 		const Vector2Int positionWidgetItemName(ViewWidth + 8, addYPos);
@@ -173,5 +217,13 @@ void HUDPlayer::UpdateItemListIcon(const ItemBase& item)
 		itemNameText->SetTextValue(findItemData.itemName + L" - Lv" + itemNumText);
 
 		mapItemWidgets.insert(std::pair<int, FItemWidget>(itemID, { itemIcon, itemNameText }));
+	}
+}
+
+void HUDPlayer::SetStartPlayTime(LARGE_INTEGER startTime)
+{
+	if (std::shared_ptr<TextBlockElapsedTime> timeText = textBlockTime.lock())
+	{
+		timeText->SetStartTime(startTime);
 	}
 }

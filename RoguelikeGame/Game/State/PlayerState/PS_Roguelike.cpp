@@ -2,6 +2,7 @@
 #include "UI/HUD/HUDPlayer.h"
 #include "Actor/Pawn/Player/PlayerPawn.h"
 #include "Item/ItemBase.h"
+#include "Item/ItemData/ItemDataTable.h"
 #include <cassert>
 
 using namespace Craft;
@@ -24,6 +25,7 @@ void PS_Roguelike::InitializeSessionData()
 
 	/* 초기 아이템 */
 	OnPlayerItemGain(1);
+	OnPlayerItemGain(2);
 }
 
 void PS_Roguelike::OnInitializeLevel(std::weak_ptr<Level> level)
@@ -47,17 +49,26 @@ void PS_Roguelike::OnSpawnedPlayerPawn(std::weak_ptr<PlayerPawn> pawn)
 	assert(currentPlayerPawn && "Invalid PlayerPawn");
 	currentPlayerPawn->InitializeHealthValue(playerCurrentHealth, playerMaxHealth);
 	currentPlayerPawn->SetHealthChangeEventCallback(std::bind(&PS_Roguelike::OnUpdatePlayerHealth, this, std::placeholders::_1, std::placeholders::_2));
+	currentPlayerPawn->SetOnItemGainEvent(std::bind(&PS_Roguelike::OnPlayerItemGain, this, std::placeholders::_1));
 
 	InitializeHUD();
+
+	/* 경과 시간 설정 */
+	BeginGameElapsedTimeCount();
 
 	/* 세션 데이터들을 새로 만든 위젯에 다시 갱신해준다. */
 	OnUpdateMonsterKillNum();
 	OnUpdatePlayerHealth(playerCurrentHealth, playerMaxHealth);
 
+	/* 세션 데이터 - 스킬 아이템 리스트를 돌면서 플레이어 스킬 및 HUD를 갱신한다. */
 	for (const auto& iterItem : mapItemlist)
 	{
+		const int itemID = iterItem.second->GetItemID();
+		const ItemData& currentItemData = ItemDataTable::GetItemData(itemID);
+
+		currentPlayerPawn->GrantAbility(currentItemData.abilityID, iterItem.second->GetItemNum());
+
 		UpdateItemListIconText(*iterItem.second);
-		
 	}
 }
 
@@ -109,7 +120,7 @@ void PS_Roguelike::OnPlayerItemGain(int itemID)
 	{
 		ItemBase* findItem = finditerItem->second.get();
 		assert(findItem && "Invalid findItem");
-		findItem->SetItemNum(findItem->GetItemNum() + 1);
+		findItem->SetItemNum(min(ItemDataTable::GetItemData(itemID).maxNum, findItem->GetItemNum() + 1));
 		UpdateItemListIconText(*findItem);
 	}
 	else
@@ -128,6 +139,23 @@ void PS_Roguelike::UpdateItemListIconText(const ItemBase& updateItem)
 	if (hudPlayer)
 	{
 		hudPlayer->UpdateItemListIcon(updateItem);
+	}
+}
+
+void PS_Roguelike::BeginGameElapsedTimeCount()
+{
+	//(최초일때는 StartPlayTime 지정)
+	if (!isCountTime)
+	{
+		QueryPerformanceCounter(&startPlayTime);    // 시작 시점의 카운터 값 저장
+
+		isCountTime = true;
+	}
+	
+	HUDPlayer* hudPlayer = GetHUD<HUDPlayer>();
+	if (hudPlayer)
+	{
+		hudPlayer->SetStartPlayTime(startPlayTime);
 	}
 }
 

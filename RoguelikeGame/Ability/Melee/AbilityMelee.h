@@ -8,7 +8,7 @@ class AbilityMelee : public AbilityPeriodicDelay
 	TYPE_DECLARATIONS(AbilityMelee, AbilityPeriodicDelay)
 
 public:
-	AbilityMelee(float interval, float damage);
+	AbilityMelee(int level, float interval, float damage);
 	virtual ~AbilityMelee() = default;
 
 private:

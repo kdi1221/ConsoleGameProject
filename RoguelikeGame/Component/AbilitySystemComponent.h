@@ -17,7 +17,8 @@ public:
 	virtual ~AbilitySystemComponent() = default;
 
 public:
-	virtual void Tick(float deltaTime) override;
+	virtual void PostTick(float deltaTime) override;
+	virtual void Draw() override;
 
 public:
 	template<typename T, typename... Args, typename = std::enable_if_t<std::is_base_of<AbilityObject, T>::value>>
@@ -43,6 +44,9 @@ public:
 
 		return Cast<T>(iterFindAbility->second);
 	}
+
+public:
+	void AllAbilitiesTriggerOff();
 
 private:
 	std::shared_ptr<Pawn> GetOwnerPawn() const;

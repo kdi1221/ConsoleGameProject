@@ -20,9 +20,9 @@ namespace Craft
 
 	}
 
-	void InputComponent::Tick(float deltaTime)
+	void InputComponent::PreTick(float deltaTime)
 	{
-		super::Tick(deltaTime);
+		super::PreTick(deltaTime);
 
 		const Input& input = Input::Get();
 		for (const auto& callbackInfo : mapInputCallbacks)

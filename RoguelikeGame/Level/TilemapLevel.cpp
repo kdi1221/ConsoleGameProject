@@ -264,6 +264,41 @@ void TilemapLevel::ProcessTilemapCollision()
 		leftActor->OnCollision(rightActor);
 		rightActor->OnCollision(leftActor);
 	}
+
+	//타일별 데미지 리스트 처리
+	for (auto& iterDamageListOnTile : mapDamageListOnTilemap)
+	{
+		const Vector2Int& tilePosition = iterDamageListOnTile.first;
+		
+		auto findTileOnActorList = mapActorListOnTilemap.find(tilePosition);
+		if (findTileOnActorList == mapActorListOnTilemap.end())
+		{
+			continue;
+		}
+
+		auto& damageListOnTile = iterDamageListOnTile.second;
+		auto& actorListOnTile = findTileOnActorList->second;
+
+		for (std::weak_ptr<ActorOnTile>& ptrActorOnTile : actorListOnTile)
+		{
+			std::shared_ptr<Pawn> actorOnPawn = Cast<Pawn>(ptrActorOnTile.lock());
+
+			// 액터가 유효하지 않거나(Pawn이 아니거나) 비활성화 상태라면 건너뛰기
+			if (!actorOnPawn || !actorOnPawn->IsActive())
+			{
+				continue;
+			}
+
+			for (const FTilemapDamageInfo& damageInfo : damageListOnTile)
+			{
+				if (actorOnPawn->GetTeamID() != damageInfo.teamID)
+				{
+					actorOnPawn->TakeDamage(damageInfo.damageValue);
+				}
+			}
+		}
+	}
+	mapDamageListOnTilemap.clear();
 }
 
 void TilemapLevel::SetPlayerVisitedRoomEventCallback(PlayerRoomEventType inCallback)
@@ -287,6 +322,12 @@ void TilemapLevel::Foreach_Rooms(std::function<void(const Room&)> callback)
 
 		callback(*pairRoom.second);
 	}
+}
+
+void TilemapLevel::AddDamageInfoToTile(const Vector2Int& tileCoord, float damageValue, eTeamID teamID)
+{
+	auto& damageListOnTile = mapDamageListOnTilemap[tileCoord];
+	damageListOnTile.emplace_back(FTilemapDamageInfo(damageValue, teamID));
 }
 
 const Room* TilemapLevel::GetPostionInRoom(const Craft::Vector2Int& checkPosition) const

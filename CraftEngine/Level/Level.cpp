@@ -56,7 +56,29 @@ namespace Craft
 				continue;
 			}
 
+			actor->PreTick(deltaTime);
+		}
+
+		for (std::shared_ptr<Actor>& actor : actorList)
+		{
+			//비활성화 액터 건너뛰기.
+			if (!actor->IsActive())
+			{
+				continue;
+			}
+
 			actor->Tick(deltaTime);
+		}
+
+		for (std::shared_ptr<Actor>& actor : actorList)
+		{
+			//비활성화 액터 건너뛰기.
+			if (!actor->IsActive())
+			{
+				continue;
+			}
+
+			actor->PostTick(deltaTime);
 		}
 
 		for (std::shared_ptr<Widget>& widget : widgetList)
@@ -128,18 +150,15 @@ namespace Craft
 		}
 
 		// 액터 추가 처리
-		if (addRequestedActorList.empty())
+		if (!addRequestedActorList.empty())
 		{
-			return;
+			//추가 요청 처리
+			for (const std::shared_ptr<Actor>& actor : addRequestedActorList)
+			{
+				actorList.emplace_back(actor);
+			}
+			addRequestedActorList.clear();
 		}
-		
-		//추가 요청 처리
-		for (const std::shared_ptr<Actor>& actor : addRequestedActorList)
-		{
-			actorList.emplace_back(actor);
-		}
-		addRequestedActorList.clear();
-
 
 		//위젯 제거 처리
 		for(auto iterator = widgetList.begin();

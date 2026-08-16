@@ -1,12 +1,13 @@
 ﻿#include "NPCRangeBase.h"
 #include "Component/AbilitySystemComponent.h"
-#include "Ability/Shooter/AbilityProjectile.h"
+#include "Ability/Shooter/Projectile/AbilityProjectile.h"
 #include "Engine/Engine.h"
 #include "Navigation/NavigationTilemap.h"
 #include <Math/Vector2Float.h>
 #include <cassert>
 
 using namespace Craft;
+
 NPCRangeBase::NPCRangeBase(const Craft::Vector2Int& position, 
 							const std::wstring& image, 
 							Craft::Color color, 
@@ -21,17 +22,7 @@ NPCRangeBase::NPCRangeBase(const Craft::Vector2Int& position,
 
 void NPCRangeBase::InitializeAbility()
 {
-	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
-	assert(abilitySystemComponent && "Invalid abilitySystemComponent");
-
-	/* Projectile 발사 Ability 추가 */
-	grantRangeAttackID = abilitySystemComponent->AddNewAbility<AbilityProjectile>(projectileFireDelay,
-																					projectileImage,
-																					projectileColor,
-																					projectileMoveDelayMin,
-																					projectileMoveDelayMax,
-																					GetTeamID(),
-																					projectileDamageValue);
+	grantRangeAttackID = grantRangeAttackAbility();
 }
 
 void NPCRangeBase::GetAvailableChaseTargetPosition(const Craft::Vector2Int& targetPos, std::vector<Craft::Vector2Int>& availablePosition)
@@ -39,6 +30,7 @@ void NPCRangeBase::GetAvailableChaseTargetPosition(const Craft::Vector2Int& targ
 	const NavigationTilemap& navigationSystem = Engine::Get().GetNavigationSystem<NavigationTilemap>();
 
 	/* 타겟의 위치를 중심으로 사정거리의 70 ~ 80프로 사이의 타일들을 추출한다. */
+	const float attackRange = GetFireRange();
 	const Vector2Int& currentPos = GetWorldPosition();
 	const int radius = static_cast<int>(round(attackRange));
 	float minRange = attackRange * 0.7f;
@@ -95,6 +87,7 @@ bool NPCRangeBase::IsTargetAttackRange(std::shared_ptr<Pawn> targetPawn) const
 		return false;
 	}
 
+	const float attackRange = GetFireRange();
 	const Vector2Int& targetPos = targetPawn->GetWorldPosition();
 	const Vector2Int& worldPos = GetWorldPosition();
 	const Vector2Int distance = targetPos - worldPos;
@@ -108,21 +101,15 @@ void NPCRangeBase::AttackAbilitiesTriggerON()
 {
 	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
 	assert(abilitySystemComponent && "Invalid abilitySystemComponent");
-	AbilityProjectile* projectileAbility = abilitySystemComponent->GetAbility<AbilityProjectile>(grantRangeAttackID);
-	if (!projectileAbility)
-	{
-		return;
-	}
-
-	std::shared_ptr<Pawn> target = GetChaseTarget().lock();
-	if (!target)
+	AbilityObject* rangeAttackAbility = abilitySystemComponent->GetAbility<AbilityObject>(grantRangeAttackID);
+	if (!rangeAttackAbility)
 	{
 		return;
 	}
 
 	AdjustAimDirection();
 
-	projectileAbility->TriggerOn();
+	rangeAttackAbility->TriggerOn();
 }
 
 void NPCRangeBase::AttackAbilitiesTriggerOFF()
@@ -130,13 +117,13 @@ void NPCRangeBase::AttackAbilitiesTriggerOFF()
 	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
 	assert(abilitySystemComponent && "Invalid abilitySystemComponent");
 
-	AbilityProjectile* projectileAbility = abilitySystemComponent->GetAbility<AbilityProjectile>(grantRangeAttackID);
-	if (!projectileAbility)
+	AbilityObject* rangeAttackAbility = abilitySystemComponent->GetAbility<AbilityObject>(grantRangeAttackID);
+	if (!rangeAttackAbility)
 	{
 		return;
 	}
 
-	projectileAbility->TriggerOff();
+	rangeAttackAbility->TriggerOff();
 }
 
 void NPCRangeBase::OnBehaviorAttack(float deltaTime)
@@ -155,14 +142,6 @@ void NPCRangeBase::OnBehaviorAttack(float deltaTime)
 
 void NPCRangeBase::AdjustAimDirection()
 {
-	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
-	assert(abilitySystemComponent && "Invalid abilitySystemComponent");
-	AbilityProjectile* projectileAbility = abilitySystemComponent->GetAbility<AbilityProjectile>(grantRangeAttackID);
-	if (!projectileAbility)
-	{
-		return;
-	}
-
 	std::shared_ptr<Pawn> target = GetChaseTarget().lock();
 	if (!target)
 	{
@@ -201,8 +180,15 @@ void NPCRangeBase::AdjustAimDirection()
 	}
 
 	/* 타겟을 향해 발사할때 가장 적절한 Offset 선택 */
-	projectileAbility->SetProjectileSpawnOffset(bestOffset);
-	projectileAbility->SetAimingPostion(targetPosition);
+	SetProjectileSpawnOffset(bestOffset);
+
+	/* 조준 방향 설정(Offset으로부터 타겟을 향하게) */
+	SetAimingDirection(static_cast<Vector2Float>(targetPosition - (currentPosition + bestOffset)));
+
+	/* 조준위치 설정(타겟위치로) */
+	SetAimingPostion(targetPosition);
+
+
 
 	/* offset 위치에서 타겟까지의 방향을 확인해서 조준 위치 설정 */
 	//const Vector2Int firePosition = currentPosition + bestOffset;

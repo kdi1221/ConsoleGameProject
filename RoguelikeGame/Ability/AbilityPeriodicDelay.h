@@ -9,7 +9,7 @@ class AbilityPeriodicDelay : public AbilityObject
 	TYPE_DECLARATIONS(AbilityPeriodicDelay, AbilityObject)
 
 public:
-	AbilityPeriodicDelay(float interval);
+	AbilityPeriodicDelay(ABILITY_ID_TYPE id, int level, float interval);
 	virtual ~AbilityPeriodicDelay() = default;
 
 private:
@@ -22,18 +22,11 @@ public:
 	/* 트리거 끄기 */
 	virtual void TriggerOff();
 
-private:
-	/* 타이머 플래그 설정 */
-	void SetEnableTimer(bool enable);
-
 protected:
 	/* 딜레이 타이머 동작 */
 	virtual void OnIntervalTrigger() = 0;
 
 private:
-	/* 타이머 동작 여부 */
-	bool isTimerActive = false;
-
 	/* 딜레이 타이머*/
 	Timer timerInterval;
 };

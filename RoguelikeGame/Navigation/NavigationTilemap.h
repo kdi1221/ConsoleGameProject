@@ -2,6 +2,7 @@
 
 #include "Navigation/NavigationBase.h"
 #include "Types/Defines.h"
+#include "Types/Enums.h"
 
 namespace Craft
 {
@@ -79,5 +80,8 @@ public:
 public:
 	/* 해당 위치의 타일이 속한 방 인덱스 반환 */
 	RoomDefines::UNIQUE_INDEX_TYPE GetRoomIndexInTile(const Craft::Vector2Int& tileCoord) const;
+
+	/* 해당 위치의 타일 카테고리 반환*/
+	eTileCategory GetTileCategory(const Craft::Vector2Int& tileCoord) const;
 };
 
