@@ -30,8 +30,8 @@ public:
 		//임시 하드코딩 테이블
 		static std::vector<ItemData> items =
 		{
-			{1, L"Spirit Ball", L"🔮", L"ⓢ", Craft::Color::LightGreen, 3, 1},
-			{2, L"Hand Blast", L"🖐️", L"ⓗ", Craft::Color::LightRed, 3, 2}
+			{1, L"Spirit Ball", L"○", L"ⓢ", Craft::Color::LightGreen, 3, 1},
+			{2, L"Hand Blast", L"♧", L"ⓗ", Craft::Color::LightRed, 3, 2}
 		};
 
 		//더미

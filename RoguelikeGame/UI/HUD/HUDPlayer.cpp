@@ -54,7 +54,7 @@ void HUDPlayer::InitializeHUD(std::weak_ptr<Craft::Level> activeLevel)
 
 	/* 현재 층수 아이콘 표시 */
 	const Vector2Int positionFloorIcon(ViewWidth + 2, 8);
-	std::shared_ptr<ImageWidget> floorIcon = currentLevel->CreateWidget<ImageWidget>(positionFloorIcon, L"🏰", Color::LightGreen);
+	std::shared_ptr<ImageWidget> floorIcon = currentLevel->CreateWidget<ImageWidget>(positionFloorIcon, L"▲", Color::LightGreen);
 	assert(floorIcon && "floorIcon Invalid..");
 	imageFloorIcon = floorIcon;
 
@@ -68,7 +68,7 @@ void HUDPlayer::InitializeHUD(std::weak_ptr<Craft::Level> activeLevel)
 
 	/* 현재 킬수 아이콘 표시 */
 	const Vector2Int positionKillIcon(ViewWidth + 2, 11);
-	std::shared_ptr<ImageWidget> killIcon = currentLevel->CreateWidget<ImageWidget>(positionKillIcon, L"💀", Color::LightBlue);
+	std::shared_ptr<ImageWidget> killIcon = currentLevel->CreateWidget<ImageWidget>(positionKillIcon, L"◈", Color::LightBlue);
 	assert(killIcon && "killIcon Invalid..");
 	imageKillNumIcon = killIcon;
 
@@ -82,20 +82,20 @@ void HUDPlayer::InitializeHUD(std::weak_ptr<Craft::Level> activeLevel)
 
 	/* 현재 플레이어 체력 아이콘 표시 */
 	const Vector2Int positionHealthIcon(ViewWidth + 2, 14);
-	std::shared_ptr<ImageWidget> healthIcon = currentLevel->CreateWidget<ImageWidget>(positionHealthIcon, L"💖", Color::LightRed);
+	std::shared_ptr<ImageWidget> healthIcon = currentLevel->CreateWidget<ImageWidget>(positionHealthIcon, L"♥", Color::LightRed);
 	assert(healthIcon && "healthIcon Invalid..");
 	imageHealthIcon = healthIcon;
 
 	/* 현재 플레이어 체력 바 표시 */
 	const Vector2Int positionHealthProgressbar(ViewWidth + 5, 14);
-	const int ProgressbarWidth = configBase.GetDisplayWidth() - ViewWidth - 7;
+	const int ProgressbarWidth = configBase.GetDisplayWidth() - ViewWidth - 9;
 	std::shared_ptr<ProgressBar> healthBar = currentLevel->CreateWidget<ProgressBar>(positionHealthProgressbar, ProgressbarWidth, Color::DarkGray, Color::LightRed);
 	assert(healthBar && "healthBar invalid..");
 	healthProgressBar = healthBar;
 
 	/* 아이템 리스트 아이콘 */
 	const Vector2Int positionItemIcon(ViewWidth + 2, 17);
-	std::shared_ptr<ImageWidget> itemIcon = currentLevel->CreateWidget<ImageWidget>(positionItemIcon, L"✨", Color::BrightYellow);
+	std::shared_ptr<ImageWidget> itemIcon = currentLevel->CreateWidget<ImageWidget>(positionItemIcon, L"♠", Color::BrightYellow);
 	assert(itemIcon && "ItemIcon Invalid..");
 	imageItemIcon = itemIcon;
 
@@ -109,7 +109,7 @@ void HUDPlayer::InitializeHUD(std::weak_ptr<Craft::Level> activeLevel)
 
 	/* 컨트롤러 아이콘 */
 	const Vector2Int positionControlIcon(ViewWidth + 2, 30);
-	std::shared_ptr<ImageWidget> ControlIcon = currentLevel->CreateWidget<ImageWidget>(positionControlIcon, L"🎮", Color::Purple);
+	std::shared_ptr<ImageWidget> ControlIcon = currentLevel->CreateWidget<ImageWidget>(positionControlIcon, L"♣", Color::Purple);
 	assert(itemIcon && "ItemIcon Invalid..");
 	imageControlIcon = ControlIcon;
 

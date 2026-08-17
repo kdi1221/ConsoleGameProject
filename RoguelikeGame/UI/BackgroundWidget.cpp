@@ -18,9 +18,9 @@ void BackgroundWidget::Draw()
 	const int drawBottom = positionLT.y + drawHeight;
 
 	/* 뒷 배경 */
-	for (int y = 0; y <= drawHeight; ++y)
+	for (int y = 1; y <= drawHeight - 1; ++y)
 	{
-		for (int x = 0; x < drawWidth; ++x)
+		for (int x = 1; x < drawWidth-1; ++x)
 		{
 			Renderer::Get().SubmitUI(L" ", Vector2Int(positionLT.x + x, positionLT.y + y), Color::Black, GetRenderSortingOrder());
 		}
