@@ -177,6 +177,15 @@
     <ClCompile Include="UI\IngameMenu\IngameMenu.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="UI\PlayerDeathMenu\PlayerDeathMenu.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Level\MainMenuLevel.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\MainMenu\MainMenu.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Level\TestLevel.h">
@@ -348,6 +357,18 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="UI\IngameMenu\IngameMenu.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\PlayerDeathMenu\PlayerDeathMenu.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\MenuItem.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Level\MainMenuLevel.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\MainMenu\MainMenu.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

@@ -230,9 +230,12 @@ namespace Craft
 		//초기화 이벤트 호출
 		mainLevel->OnInitialized();
 
+		//assert(gameMode && "Invalid gameMode");
 		// GameMode에 Level이 초기화되었음을 알림
-		assert(gameMode && "Invalid gameMode");
-		gameMode->OnInitializeLevel(mainLevel);
+		if (gameMode)
+		{
+			gameMode->OnInitializeLevel(mainLevel);
+		}
 	}
 
 	void Engine::BeginPlay()

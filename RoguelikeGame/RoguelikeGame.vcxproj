@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -138,6 +138,9 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Game\State\PlayerState\PS_Roguelike.cpp" />
     <ClCompile Include="Item\ItemBase.cpp" />
     <ClCompile Include="Level\GameLevel.cpp" />
+    <ClCompile Include="Level\MainMenuLevel.cpp" />
+    <ClCompile Include="UI\MainMenu\MainMenu.cpp" />
+    <ClCompile Include="UI\PlayerDeathMenu\PlayerDeathMenu.cpp" />
     <ClCompile Include="UI\IngameMenu\IngameMenu.cpp" />
     <ClCompile Include="UI\TextBlockElapsedTime.cpp" />
     <ClCompile Include="UI\BackgroundWidget.cpp" />
@@ -195,6 +198,10 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Item\ItemBase.h" />
     <ClInclude Include="Item\ItemData\ItemDataTable.h" />
     <ClInclude Include="Level\GameLevel.h" />
+    <ClInclude Include="Level\MainMenuLevel.h" />
+    <ClInclude Include="UI\MainMenu\MainMenu.h" />
+    <ClInclude Include="UI\MenuItem.h" />
+    <ClInclude Include="UI\PlayerDeathMenu\PlayerDeathMenu.h" />
     <ClInclude Include="UI\IngameMenu\IngameMenu.h" />
     <ClInclude Include="UI\TextBlockElapsedTime.h" />
     <ClInclude Include="UI\BackgroundWidget.h" />

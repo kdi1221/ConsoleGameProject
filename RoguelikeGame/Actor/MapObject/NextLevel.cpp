@@ -2,7 +2,7 @@
 #include "Math/Color.h"
 #include "Actor/Pawn/Player/PlayerPawn.h"
 #include "Engine/Engine.h"
-#include "Level/TestLevel.h"
+#include "Level/GameLevel.h"
 
 NextLevel::NextLevel(const Craft::Vector2Int& position)
 	:super(position, L"⌂", Craft::Color::Purple)
@@ -16,6 +16,6 @@ void NextLevel::OnCollision(const std::shared_ptr<Actor>& other)
 	if (other->IsTypeOf<PlayerPawn>())
 	{
 		/* 플레이어가 접근했으면 다음 레벨로 이동 */
-		Craft::Engine::Get().AddNewLevel<TestLevel>();
+		Craft::Engine::Get().AddNewLevel<GameLevel>();
 	}
 }

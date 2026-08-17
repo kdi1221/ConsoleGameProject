@@ -1,22 +1,26 @@
 ﻿#include "Game/Game.h"
-#include "Level/GameLevel.h"
+//#include "Level/GameLevel.h"
+#include "Level/MainMenuLevel.h"
 
 using namespace Craft;
 
 int main(void)
 {
-	/*const int FrameStringLength = 256;
-	char szFrame[FrameStringLength] = {};
-	sprintf_s(szFrame, FrameStringLength, "")
+	// 콘솔 출력 인코딩을 UTF-8로 설정
+	//SetConsoleOutputCP(65001);
+	//SetConsoleCP(65001);
 
-	SetConsoleTitleA("Sokoban Game");*/
+	SetConsoleTitle(L"Rogue Wizard");
 
 	Game game;
 	game.InitializeEngine();
 
+
+	game.AddNewLevel<MainMenuLevel>();
+
 	//테스트 : 인게임 곧바로 시작
-	game.InitializeGameSessionData();
-	game.AddNewLevel<GameLevel>();
+	//game.InitializeGameSessionData();
+	//game.AddNewLevel<GameLevel>();
 
 
 	game.Run();

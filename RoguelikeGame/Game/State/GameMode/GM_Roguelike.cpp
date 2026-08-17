@@ -1,6 +1,6 @@
 ﻿#include "GM_Roguelike.h"
 #include "Util/Util.h"
-#include "Level/TilemapLevel.h"
+#include "Level/GameLevel.h"
 #include "TileMap/Room/Room.h"
 #include "Tilemap/BSP/RoomSpace/RoomSpace.h"
 #include "Game/State/PlayerState/PS_Roguelike.h"
@@ -18,6 +18,7 @@
 #include "Actor/Pawn/NPC/Sharman/NPCSharman.h"
 #include "Actor/FieldItem/HealthPotion.h"
 #include "Actor/FieldItem/FieldSkillItem.h"
+#include <Engine/Engine.h>
 #include <Math/Vector2Int.h>
 #include <cassert>
 
@@ -55,6 +56,22 @@ void GM_Roguelike::OnInitializeLevel(std::weak_ptr<Craft::Level> level)
 	PlayerPawnSpawn();
 
 	IncrementFloorLevel();
+
+	switch (currentFloorLevel)
+	{
+	case 1:
+		Engine::Get().PlayBackgroundMusic("BGM/stage1.wav");
+		break;
+
+	case 2:
+		Engine::Get().PlayBackgroundMusic("BGM/stage2.wav");
+		break;
+
+	default:
+		Engine::Get().PlayBackgroundMusic("BGM/stage3.wav");
+		break;
+	}
+	
 }
 
 void GM_Roguelike::OnDestroyedCurrentLevel()
@@ -490,7 +507,14 @@ void GM_Roguelike::OnEventNPCDeath(std::shared_ptr<Pawn> deathPawn)
 
 void GM_Roguelike::OnEventPlayerDeath(std::shared_ptr<Pawn> deathPawn)
 {
-	OutputDebugStringA("TODO : Player Death Process\n");
+	std::shared_ptr<GameLevel> gameLevel = GetCurrentLevel<GameLevel>();
+	if (gameLevel)
+	{
+		PS_Roguelike* playerState = GetPlayerState<PS_Roguelike>();
+		assert(playerState && "Invalid playerState");
 
+		gameLevel->OnPlayerDeath(*playerState);
 
+		Engine::Get().PlayBackgroundMusic("BGM/defeat.wav");
+	}
 }

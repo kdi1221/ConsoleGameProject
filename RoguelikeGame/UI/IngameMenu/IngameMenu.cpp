@@ -63,18 +63,24 @@ void IngameMenu::Tick(float deltaTime)
 	{
 		// 인덱스 감소처리, 인덱스 돌리기.
 		currentIndex = (currentIndex - 1 + length) % length;
+
+		Engine::Get().PlayOneShot("Effect/selectmove.wav");
 	}
 
 	if (Input::Get().GetKeyDown(VK_DOWN))
 	{
 		// 인덱스 증가처리, 인덱스 돌리기.
 		currentIndex = (currentIndex + 1) % length;
+
+		Engine::Get().PlayOneShot("Effect/selectmove.wav");
 	}
 
 	if (Input::Get().GetKeyDown(VK_RETURN))
 	{
 		// 메뉴 아이템이 저장한 함수(함수 포인터로 저장) 호출.
 		menuList[currentIndex]->onSelected();
+
+		Engine::Get().PlayOneShot("Effect/button.wav");
 	}
 }
 
@@ -98,7 +104,7 @@ void IngameMenu::Draw()
 		int drawXPos = positionLT.x + menuHalfWidth - (static_cast<int>(menuList[ix]->text.length()) >> 1);
 
 		const Vector2Int drawMenuPos(drawXPos, positionLT.y + 2 + (ix * 3));
-		Renderer::Get().SubmitUI(menuList[ix]->text, static_cast<Vector2Int>(drawMenuPos), textColor, static_cast<int>(eRenderSortingOrder::UI));
+		Renderer::Get().SubmitUI(menuList[ix]->text, drawMenuPos, textColor, static_cast<int>(eRenderSortingOrder::UI));
 	}
 }
 
@@ -111,5 +117,11 @@ void IngameMenu::ShowIngameMenu(bool bShow)
 	{
 		ingameBackground->SetActive(bShowMenu);
 	}
+
+	if (bShowMenu)
+	{
+		Engine::Get().PlayOneShot("Effect/menuopen.wav");
+	}
+	
 
 }

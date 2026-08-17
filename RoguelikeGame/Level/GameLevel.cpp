@@ -1,7 +1,8 @@
 ﻿#include "GameLevel.h"
+#include "Game/Game.h"
+#include "Level/MainMenuLevel.h"
 #include <Core/Input.h>
 #include <cassert>
-#include <Engine/Engine.h>
 
 using namespace Craft;
 
@@ -11,12 +12,16 @@ void GameLevel::OnInitialized()
 
 	ingameMenu = std::make_unique<IngameMenu>();
 	assert(ingameMenu && "Invalid ingameMenu");
-
 	ingameMenu->CreateIngameMenu(weak_from_this());
-
 	ingameMenu->AddIngameMenuItem(L"Resume Game", std::bind(&GameLevel::OnResumeGame, this));
 	ingameMenu->AddIngameMenuItem(L"To Menu", std::bind(&GameLevel::OnToMenu, this));
-	ingameMenu->AddIngameMenuItem(L"Quit Game", std::bind(&GameLevel::OnQuitGame, this));
+	ingameMenu->AddIngameMenuItem(L"Quit Game",std::bind(&GameLevel::OnQuitGame, this));
+
+	playerDeathMenu = std::make_unique<PlayerDeathMenu>();
+	assert(playerDeathMenu && "Invalid playerDeathMenu");
+	playerDeathMenu->CreatePlayerDeathMenu(weak_from_this());
+	playerDeathMenu->AddPlayerDeathMenuItem(L"To Menu", std::bind(&GameLevel::OnToMenu, this));
+	playerDeathMenu->AddPlayerDeathMenuItem(L"Quit Game", std::bind(&GameLevel::OnQuitGame, this));
 }
 
 void GameLevel::Tick(float deltaTime)
@@ -35,6 +40,11 @@ void GameLevel::Tick(float deltaTime)
 	{
 		ingameMenu->Tick(deltaTime);
 	}
+
+	if (playerDeathMenu)
+	{
+		playerDeathMenu->Tick(deltaTime);
+	}
 }
 
 void GameLevel::Draw()
@@ -45,6 +55,18 @@ void GameLevel::Draw()
 	{
 		ingameMenu->Draw();
 	}
+
+	if (playerDeathMenu)
+	{
+		playerDeathMenu->Draw();
+	}
+}
+
+void GameLevel::OnPlayerDeath(const PS_Roguelike& playerState)
+{
+	SetGamePause(true);
+
+	ShowPlayerDeathMenu(playerState);
 }
 
 void GameLevel::OnResumeGame()
@@ -55,7 +77,9 @@ void GameLevel::OnResumeGame()
 
 void GameLevel::OnToMenu()
 {
-	OutputDebugStringA("TODO : To Menu");
+	Game& game = dynamic_cast<Game&>(Engine::Get());
+	game.DestroyGameSessionData();
+	game.AddNewLevel<MainMenuLevel>();
 }
 
 void GameLevel::OnQuitGame()
@@ -71,4 +95,14 @@ void GameLevel::ShowIngameMenu(bool bShow)
 	}
 
 	ingameMenu->ShowIngameMenu(bShow);
+}
+
+void GameLevel::ShowPlayerDeathMenu(const PS_Roguelike& playerState)
+{
+	if (!playerDeathMenu)
+	{
+		return;
+	}
+
+	playerDeathMenu->ShowPlayerDeathMenu(true);
 }
