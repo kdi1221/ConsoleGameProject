@@ -28,6 +28,11 @@ AbilityProjectile::AbilityProjectile(int id,
 
 }
 
+void AbilityProjectile::PlayShootSound()
+{
+
+}
+
 void AbilityProjectile::OnIntervalTrigger()
 {
 	std::shared_ptr<Pawn> ownerPawn = GetOwnerPawn();
@@ -83,4 +88,6 @@ void AbilityProjectile::OnIntervalTrigger()
 			instigatorTeamID,
 			projectileDamage);
 	}
+
+	PlayShootSound();
 }

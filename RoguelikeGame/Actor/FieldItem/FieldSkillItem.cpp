@@ -1,6 +1,7 @@
 #include "FieldSkillItem.h"
 #include "Actor/Pawn/Player/PlayerPawn.h"
 #include "Item/ItemData/ItemDataTable.h"
+#include <Engine/Engine.h>
 #include <cassert>
 
 using namespace Craft;
@@ -31,5 +32,7 @@ void FieldSkillItem::OnCollision(const std::shared_ptr<Actor>& other)
 		collidePlayerPawn->GainSkillItem(std::static_pointer_cast<FieldSkillItem>(shared_from_this()));
 
 		Destroy();
+
+		Engine::Get().PlayOneShot("Effect/itemget.wav");
 	}
 }

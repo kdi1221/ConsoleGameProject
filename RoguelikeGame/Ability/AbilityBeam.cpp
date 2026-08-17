@@ -6,6 +6,7 @@
 #include "Render/Renderer.h"
 #include "Level/TilemapLevel.h"
 #include <vector>
+#include <Engine/Engine.h>
 
 using namespace Craft;
 
@@ -96,6 +97,8 @@ void AbilityBeam::Tick(float deltaTime)
 
 				timerRangeUpdate[static_cast<unsigned int>(eBeamMode::Growth)].Reset();
 				beamMode = eBeamMode::Growth;
+
+				Engine::Get().PlayOneShot("Effect/cast.wav");
 			}
 		}
 		break;
@@ -145,6 +148,8 @@ void AbilityBeam::TriggerOn()
 
 		BuildBeamPaths(startPos);
 	}
+
+	Engine::Get().PlayOneShot("Effect/cast.wav");
 }
 
 void AbilityBeam::TriggerOff()

@@ -33,8 +33,8 @@ void MainMenuLevel::OnInitialized()
 	mainMenu = std::make_unique<MainMenu>();
 	assert(mainMenu && "Invalid mainMenu");
 	mainMenu->CreateMenu(weak_from_this());
-	mainMenu->AddMenuItem(L"Play", std::bind(&MainMenuLevel::OnPlay, this));
-	mainMenu->AddMenuItem(L"Quit Game", std::bind(&MainMenuLevel::OnQuitGame, this));
+	mainMenu->AddMenuItem(L"Play Game", std::bind(&MainMenuLevel::OnPlay, this));
+	mainMenu->AddMenuItem(L"Quit", std::bind(&MainMenuLevel::OnQuitGame, this));
 
 	Engine::Get().PlayBackgroundMusic("BGM/Mainmenu.wav");
 }

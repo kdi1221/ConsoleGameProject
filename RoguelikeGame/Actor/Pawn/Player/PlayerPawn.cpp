@@ -6,6 +6,8 @@
 #include "Ability/AbilityBeam.h"
 #include "Actor/FieldItem/FieldSkillItem.h"
 #include "Item/ItemData/ItemDataTable.h"
+#include "Game/State/GameMode/GM_Roguelike.h"
+#include <Engine/Engine.h>
 #include <Math/Vector2Float.h>
 #include <cassert>
 #include <Windows.h>
@@ -35,6 +37,14 @@ PlayerPawn::PlayerPawn(const Craft::Vector2Int& position)
 	inputComponent->AddInputCallback(VK_DOWN, fireInputTrigger);
 	inputComponent->AddInputCallback(VK_LEFT, fireInputTrigger);
 	inputComponent->AddInputCallback(VK_RIGHT, fireInputTrigger);
+
+	/* 치트 및 디버깅용 트리거 */
+	InputComponent::FInputTrigger cheatInputTrigger(eInputTrigger::Down,
+		std::bind(&PlayerPawn::OnCheatInputTrigger, this, std::placeholders::_1, std::placeholders::_2));
+
+	inputComponent->AddInputCallback('P', cheatInputTrigger);
+	inputComponent->AddInputCallback('I', cheatInputTrigger);
+	
 
 	/* 이동 컴포넌트 */
 	movementComponent = AddComponent<MovementComponent>(0.05f);
@@ -209,6 +219,30 @@ void PlayerPawn::OnProjectileFireKeyInput(int keyCode, eInputTrigger inputTrigge
 	}
 
 	fireInputValue += addInputValue;
+}
+
+void PlayerPawn::OnCheatInputTrigger(int keyCode, Craft::eInputTrigger inputTrigger)
+{
+	Engine& engine = Engine::Get();
+
+	switch (keyCode)
+	{
+	case 'P':
+		{
+			engine.SetDrawAIPaths(!engine.GetDrawAIPaths());
+		}
+		break;
+
+	case 'I':
+		{
+			if (GM_Roguelike* gameMode = engine.GetGameMode<GM_Roguelike>())
+			{
+				const Vector2Int& nextFloorRoomDoorPos = gameMode->GetNextFloorRoomDoorPosition();
+				SetPosition(nextFloorRoomDoorPos);
+			}
+		}
+		break;
+	}
 }
 
 void PlayerPawn::UpdateViewCameraPosition(const Craft::Vector2Int& viewPosition)

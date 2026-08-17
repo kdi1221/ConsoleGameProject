@@ -56,12 +56,18 @@ void NPCBase::Draw()
 {
 	super::Draw();
 
-	/* 경로 확인 테스트용 */
-	/*pathMoveComponent->Foreach_Path([&](const Vector2Int& path)
+	/* 경로 확인 디버깅용 */
+	if (Engine::Get().GetDrawAIPaths())
+	{
+		if (pathMoveComponent)
 		{
-			Renderer::Get().Submit(L" ", path, Color::BG_LightGreen, static_cast<int>(eRenderSortingOrder::MapObject));
+			pathMoveComponent->Foreach_Path([&](const Vector2Int& path)
+				{
+					Renderer::Get().Submit(L" ", path, Color::BG_LightGreen, static_cast<int>(eRenderSortingOrder::MapObject));
+				}
+			);
 		}
-	);*/
+	}
 }
 
 void NPCBase::SetChaseTarget(std::weak_ptr<Pawn> target)

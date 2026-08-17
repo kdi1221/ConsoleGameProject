@@ -1,5 +1,5 @@
 ﻿#include "HUDPlayer.h"
-#include "UI/TextBlockFPS.h"
+//#include "UI/TextBlockFPS.h"
 #include "UI/TextBlockElapsedTime.h"
 #include "UI/BackgroundWidget.h"
 #include "Item/ItemBase.h"
@@ -29,9 +29,9 @@ void HUDPlayer::InitializeHUD(std::weak_ptr<Craft::Level> activeLevel)
 	const int ViewWidth = configBase.GetViewWidth();
 
 	/* FPS 표시 위젯 생성 */
-	const int widthWidgetFPS = 12;
+	/*const int widthWidgetFPS = 12;
 	const Vector2Int positionWidgetFPS(configBase.GetDisplayWidth() - widthWidgetFPS - 1, 0);
-	textBlockFPS = currentLevel->CreateWidget<TextBlockFPS>(positionWidgetFPS, widthWidgetFPS);
+	textBlockFPS = currentLevel->CreateWidget<TextBlockFPS>(positionWidgetFPS, widthWidgetFPS);*/
 
 	/* Background 위젯 */
 	const Vector2Int positionWidgetBackground(ViewWidth, 3);

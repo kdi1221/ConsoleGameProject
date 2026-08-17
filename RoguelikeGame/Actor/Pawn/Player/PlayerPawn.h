@@ -46,6 +46,7 @@ private:
 	/* 키 입력 콜백 */
 	void OnMoveKeyInput(int keyCode, Craft::eInputTrigger inputTrigger);
 	void OnProjectileFireKeyInput(int keyCode, Craft::eInputTrigger inputTrigger);
+	void OnCheatInputTrigger(int keyCode, Craft::eInputTrigger inputTrigger);
 
 private:
 	/* 위치 이동 시 호출되는 카메라 뷰 위치 변경 함수 */

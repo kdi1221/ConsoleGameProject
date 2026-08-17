@@ -4,6 +4,8 @@
 #include "Component/AttributeComponent.h"
 #include "Component/AbilitySystemComponent.h"
 #include "Actor/MapObject/RoomDoor.h"
+#include "Util/Util.h"
+#include <Engine/Engine.h>
 #include <cassert>
 
 using namespace Craft;
@@ -92,6 +94,10 @@ void Pawn::TakeDamage(const float inDamage)
 	}
 
 	attributeComponent->DecreaseCurrrentHealth(inDamage);
+
+	int randomHitSoundIndex = Util::RandomRange(1, 3);
+	std::string hitSoundName = "Effect/hit" + std::to_string(randomHitSoundIndex) + ".wav";
+	Engine::Get().PlayOneShot(hitSoundName);
 }
 
 void Pawn::AddHealthValue(const float inHealValue)
@@ -146,6 +152,8 @@ void Pawn::InitializeAbility()
 
 void Pawn::OnDeath()
 {
+	Engine::Get().PlayOneShot("Effect/death.wav");
+
 	if (onDeathEvent)
 	{
 		onDeathEvent(std::static_pointer_cast<Pawn>(shared_from_this()));

@@ -93,6 +93,12 @@ namespace Craft
 		//카메라 객체 반환
 		CameraManager& GetCameraManager() const;
 
+		//AI 경로 그리기 여부 반환
+		inline bool GetDrawAIPaths() const { return bDrawAIPath; }
+
+		//AI 경로 그리기 여부 설정
+		inline void SetDrawAIPaths(bool bDraw) { bDrawAIPath = bDraw; }
+
 	protected:
 		// 입력 처리 함수. (입력 폴링)
 		virtual void ProcessInput();
@@ -170,6 +176,11 @@ namespace Craft
 
 		//현재 게임모드(Level과 별도 관리)
 		std::unique_ptr<GameMode> gameMode;
+
+	private:
+		/* AI 경로 표시 */
+		bool bDrawAIPath = false;
+
 	};
 }
 

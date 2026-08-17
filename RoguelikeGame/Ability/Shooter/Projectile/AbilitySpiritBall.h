@@ -9,5 +9,8 @@ class AbilitySpiritBall : public AbilityProjectile
 public:
 	AbilitySpiritBall(int level, eTeamID teamID);
 	virtual ~AbilitySpiritBall() = default;
+
+protected:
+	virtual void PlayShootSound() override;
 };
 

@@ -24,6 +24,9 @@ public:
 
 	virtual ~AbilityProjectile() = default;
 
+protected:
+	virtual void PlayShootSound();
+
 private:
 	/* 딜레이 타이머 동작 */
 	virtual void OnIntervalTrigger() override;

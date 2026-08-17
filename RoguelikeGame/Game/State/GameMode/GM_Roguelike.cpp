@@ -89,6 +89,11 @@ void GM_Roguelike::OnDestroyedCurrentLevel()
 	super::OnDestroyedCurrentLevel();
 }
 
+const Craft::Vector2Int& GM_Roguelike::GetNextFloorRoomDoorPosition() const
+{
+	return nextFloorRoomDoorPos;
+}
+
 std::unique_ptr<PlayerState> GM_Roguelike::CreatePlayerState() const
 {
 	return std::make_unique<PS_Roguelike>();
@@ -116,9 +121,8 @@ void GM_Roguelike::ReadyGameActorSpawn()
 
 			case eRoomType::NextLevel:
 				{
-					//다음 층으로 이동할 입구 오브젝트 생성
-					const Vector2Int& selectTilePos = roomSpace.GetPositionCenter();
-					level->SpawnActor<NextLevel>(selectTilePos);
+					//입구 타일들 중 첫번째 타일을 지정
+					nextFloorRoomDoorPos = roomSpace.GetDoorTileIndices()[0];
 				}
 				break;
 
@@ -199,7 +203,7 @@ void GM_Roguelike::OnPlayerVisitedRoom(const Room& visitRoom, const Craft::Vecto
 
 	case eRoomType::NextLevel:
 		{
-			OutputDebugStringA("Enter NextLevel Room\n");
+			OnPlayerVisitedNextRoom(visitRoom, playerPosition);
 		}
 		break;
 	}
@@ -464,6 +468,21 @@ void GM_Roguelike::OnPlayerVisitedTreasureRoom(const Room& visitRoom, const Craf
 
 		--spawnItemNum;
 	}
+}
+
+void GM_Roguelike::OnPlayerVisitedNextRoom(const Room& visitRoom, const Craft::Vector2Int& playerPosition)
+{
+	std::shared_ptr<Level> level = GetCurrentLevel<Level>();
+	if (!level)
+	{
+		return;
+	}
+
+	const RoomSpace& visitRoomSpace = visitRoom.GetRoomSpace();
+
+	//다음 층으로 이동할 입구 오브젝트 생성
+	const Vector2Int& selectTilePos = visitRoomSpace.GetPositionCenter();
+	level->SpawnActor<NextLevel>(selectTilePos);
 }
 
 void GM_Roguelike::OnRoomBattleEnd()

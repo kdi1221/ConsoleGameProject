@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "GameState/GameMode/GameMode.h"
+#include "Math/Vector2Int.h"
 #include "Types/Defines.h"
 #include "Types/Enums.h"
 #include <vector>
@@ -36,6 +37,10 @@ public:
 	/* 현재 활성화되어 있던 레벨이 지워지기전 호출됨 */
 	virtual void OnDestroyedCurrentLevel() override;
 
+public:
+	/* 치트키용 : 다음 층으로 가는 방의 입구 타일 위치 반환 */
+	const Craft::Vector2Int& GetNextFloorRoomDoorPosition() const;
+
 private:
 	/* 플레이어 상태 객체 생성 */
 	virtual std::unique_ptr<Craft::PlayerState> CreatePlayerState() const override;
@@ -70,6 +75,9 @@ private:
 	/* 보물창고 방 처리 */
 	void OnPlayerVisitedTreasureRoom(const Room& visitRoom, const Craft::Vector2Int& playerPosition);
 
+	/* 다음 층으로 향하는 출구 방 처리 */
+	void OnPlayerVisitedNextRoom(const Room& visitRoom, const Craft::Vector2Int& playerPosition);
+
 	/* 배틀 종료 처리 */
 	void OnRoomBattleEnd();
 
@@ -99,5 +107,7 @@ private:
 	/* 현재 진행 층수 */
 	int currentFloorLevel = 0;
 	
+	/* 현재 층에서 다음 레벨로 향하는 방의 입구 타일 위치 */
+	Craft::Vector2Int nextFloorRoomDoorPos = Craft::Vector2Int::Zero;
 };
 
