@@ -11,6 +11,11 @@
 #include "Actor/Pawn/Player/PlayerPawn.h"
 #include "Actor/Pawn/NPC/Slime/NPCSlime.h"
 #include "Actor/Pawn/NPC/GoblinArcher/NPCGoblinArcher.h"
+#include "Actor/Pawn/NPC/Orc/NPCOrc.h"
+#include "Actor/Pawn/NPC/Troll/NPCTroll.h"
+#include "Actor/Pawn/NPC/Golem/NPCGolem.h"
+#include "Actor/Pawn/NPC/Imp/NPCImp.h"
+#include "Actor/Pawn/NPC/Sharman/NPCSharman.h"
 #include "Actor/FieldItem/HealthPotion.h"
 #include "Actor/FieldItem/FieldSkillItem.h"
 #include <Math/Vector2Int.h>
@@ -244,20 +249,83 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 	int spawnMonsterNum = Util::RandomRange(spawnMinRange, spawnMaxRange);
 	int currentIndex = 0;
 
-	auto spawnRandomNPC = [level](const Vector2Int& spawnTilePos, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
+	auto spawnRandomNPC = [this, level](const Vector2Int& spawnTilePos, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
 		{
 			const int randomValue = Util::RandomRange(0, 99);
 
 			std::shared_ptr<NPCBase> spawnedNPC = nullptr;
 
-			if (randomValue < 30)
+			switch (currentFloorLevel)
 			{
-				spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnTilePos, roomIndex);
-			}
-			else
-			{
-				spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
-			}
+			case 1:
+				if (randomValue < 30)
+				{
+					spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnTilePos, roomIndex);
+				}
+				else if (randomValue < 80)
+				{
+					spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
+				}
+				else
+				{
+					spawnedNPC = level->SpawnActor<NPCOrc>(spawnTilePos, roomIndex);
+				}
+				break;
+
+			case 2:
+				if (randomValue < 10)
+				{
+					spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnTilePos, roomIndex);
+				}
+				else if (randomValue < 25)
+				{
+					spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
+				}
+				else if (randomValue < 50)
+				{
+					spawnedNPC = level->SpawnActor<NPCOrc>(spawnTilePos, roomIndex);
+				}
+				else if (randomValue < 65)
+				{
+					spawnedNPC = level->SpawnActor<NPCImp>(spawnTilePos, roomIndex);
+				}
+				else
+				{
+					spawnedNPC = level->SpawnActor<NPCTroll>(spawnTilePos, roomIndex);
+				}
+				break;
+
+			default:
+				if (randomValue < 10)
+				{
+					spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnTilePos, roomIndex);
+				}
+				else if (randomValue < 15)
+				{
+					spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
+				}
+				else if (randomValue < 30)
+				{
+					spawnedNPC = level->SpawnActor<NPCOrc>(spawnTilePos, roomIndex);
+				}
+				else if (randomValue < 40)
+				{
+					spawnedNPC = level->SpawnActor<NPCImp>(spawnTilePos, roomIndex);
+				}
+				else if(randomValue < 60)
+				{
+					spawnedNPC = level->SpawnActor<NPCTroll>(spawnTilePos, roomIndex);
+				}
+				else if (randomValue < 75)
+				{
+					spawnedNPC = level->SpawnActor<NPCSharman>(spawnTilePos, roomIndex);
+				}
+				else
+				{
+					spawnedNPC = level->SpawnActor<NPCGolem>(spawnTilePos, roomIndex);
+				}
+				break;
+			}	
 
 			return spawnedNPC;
 		};

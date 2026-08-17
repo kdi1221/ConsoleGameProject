@@ -55,6 +55,9 @@ private:
 	/* 경과 시간 카운트 시작 */
 	void BeginGameElapsedTimeCount();
 
+	/* 게임 일시정지 여부 이벤트 콜백 */
+	void OnSetGamePaused(bool bPause);
+
 private:
 	/* HUD 객체 생성 */
 	virtual std::unique_ptr<Craft::HUD> CreateHUD() const;
@@ -80,5 +83,8 @@ private:
 
 	/* 플레이어의 게임 시작 시간 */
 	LARGE_INTEGER startPlayTime;
+
+	/* 플레이어의 게임 일시정지 시간 */
+	LARGE_INTEGER lastPauseTime;
 };
 

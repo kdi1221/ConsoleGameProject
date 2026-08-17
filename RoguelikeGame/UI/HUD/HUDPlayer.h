@@ -39,6 +39,7 @@ public:
 	void ChangePlayerHealthValue(float current, float maxValue);
 	void UpdateItemListIcon(const ItemBase& item);
 	void SetStartPlayTime(LARGE_INTEGER startTime);
+	void SetGamePause(bool bPause);
 
 private:
 	std::weak_ptr<TextBlockFPS> textBlockFPS;

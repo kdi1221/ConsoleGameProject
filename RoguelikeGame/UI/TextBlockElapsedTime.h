@@ -15,6 +15,7 @@ private:
 
 public:
 	void SetStartTime(LARGE_INTEGER time);
+	void SetGamePause(bool bPause);
 
 private:
 	void FormatTimeString();
@@ -22,5 +23,6 @@ private:
 private:
 	LARGE_INTEGER frequency;
 	LARGE_INTEGER startTime;
+	bool bGamePause = false;
 };
 

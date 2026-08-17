@@ -25,6 +25,9 @@ namespace Craft
 		//Engine 프렌드 선언.
 		friend class Engine;
 
+	private:
+		using OnGamePauseType = std::function<void(bool)>;
+
 	public:
 		Level();
 		virtual ~Level();
@@ -65,6 +68,9 @@ namespace Craft
 			std::shared_ptr<T> createdWidget = std::make_shared<T>(std::forward<Args>(args)...);
 
 			addRequestedwidgetList.emplace_back(createdWidget);
+
+			//Widget의 Owner 지정
+			createdWidget->SetOwner(weak_from_this());
 
 			return createdWidget;
 		}
@@ -109,8 +115,15 @@ namespace Craft
 		/* 다음 위치(nextPosition)로 actor가 이동할 수 있는지 확인 */
 		virtual bool CanNextMove(std::shared_ptr<Actor> checkActor, const Vector2Int& nextPosition);
 
+		/* 인게임 일시정지 */
+		void SetGamePause(bool bPause);
+
+		/* 게임 일시정지 여부 변경시 호출되는 이벤트 콜백 설정 */
+		void SetOnGamePause(OnGamePauseType callback);
+
 		// Getter.
 		inline bool HasInitialized() const { return hasInitialized; }
+		inline bool GetGamePaused() const { return bGamePaused; }
 
 	protected:
 		// 이전 프레임에 추가/제거 요청된 액터 처리 함수.
@@ -132,9 +145,15 @@ namespace Craft
 		virtual void OnDestroyedActorInLevel(std::weak_ptr<Actor> destoryedActor);
 
 
-	protected:
+	private:
 		//레벨 초기화 여부 플래그
 		bool hasInitialized = false;
+
+		//게임 일시정지 여부
+		bool bGamePaused = false;
+
+		// 게임 일시정지 여부 업데이트시 호출되는 이벤트
+		OnGamePauseType onGamePause = nullptr;
 
 		//레벨에 배치된 모든 액터.
 		std::vector<std::shared_ptr<Actor>> actorList;

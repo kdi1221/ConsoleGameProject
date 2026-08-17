@@ -1,5 +1,5 @@
 ﻿#include "Game/Game.h"
-#include "Level/TestLevel.h"
+#include "Level/GameLevel.h"
 
 using namespace Craft;
 
@@ -16,7 +16,7 @@ int main(void)
 
 	//테스트 : 인게임 곧바로 시작
 	game.InitializeGameSessionData();
-	game.AddNewLevel<TestLevel>();
+	game.AddNewLevel<GameLevel>();
 
 
 	game.Run();

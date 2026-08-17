@@ -45,4 +45,19 @@ namespace Craft
 		// 다음 프레임에 위젯이 레벨에서 제거됨.
 		hasExpired = true;
 	}
+
+	void Widget::SetActive(bool bActive)
+	{
+		isActive = bActive;
+	}
+
+	void Widget::SetRenderSortingOrder(int order)
+	{
+		renderSortingOrder = order;
+	}
+
+	void Widget::SetOwner(std::weak_ptr<Level> newOwner)
+	{
+		owner = newOwner;
+	}
 }

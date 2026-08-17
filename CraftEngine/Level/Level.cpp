@@ -48,39 +48,42 @@ namespace Craft
 
 	void Level::Tick(float deltaTime)
 	{
-		for (std::shared_ptr<Actor>& actor : actorList)
+		if (!bGamePaused)
 		{
-			//비활성화 액터 건너뛰기.
-			if (!actor->IsActive())
+			for (std::shared_ptr<Actor>& actor : actorList)
 			{
-				continue;
+				//비활성화 액터 건너뛰기.
+				if (!actor->IsActive())
+				{
+					continue;
+				}
+
+				actor->PreTick(deltaTime);
 			}
 
-			actor->PreTick(deltaTime);
-		}
-
-		for (std::shared_ptr<Actor>& actor : actorList)
-		{
-			//비활성화 액터 건너뛰기.
-			if (!actor->IsActive())
+			for (std::shared_ptr<Actor>& actor : actorList)
 			{
-				continue;
+				//비활성화 액터 건너뛰기.
+				if (!actor->IsActive())
+				{
+					continue;
+				}
+
+				actor->Tick(deltaTime);
 			}
 
-			actor->Tick(deltaTime);
-		}
-
-		for (std::shared_ptr<Actor>& actor : actorList)
-		{
-			//비활성화 액터 건너뛰기.
-			if (!actor->IsActive())
+			for (std::shared_ptr<Actor>& actor : actorList)
 			{
-				continue;
+				//비활성화 액터 건너뛰기.
+				if (!actor->IsActive())
+				{
+					continue;
+				}
+
+				actor->PostTick(deltaTime);
 			}
-
-			actor->PostTick(deltaTime);
 		}
-
+		
 		for (std::shared_ptr<Widget>& widget : widgetList)
 		{
 			//비활성화 위젯 건너뛰기
@@ -121,6 +124,21 @@ namespace Craft
 	bool Level::CanNextMove(std::shared_ptr<Actor> checkActor, const Vector2Int& nextPosition)
 	{
 		return true;
+	}
+
+	void Level::SetGamePause(bool bPause)
+	{
+		bGamePaused = bPause;
+
+		if (onGamePause)
+		{
+			onGamePause(bGamePaused);
+		}
+	}
+
+	void Level::SetOnGamePause(OnGamePauseType callback)
+	{
+		onGamePause = callback;
 	}
 
 	void Level::ProcessAddAndDestroyActors()

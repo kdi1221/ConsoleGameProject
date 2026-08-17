@@ -17,6 +17,15 @@ void BackgroundWidget::Draw()
 	const int drawRight = positionLT.x + drawWidth - 2;
 	const int drawBottom = positionLT.y + drawHeight;
 
+	/* 뒷 배경 */
+	for (int y = 0; y <= drawHeight; ++y)
+	{
+		for (int x = 0; x < drawWidth; ++x)
+		{
+			Renderer::Get().SubmitUI(L" ", Vector2Int(positionLT.x + x, positionLT.y + y), Color::Black, GetRenderSortingOrder());
+		}
+	}
+
 	/* 모서리 */
 	Renderer::Get().SubmitUI(L"┏", Vector2Int(positionLT.x, positionLT.y), drawColor, GetRenderSortingOrder());
 	Renderer::Get().SubmitUI(L"┓", Vector2Int(drawRight, positionLT.y), drawColor, GetRenderSortingOrder());

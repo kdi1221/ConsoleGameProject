@@ -5,6 +5,8 @@
 
 namespace Craft
 {
+	class Level;
+
 	/* UI 표시할 Widget Base */
 	class CRAFT_API Widget : public CraftObject
 	{
@@ -20,6 +22,14 @@ namespace Craft
 		virtual void Tick(float deltaTime);
 		virtual void Draw();
 		virtual void Destroy();
+
+	public:
+		void SetActive(bool bActive);
+		void SetRenderSortingOrder(int order);
+		void SetOwner(std::weak_ptr<Level> newOwner);
+
+	public:
+		inline std::shared_ptr<Level> GetOwner() const { return owner.lock(); }
 
 	public:
 		inline bool HasBeganPlay() const { return hasBeganPlay; }
@@ -51,6 +61,9 @@ namespace Craft
 
 		//깊이버퍼 순서
 		int renderSortingOrder = 0;
+
+		// Owner - 위젯을 소유하는 레벨 객체
+		std::weak_ptr<Level> owner;
 	};
 }
 

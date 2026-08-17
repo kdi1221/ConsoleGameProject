@@ -3,11 +3,14 @@
 #include "Actor/Pawn/Player/PlayerPawn.h"
 #include "Item/ItemBase.h"
 #include "Item/ItemData/ItemDataTable.h"
+#include <Level/Level.h>
 #include <cassert>
 
 using namespace Craft;
 
 PS_Roguelike::PS_Roguelike()
+	:startPlayTime()
+	,lastPauseTime()
 {
 
 }
@@ -25,12 +28,17 @@ void PS_Roguelike::InitializeSessionData()
 
 	/* 초기 아이템 */
 	OnPlayerItemGain(1);
-	OnPlayerItemGain(2);
+	//OnPlayerItemGain(2);
 }
 
 void PS_Roguelike::OnInitializeLevel(std::weak_ptr<Level> level)
 {
 	super::OnInitializeLevel(level);
+
+	if (std::shared_ptr<Level> currentLevel = level.lock())
+	{
+		currentLevel->SetOnGamePause(std::bind(&PS_Roguelike::OnSetGamePaused, this, std::placeholders::_1));
+	}
 }
 
 void PS_Roguelike::OnDestroyedCurrentLevel()
@@ -156,6 +164,33 @@ void PS_Roguelike::BeginGameElapsedTimeCount()
 	if (hudPlayer)
 	{
 		hudPlayer->SetStartPlayTime(startPlayTime);
+	}
+}
+
+void PS_Roguelike::OnSetGamePaused(bool bPause)
+{
+	HUDPlayer* hudPlayer = GetHUD<HUDPlayer>();
+	if (hudPlayer)
+	{
+		hudPlayer->SetGamePause(bPause);
+	}
+
+	if (bPause)
+	{
+		//일시정지 시간 저장
+		QueryPerformanceCounter(&lastPauseTime);
+	}
+	else
+	{
+		LARGE_INTEGER currentTime;
+		QueryPerformanceCounter(&currentTime);
+
+		startPlayTime.QuadPart += currentTime.QuadPart - lastPauseTime.QuadPart;
+
+		if (hudPlayer)
+		{
+			hudPlayer->SetStartPlayTime(startPlayTime);
+		}
 	}
 }
 

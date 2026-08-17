@@ -14,13 +14,21 @@ void TextBlockElapsedTime::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
 
-	FormatTimeString();
+	if (!bGamePause)
+	{
+		FormatTimeString();
+	}
 }
 
 void TextBlockElapsedTime::SetStartTime(LARGE_INTEGER time)
 {
 	startTime = time;
 	FormatTimeString();
+}
+
+void TextBlockElapsedTime::SetGamePause(bool bPause)
+{
+	bGamePause = bPause;
 }
 
 void TextBlockElapsedTime::FormatTimeString()

@@ -227,3 +227,11 @@ void HUDPlayer::SetStartPlayTime(LARGE_INTEGER startTime)
 		timeText->SetStartTime(startTime);
 	}
 }
+
+void HUDPlayer::SetGamePause(bool bPause)
+{
+	if (std::shared_ptr<TextBlockElapsedTime> timeText = textBlockTime.lock())
+	{
+		timeText->SetGamePause(bPause);
+	}
+}
