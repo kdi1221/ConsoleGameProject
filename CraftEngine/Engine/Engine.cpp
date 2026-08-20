@@ -84,9 +84,6 @@ namespace Craft
 
 		while (!isQuit)
 		{
-			// 입력 처리.
-			ProcessInput();
-
 			// 현재 시간 확인.
 			QueryPerformanceCounter(&counter);
 			currentTime = counter.QuadPart;
@@ -97,6 +94,9 @@ namespace Craft
 			// 고정 프레임 처리
 			if (deltaTime >= oneFrameTime)
 			{
+				// 입력 처리.
+				ProcessInput();
+
 				// 레벨 초기화 이벤트 함수.
 				OnInitialized();
 
