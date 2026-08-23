@@ -44,6 +44,8 @@ namespace Craft
 
 		// 입력 객체 생성.
 		input = std::make_unique<Input>();
+		const bool bInputInit = input->InitializeInput();
+		assert(bInputInit && "Failed Input Initialize");
 
 		// 렌더러 객체 생성
 		renderer = std::make_unique<Renderer>(Vector2Int(config.GetDisplayWidth(), config.GetDisplayHeight()));

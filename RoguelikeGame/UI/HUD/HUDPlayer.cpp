@@ -1,6 +1,8 @@
 ﻿#include "HUDPlayer.h"
-//#include "UI/TextBlockFPS.h"
-#include "UI/TextBlockElapsedTime.h"
+#include "UI/TextBlock/TextBlockFPS.h"
+#include "UI/TextBlock/TextBlockMousePos.h"
+#include "UI/TextBlock/TextBlockMouseButton.h"
+#include "UI/TextBlock/TextBlockElapsedTime.h"
 #include "UI/BackgroundWidget.h"
 #include "Item/ItemBase.h"
 #include "Item/ItemData/ItemDataTable.h"
@@ -29,9 +31,19 @@ void HUDPlayer::InitializeHUD(std::weak_ptr<Craft::Level> activeLevel)
 	const int ViewWidth = configBase.GetViewWidth();
 
 	/* FPS 표시 위젯 생성 */
-	/*const int widthWidgetFPS = 12;
+	const int widthWidgetFPS = 12;
 	const Vector2Int positionWidgetFPS(configBase.GetDisplayWidth() - widthWidgetFPS - 1, 0);
-	textBlockFPS = currentLevel->CreateWidget<TextBlockFPS>(positionWidgetFPS, widthWidgetFPS);*/
+	textBlockFPS = currentLevel->CreateWidget<TextBlockFPS>(positionWidgetFPS, widthWidgetFPS);
+
+	/* 마우스 위치 표시 위젯 생성 */
+	const int widthWidgetMousePos = 24;
+	const Vector2Int positionWidgetMousePos(configBase.GetDisplayWidth() - widthWidgetMousePos - 1, 1);
+	textBlockMousePos = currentLevel->CreateWidget<TextBlockMousePos>(positionWidgetMousePos, widthWidgetMousePos);
+
+	/* 마우스 버튼 표시 위젯 생성 */
+	const int widthWidgetMouseBtn = 26;
+	const Vector2Int positionWidgetMouseBtn(configBase.GetDisplayWidth() - widthWidgetMouseBtn - 1, 2);
+	textBlockMouseBtn = currentLevel->CreateWidget<TextBlockMouseButton>(positionWidgetMouseBtn, widthWidgetMouseBtn);
 
 	/* Background 위젯 */
 	const Vector2Int positionWidgetBackground(ViewWidth, 3);

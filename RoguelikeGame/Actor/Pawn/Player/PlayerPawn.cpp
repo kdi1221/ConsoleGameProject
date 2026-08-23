@@ -17,17 +17,18 @@ using namespace Craft;
 PlayerPawn::PlayerPawn(const Craft::Vector2Int& position)
 	:super(position, L"☺", Color::Yellow, 100.f, eTeamID::Player)
 {
-	std::shared_ptr<InputComponent> inputComponent = AddComponent<InputComponent>();
+	inputComponent = AddComponent<InputComponent>();
 	assert(inputComponent && "inputComponent create fail..");
 
 	/* 이동 입력 트리거 */
 	InputComponent::FInputTrigger moveInputTrigger(eInputTrigger::Press,
 												std::bind(&PlayerPawn::OnMoveKeyInput, this, std::placeholders::_1, std::placeholders::_2));
 
-	inputComponent->AddInputCallback('W', moveInputTrigger);
+	inputComponent->AddInputCallback(VK_LBUTTON, moveInputTrigger);
+	/*inputComponent->AddInputCallback('W', moveInputTrigger);
 	inputComponent->AddInputCallback('S', moveInputTrigger);
 	inputComponent->AddInputCallback('A', moveInputTrigger);
-	inputComponent->AddInputCallback('D', moveInputTrigger);
+	inputComponent->AddInputCallback('D', moveInputTrigger);*/
 
 	/* 발사 입력 트리거 */
 	InputComponent::FInputTrigger fireInputTrigger(eInputTrigger::Up | eInputTrigger::Down,
@@ -45,10 +46,10 @@ PlayerPawn::PlayerPawn(const Craft::Vector2Int& position)
 	inputComponent->AddInputCallback('P', cheatInputTrigger);
 	inputComponent->AddInputCallback('I', cheatInputTrigger);
 	
-
 	/* 이동 컴포넌트 */
-	movementComponent = AddComponent<MovementComponent>(0.05f);
-	assert(movementComponent && "cameraComponent create fail..");
+	//movementComponent = AddComponent<MovementComponent>(0.05f);
+	movementComponent = AddComponent<MovementComponent>(30.f);
+	assert(movementComponent && "movementComponent create fail..");
 
 	/* 카메라 컴포넌트 */
 	cameraComponent = AddComponent<CameraComponent>();
@@ -160,7 +161,15 @@ void PlayerPawn::GrantAbility(int abilityID, int abilityLevel)
 
 void PlayerPawn::OnMoveKeyInput(int keyCode, eInputTrigger inputTrigger)
 {
-	switch (keyCode)
+	assert(inputComponent && "Invalid inputComponent");
+
+	//마우스 커서의 월드상 위치로 향하는 방향을 이동방향으로 삼는다.
+	const Vector2Int& cursorWorldPos = inputComponent->GetLastMosueCursorPos();
+	moveInputValue = static_cast<Vector2Float>(cursorWorldPos - GetWorldPosition());
+
+	//TODO : Look Vector 결정 및 그 방향으로 스킬 사용
+	
+	/*switch (keyCode)
 	{
 	case 'W':
 		{
@@ -185,7 +194,7 @@ void PlayerPawn::OnMoveKeyInput(int keyCode, eInputTrigger inputTrigger)
 			moveInputValue += Vector2Int::Right;
 		}
 		break;
-	}
+	}*/
 }
 
 void PlayerPawn::OnProjectileFireKeyInput(int keyCode, eInputTrigger inputTrigger)
@@ -290,7 +299,8 @@ void PlayerPawn::ProcessMoveInput()
 	assert(movementComponent && "Invalid movementComponent");
 
 	movementComponent->SetLastMoveDirection(moveInputValue);
-	moveInputValue = Vector2Int::Zero;
+	moveInputValue = Vector2Float::Zero;
+	//moveInputValue = Vector2Int::Zero;
 }
 
 void PlayerPawn::SetProjectileAbilityTrigger(bool bTrigger)

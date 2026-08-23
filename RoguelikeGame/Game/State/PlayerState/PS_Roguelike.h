@@ -13,6 +13,7 @@ class PS_Roguelike : public Craft::PlayerState
 	TYPE_DECLARATIONS(PS_Roguelike, PlayerState)
 
 private:
+	//최대 킬수
 	static constexpr int MAX_KILL_NUM = 100000;
 
 public:

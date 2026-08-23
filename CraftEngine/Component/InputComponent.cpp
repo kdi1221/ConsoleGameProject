@@ -1,5 +1,8 @@
 #include "InputComponent.h"
 #include "Core/Input.h"
+#include "Engine/Engine.h"
+#include "Engine/Config/ConfigBase.h"
+#include "Camera/CameraManager.h"
 
 namespace Craft
 {
@@ -24,7 +27,25 @@ namespace Craft
 	{
 		super::PreTick(deltaTime);
 
+		const Engine& engine = Engine::Get();
 		const Input& input = Input::Get();
+		const ConfigBase& configBase = engine.GetConfig<ConfigBase>();
+		const CameraManager& cameraManager = engine.GetCameraManager();
+
+		//마우스 위치 갱신
+		const Vector2Int& currentMouseCursorPos = input.GetMousePosition();
+
+		//카메라가 현재 보고 있는 위치(중심)
+		const Vector2Int& cameraViewPos = cameraManager.GetViewPosition();
+
+		//현재 좌상단 월드 위치
+		const Vector2Int positionLeftTop(cameraViewPos.x - (configBase.GetViewWidth() >> 1),
+										cameraViewPos.y - (configBase.GetViewHeight() >> 1));
+		
+		//커서의 월드상 위치(좌상단 월드 위치 + 마우스 커서의 위치)
+		lastMouseCursorPos = positionLeftTop + currentMouseCursorPos;
+
+		//입력에 대한 콜백 호출
 		for (const auto& callbackInfo : mapInputCallbacks)
 		{
 			const int keyCode = callbackInfo.first;

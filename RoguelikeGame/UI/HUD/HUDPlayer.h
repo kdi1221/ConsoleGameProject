@@ -11,7 +11,9 @@ namespace Craft
 	class ProgressBar;
 }
 
-//class TextBlockFPS;
+class TextBlockFPS;
+class TextBlockMousePos;
+class TextBlockMouseButton;
 class TextBlockElapsedTime;
 class BackgroundWidget;
 class ItemBase;
@@ -42,7 +44,9 @@ public:
 	void SetGamePause(bool bPause);
 
 private:
-	//std::weak_ptr<TextBlockFPS> textBlockFPS;
+	std::weak_ptr<TextBlockFPS> textBlockFPS;
+	std::weak_ptr<TextBlockMousePos> textBlockMousePos;
+	std::weak_ptr<TextBlockMouseButton> textBlockMouseBtn;
 	std::weak_ptr<BackgroundWidget> hudBackground;
 	std::weak_ptr<Craft::ImageWidget> imageTimeIcon;
 	std::weak_ptr<TextBlockElapsedTime> textBlockTime;

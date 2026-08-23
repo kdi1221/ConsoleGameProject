@@ -4,10 +4,10 @@
 #include <unordered_map>
 #include "Ability/AbilityObject.h"
 
+class Pawn;
+class AbilityObject;
 
 /* Ability들을 관리하는 컴포넌트 */
-class AbilityObject;
-class Pawn;
 class AbilitySystemComponent : public Craft::Component
 {
 	TYPE_DECLARATIONS(AbilitySystemComponent, Component)
@@ -18,6 +18,8 @@ public:
 
 public:
 	virtual void PostTick(float deltaTime) override;
+
+	/* Ability 별 상태 Draw */
 	virtual void Draw() override;
 
 public:

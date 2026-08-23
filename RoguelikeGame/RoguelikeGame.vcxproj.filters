@@ -117,7 +117,7 @@
     <ClCompile Include="Actor\Pawn\NPC\GoblinArcher\NPCGoblinArcher.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="UI\TextBlockFPS.cpp">
+    <ClCompile Include="UI\TextBlock\TextBlockFPS.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="UI\HUD\HUDPlayer.cpp">
@@ -147,7 +147,7 @@
     <ClCompile Include="Ability\AbilityBeam.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="UI\TextBlockElapsedTime.cpp">
+    <ClCompile Include="UI\TextBlock\TextBlockElapsedTime.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Actor\Pawn\NPC\Orc\NPCOrc.cpp">
@@ -184,6 +184,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="UI\MainMenu\MainMenu.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\TextBlock\TextBlockMousePos.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\TextBlock\TextBlockMouseButton.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -296,7 +302,7 @@
     <ClInclude Include="Actor\Pawn\NPC\GoblinArcher\NPCGoblinArcher.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="UI\TextBlockFPS.h">
+    <ClInclude Include="UI\TextBlock\TextBlockFPS.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="UI\HUD\HUDPlayer.h">
@@ -329,7 +335,7 @@
     <ClInclude Include="Ability\AbilityBeam.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="UI\TextBlockElapsedTime.h">
+    <ClInclude Include="UI\TextBlock\TextBlockElapsedTime.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Actor\Pawn\NPC\Orc\NPCOrc.h">
@@ -369,6 +375,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="UI\MainMenu\MainMenu.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\TextBlock\TextBlockMousePos.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\TextBlock\TextBlockMouseButton.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

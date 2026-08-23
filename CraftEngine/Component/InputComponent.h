@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Component.h"
+#include "Math/Vector2Int.h"
 #include "Core/Core.h"
 #include <functional>
 #include <map>
@@ -55,8 +56,15 @@ namespace Craft
 	public:
 		void AddInputCallback(const int keyCode, const FInputTrigger& triggerInfo);
 
+	public:
+		inline const Vector2Int& GetLastMosueCursorPos() const { return lastMouseCursorPos; }
+
 	private:
+		/* 입력에 대한 콜백 정보 */
 		std::map<int, FInputTrigger> mapInputCallbacks;
+
+		/* 마지막 마우스 커서 위치 정보 */
+		Vector2Int lastMouseCursorPos = Vector2Int(-1, -1);
 	};
 }
 

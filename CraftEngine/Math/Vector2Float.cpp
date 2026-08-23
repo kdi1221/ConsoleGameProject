@@ -111,6 +111,11 @@ namespace Craft
 
 	void Vector2Float::Normalize()
 	{
+		if (IsNearlyZero())
+		{
+			return;
+		}
+
 		const float Length = LengthSqrt();
 
 		x /= Length;
@@ -119,7 +124,7 @@ namespace Craft
 
 	bool Vector2Float::IsNearlyZero() const
 	{
-		return !(Length() > 0.00001f);
+		return !(Length() > EPSILON);
 	}
 
 	Vector2Float Vector2Float::RotateVector(const Vector2Float& dir, float angleDegree)
