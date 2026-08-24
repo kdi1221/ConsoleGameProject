@@ -283,7 +283,7 @@ namespace Craft
 
 	void Input::UpdateCurrentFocus()
 	{
-		bFocusWindow = consoleWindowHandle == GetForegroundWindow();
+		bFocusWindow = (consoleWindowHandle == GetForegroundWindow());
 	}
 
 	void Input::ClearInputBuffer()

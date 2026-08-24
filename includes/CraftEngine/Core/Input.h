@@ -95,7 +95,7 @@ namespace Craft
 		bool bWasFocusWindow = false;
 
 
-		
+
 
 
 

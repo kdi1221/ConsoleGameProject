@@ -1,6 +1,7 @@
 ﻿#include "Game/Game.h"
 #include "Level/GameLevel.h"
 #include "Level/MainMenuLevel.h"
+#include "Level/DummyLevel.h"
 
 using namespace Craft;
 
@@ -21,6 +22,9 @@ int main(void)
 	//테스트 : 인게임 곧바로 시작
 	game.InitializeGameSessionData();
 	game.AddNewLevel<GameLevel>();
+
+	//더미 - 프레임 테스트용
+	//game.AddNewLevel<DummyLevel>();
 
 	game.Run();
 }

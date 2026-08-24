@@ -53,6 +53,12 @@ void Tilemap::InitializeTilemap(const Vector2Int& inMapSize,
 
 	//방, 경로 정보들을 바탕으로 Tile 구성
 	BSPRoot->ExtractNodeContents(CorridorCallback, RoomCallback);
+
+	//현재 카메라가 표시하는 화면의 길이만큼 타일맵이 한줄씩 표시되므로 DrawBuffer의 크기를 미리 지정해둔다.
+	const CameraManager& cameraManager = Engine::Get().GetCameraManager();
+	const Vector2Int leftTopPosition = cameraManager.GetLeftTopPosition();
+	const Vector2Int rightDownPosition = cameraManager.GetRightDownPosition();
+	drawTileLineBuffer.reserve(rightDownPosition.x - leftTopPosition.x);
 }
 
 void Tilemap::Tick(float deltaTime)
@@ -62,17 +68,24 @@ void Tilemap::Tick(float deltaTime)
 
 void Tilemap::Draw()
 {
+	Renderer& renderer = Renderer::Get();
+
 	//카메라에 표시되는 타일들만 출력한다. 
 	const CameraManager& cameraManager = Engine::Get().GetCameraManager();
 	const Vector2Int leftTopPosition = cameraManager.GetLeftTopPosition();
 	const Vector2Int rightDownPosition = cameraManager.GetRightDownPosition();
+	const int drawTileWidth = rightDownPosition.x - leftTopPosition.x;
 
 	for (int y = leftTopPosition.y; y != rightDownPosition.y; ++y)
 	{
-		for (int x = leftTopPosition.x; x != rightDownPosition.x; ++x)
+		drawTileLineBuffer.clear();
+		drawTileLineBuffer.resize(drawTileWidth);
+		int tileBufferIndex = 0;
+
+		for (int x = leftTopPosition.x; x != rightDownPosition.x; ++x, ++tileBufferIndex)
 		{
 			const size_t tileIndex = (y * mapSize.x) + x;
-			if (tileIndex < 0 || tileIndex >= tileList.size())
+			if (tileIndex >= tileList.size())
 			{
 				continue;
 			}
@@ -84,35 +97,85 @@ void Tilemap::Draw()
 			{
 			case eTileCategory::Wall:
 				{
-					Renderer::Get().Submit(L"█", tile.GetTilePosition(), Color::DarkGray);
+					drawTileLineBuffer[tileBufferIndex] = L'█';
 				}
-				break;
-			}
-
-			/*Color TileColor;
-			std::wstring TileSprite;
-
-			switch (tile.GetTileCategory())
-			{
-			case eTileCategory::Wall:
-				TileColor = Color::DarkGray;
-				TileSprite = L"█";
 				break;
 
 			case eTileCategory::Ground:
-				TileColor = Color::White;
-				TileSprite = L" ";
+				{
+					drawTileLineBuffer[tileBufferIndex] = L' ';
+				}
 				break;
 
 			default:
-				TileColor = Color::White;
-				TileSprite = L"e";
+				{
+					drawTileLineBuffer[tileBufferIndex] = L'e';
+				}
 				break;
 			}
-
-			Renderer::Get().Submit(TileSprite, tile.GetTilePosition(), TileColor);*/
 		}
+
+		// Buffer Submit;
+		renderer.Submit(drawTileLineBuffer, Vector2Int(leftTopPosition.x, y), Color::DarkGray);
 	}
+
+
+
+
+
+
+
+	//카메라에 표시되는 타일들만 출력한다. 
+	//const CameraManager& cameraManager = Engine::Get().GetCameraManager();
+	//const Vector2Int leftTopPosition = cameraManager.GetLeftTopPosition();
+	//const Vector2Int rightDownPosition = cameraManager.GetRightDownPosition();
+
+	//for (int y = leftTopPosition.y; y != rightDownPosition.y; ++y)
+	//{
+	//	for (int x = leftTopPosition.x; x != rightDownPosition.x; ++x)
+	//	{
+	//		const size_t tileIndex = (y * mapSize.x) + x;
+	//		if (tileIndex < 0 || tileIndex >= tileList.size())
+	//		{
+	//			continue;
+	//		}
+
+	//		const Tile& tile = *tileList[tileIndex];
+
+	//		/* 벽타일과 방 입구 문 타일만 그린다. */
+	//		switch (tile.GetTileCategory())
+	//		{
+	//		case eTileCategory::Wall:
+	//			{
+	//				Renderer::Get().Submit(L"█", tile.GetTilePosition(), Color::DarkGray);
+	//			}
+	//			break;
+	//		}
+
+	//		/*Color TileColor;
+	//		std::wstring TileSprite;
+
+	//		switch (tile.GetTileCategory())
+	//		{
+	//		case eTileCategory::Wall:
+	//			TileColor = Color::DarkGray;
+	//			TileSprite = L"█";
+	//			break;
+
+	//		case eTileCategory::Ground:
+	//			TileColor = Color::White;
+	//			TileSprite = L" ";
+	//			break;
+
+	//		default:
+	//			TileColor = Color::White;
+	//			TileSprite = L"e";
+	//			break;
+	//		}
+
+	//		Renderer::Get().Submit(TileSprite, tile.GetTilePosition(), TileColor);*/
+	//	}
+	//}
 }
 
 void Tilemap::SetTileRoomIndex(int xPos, int yPos, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)

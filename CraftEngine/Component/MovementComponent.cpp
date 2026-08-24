@@ -1,6 +1,7 @@
 ﻿#include "MovementComponent.h"
 #include "Actor/Actor.h"
 #include "Level/Level.h"
+#include "StaticLibrary/StaticFunctionLibrary.h"
 #include <cassert>
 
 namespace Craft
@@ -88,20 +89,68 @@ namespace Craft
 		}
 		else
 		{
-			/* 이동이 실제 가능한지 점검(타일 기준) */
-			if (level->CanNextMove(ownerActor, newTileCoord))
+			//브레젠험 직선그리기로 도착지점까지의 경로 타일들을 구한다.
+			std::vector<Vector2Int> pathTiles;
+			StaticFunctionLibrary::GetBresenhamPath(currentTilecoord, newTileCoord, pathTiles);
+			assert(!pathTiles.empty() && "pathTiles empty..");
+
+			//브레젠험으로 구한 경로의 첫 시작은 현재타일위치와 같음
+			auto iterMoveNextTileCoord = pathTiles.begin();
+
+			//마지막으로 이동가능이 확인된 타일 위치
+			auto iterlastMoveEnableTileCoord = iterMoveNextTileCoord;
+
+			//시작 바로 다음 경로부터 체크 시작
+			++iterMoveNextTileCoord;
+			
+			/* 각 경로타일에서 막히는 경로가 있는지(벽, 다른 Pawn) 확인해서 블록된 경로 바로 앞부분을 이동위치로 삼는다. */
+			for (; iterMoveNextTileCoord != pathTiles.end(); ++iterMoveNextTileCoord)
 			{
-				/* 이동할 새로운 위치 지정 */
-				ownerActor->SetPosition(newTileCoord);
-				currentWorldPosition = newPosition;
+				const Vector2Int& checkTileCoord = *iterMoveNextTileCoord;
+				if (!level->CanNextMove(ownerActor, checkTileCoord))
+				{
+					break;
+				}
+
+				iterlastMoveEnableTileCoord = iterMoveNextTileCoord;
+			}
+
+			/* 마지막에 이동가능한 위치로 확인된 타일 인덱스 */
+			const Vector2Int& lastCheckEanbleMoveCoord = *iterlastMoveEnableTileCoord;
+			
+			/* 이동 가능한 위치가 현재위치와 같으면 => 블록때문에 못움직이므로 리턴한다. */
+			if (lastCheckEanbleMoveCoord == currentTilecoord)
+			{
+				return;
+			}
+
+			/* 그게 아니면 이동이 실제 가능하므로 새로운 위치로 Owner의 타일 위치를 갱신한다. */
+			ownerActor->SetPosition(lastCheckEanbleMoveCoord);
+			
+			/* 처음 예상한 위치와 실제 이동 가능한 위치가 다른경우 float형 위치값은 실제 이동 가능한 위치로 갱신해줘야한다. */
+			if (lastCheckEanbleMoveCoord != newTileCoord)
+			{
+				currentWorldPosition = static_cast<Vector2Float>(lastCheckEanbleMoveCoord);
 			}
 			else
 			{
-				/* TODO : 현재 타일 위치에서 브레젠험알고리즘으로 직선 경로를 만든 뒤, 이동가능한 마지막 위치를 찾아서 움직여야 한다. */
-				char szTmp[256] = { 0 };
-				sprintf_s(szTmp, "Can't Move, currentPosition[%f, %f], newPosition[%f, %f] \n", currentWorldPosition.x, currentWorldPosition.y, newPosition.x, newPosition.y);
-				OutputDebugStringA(szTmp);
+				currentWorldPosition = newPosition;
 			}
+
+			/* 이동이 실제 가능한지 점검(타일 기준) */
+			//if (level->CanNextMove(ownerActor, newTileCoord))
+			//{
+			//	/* 이동할 새로운 위치 지정 */
+			//	ownerActor->SetPosition(newTileCoord);
+			//	currentWorldPosition = newPosition;
+			//}
+			//else
+			//{
+			//	/* TODO : 현재 타일 위치에서 브레젠험알고리즘으로 직선 경로를 만든 뒤, 이동가능한 마지막 위치를 찾아서 움직여야 한다. */
+			//	char szTmp[256] = { 0 };
+			//	sprintf_s(szTmp, "Can't Move, currentPosition[%f, %f], newPosition[%f, %f] \n", currentWorldPosition.x, currentWorldPosition.y, newPosition.x, newPosition.y);
+			//	OutputDebugStringA(szTmp);
+			//}
 		}
 
 		///* 이동이 실제 가능한지 점검 필요 */

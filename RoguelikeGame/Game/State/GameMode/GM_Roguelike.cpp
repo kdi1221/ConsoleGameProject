@@ -57,7 +57,7 @@ void GM_Roguelike::OnInitializeLevel(std::weak_ptr<Craft::Level> level)
 
 	IncrementFloorLevel();
 
-	switch (currentFloorLevel)
+	/*switch (currentFloorLevel)
 	{
 	case 1:
 		Engine::Get().PlayBackgroundMusic("BGM/stage1.wav");
@@ -70,7 +70,7 @@ void GM_Roguelike::OnInitializeLevel(std::weak_ptr<Craft::Level> level)
 	default:
 		Engine::Get().PlayBackgroundMusic("BGM/stage3.wav");
 		break;
-	}
+	}*/
 	
 }
 

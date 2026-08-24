@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <functional>
+#include <string>
 
 namespace Craft
 {
@@ -55,5 +56,8 @@ private:
 
 	//타일맵 내의 타일들
 	TileListType tileList;
+
+	//타일맵 그릴때 사용할 한 라인에 대한 버퍼
+	std::wstring drawTileLineBuffer;
 };
 

@@ -9,6 +9,7 @@ namespace Craft
 	class Actor;
 }
 
+/* 타일맵 내에서 경로 찾기를 실행하는 Navigation 클래스 */
 class NavigationTilemap : public Craft::NavigationBase
 {
 private:
