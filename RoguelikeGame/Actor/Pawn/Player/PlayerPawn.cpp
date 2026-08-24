@@ -165,7 +165,71 @@ void PlayerPawn::OnMoveKeyInput(int keyCode, eInputTrigger inputTrigger)
 
 	//마우스 커서의 월드상 위치로 향하는 방향을 이동방향으로 삼는다.
 	const Vector2Int& cursorWorldPos = inputComponent->GetLastMosueCursorPos();
-	moveInputValue = static_cast<Vector2Float>(cursorWorldPos - GetWorldPosition());
+	const Vector2Int& currentPos = GetWorldPosition();
+	if (currentPos != cursorWorldPos)
+	{
+		moveInputValue = static_cast<Vector2Float>(cursorWorldPos - currentPos);
+	}
+	else
+	{
+		moveInputValue = Vector2Float::Zero;
+	}
+	
+
+
+
+	//마우스 커서의 월드상 위치로 향하는 방향과 가장일치하는 8방향 중의 하나를 이동방향으로 삼는다.
+	//static const Vector2Float directions[] =
+	//{
+	//	Vector2Float::Up,
+	//	Vector2Float::Down,
+	//	Vector2Float::Left,
+	//	Vector2Float::Right,
+
+	//	//LeftTop
+	//	{-0.707f, -0.707f},
+
+	//	//RightTop
+	//	{0.707f, -0.707f},
+
+	//	//LeftBottom
+	//	{-0.707f, 0.707f},
+
+	//	//RightBottom
+	//	{0.707f, 0.707f},
+	//};
+
+	//const Vector2Int& cursorWorldPos = inputComponent->GetLastMosueCursorPos();
+	//const Vector2Int& currentPos = GetWorldPosition();
+	//if (currentPos != cursorWorldPos)
+	//{
+	//	Vector2Float toCursorPosDirection = static_cast<Vector2Float>(cursorWorldPos - currentPos);
+	//	toCursorPosDirection.Normalize();
+
+	//	Vector2Float bestDirections = directions[0];
+	//	float maxDot = -1.f;
+	//	for (const Vector2Float& dir : directions)
+	//	{
+	//		float dotResult = dir.DotProduct(toCursorPosDirection);
+	//		if (dotResult > maxDot)
+	//		{
+	//			maxDot = dotResult;
+	//			bestDirections = dir;
+	//		}
+	//	}
+
+	//	moveInputValue = bestDirections;
+	//}
+	//else
+	//{
+	//	moveInputValue = Vector2Float::Zero;
+	//}
+
+
+
+
+
+
 
 	//TODO : Look Vector 결정 및 그 방향으로 스킬 사용
 	

@@ -79,7 +79,8 @@ namespace Craft
 		const Vector2Float newPosition = currentWorldPosition + moveDelta;
 
 		/* 점유할 타일 위치 (round) */
-		const Vector2Int newTileCoord(static_cast<int>(round(newPosition.x)), static_cast<int>(round(newPosition.y)));
+		//const Vector2Int newTileCoord(static_cast<int>(round(newPosition.x)), static_cast<int>(round(newPosition.y)));
+		const Vector2Int newTileCoord(static_cast<int>(newPosition.x), static_cast<int>(newPosition.y));
 
 		/* 이동할 타일위치가 현재위치와 같으면 */
 		if (currentTilecoord == newTileCoord)
