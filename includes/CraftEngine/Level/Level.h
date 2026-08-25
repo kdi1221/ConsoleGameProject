@@ -112,9 +112,6 @@ namespace Craft
 			return nullptr;
 		}
 
-		/* 다음 위치(nextPosition)로 actor가 이동할 수 있는지 확인 */
-		virtual bool CanNextMove(std::shared_ptr<Actor> checkActor, const Vector2Int& nextPosition);
-
 		/* 인게임 일시정지 */
 		void SetGamePause(bool bPause);
 

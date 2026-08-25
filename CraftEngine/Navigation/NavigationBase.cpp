@@ -20,6 +20,13 @@ namespace Craft
 		return false;
 	}
 
+	CheckMoveResultType NavigationBase::CheckEnableMoveToTargetPosition(std::shared_ptr<Craft::Actor> agent,
+																		const Craft::Vector2Int& checkPos, 
+																		Vector2Int& enableMovePosition) const
+	{
+		return eCheckMoveTargetResult::Success;
+	}
+
 	void NavigationBase::SetCurrentLevel(std::weak_ptr<Level> level)
 	{
 		currentLevel = level;

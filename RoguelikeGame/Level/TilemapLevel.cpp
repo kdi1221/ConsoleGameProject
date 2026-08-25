@@ -108,24 +108,24 @@ void TilemapLevel::OnDestroyedActorInLevel(std::weak_ptr<Actor> destoryedActor)
 	UnregisterActorOnTilemap(actorOnTile);
 }
 
-bool TilemapLevel::CanNextMove(std::shared_ptr<Actor> checkActor, const Vector2Int& nextPosition)
+CheckPlacementResult TilemapLevel::CanNextMove(std::shared_ptr<Actor> checkActor, const Vector2Int& nextPosition) const
 {
 	if (!checkActor || !checkActor->IsActive())
 	{
-		return false;
+		return CheckPlacementResult::InactiveActor;
 	}
 
 	/* 같은 위치라면 이동 불가 */
 	if (checkActor->GetWorldPosition() == nextPosition)
 	{
-		return false;
+		return CheckPlacementResult::SamePosition;
 	}
 
 	/* 다음에 이동할 위치가 벽타일이면 이동 불가 */
 	const eTileCategory nextTileCategory = tileMap->GetTileCategory(nextPosition);
 	if (eTileCategory::Wall == nextTileCategory)
 	{
-		return false;
+		return CheckPlacementResult::BlockWall;
 	}
 
 	/* 다음에 이동할 위치에 Block되는 Actor가 존재하는지 확인 */
@@ -137,7 +137,7 @@ bool TilemapLevel::CanNextMove(std::shared_ptr<Actor> checkActor, const Vector2I
 		/* 해당 타일에 존재하는 Actor가 없는 경우 이동 가능 */
 		if (findActorListOnTile == mapActorListOnTilemap.end())
 		{
-			return true;
+			return CheckPlacementResult::CanMove;
 		}
 
 		auto& actorListOnTile = findActorListOnTile->second;
@@ -155,10 +155,12 @@ bool TilemapLevel::CanNextMove(std::shared_ptr<Actor> checkActor, const Vector2I
 			};
 
 		/* 해당 위치 타일에 block되는 Actor가 존재하지 않으면 이동 가능 */
-		return actorListOnTile.end() == std::find_if(actorListOnTile.begin(), actorListOnTile.end(), find_blockActor);
+		auto iterFindBlockActor = std::find_if(actorListOnTile.begin(), actorListOnTile.end(), find_blockActor);
+		return iterFindBlockActor == actorListOnTile.end() ? CheckPlacementResult::CanMove : CheckPlacementResult::BlockActor;
 	}
 
-	return true;
+	/* 그 외의 경우 모두 이동 가능*/
+	return CheckPlacementResult::CanMove;
 }
 
 void TilemapLevel::ProcessTilemapCollision()

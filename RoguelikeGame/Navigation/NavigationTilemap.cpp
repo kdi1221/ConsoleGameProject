@@ -1,7 +1,9 @@
 ﻿#include "NavigationTilemap.h"
 #include "Level/TilemapLevel.h"
+#include <StaticLibrary/StaticFunctionLibrary.h>
 #include <Math/Vector2Float.h>
 #include <Actor/Actor.h>
+#include <cassert>
 #include <queue>
 #include <unordered_map>
 
@@ -106,7 +108,7 @@ bool NavigationTilemap::FindPath(std::shared_ptr<Actor> agent,
 				}
 
 				/* 다른 객체가 점유중인 타일은 제외한다. */
-				if (!tilemapLevel->CanNextMove(agent, checkTileCoord))
+				if (CheckPlacementResult::CanMove != tilemapLevel->CanNextMove(agent, checkTileCoord))
 				{
 					continue;
 				}
@@ -166,7 +168,91 @@ bool NavigationTilemap::CanNextMove(std::shared_ptr<Actor> agent, const Vector2I
 		return false;
 	}
 
-	return tilemapLevel->CanNextMove(agent, checkPos);
+	return CheckPlacementResult::CanMove == tilemapLevel->CanNextMove(agent, checkPos);
+}
+
+CheckMoveResultType NavigationTilemap::CheckEnableMoveToTargetPosition(std::shared_ptr<Craft::Actor> agent,
+																		const Craft::Vector2Int& checkPos, 
+																		Vector2Int& enableMovePosition) const
+{
+	if (!agent || !agent->IsActive())
+	{
+		return eCheckMoveTargetResult::Unknown;
+	}
+
+	std::shared_ptr<TilemapLevel> tilemapLevel = GetCurrentLevel<TilemapLevel>();
+	if (!tilemapLevel)
+	{
+		return eCheckMoveTargetResult::Unknown;
+	}
+
+	const Vector2Int& currentTilecoord = agent->GetWorldPosition();
+
+	//브레젠험 직선그리기로 도착지점까지의 경로 타일들을 구한다.
+	std::vector<Vector2Int> pathTiles;
+	StaticFunctionLibrary::GetBresenhamPath(currentTilecoord, checkPos, pathTiles);
+	assert(!pathTiles.empty() && "pathTiles empty..");
+
+	//브레젠험으로 구한 경로의 첫 시작은 현재타일위치와 같음
+	auto iterMoveNextTileCoord = pathTiles.begin();
+
+	//마지막으로 이동가능이 확인된 타일 위치
+	auto iterlastMoveEnableTileCoord = iterMoveNextTileCoord;
+
+	//시작 바로 다음 경로부터 체크 시작
+	++iterMoveNextTileCoord;
+
+	//반환 결과 값
+	CheckMoveResultType checkResult = CheckMoveResultType::None;
+			
+	/* 각 경로타일에서 막히는 경로가 있는지(벽, 다른 Pawn) 확인해서 블록된 경로 바로 앞부분을 이동위치로 삼는다. */
+	for (; iterMoveNextTileCoord != pathTiles.end(); ++iterMoveNextTileCoord)
+	{
+		const Vector2Int& checkTileCoord = *iterMoveNextTileCoord;
+
+		//이동 불가능한 이유에 대해 Return 값 결정
+		const CheckPlacementResult checkMoveResult = tilemapLevel->CanNextMove(agent, checkTileCoord);
+		if (checkMoveResult != CheckPlacementResult::CanMove)
+		{
+			switch (checkMoveResult)
+			{
+			case CheckPlacementResult::BlockActor:
+				{
+					//충돌한 액터 존재
+					checkResult = CheckMoveResultType::BlockActor;
+				}
+				break;
+
+			case CheckPlacementResult::BlockWall:
+				{
+					//충돌한 벽 존재
+					checkResult = CheckMoveResultType::BlockWall;
+				}
+				break;
+
+			default:
+				{
+					//기타
+					checkResult = CheckMoveResultType::Unknown;
+				}
+				break;
+			}
+
+			/* 중간에 충돌되었으므로 더이상 체크하지 않고 빠져나옴 */
+			break;
+		}
+		
+		/* 마지막으로 이동가능이 확인된 타일 위치 저장 */
+		iterlastMoveEnableTileCoord = iterMoveNextTileCoord;
+	}
+
+	/* 여기까지 왔는데 checkResult가 None이면 경로상의 충돌된 대상이 없다는것 */
+	checkResult = (checkResult == CheckMoveResultType::None) ? CheckMoveResultType::Success : checkResult;
+
+	/* 마지막으로 이동 가능이 확인된 타일 위치 반환 */
+	enableMovePosition = *iterlastMoveEnableTileCoord;
+
+	return checkResult;
 }
 
 RoomDefines::UNIQUE_INDEX_TYPE NavigationTilemap::GetRoomIndexInTile(const Craft::Vector2Int& tileCoord) const

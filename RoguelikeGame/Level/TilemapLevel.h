@@ -24,6 +24,18 @@ class TilemapLevel : public Craft::Level
 {
 	TYPE_DECLARATIONS(TilemapLevel, Level)
 
+public:
+	/* 타일위에 Actor가 위치 가능한지 여부결과 값 */
+	enum class eCheckPlacementResult
+	{
+		CanMove,
+		InactiveActor,
+		SamePosition,
+		BlockWall,
+		BlockActor,
+		Unknown
+	};
+
 private:
 	struct FTilemapDamageInfo
 	{
@@ -72,7 +84,7 @@ protected:
 
 public:
 	/* 다음 위치(nextPosition)로 actor가 이동할 수 있는지 확인 */
-	virtual bool CanNextMove(std::shared_ptr<Craft::Actor> checkActor, const Craft::Vector2Int& nextPosition) override;
+	eCheckPlacementResult CanNextMove(std::shared_ptr<Craft::Actor> checkActor, const Craft::Vector2Int& nextPosition) const;
 
 public:
 	/* 타일맵 기반 충돌 처리 */
@@ -138,3 +150,4 @@ private:
 	TilemapDamageListType mapDamageListOnTilemap;
 };
 
+using CheckPlacementResult = TilemapLevel::eCheckPlacementResult;

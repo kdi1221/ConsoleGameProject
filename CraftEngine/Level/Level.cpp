@@ -121,11 +121,6 @@ namespace Craft
 		}
 	}
 
-	bool Level::CanNextMove(std::shared_ptr<Actor> checkActor, const Vector2Int& nextPosition)
-	{
-		return true;
-	}
-
 	void Level::SetGamePause(bool bPause)
 	{
 		bGamePaused = bPause;

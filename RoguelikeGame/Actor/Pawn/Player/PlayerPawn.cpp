@@ -164,7 +164,7 @@ void PlayerPawn::OnMoveKeyInput(int keyCode, eInputTrigger inputTrigger)
 	assert(inputComponent && "Invalid inputComponent");
 
 	//마우스 커서의 월드상 위치로 향하는 방향을 이동방향으로 삼는다.
-	const Vector2Int& cursorWorldPos = inputComponent->GetLastMosueCursorPos();
+	/*const Vector2Int& cursorWorldPos = inputComponent->GetLastMosueCursorPos();
 	const Vector2Int& currentPos = GetWorldPosition();
 	if (currentPos != cursorWorldPos)
 	{
@@ -173,66 +173,50 @@ void PlayerPawn::OnMoveKeyInput(int keyCode, eInputTrigger inputTrigger)
 	else
 	{
 		moveInputValue = Vector2Float::Zero;
-	}
+	}*/
 	
 
-
-
 	//마우스 커서의 월드상 위치로 향하는 방향과 가장일치하는 8방향 중의 하나를 이동방향으로 삼는다.
-	//static const Vector2Float directions[] =
-	//{
-	//	Vector2Float::Up,
-	//	Vector2Float::Down,
-	//	Vector2Float::Left,
-	//	Vector2Float::Right,
+	eDirection newMoveDirection = eDirection::None;
 
-	//	//LeftTop
-	//	{-0.707f, -0.707f},
+	const Vector2Int& cursorWorldPos = inputComponent->GetLastMosueCursorPos();
+	const Vector2Int& currentPos = GetWorldPosition();
+	if (currentPos != cursorWorldPos)
+	{
+		Vector2Float toCursorPosDirection = static_cast<Vector2Float>(cursorWorldPos - currentPos);
+		toCursorPosDirection.Normalize();
 
-	//	//RightTop
-	//	{0.707f, -0.707f},
+		float maxDot = -1.f;
+		for (const auto& moveDirection : MOVE_DIRECTION)
+		{
+			const Vector2Float& currentDirection = moveDirection.second;
+			const float dotResult = currentDirection.DotProduct(toCursorPosDirection);
+			if (dotResult > maxDot)
+			{
+				maxDot = dotResult;
+				newMoveDirection = moveDirection.first;
+			}
+		}
+	}
+	else
+	{
+		newMoveDirection = eDirection::None;
+	}
 
-	//	//LeftBottom
-	//	{-0.707f, 0.707f},
-
-	//	//RightBottom
-	//	{0.707f, 0.707f},
-	//};
-
-	//const Vector2Int& cursorWorldPos = inputComponent->GetLastMosueCursorPos();
-	//const Vector2Int& currentPos = GetWorldPosition();
-	//if (currentPos != cursorWorldPos)
-	//{
-	//	Vector2Float toCursorPosDirection = static_cast<Vector2Float>(cursorWorldPos - currentPos);
-	//	toCursorPosDirection.Normalize();
-
-	//	Vector2Float bestDirections = directions[0];
-	//	float maxDot = -1.f;
-	//	for (const Vector2Float& dir : directions)
-	//	{
-	//		float dotResult = dir.DotProduct(toCursorPosDirection);
-	//		if (dotResult > maxDot)
-	//		{
-	//			maxDot = dotResult;
-	//			bestDirections = dir;
-	//		}
-	//	}
-
-	//	moveInputValue = bestDirections;
-	//}
-	//else
-	//{
-	//	moveInputValue = Vector2Float::Zero;
-	//}
-
-
+	moveInputDirection = newMoveDirection;
 
 
 
 
 
 	//TODO : Look Vector 결정 및 그 방향으로 스킬 사용
-	
+
+
+
+
+
+
+
 	/*switch (keyCode)
 	{
 	case 'W':
@@ -362,8 +346,12 @@ void PlayerPawn::ProcessMoveInput()
 {
 	assert(movementComponent && "Invalid movementComponent");
 
-	movementComponent->SetLastMoveDirection(moveInputValue);
-	moveInputValue = Vector2Float::Zero;
+
+	movementComponent->SetLastMoveInputDireciton(moveInputDirection);
+	moveInputDirection = eDirection::None;
+
+	//movementComponent->SetLastMoveDirection(moveInputValue);
+	//moveInputValue = Vector2Float::Zero;
 	//moveInputValue = Vector2Int::Zero;
 }
 
