@@ -3,6 +3,7 @@
 #include "Component.h"
 #include "Core/Core.h"
 #include "Math/Vector2Float.h"
+#include <string>
 #include <unordered_map>
 
 namespace Craft
@@ -29,6 +30,53 @@ namespace Craft
 	inline constexpr eDirection operator&(eDirection lhs, eDirection rhs)
 	{
 		return static_cast<eDirection>(static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs));
+	}
+
+	inline bool IsHorizontal(const eDirection direction)
+	{
+		return eDirection::None != (direction & (eDirection::Left | eDirection::Right));
+	}
+
+	inline bool IsVertical(const eDirection direction)
+	{
+		return eDirection::None != (direction & (eDirection::Top | eDirection::Bottom));
+	}
+
+	inline bool IsDiagonal(const eDirection direction)
+	{
+		return IsHorizontal(direction) && IsVertical(direction);
+	}
+
+	inline std::wstring ToString(const eDirection direction)
+	{
+		switch (direction)
+		{
+		case eDirection::Left:
+			return L"Left";
+
+		case eDirection::Top:
+			return L"Top";
+
+		case eDirection::Right:
+			return L"Right";
+
+		case eDirection::Bottom:
+			return L"Bottom";
+
+		case eDirection::LeftTop:
+			return L"LeftTop";
+
+		case eDirection::RightTop:
+			return L"RightTop";
+
+		case eDirection::LeftBottom:
+			return L"LeftBottom";
+
+		case eDirection::RightBottom:
+			return L"RightBottom";
+		}
+
+		return L"None";
 	}
 
 	/* 대각선 이동에 대한 기본 빗변 길이 */

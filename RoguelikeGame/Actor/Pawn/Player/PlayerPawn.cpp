@@ -90,7 +90,7 @@ void PlayerPawn::OnUpdatedPosition(const Craft::Vector2Int& prevLocalPosition,
 	super::OnUpdatedPosition(prevLocalPosition, prevWorldPosition, localPosition, worldPosition);
 
 	/* 위치 업데이트 시 카메라의 View Position도 업데이트 한다. */
-	UpdateViewCameraPosition(worldPosition);
+	//UpdateViewCameraPosition(worldPosition);
 }
 
 void PlayerPawn::GainSkillItem(std::shared_ptr<FieldSkillItem> gainItem)
