@@ -8,6 +8,7 @@
 #include "Util/Util.h"
 #include "Actor/Pawn/Player/PlayerPawn.h"
 #include "Actor/Projectile/Projectile.h"
+#include "Camera/CameraManager.h"
 #include <cassert>
 #include <Memory>
 
@@ -412,6 +413,13 @@ void TilemapLevel::BuildTilemapBSP()
 	const Config& config = Engine::Get().GetConfig<Config>();
 	const Vector2Int tilemapSize(config.GetTilemapWidth(), config.GetTilemapHeight());
 	tileMap->InitializeTilemap(tilemapSize, lambdaOpenPath, lambdaGenerateRoom);
+
+	/* 카메라 제한 설정, 타일맵 외곽을 벗어나지 못하게 한다. */
+	const Vector2Int& tileMapLeftTopPos = tileMap->GetLeftTopPos();
+	const Vector2Int& tileMapInnerRect = tileMap->GetInnerTileRect();
+
+	CameraManager& cameraManager = Engine::Get().GetCameraManager();
+	cameraManager.SetLimitPosition(tileMapLeftTopPos, tileMapLeftTopPos + tileMapInnerRect - Vector2Int::One);
 }
 
 void TilemapLevel::AssignRoomType()

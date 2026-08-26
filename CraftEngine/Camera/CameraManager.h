@@ -9,12 +9,13 @@ namespace Craft
 	class CRAFT_API CameraManager
 	{
 	public:
-		CameraManager(int width, int height, int spaceMaxWidth, int spaceMaxHeight);
+		CameraManager(int width, int height);
 		~CameraManager();
 
 	public:
 		void SetViewPosition(const Vector2Int& position);
 		void SetViewWidthHeight(int width, int height);
+		void SetLimitPosition(const Vector2Int& leftTopPos, const Vector2Int& rightDownPos);
 
 	public:
 		Vector2Int GetLeftTopPosition() const;
@@ -39,7 +40,7 @@ namespace Craft
 		Vector2Int limitLeftTopPos = Vector2Int::Zero;
 
 		/* Right Bottom 최대 위치 */
-		Vector2Int limitRightDownPos = Vector2Int::Zero;
+		Vector2Int limitRightDownPos = Vector2Int(INT_MAX, INT_MAX);
 	};
 }
 

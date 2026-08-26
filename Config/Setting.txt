@@ -13,23 +13,17 @@ viewWidth = 120
 # View Height
 viewHeight = 40
 
-# View Space Max Width
-viewSpaceMaxWidth = 400
-
-# View Space Max Height
-viewSpaceMaxHeight = 400
-
 # tilemap width
-tilemapWidth = 400
+tilemapWidth = 600
 
 # tilemap height
 tilemapHeight = 400
 
 # BSP room min width(min 10)
-bspMinRoomWidth = 30;
+bspMinRoomWidth = 35;
 
 # BSP room min height(min 10)
-bspMinRoomHeight = 20;
+bspMinRoomHeight = 15;
 
 # BSP room Wall Thickness(min 2)
 bspRoomWallThickness = 2;

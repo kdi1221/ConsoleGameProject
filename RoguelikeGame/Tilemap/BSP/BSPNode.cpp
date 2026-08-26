@@ -184,16 +184,19 @@ void BSPNode::ExtractNodeContents(std::function<void(const std::vector<Craft::Ve
 	}
 }
 
-//void BSPNode::GenerateRoomSpace(const int minRoomLength, const int wallThickness)
 void BSPNode::GenerateRoomSpace(const int minRoomWidth, const int minRoomHeight, const int wallThickness)
 {
 	//방 생성 크기 랜덤 결정
 	const int RoomMaxWidth = Width - (wallThickness * 2);
-	//const int RoomWidth = Util::RandomRange(minRoomLength, RoomMaxWidth);
 	const int RoomWidth = Util::RandomRange(minRoomWidth, RoomMaxWidth);
+
 	const int RoomMaxHeight = Height - (wallThickness * 2);
-	//const int RoomHeight = Util::RandomRange(minRoomLength, RoomMaxHeight);
-	const int RoomHeight = Util::RandomRange(minRoomHeight, RoomMaxHeight);
+	//const int RoomHeight = Util::RandomRange(minRoomHeight, RoomMaxHeight);
+
+	/* 방의 세로길이는는 방의 가로길이의 60프로 정도 차지해야 함 */
+	const float roomHeightRatio = static_cast<float>(RoomWidth) * 0.6f;
+	const int RoomHeight = min(max(static_cast<int>(roomHeightRatio), minRoomHeight), RoomMaxHeight);
+
 
 	//방 위치(좌상단) 랜덤 결정
 	const int xPosRangeMin = StartPosition.x + wallThickness;

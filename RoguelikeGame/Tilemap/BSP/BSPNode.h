@@ -51,7 +51,6 @@ public:
 private:
 	//방 내의 공간 계산 
 	void GenerateRoomSpace(const int minRoomWidth, const int minRoomHeight, const int wallThickness);
-	//void GenerateRoomSpace(const int minRoomLength, const int wallThickness);
 
 	//자식노드들에 위치한 모든 방 리스트 반환 
 	void GetRoomLists(std::vector<RoomSpace*>& outRoomLists);

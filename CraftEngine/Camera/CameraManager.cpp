@@ -2,20 +2,11 @@
 
 namespace Craft
 {
-	CameraManager::CameraManager(int width, int height, int spaceMaxWidth, int spaceMaxHeight)
+	CameraManager::CameraManager(int width, int height)
 		:viewWidth(width)
 		,viewHeight(height)
 	{
-		const int halfViewWidth = viewWidth >> 1;
-		const int halfViewHeight = viewHeight >> 1;
 
-		limitLeftTopPos.x = halfViewWidth;
-		limitLeftTopPos.y = halfViewHeight;
-
-		limitRightDownPos.x = (spaceMaxWidth - viewWidth) + halfViewWidth;
-		limitRightDownPos.y = (spaceMaxHeight - viewHeight) + halfViewHeight;
-
-		SetViewPosition(limitLeftTopPos);
 	}
 
 	CameraManager::~CameraManager()
@@ -25,8 +16,6 @@ namespace Craft
 
 	void CameraManager::SetViewPosition(const Vector2Int& position)
 	{
-		//viewPosition = position;
-
 		viewPosition.x = min(max(position.x, limitLeftTopPos.x), limitRightDownPos.x);
 		viewPosition.y = min(max(position.y, limitLeftTopPos.y), limitRightDownPos.y);
 	}
@@ -35,6 +24,12 @@ namespace Craft
 	{
 		viewWidth = width;
 		viewHeight = height;
+	}
+
+	void CameraManager::SetLimitPosition(const Vector2Int& leftTopPos, const Vector2Int& rightDownPos)
+	{
+		limitLeftTopPos = leftTopPos;
+		limitRightDownPos = rightDownPos;
 	}
 
 	Vector2Int CameraManager::GetLeftTopPosition() const

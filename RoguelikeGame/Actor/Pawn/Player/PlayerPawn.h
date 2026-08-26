@@ -65,9 +65,6 @@ private:
 	/* 현재 프레임에서의 이동 입력 방향 */
 	Craft::eDirection moveInputDirection = Craft::eDirection::None;
 
-	/* 직전 프레임에서의 이동 입력 방향 */
-	Craft::eDirection lastMoveInputDirection = Craft::eDirection::None;
-
 	/* 현재 프레임에서의 공격 입력 누적 값*/
 	Craft::Vector2Int fireInputValue = Craft::Vector2Int::Zero;
 

@@ -42,7 +42,8 @@ public:
 	RoomDefines::UNIQUE_INDEX_TYPE GetTileRoomIndex(const Craft::Vector2Int& position) const;
 
 public:
-	inline Craft::Level& GetOwnerLevel() const { return ownerLevel; }
+	inline const Craft::Vector2Int& GetLeftTopPos() const { return leftTopPos; }
+	inline const Craft::Vector2Int& GetInnerTileRect() const { return innerTileRect; }
 
 private:
 	Tile* GetTile(int xPos, int yPos) const;
@@ -51,8 +52,14 @@ private:
 	//이 타일맵을 소유하는 Level;
 	Craft::Level& ownerLevel;
 
-	//타일맵 크기(가로 X 세로)
-	Craft::Vector2Int mapSize;
+	//타일맵 전체 크기(가로 X 세로)
+	Craft::Vector2Int mapSize = Craft::Vector2Int::Zero;
+
+	//외곽 제외한 실제 영역의 시작 위치
+	Craft::Vector2Int leftTopPos = Craft::Vector2Int::Zero;
+
+	//외곽 제외한 실제 영역의 크기
+	Craft::Vector2Int innerTileRect = Craft::Vector2Int::Zero;
 
 	//타일맵 내의 타일들
 	TileListType tileList;

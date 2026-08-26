@@ -164,10 +164,6 @@ void PlayerPawn::GrantAbility(int abilityID, int abilityLevel)
 void PlayerPawn::OnMoveKeyInput(int keyCode, eInputTrigger inputTrigger)
 {
 	assert(inputComponent && "Invalid inputComponent");
-	//assert(movementComponent && "Invalid movementComponent");
-
-	/* 직전 프레임에서의 이동 방향 */
-	//const eDirection currentMoveDirection = movementComponent->GetCurrentMoveDirection();
 
 	//마우스 커서의 월드상 위치로 향하는 방향과 가장일치하는 8방향 중의 하나를 이동방향으로 삼는다.
 	eDirection newMoveDirection = eDirection::None;
@@ -185,13 +181,6 @@ void PlayerPawn::OnMoveKeyInput(int keyCode, eInputTrigger inputTrigger)
 			const Vector2Float& currentDirection = moveDirection.second;
 			float dotResult = currentDirection.DotProduct(toCursorPosDirection);
 
-			/* 만약 직전 프레임에서 이동중이었을때는 그 방향에 가중치를 조금 더해서 가능한 그 방향을 유지하게 한다. */
-			if (eDirection::None != lastMoveInputDirection &&
-				moveDirection.first == lastMoveInputDirection)
-			{
-				dotResult += 0.05f;
-			}
-
 			if (dotResult > maxDot)
 			{
 				maxDot = dotResult;
@@ -204,79 +193,7 @@ void PlayerPawn::OnMoveKeyInput(int keyCode, eInputTrigger inputTrigger)
 		newMoveDirection = eDirection::None;
 	}
 
-	lastMoveInputDirection = newMoveDirection;
 	moveInputDirection = newMoveDirection;
-
-
-	//화면 중앙에서 마우스 커서의 위치로 향하는 방향과 가장일치하는 8방향 중의 하나를 이동방향으로 삼는다.
-	//eDirection newMoveDirection = eDirection::None;
-
-	//const Input& input = Input::Get();
-	//const ConfigBase& configBase = Engine::Get().GetConfig<ConfigBase>();
-
-	////현재 마우스 커서 위치
-	//const Vector2Int& currentMouseCursorPos = input.GetMousePosition();	
-
-	////화면 중앙 위치
-	//const Vector2Int viewCenterPos(configBase.GetViewWidth() >> 1, configBase.GetViewHeight() >> 1);
-	//if (currentMouseCursorPos != viewCenterPos)
-	//{
-	//	Vector2Float toCursorPosDirection = static_cast<Vector2Float>(currentMouseCursorPos - viewCenterPos);
-	//	toCursorPosDirection.Normalize();
-
-	//	float maxDot = -1.f;
-	//	for (const auto& moveDirection : MOVE_DIRECTION)
-	//	{
-	//		const Vector2Float& currentDirection = moveDirection.second;
-	//		const float dotResult = currentDirection.DotProduct(toCursorPosDirection);
-	//		if (dotResult > maxDot)
-	//		{
-	//			maxDot = dotResult;
-	//			newMoveDirection = moveDirection.first;
-	//		}
-	//	}
-	//}
-	//else
-	//{
-	//	newMoveDirection = eDirection::None;
-	//}
-
-	//moveInputDirection = newMoveDirection;
-
-	//TODO : Look Vector 결정 및 그 방향으로 스킬 사용
-
-
-
-
-
-
-
-	/*switch (keyCode)
-	{
-	case 'W':
-		{
-			moveInputValue += Vector2Int::Up;
-		}
-		break;
-
-	case 'S':
-		{
-			moveInputValue += Vector2Int::Down;
-		}
-		break;
-
-	case 'A':
-		{
-			moveInputValue += Vector2Int::Left;
-		}
-		break;
-
-	case 'D':
-		{
-			moveInputValue += Vector2Int::Right;
-		}
-		break;
-	}*/
 }
 
 void PlayerPawn::OnProjectileFireKeyInput(int keyCode, eInputTrigger inputTrigger)

@@ -57,8 +57,7 @@ namespace Craft
 		sound = std::make_unique<Sound>();
 
 		//카메라 객체 생성.
-		cameraManager = std::make_unique<CameraManager>(config.GetViewWidth(), config.GetViewHeight(), 
-														config.GetViewSpaceMaxWidth(), config.GetViewSpaceMaxHeight());
+		cameraManager = std::make_unique<CameraManager>(config.GetViewWidth(), config.GetViewHeight());
 
 		//네비게이션 시스템 객체 생성.
 		navigationSystem = CreateNavigationSystem();

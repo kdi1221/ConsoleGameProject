@@ -28,8 +28,6 @@ namespace Craft
 		inline int GetDisplayHeight() const { return height; }
 		inline int GetViewWidth() const { return viewWidth; }
 		inline int GetViewHeight() const { return viewHeight; }
-		inline int GetViewSpaceMaxWidth() const { return viewSpaceMaxWidth; }
-		inline int GetViewSpaceMaxHeight() const { return viewSpaceMaxHeight; }
 
 	private:
 		// 목표 프레임 속도.
@@ -46,12 +44,6 @@ namespace Craft
 
 		// 카메라 뷰 세로 크기
 		int viewHeight = 0;
-
-		// 카메라로 표시되는 공간의 최대 Width
-		int viewSpaceMaxWidth = 0;
-
-		// 카메라로 표시되는 공간의 최대 Height
-		int viewSpaceMaxHeight = 0;
 
 	private:
 		//파싱된 Config Key마다 호출될 콜백

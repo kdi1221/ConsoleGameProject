@@ -26,7 +26,19 @@ void Tilemap::InitializeTilemap(const Vector2Int& inMapSize,
 								std::function<void(const std::vector<Craft::Vector2Int>&)> CorridorCallback,
 								std::function<void(std::unique_ptr<RoomSpace>)> RoomCallback)
 {
-	mapSize = inMapSize;
+	const CameraManager& cameraManager = Engine::Get().GetCameraManager();
+
+	/* 맵 외곽 가로 길이*/
+	const int cameraViewWidth = cameraManager.GetViewWidth();
+	const int mapBoundaryWidth = cameraViewWidth >> 1;
+
+	/* 맵 외곽 세로 길이*/
+	const int cameraViewHeight = cameraManager.GetViewHeight();
+	const int mapBoundaryHeight = cameraViewHeight >> 1;
+
+	/* 맵의 사이즈 (지정된 맵사이즈 + 카메라가 최대 볼 수 있는 외곽영역 포함 사이즈 )*/
+	mapSize.x = inMapSize.x + cameraViewWidth;
+	mapSize.y = inMapSize.y + cameraViewHeight;
 
 	//생성할 타일 갯수
 	const size_t GenerateMapTileNum = mapSize.x * mapSize.y;
@@ -44,7 +56,11 @@ void Tilemap::InitializeTilemap(const Vector2Int& inMapSize,
 	}
 
 	//BSP알고리즘을 통한 공간 분할 및 방 생성, 경로 정보 생성
-	std::unique_ptr<BSPNode> BSPRoot = std::make_unique<BSPNode>(0, 0, mapSize.x, mapSize.y);
+	leftTopPos.x = mapBoundaryWidth;
+	leftTopPos.y = mapBoundaryHeight;
+	innerTileRect.x = mapSize.x - cameraViewWidth;
+	innerTileRect.y = mapSize.y - cameraViewHeight;
+	std::unique_ptr<BSPNode> BSPRoot = std::make_unique<BSPNode>(leftTopPos.x, leftTopPos.y, innerTileRect.x, innerTileRect.y);
 	assert(BSPRoot && "BSPRoot Alloc Failed..");
 	BSPRoot->Divide();
 
@@ -55,10 +71,7 @@ void Tilemap::InitializeTilemap(const Vector2Int& inMapSize,
 	BSPRoot->ExtractNodeContents(CorridorCallback, RoomCallback);
 
 	//현재 카메라가 표시하는 화면의 길이만큼 타일맵이 한줄씩 표시되므로 DrawBuffer의 크기를 미리 지정해둔다.
-	const CameraManager& cameraManager = Engine::Get().GetCameraManager();
-	const Vector2Int leftTopPosition = cameraManager.GetLeftTopPosition();
-	const Vector2Int rightDownPosition = cameraManager.GetRightDownPosition();
-	drawTileLineBuffer.reserve(rightDownPosition.x - leftTopPosition.x);
+	drawTileLineBuffer.reserve(cameraViewWidth);
 }
 
 void Tilemap::Tick(float deltaTime)
