@@ -439,7 +439,9 @@ void TilemapLevel::AssignRoomType()
 	mapRooms[roomKeys[0]]->SetRoomType(eRoomType::Start);
 	mapRooms[roomKeys[1]]->SetRoomType(eRoomType::NextLevel);
 
-	const float battleRoomRatio = 0.7f;
+	//const float battleRoomRatio = 0.7f;
+	//테스트..
+	const float battleRoomRatio = 0.f;
 
 	//나머지 방들은 비율에 맞춰 보물창고 / 전투 타입으로 지정한다.
 	const auto& middleRoomStart = roomKeys.begin() + 2;

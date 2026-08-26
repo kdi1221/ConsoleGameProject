@@ -13,7 +13,17 @@ RoomSpace::RoomSpace(const Craft::Vector2Int& inPositionLT, int inRoomWidth, int
 	,outerWidth(inOuterWidth)
 	,outerHeight(inOuterHeight)
 {
-
+	char szTmp[256] = { 0 };
+	sprintf_s(szTmp, "RoomSpace - LT Pos[%d, %d], Size[%d, %d], OuterPos[%d, %d], OuterSize[%d %d]\n", 
+						positionLT.x, 
+						positionLT.y, 
+						Width, 
+						Height,
+						outerPositionLT.x,	
+						outerPositionLT.y,
+						outerWidth,
+						outerHeight);
+	OutputDebugStringA(szTmp);
 }
 
 RoomSpace::~RoomSpace()

@@ -28,11 +28,15 @@ void BSPNode::Divide()
 {
 	//설정에 지정된 방의 최소길이 및 두께 정보 가져오기
 	const Config& config = Engine::Get().GetConfig<Config>();
-	const int minRoomLength = config.GetBSPMinRoomLength();
+	const int minRoomWidth = config.GetBSPMinRoomWidth();
+	const int minRoomHeight = config.GetBSPMinRoomHeight();
 	const int wallThickness = config.GetBSPRoomWallThickness();
 
-	//방의 최소 길이 + 방의 양면 벽길이(상하 / 좌우) 
-	const int MinLength = minRoomLength + (wallThickness * 2);
+	//방의 최소 가로 길이 + 방의 좌우 벽길이
+	const int minWidth = minRoomWidth + (wallThickness * 2);
+
+	//방의 최소 세로 길이 + 방의 상하 벽길이
+	const int minHeight = minRoomHeight + (wallThickness * 2);
 
 	//분할 비율 결정
 	const float DivideRatio = Util::RandomRange(4.f, 6.f);
@@ -47,10 +51,10 @@ void BSPNode::Divide()
 		const int RightWidth = Width - LeftWidth;
 
 		//분할될 공간 중 한쪽이 최소 길이보다 작은경우 분할하지 않고 반환
-		if (LeftWidth <= MinLength || RightWidth <= MinLength)
+		if (LeftWidth <= minWidth || RightWidth <= minWidth)
 		{
 			NodeCategory = eNodeCategory::Room;
-			GenerateRoomSpace(minRoomLength, wallThickness);
+			GenerateRoomSpace(minRoomWidth, minRoomHeight, wallThickness);
 			return;
 		}
 		
@@ -67,10 +71,10 @@ void BSPNode::Divide()
 		const int RightHeight = Height - LeftHeight;
 
 		//분할될 공간 중 한쪽이 최소 길이보다 작은경우 분할하지 않고 반환
-		if (LeftHeight <= MinLength || RightHeight <= MinLength)
+		if (LeftHeight <= minHeight || RightHeight <= minHeight)
 		{
 			NodeCategory = eNodeCategory::Room;
-			GenerateRoomSpace(minRoomLength, wallThickness);
+			GenerateRoomSpace(minRoomWidth, minRoomHeight, wallThickness);
 			return;
 		}
 		
@@ -180,13 +184,16 @@ void BSPNode::ExtractNodeContents(std::function<void(const std::vector<Craft::Ve
 	}
 }
 
-void BSPNode::GenerateRoomSpace(const int minRoomLength, const int wallThickness)
+//void BSPNode::GenerateRoomSpace(const int minRoomLength, const int wallThickness)
+void BSPNode::GenerateRoomSpace(const int minRoomWidth, const int minRoomHeight, const int wallThickness)
 {
 	//방 생성 크기 랜덤 결정
 	const int RoomMaxWidth = Width - (wallThickness * 2);
-	const int RoomWidth = Util::RandomRange(minRoomLength, RoomMaxWidth);
+	//const int RoomWidth = Util::RandomRange(minRoomLength, RoomMaxWidth);
+	const int RoomWidth = Util::RandomRange(minRoomWidth, RoomMaxWidth);
 	const int RoomMaxHeight = Height - (wallThickness * 2);
-	const int RoomHeight = Util::RandomRange(minRoomLength, RoomMaxHeight);
+	//const int RoomHeight = Util::RandomRange(minRoomLength, RoomMaxHeight);
+	const int RoomHeight = Util::RandomRange(minRoomHeight, RoomMaxHeight);
 
 	//방 위치(좌상단) 랜덤 결정
 	const int xPosRangeMin = StartPosition.x + wallThickness;

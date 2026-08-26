@@ -96,15 +96,17 @@ namespace Craft
 		virtual ~MovementComponent() = default;
 
 	private:
-		virtual void BeginPlay() override;
 		virtual void Tick(float deltaTime) override;
 
 	public:
 		void SetLastMoveInputDireciton(const eDirection newDirection);
 
+	public:
+		inline eDirection GetCurrentMoveDirection() const { return currentMoveDirection; }
+
 	private:
-		/* 이동 임시위치를 현재 Owner의 위치로 초기화한다. */
-		void ResetTempPostion();
+		/* 이동 델타 누산값 초기화 */
+		void ResetAccumulatorMoveDelta();
 
 		/* 매 프레임 이동 실행 */
 		void UpdateMovement(const float deltaTime);
@@ -113,11 +115,11 @@ namespace Craft
 		/* 이동 속도 */
 		float moveSpeed = 0.f;
 
-		/* 현재 이동 임시 위치(int => float) */
-		Vector2Float moveTempPosition = Vector2Float::Zero;
-
 		/* 현재 이동 방향 */
 		eDirection currentMoveDirection = eDirection::None;
+
+		/* 이동델타 누산값 */
+		Vector2Float accumulatorMoveDelta = Vector2Float::Zero;
 	};
 }
 

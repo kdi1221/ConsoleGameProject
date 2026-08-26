@@ -25,12 +25,7 @@ namespace Craft
 
 	void CameraManager::SetViewPosition(const Vector2Int& position)
 	{
-		/*if (position.x < limitLeftTopPos.x || position.x > limitRightDownPos.x ||
-			position.y < limitLeftTopPos.y || position.y > limitRightDownPos.y)
-		{
-			int a = 10;
-			a = a;
-		}*/
+		//viewPosition = position;
 
 		viewPosition.x = min(max(position.x, limitLeftTopPos.x), limitRightDownPos.x);
 		viewPosition.y = min(max(position.y, limitLeftTopPos.y), limitRightDownPos.y);

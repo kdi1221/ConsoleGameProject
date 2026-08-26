@@ -11,7 +11,8 @@ public:
 public:
 	inline int GetTilemapWidth() const { return tilemapWidth; }
 	inline int GetTilemapHeight() const { return tilemapHeight; }
-	inline int GetBSPMinRoomLength() const { return bspMinRoomLength; }
+	inline int GetBSPMinRoomWidth() const { return bspMinRoomWidth; }
+	inline int GetBSPMinRoomHeight() const { return bspMinRoomHeight; }
 	inline int GetBSPRoomWallThickness() const { return bspRoomWallThickness; }
 
 private:
@@ -21,8 +22,11 @@ private:
 	//타일맵 세로 길이
 	int tilemapHeight = 0;
 
-	//BSP 방 최소 길이(최소 10 이상)
-	int bspMinRoomLength = 0;
+	//BSP 방 최소 가로 길이(최소 10 이상)
+	int bspMinRoomWidth = 0;
+
+	//BSP 방 최소 세로 길이(최소 10 이상)
+	int bspMinRoomHeight = 0;
 
 	//BSP 벽 길이(최소 2이상)
 	int bspRoomWallThickness = 0;

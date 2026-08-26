@@ -17,7 +17,7 @@ namespace Craft
 
 	public:
 
-		/* 경로 */
+		/* 타겟 위치까지 선을 그었을때 충돌되는 대상이 있는지 여부 반환 */
 		enum class eCheckMoveTargetResult
 		{
 			/* 기본값 */

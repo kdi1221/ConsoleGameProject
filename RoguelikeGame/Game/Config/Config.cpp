@@ -17,11 +17,18 @@ Config::Config()
 			return tilemapHeight > 0;
 		});
 
-	AddLoadConfigCallback("bspMinRoomLength", [this](const std::string& inKey, const std::string& inValue)
+	AddLoadConfigCallback("bspMinRoomWidth", [this](const std::string& inKey, const std::string& inValue)
 		{
-			bspMinRoomLength = static_cast<int>(atoi(inValue.c_str()));
-			assert(bspMinRoomLength >= 10);
-			return bspMinRoomLength >= 10;
+			bspMinRoomWidth = static_cast<int>(atoi(inValue.c_str()));
+			assert(bspMinRoomWidth >= 10);
+			return bspMinRoomWidth >= 10;
+		});
+
+	AddLoadConfigCallback("bspMinRoomHeight", [this](const std::string& inKey, const std::string& inValue)
+		{
+			bspMinRoomHeight = static_cast<int>(atoi(inValue.c_str()));
+			assert(bspMinRoomHeight >= 10);
+			return bspMinRoomHeight >= 10;
 		});
 
 	AddLoadConfigCallback("bspRoomWallThickness", [this](const std::string& inKey, const std::string& inValue)

@@ -62,14 +62,11 @@ private:
 	void SetProjectileAbilityTrigger(bool bTrigger);
 
 private:
-	/* 현재 프레임에서의 누적 이동 입력 값*/
-	//Craft::Vector2Int moveInputValue = Craft::Vector2Int::Zero;
-
-	/* 현재 프레임에서의 이동 방향 입력 값*/
-	//Craft::Vector2Float moveInputValue = Craft::Vector2Float::Zero;
-
 	/* 현재 프레임에서의 이동 입력 방향 */
 	Craft::eDirection moveInputDirection = Craft::eDirection::None;
+
+	/* 직전 프레임에서의 이동 입력 방향 */
+	Craft::eDirection lastMoveInputDirection = Craft::eDirection::None;
 
 	/* 현재 프레임에서의 공격 입력 누적 값*/
 	Craft::Vector2Int fireInputValue = Craft::Vector2Int::Zero;
