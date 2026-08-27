@@ -13,7 +13,7 @@ RoomSpace::RoomSpace(const Craft::Vector2Int& inPositionLT, int inRoomWidth, int
 	,outerWidth(inOuterWidth)
 	,outerHeight(inOuterHeight)
 {
-	char szTmp[256] = { 0 };
+	/*char szTmp[256] = { 0 };
 	sprintf_s(szTmp, "RoomSpace - LT Pos[%d, %d], Size[%d, %d], OuterPos[%d, %d], OuterSize[%d %d]\n", 
 						positionLT.x, 
 						positionLT.y, 
@@ -23,7 +23,7 @@ RoomSpace::RoomSpace(const Craft::Vector2Int& inPositionLT, int inRoomWidth, int
 						outerPositionLT.y,
 						outerWidth,
 						outerHeight);
-	OutputDebugStringA(szTmp);
+	OutputDebugStringA(szTmp);*/
 }
 
 RoomSpace::~RoomSpace()
@@ -47,11 +47,16 @@ void RoomSpace::InitializeRoomSpace()
 			innerTileIndices.emplace_back(Vector2Int(XPos, YPos));
 		}
 	}
+	
+	const int limitWidth = Width - 4;
+	assert(limitWidth > 0 && "limit Width shortage..");
+	const int limitHeight = Height - 4;
+	assert(limitHeight > 0 && "limit Height shortage..");
 
 	//방 주변 문 후보 타일들 인덱스 계산
 	const int leftXPos = positionLT.x - 1;
-	const int leftYPos = positionLT.y + 1;
-	for (int addYPos = 0; addYPos < Height - 2; ++addYPos)
+	const int leftYPos = positionLT.y + 2;
+	for (int addYPos = 0; addYPos < limitHeight; ++addYPos)
 	{
 		const int xPos = leftXPos;
 		const int yPos = leftYPos + addYPos;
@@ -59,9 +64,9 @@ void RoomSpace::InitializeRoomSpace()
 		outerTileIndices[static_cast<int>(eRoomSides::Left)].emplace_back(Vector2Int(xPos, yPos));
 	}
 
-	const int topXPos = positionLT.x + 1;
+	const int topXPos = positionLT.x + 2;
 	const int topYPos = positionLT.y - 1;
-	for (int addXPos = 0; addXPos < Width - 2; ++addXPos)
+	for (int addXPos = 0; addXPos < limitWidth; ++addXPos)
 	{
 		const int xPos = topXPos + addXPos;
 		const int yPos = topYPos;
@@ -70,8 +75,8 @@ void RoomSpace::InitializeRoomSpace()
 	}
 
 	const int rightXPos = positionLT.x + Width;
-	const int rightYPos = positionLT.y + 1;
-	for (int addYPos = 0; addYPos < Height - 2; ++addYPos)
+	const int rightYPos = positionLT.y + 2;
+	for (int addYPos = 0; addYPos < limitHeight; ++addYPos)
 	{
 		const int xPos = rightXPos;
 		const int yPos = rightYPos + addYPos;
@@ -79,9 +84,9 @@ void RoomSpace::InitializeRoomSpace()
 		outerTileIndices[static_cast<int>(eRoomSides::Right)].emplace_back(Vector2Int(xPos, yPos));
 	}
 
-	const int bottomXPos = positionLT.x + 1;
+	const int bottomXPos = positionLT.x + 2;
 	const int bottomYPos = positionLT.y + Height;
-	for (int addXPos = 0; addXPos < Width - 2; ++addXPos)
+	for (int addXPos = 0; addXPos < limitWidth; ++addXPos)
 	{
 		const int xPos = bottomXPos + addXPos;
 		const int yPos = bottomYPos;

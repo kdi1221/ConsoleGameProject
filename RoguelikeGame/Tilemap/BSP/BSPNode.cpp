@@ -266,10 +266,16 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 			const Vector2Int selectRightOuterTile = rightRoom.SelectDoorTile(eRoomSides::Left);
 
 			//leftRoom을 감싸는 외곽영역의 경계라인 x 인덱스
-			const int OuterBorderXPos = leftRoom.GetOuterPostionLT().x + leftRoom.GetOuterWidth() - 1;
+			const Vector2Int& OuterPostionLT = leftRoom.GetOuterPostionLT();
+			const int OuterWidth = leftRoom.GetOuterWidth();
+			const int OuterBorderXPos = OuterPostionLT.x + OuterWidth - 1;
 
 			//y 증가량 구하기
 			const int addY = getAddValue(selectRightOuterTile.y - selectLeftOuterTile.y);
+
+			//경로 여백 y 증가량
+			const int addleftYPathThickness = (addY != 0) ? addY : 1;
+			const int addrightYPathThickness = (addY != 0) ? -addY : 1;
 
 			int xPos = selectLeftOuterTile.x;
 			int yPos = selectLeftOuterTile.y;
@@ -279,6 +285,7 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 			{
 				//경로내의 타일 뚫기
 				pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
+				pathTileIndices.emplace_back(Vector2Int(xPos, yPos + addleftYPathThickness));
 			}
 
 			//y 경로 생성
@@ -286,6 +293,7 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 			{
 				//경로내의 타일 뚫기
 				pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
+				pathTileIndices.emplace_back(Vector2Int(xPos + 1, yPos));
 			}
 
 			//나머지 x 경로 생성.
@@ -293,10 +301,12 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 			{
 				//경로내의 타일 뚫기
 				pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
+				pathTileIndices.emplace_back(Vector2Int(xPos, yPos + addrightYPathThickness));
 			}
 
 			//마지막 타일 뚫기
 			pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
+			pathTileIndices.emplace_back(Vector2Int(xPos, yPos + addrightYPathThickness));
 		}
 		break;
 
@@ -310,10 +320,16 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 			const Vector2Int selectRightOuterTile = rightRoom.SelectDoorTile(eRoomSides::Top);
 
 			//leftRoom을 감싸는 외곽영역의 경계라인 y 인덱스
-			const int OuterBorderYPos = leftRoom.GetOuterPostionLT().y + leftRoom.GetOuterHeight() - 1;
+			const Vector2Int& OuterPostionLT = leftRoom.GetOuterPostionLT();
+			const int OuterHeight = leftRoom.GetOuterHeight();
+			const int OuterBorderYPos = OuterPostionLT.y + OuterHeight - 1;
 
 			//x 증가량 구하기
 			const int addX = getAddValue(selectRightOuterTile.x - selectLeftOuterTile.x);
+
+			//경로 여백 x 증가량
+			const int addleftXPathThickness = (addX != 0) ? addX : 1;
+			const int addrightXPathThickness = (addX != 0) ? -addX : 1;
 
 			int xPos = selectLeftOuterTile.x;
 			int yPos = selectLeftOuterTile.y;
@@ -323,6 +339,7 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 			{
 				//경로내의 타일 뚫기
 				pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
+				pathTileIndices.emplace_back(Vector2Int(xPos + addleftXPathThickness, yPos));
 			}
 
 			//x 경로 생성
@@ -330,6 +347,7 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 			{
 				//경로내의 타일 뚫기
 				pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
+				pathTileIndices.emplace_back(Vector2Int(xPos, yPos + 1));
 			}
 
 			//나머지 절반 y 경로 생성.
@@ -337,10 +355,12 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 			{
 				//경로내의 타일 뚫기
 				pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
+				pathTileIndices.emplace_back(Vector2Int(xPos + addrightXPathThickness, yPos));
 			}
 
 			//마지막 타일 뚫기
 			pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
+			pathTileIndices.emplace_back(Vector2Int(xPos + addrightXPathThickness, yPos));
 		}
 		break;
 	}

@@ -142,13 +142,13 @@ namespace Craft
 		const CheckMoveResultType moveResult = movePosition(ownerActor, moveDirection, moveDistance);
 
 		/* For Debug.. */
-		char szTmp[256] = { 0 };
+		/*char szTmp[256] = { 0 };
 		const Vector2Int currentPosition = ownerActor->GetPosition();
 		sprintf_s(szTmp, "MoveDirection[%ls], Prev moveTempPosition[%d %d], current moveTempPosition[%d %d]\n", ToString(currentMoveDirection).c_str(), prevTilecoord.x, prevTilecoord.y, currentPosition.x, currentPosition.y);
 		OutputDebugStringA(szTmp);
 
 		sprintf_s(szTmp, "PrevDelta[%f, %f], CurrentDelta[%f %f]\n", prevDelta.x, prevDelta.y, accumulatorMoveDelta.x, accumulatorMoveDelta.y);
-		OutputDebugStringA(szTmp);
+		OutputDebugStringA(szTmp);*/
 
 		/* 목적지까지 이동 실패했고 대각이동이고 위치에 변화가 없다면 충돌상황이므로 축을 분리해서 이동한다(슬라이딩 효과) */
 		const Vector2Int postMoveTileCoord = ownerActor->GetWorldPosition();
