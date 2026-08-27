@@ -70,7 +70,7 @@ void Bullet::OnTileOverlap(const eTileCategory tileCategory)
 	}
 }
 
-bool Bullet::IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor)
+bool Bullet::IsBlockActor(std::shared_ptr<Actor> otherActor)
 {
 	/* 상관없이 모두 겹치기 가능 */
 	return false;

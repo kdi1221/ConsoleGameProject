@@ -108,6 +108,9 @@
     <ClCompile Include="UI\Widget\ProgressBar\ProgressBar.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Component\ProjectileMoveComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Engine.h">
@@ -213,6 +216,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Math\Define.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ProjectileMoveComponent.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

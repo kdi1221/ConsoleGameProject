@@ -152,7 +152,7 @@ CheckPlacementResult TilemapLevel::CanNextMove(std::shared_ptr<Actor> checkActor
 					return false;
 				}
 
-				return checkBlockActor->IsBlockActorOnTile(checkActorOnTile);
+				return checkBlockActor->IsBlockActor(checkActorOnTile);
 			};
 
 		/* 해당 위치 타일에 block되는 Actor가 존재하지 않으면 이동 가능 */
@@ -333,6 +333,42 @@ void TilemapLevel::AddDamageInfoToTile(const Vector2Int& tileCoord, float damage
 	damageListOnTile.emplace_back(FTilemapDamageInfo(damageValue, teamID));
 }
 
+CheckBlockingResult TilemapLevel::CheckBlocking(std::shared_ptr<Craft::Actor> checkActor, 
+												const Craft::Vector2Int& tileCoord,
+												std::shared_ptr<ActorOnTile>& outBlockingActor) const
+{
+	/* 1. 해당위치의 벽에 충돌되었는지 확인 */
+	if (eTileCategory::Wall == GetTileCategory(tileCoord))
+	{
+		return CheckBlockingResult::BlockWall;
+	}
+
+	/* 2. 해당 위치의 다른 Actor와 Block되었는지 확인 */
+	const auto findIterActorListOnTile = mapActorListOnTilemap.find(tileCoord);
+	if (findIterActorListOnTile != mapActorListOnTilemap.end())
+	{
+		const std::vector<std::weak_ptr<ActorOnTile>>& actorListOnTile = findIterActorListOnTile->second;
+		for (const std::weak_ptr<ActorOnTile>& actorOnTile : actorListOnTile)
+		{
+			std::shared_ptr<ActorOnTile> checkAnotherActor = actorOnTile.lock();
+			if (!checkAnotherActor)
+			{
+				continue;
+			}
+
+			if (checkAnotherActor->IsBlockActor(checkActor))
+			{
+				/* 충돌된 액터 정보 반환 */
+				outBlockingActor = checkAnotherActor;
+
+				return CheckBlockingResult::BlockActor;
+			}
+		}
+	}
+
+	return CheckBlockingResult::NoBlock;
+}
+
 const Room* TilemapLevel::GetPostionInRoom(const Craft::Vector2Int& checkPosition) const
 {
 	if (!tileMap)
@@ -449,7 +485,8 @@ void TilemapLevel::AssignRoomType()
 
 	//const float battleRoomRatio = 0.7f;
 	//테스트..
-	const float battleRoomRatio = 0.f;
+	//const float battleRoomRatio = 0.f;
+	const float battleRoomRatio = 1.f;
 
 	//나머지 방들은 비율에 맞춰 보물창고 / 전투 타입으로 지정한다.
 	const auto& middleRoomStart = roomKeys.begin() + 2;

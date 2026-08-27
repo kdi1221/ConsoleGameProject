@@ -95,20 +95,54 @@ void RoomSpace::InitializeRoomSpace()
 	}
 }
 
-Craft::Vector2Int RoomSpace::SelectDoorTile(eRoomSides edge)
+void RoomSpace::AddDoorTile(eRoomSides edge, const Vector2Int& tileCoord)
 {
 	std::vector<Vector2Int>& edgeOuterTileIndices = outerTileIndices[static_cast<int>(edge)];
 
+	auto iterFindRemoveOuterTile = std::remove_if(edgeOuterTileIndices.begin(),
+													edgeOuterTileIndices.end(),
+													[&tileCoord](const Vector2Int& coord)
+													{
+														return coord == tileCoord;
+													});
+
+	//외곽 타일에서 존재했을때만(이전에 다른 경로가 생성되면서 이미 외곽타일에서 제거되었을 수도 있음)
+	if (iterFindRemoveOuterTile != edgeOuterTileIndices.end())
+	{
+		//외곽 타일에서 제거	
+		edgeOuterTileIndices.erase(iterFindRemoveOuterTile, edgeOuterTileIndices.end());
+
+		
+	}
+	
+	//Door 타일에 추가(유니크)
+	doorTileIndices.insert(tileCoord);
+}
+
+Vector2Int RoomSpace::RandomSelectOuterTile(eRoomSides edge) const
+{
+	const std::vector<Vector2Int>& edgeOuterTileIndices = outerTileIndices[static_cast<int>(edge)];
 	assert(!edgeOuterTileIndices.empty() && "edgeOuterTileIndices empty..");
 
 	const int selectTileIndex = Util::RandomRange(0, static_cast<int>(edgeOuterTileIndices.size()) - 1);
-	Vector2Int selectTile = edgeOuterTileIndices[selectTileIndex];
 
-	//선택된 외곽 타일 인덱스 제거
-	edgeOuterTileIndices.erase(edgeOuterTileIndices.begin() + selectTileIndex);
-
-	//문 타일로 저장한다.
-	doorTileIndices.emplace_back(selectTile);
-
-	return selectTile;
+	return edgeOuterTileIndices[selectTileIndex];
 }
+
+//Craft::Vector2Int RoomSpace::SelectDoorTile(eRoomSides edge)
+//{
+//	std::vector<Vector2Int>& edgeOuterTileIndices = outerTileIndices[static_cast<int>(edge)];
+//
+//	assert(!edgeOuterTileIndices.empty() && "edgeOuterTileIndices empty..");
+//
+//	const int selectTileIndex = Util::RandomRange(0, static_cast<int>(edgeOuterTileIndices.size()) - 1);
+//	Vector2Int selectTile = edgeOuterTileIndices[selectTileIndex];
+//
+//	//선택된 외곽 타일 인덱스 제거
+//	edgeOuterTileIndices.erase(edgeOuterTileIndices.begin() + selectTileIndex);
+//
+//	//문 타일로 저장한다.
+//	doorTileIndices.emplace_back(selectTile);
+//
+//	return selectTile;
+//}

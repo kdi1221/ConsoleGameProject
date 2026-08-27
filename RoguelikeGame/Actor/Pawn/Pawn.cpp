@@ -4,6 +4,7 @@
 #include "Component/AttributeComponent.h"
 #include "Component/AbilitySystemComponent.h"
 #include "Actor/MapObject/RoomDoor.h"
+#include "Actor/Projectile/Projectile.h"
 #include "Util/Util.h"
 #include <Engine/Engine.h>
 #include <cassert>
@@ -47,7 +48,7 @@ void Pawn::Destroy()
 	super::Destroy();
 }
 
-bool Pawn::IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor)
+bool Pawn::IsBlockActor(std::shared_ptr<Actor> otherActor)
 {
 	assert(otherActor && "Invalid otherActor");
 
@@ -61,6 +62,16 @@ bool Pawn::IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor)
 	if (otherActor->IsTypeOf<RoomDoor>())
 	{
 		return true;
+	}
+
+	if (otherActor->IsTypeOf<Projectile>())
+	{
+		/* Projectile와는 다른팀일때 Block */
+		std::shared_ptr<Projectile> blockProjectile = Cast<Projectile>(otherActor);
+		if (blockProjectile && blockProjectile->GetInstigatorTeamID() != GetTeamID())
+		{
+			return true;
+		}
 	}
 
 	return false;

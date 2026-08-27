@@ -1,19 +1,26 @@
 ﻿#include "RoomDoor.h"
 #include "Actor/Pawn/Pawn.h"
+#include "Actor/Projectile/Projectile.h"
 #include <cassert>
 
 RoomDoor::RoomDoor(const Craft::Vector2Int& position)
-	:super(position, L"▤", Craft::Color::Red)
+	:super(position, L"█", Craft::Color::Red)
 {
 
 }
 
-bool RoomDoor::IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor)
+bool RoomDoor::IsBlockActor(std::shared_ptr<Actor> otherActor)
 {
 	assert(otherActor && "Invalid otherActor");
 
 	/* Pawn하고는 겹칠 수 없음*/
 	if (otherActor->IsTypeOf<Pawn>())
+	{
+		return true;
+	}
+
+	/* Projectile와는 Blocking */
+	if (otherActor->IsTypeOf<Projectile>())
 	{
 		return true;
 	}

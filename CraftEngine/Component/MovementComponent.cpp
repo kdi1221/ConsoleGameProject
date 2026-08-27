@@ -48,6 +48,7 @@ namespace Craft
 		currentMoveDirection = newDirection;
 	}
 
+
 	void MovementComponent::ResetAccumulatorMoveDelta()
 	{
 		accumulatorMoveDelta = Vector2Float::Zero;

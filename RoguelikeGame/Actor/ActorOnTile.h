@@ -17,6 +17,6 @@ public:
 	virtual void OnTileOverlap(const eTileCategory tileCategory);
 
 	/* 다른 종류의 Actor와 Block되는지 체크 */
-	virtual bool IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor) = 0;
+	virtual bool IsBlockActor(std::shared_ptr<Craft::Actor> otherActor) = 0;
 };
 

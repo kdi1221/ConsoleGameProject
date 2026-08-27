@@ -122,7 +122,7 @@ void GM_Roguelike::ReadyGameActorSpawn()
 			case eRoomType::NextLevel:
 				{
 					//입구 타일들 중 첫번째 타일을 지정
-					nextFloorRoomDoorPos = roomSpace.GetDoorTileIndices()[0];
+					nextFloorRoomDoorPos = *roomSpace.GetDoorTileIndices().begin();
 				}
 				break;
 
@@ -370,7 +370,7 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 	}
 
 	/* 방의 입구에 문 Actor 생성 */
-	const RoomSpace::RoomTileIndices& doorTileIndices = visitRoomSpace.GetDoorTileIndices();
+	const RoomSpace::RoomDoorTileIndices& doorTileIndices = visitRoomSpace.GetDoorTileIndices();
 	for (const Vector2Int& doorTileIndex : doorTileIndices)
 	{
 		std::shared_ptr<RoomDoor> spawnedRoomDoor = level->SpawnActor<RoomDoor>(doorTileIndex);

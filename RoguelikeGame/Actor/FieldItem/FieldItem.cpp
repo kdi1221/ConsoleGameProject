@@ -10,7 +10,7 @@ FieldItem::FieldItem(const Vector2Int& position, const std::wstring& image, Colo
 	AddComponent<SpriteRendererComponent>(image, color, static_cast<int>(eRenderSortingOrder::FieldItem));
 }
 
-bool FieldItem::IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor)
+bool FieldItem::IsBlockActor(std::shared_ptr<Actor> otherActor)
 {
 	/* 기본적으로 필드 아이템은 모든 Actor와 겹치기 가능 */
 	return false;

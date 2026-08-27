@@ -63,11 +63,11 @@ private:
 	/* 발사 입력 처리 */
 	//void ProcessFireInput();
 
-	/* 조준 입력 처리 */
-	void ProcessAimingInput();
-
 	/* 이동 입력 처리 */
 	void ProcessMoveInput();
+
+	/* 조준 방향 결정(마우스 커서 위치를 향해) */
+	void UpdateAimingDirectionToCursorPos();
 
 	/* Projectile Ability의 트리거 ON/OFF*/
 	//void SetProjectileAbilityTrigger(bool bTrigger);

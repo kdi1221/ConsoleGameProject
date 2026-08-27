@@ -260,10 +260,12 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 	case eDivideDirection::Vertical:
 		{
 			//왼쪽 자식 방의 외곽 타일 중 하나 선택
-			const Vector2Int selectLeftOuterTile = leftRoom.SelectDoorTile(eRoomSides::Right);
+			//const Vector2Int selectLeftOuterTile = leftRoom.SelectDoorTile(eRoomSides::Right);
+			const Vector2Int selectLeftOuterTile = leftRoom.RandomSelectOuterTile(eRoomSides::Right);
 
 			//오른쪽 자식 방의 외곽 타일 중 하나 선택
-			const Vector2Int selectRightOuterTile = rightRoom.SelectDoorTile(eRoomSides::Left);
+			//const Vector2Int selectRightOuterTile = rightRoom.SelectDoorTile(eRoomSides::Left);
+			const Vector2Int selectRightOuterTile = rightRoom.RandomSelectOuterTile(eRoomSides::Left);
 
 			//leftRoom을 감싸는 외곽영역의 경계라인 x 인덱스
 			const Vector2Int& OuterPostionLT = leftRoom.GetOuterPostionLT();
@@ -279,6 +281,11 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 
 			int xPos = selectLeftOuterTile.x;
 			int yPos = selectLeftOuterTile.y;
+
+			//시작 방의 문 타일 위치 저장
+			const Vector2Int startTileCoord(xPos, yPos);
+			leftRoom.AddDoorTile(eRoomSides::Right, startTileCoord);
+			leftRoom.AddDoorTile(eRoomSides::Right, startTileCoord + Vector2Int(0, addleftYPathThickness));
 
 			//첫 x 경로 생성.(외곽영역 경계까지)
 			for (; xPos != OuterBorderXPos; ++xPos)
@@ -307,6 +314,11 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 			//마지막 타일 뚫기
 			pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
 			pathTileIndices.emplace_back(Vector2Int(xPos, yPos + addrightYPathThickness));
+
+			//끝 방의 문 타일 위치 저장
+			const Vector2Int endTileCoord(xPos, yPos);
+			rightRoom.AddDoorTile(eRoomSides::Left, endTileCoord);
+			rightRoom.AddDoorTile(eRoomSides::Left, endTileCoord + Vector2Int(0, addrightYPathThickness));
 		}
 		break;
 
@@ -314,10 +326,12 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 	case eDivideDirection::Horizontal:
 		{
 			//왼쪽 자식 방(위쪽에 위치)의 외곽 타일 중 하나 선택
-			const Vector2Int selectLeftOuterTile = leftRoom.SelectDoorTile(eRoomSides::Bottom);
+			//const Vector2Int selectLeftOuterTile = leftRoom.SelectDoorTile(eRoomSides::Bottom);
+			const Vector2Int selectLeftOuterTile = leftRoom.RandomSelectOuterTile(eRoomSides::Bottom);
 
 			//오른쪽 자식 방(아래쪽에 위치)의 외곽 타일 중 하나 선택
-			const Vector2Int selectRightOuterTile = rightRoom.SelectDoorTile(eRoomSides::Top);
+			//const Vector2Int selectRightOuterTile = rightRoom.SelectDoorTile(eRoomSides::Top);
+			const Vector2Int selectRightOuterTile = rightRoom.RandomSelectOuterTile(eRoomSides::Top);
 
 			//leftRoom을 감싸는 외곽영역의 경계라인 y 인덱스
 			const Vector2Int& OuterPostionLT = leftRoom.GetOuterPostionLT();
@@ -333,6 +347,11 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 
 			int xPos = selectLeftOuterTile.x;
 			int yPos = selectLeftOuterTile.y;
+
+			//시작 방의 문 타일 위치 저장
+			const Vector2Int startTileCoord(xPos, yPos);
+			leftRoom.AddDoorTile(eRoomSides::Bottom, startTileCoord);
+			leftRoom.AddDoorTile(eRoomSides::Bottom, startTileCoord + Vector2Int(addleftXPathThickness, 0));
 
 			//첫 y 경로 생성.(외곽영역 경계까지)
 			for (; yPos != OuterBorderYPos; ++yPos)
@@ -361,6 +380,11 @@ void BSPNode::GeneratePathBetweenRooms(RoomSpace& leftRoom, RoomSpace& rightRoom
 			//마지막 타일 뚫기
 			pathTileIndices.emplace_back(Vector2Int(xPos, yPos));
 			pathTileIndices.emplace_back(Vector2Int(xPos + addrightXPathThickness, yPos));
+
+			//끝 방의 문 타일 위치 저장
+			const Vector2Int endTileCoord(xPos, yPos);
+			rightRoom.AddDoorTile(eRoomSides::Top, endTileCoord);
+			rightRoom.AddDoorTile(eRoomSides::Top, endTileCoord + Vector2Int(addrightXPathThickness, 0));
 		}
 		break;
 	}

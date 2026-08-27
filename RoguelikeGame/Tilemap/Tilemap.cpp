@@ -236,7 +236,7 @@ RoomDefines::UNIQUE_INDEX_TYPE Tilemap::GetTileRoomIndex(const Craft::Vector2Int
 Tile* Tilemap::GetTile(int xPos, int yPos) const
 {
 	const size_t TileIndex = (yPos * mapSize.x) + xPos;
-	if (TileIndex < 0 || TileIndex >= tileList.size())
+	if (TileIndex >= tileList.size())
 	{
 		return nullptr;
 	}

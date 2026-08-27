@@ -49,7 +49,7 @@ PlayerPawn::PlayerPawn(const Craft::Vector2Int& position)
 	cameraComponent = AddComponent<CameraComponent>();
 	assert(cameraComponent && "cameraComponent create fail..");
 
-	// 공격 범위 지정
+	// 공격 범위 지정(TODO : 폐기 예정)
 	SetFireRange(10.f);
 }
 
@@ -63,9 +63,6 @@ void PlayerPawn::BeginPlay()
 void PlayerPawn::PreTick(float deltaTime)
 {
 	super::PreTick(deltaTime);
-
-	/* 조준 입력 처리 */
-	ProcessAimingInput();
 
 	/* 이동 입력 처리 */
 	ProcessMoveInput();
@@ -190,6 +187,9 @@ void PlayerPawn::OnAbilityActiveKeyDown(int keyCode, Craft::eInputTrigger inputT
 		return;
 	}
 
+	/* Ability 활성화 전 마우스 커서위치를 향한 Aiming Direction Update*/
+	UpdateAimingDirectionToCursorPos();
+
 	/* Input에 연결된 Ability ID에 대한 활성화 요청 */
 	const ABILITY_ID_TYPE inputAbilityID = iterFindGrantAbilityID->second;
 	abilitySystemComponent->ActivateAbility(inputAbilityID);
@@ -292,13 +292,22 @@ void PlayerPawn::UpdateViewCameraPosition(const Craft::Vector2Int& viewPosition)
 //	}
 //}
 
-void PlayerPawn::ProcessAimingInput()
+
+void PlayerPawn::ProcessMoveInput()
+{
+	assert(movementComponent && "Invalid movementComponent");
+
+	movementComponent->SetLastMoveInputDireciton(moveInputDirection);
+	moveInputDirection = eDirection::None;
+}
+
+void PlayerPawn::UpdateAimingDirectionToCursorPos()
 {
 	assert(inputComponent && "Invalid inputComponent");
 
 	/* 월드 상의 마우스 좌표 */
 	const Vector2Int& toMouseCursorPosInWorld = inputComponent->GetLastMosueCursorPos();
-	
+
 	/* 현재 위치 */
 	const Vector2Int& currentPos = GetWorldPosition();
 
@@ -316,14 +325,6 @@ void PlayerPawn::ProcessAimingInput()
 	}
 
 	SetAimingDirection(newAimingDirection);
-}
-
-void PlayerPawn::ProcessMoveInput()
-{
-	assert(movementComponent && "Invalid movementComponent");
-
-	movementComponent->SetLastMoveInputDireciton(moveInputDirection);
-	moveInputDirection = eDirection::None;
 }
 
 //void PlayerPawn::SetProjectileAbilityTrigger(bool bTrigger)

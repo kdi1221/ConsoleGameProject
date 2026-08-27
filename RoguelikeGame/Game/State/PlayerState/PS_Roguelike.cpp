@@ -30,7 +30,7 @@ void PS_Roguelike::InitializeSessionData()
 	playerCurrentHealth = playerMaxHealth;
 
 	/* 초기 Ability */
-	GrantAbilityToPlayer(1, 1, VK_RBUTTON);
+	GrantAbilityToPlayer(1, 2, VK_RBUTTON);
 
 	/* 초기 아이템 */
 	//OnPlayerItemGain(1);

@@ -27,7 +27,7 @@ private:
 	virtual void OnTileOverlap(const eTileCategory tileCategory) override;
 
 	/* 다른 종류의 Actor와 Block되는지 체크 */
-	virtual bool IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor) override;
+	virtual bool IsBlockActor(std::shared_ptr<Actor> otherActor) override;
 
 	//충돌 시 호출될 충돌 이벤트 함수.
 	virtual void OnCollision(const std::shared_ptr<Actor>& other) override;

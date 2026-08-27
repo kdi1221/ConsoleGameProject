@@ -36,6 +36,14 @@ public:
 		Unknown
 	};
 
+	/* 벽, Actor등과 Block 되었는지 여부 결과 값 */
+	enum class eBlockingCheckResult
+	{
+		NoBlock,
+		BlockWall,
+		BlockActor,
+	};
+
 private:
 	struct FTilemapDamageInfo
 	{
@@ -103,6 +111,11 @@ public:
 	void AddDamageInfoToTile(const Craft::Vector2Int& tileCoord, float damageValue, eTeamID teamID);
 
 public:
+	/* 해당 위치에 Block되는 Actor가 존재하는지 여부 반환 */
+	eBlockingCheckResult CheckBlocking(std::shared_ptr<Craft::Actor> checkActor, 
+										const Craft::Vector2Int& tileCoord,
+										std::shared_ptr<ActorOnTile>& outBlockingActor) const;
+
 	/* 해당 위치가 속한 방 반환 */
 	const Room* GetPostionInRoom(const Craft::Vector2Int& checkPosition) const;
 
@@ -151,3 +164,4 @@ private:
 };
 
 using CheckPlacementResult = TilemapLevel::eCheckPlacementResult;
+using CheckBlockingResult = TilemapLevel::eBlockingCheckResult;

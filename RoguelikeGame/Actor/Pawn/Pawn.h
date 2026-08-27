@@ -29,7 +29,7 @@ public:
 	virtual void Destroy() override;
 
 	/* 다른 종류의 Actor와 Block되는지 체크 */
-	virtual bool IsBlockActorOnTile(std::shared_ptr<ActorOnTile> otherActor) override;
+	virtual bool IsBlockActor(std::shared_ptr<Actor> otherActor) override;
 
 public:
 	/* 체력 초기화 */
