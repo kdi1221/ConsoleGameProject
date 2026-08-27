@@ -11,7 +11,7 @@ NPCSharman::NPCSharman(const Vector2Int& position, RoomDefines::UNIQUE_INDEX_TYP
 	SetFireRange(12.f);
 }
 
-AbilityObject::ABILITY_ID_TYPE NPCSharman::grantRangeAttackAbility()
+ABILITY_ID_TYPE NPCSharman::grantRangeAttackAbility()
 {
 	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
 	assert(abilitySystemComponent && "Invalid abilitySystemComponent");

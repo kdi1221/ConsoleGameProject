@@ -10,7 +10,7 @@ NPCGoblinArcher::NPCGoblinArcher(const Vector2Int& position, RoomDefines::UNIQUE
 	SetFireRange(8.f);
 }
 
-AbilityObject::ABILITY_ID_TYPE NPCGoblinArcher::grantRangeAttackAbility()
+ABILITY_ID_TYPE NPCGoblinArcher::grantRangeAttackAbility()
 {
 	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
 	assert(abilitySystemComponent && "Invalid abilitySystemComponent");

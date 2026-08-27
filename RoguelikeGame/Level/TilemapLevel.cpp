@@ -7,7 +7,7 @@
 #include "Tilemap/BSP/RoomSpace/RoomSpace.h"
 #include "Util/Util.h"
 #include "Actor/Pawn/Player/PlayerPawn.h"
-#include "Actor/Projectile/Projectile.h"
+#include "Actor/Bullet/Bullet.h"
 #include "Camera/CameraManager.h"
 #include <cassert>
 #include <Memory>

@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Types/Defines.h"
 #include <Core/Core.h>
 #include <Core/CraftObject.h>
 
@@ -11,23 +12,41 @@ class AbilityObject : public Craft::CraftObject
 	TYPE_DECLARATIONS(AbilityObject, CraftObject)
 
 public:
-	using ABILITY_ID_TYPE = int;
-	static constexpr ABILITY_ID_TYPE INVALID_ABILITY_ID = 0;
+	/* Ability ID에 대한 AbilityObject생성*/
+	static std::unique_ptr<AbilityObject> CreateNewAbility(const ABILITY_ID_TYPE abilityID, int abilityLevel);
 
 public:
 	AbilityObject(ABILITY_ID_TYPE id, int level);
 	virtual ~AbilityObject();
 
 public:
-	virtual void Tick(float deltaTime) = 0;
+	virtual void Tick(float deltaTime);
 
 	virtual void Draw();
 
+	/* Ability 활성화 가능 여부 */
+	virtual bool CanActivateAbility() const;
+
+	/* Ability 활성화 */
+	virtual void ActivateAbility();
+
+	/* Ability 종료 */
+	virtual void EndAbility(bool bCancelAbility);
+
+	/* Ability 취소 */
+	virtual void CancelAbility();
+
+
+
+
+
+	//--------------이 아래로 폐기 예정 ------------------//
 	/* Ability 트리거 켜기 */
 	virtual void TriggerOn();
 
 	/* Ability 트리거 끄기 */
 	virtual void TriggerOff();
+	//--------------이 위로 폐기 예정 ------------------//
 
 public:
 	void SetOwnerPawn(std::weak_ptr<Pawn> newOwner);

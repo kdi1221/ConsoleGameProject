@@ -63,7 +63,7 @@
     <ClCompile Include="Actor\Pawn\Player\PlayerPawn.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Actor\Projectile\Projectile.cpp">
+    <ClCompile Include="Actor\Bullet\Bullet.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Actor\ActorOnTile.cpp">
@@ -195,6 +195,15 @@
     <ClCompile Include="Level\DummyLevel.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Game\State\PlayerState\PlayerAbilityInfo.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability\PlayerAbility\AbilityShotSpiritBall.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Projectile\Projectile.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Level\TestLevel.h">
@@ -251,7 +260,7 @@
     <ClInclude Include="Actor\Pawn\Player\PlayerPawn.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Actor\Projectile\Projectile.h">
+    <ClInclude Include="Actor\Bullet\Bullet.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Actor\ActorOnTile.h">
@@ -387,6 +396,18 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Level\DummyLevel.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\AbilityDataTable.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\State\PlayerState\PlayerAbilityInfo.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\PlayerAbility\AbilityShotSpiritBall.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Projectile\Projectile.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

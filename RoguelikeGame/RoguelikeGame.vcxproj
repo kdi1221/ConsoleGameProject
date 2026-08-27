@@ -102,6 +102,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Ability\AbilityObject.cpp" />
     <ClCompile Include="Ability\AbilityPeriodicDelay.cpp" />
     <ClCompile Include="Ability\Melee\AbilityMelee.cpp" />
+    <ClCompile Include="Ability\PlayerAbility\AbilityShotSpiritBall.cpp" />
     <ClCompile Include="Ability\Shooter\Projectile\AbilityDarkBall.cpp" />
     <ClCompile Include="Ability\Shooter\Projectile\AbilityGoblinArrow.cpp" />
     <ClCompile Include="Ability\Shooter\Projectile\AbilityImpFireball.cpp" />
@@ -128,13 +129,15 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Actor\Pawn\NPC\Troll\NPCTroll.cpp" />
     <ClCompile Include="Actor\Pawn\Pawn.cpp" />
     <ClCompile Include="Actor\Pawn\Player\PlayerPawn.cpp" />
-    <ClCompile Include="Actor\Projectile\Projectile.cpp" />
+    <ClCompile Include="Actor\Bullet\Bullet.cpp" />
     <ClCompile Include="Actor\MapObject\RoomDoor.cpp" />
+    <ClCompile Include="Actor\Projectile\Projectile.cpp" />
     <ClCompile Include="Component\AbilitySystemComponent.cpp" />
     <ClCompile Include="Component\AttributeComponent.cpp" />
     <ClCompile Include="Game\Config\Config.cpp" />
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Game\State\GameMode\GM_Roguelike.cpp" />
+    <ClCompile Include="Game\State\PlayerState\PlayerAbilityInfo.cpp" />
     <ClCompile Include="Game\State\PlayerState\PS_Roguelike.cpp" />
     <ClCompile Include="Item\ItemBase.cpp" />
     <ClCompile Include="Level\DummyLevel.cpp" />
@@ -161,9 +164,11 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ability\AbilityBeam.h" />
+    <ClInclude Include="Ability\AbilityDataTable.h" />
     <ClInclude Include="Ability\AbilityObject.h" />
     <ClInclude Include="Ability\AbilityPeriodicDelay.h" />
     <ClInclude Include="Ability\Melee\AbilityMelee.h" />
+    <ClInclude Include="Ability\PlayerAbility\AbilityShotSpiritBall.h" />
     <ClInclude Include="Ability\Shooter\Projectile\AbilityDarkBall.h" />
     <ClInclude Include="Ability\Shooter\Projectile\AbilityGoblinArrow.h" />
     <ClInclude Include="Ability\Shooter\Projectile\AbilityImpFireball.h" />
@@ -190,13 +195,15 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Actor\Pawn\NPC\Troll\NPCTroll.h" />
     <ClInclude Include="Actor\Pawn\Pawn.h" />
     <ClInclude Include="Actor\Pawn\Player\PlayerPawn.h" />
-    <ClInclude Include="Actor\Projectile\Projectile.h" />
+    <ClInclude Include="Actor\Bullet\Bullet.h" />
     <ClInclude Include="Actor\MapObject\RoomDoor.h" />
+    <ClInclude Include="Actor\Projectile\Projectile.h" />
     <ClInclude Include="Component\AbilitySystemComponent.h" />
     <ClInclude Include="Component\AttributeComponent.h" />
     <ClInclude Include="Game\Config\Config.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Game\State\GameMode\GM_Roguelike.h" />
+    <ClInclude Include="Game\State\PlayerState\PlayerAbilityInfo.h" />
     <ClInclude Include="Game\State\PlayerState\PS_Roguelike.h" />
     <ClInclude Include="Item\ItemBase.h" />
     <ClInclude Include="Item\ItemData\ItemDataTable.h" />

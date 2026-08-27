@@ -39,13 +39,13 @@ private:
 	virtual void OnBehaviorAttack(float deltaTime) override;
 
 protected:
-	virtual AbilityObject::ABILITY_ID_TYPE grantRangeAttackAbility() = 0;
+	virtual ABILITY_ID_TYPE grantRangeAttackAbility() = 0;
 
 private:
 	void AdjustAimDirection();
 
 private:
 	/* 부여된 원거리 공격 Ability */
-	AbilityObject::ABILITY_ID_TYPE grantRangeAttackID = AbilityObject::INVALID_ABILITY_ID;
+	ABILITY_ID_TYPE grantRangeAttackID = INVALID_ABILITY_ID;
 };
 

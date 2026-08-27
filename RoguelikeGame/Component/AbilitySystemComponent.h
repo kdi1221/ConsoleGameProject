@@ -14,7 +14,7 @@ class AbilitySystemComponent : public Craft::Component
 
 public:
 	AbilitySystemComponent();
-	virtual ~AbilitySystemComponent() = default;
+	virtual ~AbilitySystemComponent();
 
 public:
 	virtual void PostTick(float deltaTime) override;
@@ -23,12 +23,19 @@ public:
 	virtual void Draw() override;
 
 public:
+	/* 새로운 Ability 추가 */
+	ABILITY_ID_TYPE AddNewAbility(ABILITY_ID_TYPE abilityID, int abilityLevel);
+
+	/* Ability 활성화 */
+	void ActivateAbility(ABILITY_ID_TYPE abilityID);
+
+
 	template<typename T, typename... Args, typename = std::enable_if_t<std::is_base_of<AbilityObject, T>::value>>
-	AbilityObject::ABILITY_ID_TYPE AddNewAbility(Args&& ...args)
+	ABILITY_ID_TYPE AddNewAbility(Args&& ...args)
 	{
 		std::unique_ptr<T> newAbility = std::make_unique<T>(std::forward<Args>(args)...);
 		newAbility->SetOwnerPawn(GetOwnerPawn());
-		const AbilityObject::ABILITY_ID_TYPE newAbilityID = newAbility->GetAbilityID();
+		const ABILITY_ID_TYPE newAbilityID = newAbility->GetAbilityID();
 
 		mapAbilities.emplace(newAbilityID, std::move(newAbility));
 
@@ -36,7 +43,7 @@ public:
 	}
 
 	template<typename T, typename = std::enable_if_t<std::is_base_of<AbilityObject, T>::value>>
-	T* GetAbility(const AbilityObject::ABILITY_ID_TYPE abilityID)
+	T* GetAbility(const ABILITY_ID_TYPE abilityID)
 	{
 		auto iterFindAbility = mapAbilities.find(abilityID);
 		if (iterFindAbility == mapAbilities.end())
@@ -51,10 +58,11 @@ public:
 	void AllAbilitiesTriggerOff();
 
 private:
+	/* Owner Pawn 참조 반환 */
 	std::shared_ptr<Pawn> GetOwnerPawn() const;
 
 private:
 	/* 보유중인 Ability List*/
-	std::unordered_map<AbilityObject::ABILITY_ID_TYPE, std::unique_ptr<AbilityObject>> mapAbilities;
+	std::unordered_map<ABILITY_ID_TYPE, std::unique_ptr<AbilityObject>> mapAbilities;
 };
 

@@ -38,7 +38,7 @@ private:
 
 private:
 	/* 부여된 근접 공격 Ability */
-	AbilityObject::ABILITY_ID_TYPE grantMeleeAttackID = AbilityObject::INVALID_ABILITY_ID;
+	ABILITY_ID_TYPE grantMeleeAttackID = INVALID_ABILITY_ID;
 
 	/* 공격 딜레이 */
 	float attackDelayInterval = 0.f;

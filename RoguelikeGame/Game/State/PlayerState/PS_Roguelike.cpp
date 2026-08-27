@@ -1,6 +1,9 @@
 ﻿#include "PS_Roguelike.h"
 #include "UI/HUD/HUDPlayer.h"
 #include "Actor/Pawn/Player/PlayerPawn.h"
+#include "PlayerAbilityInfo.h"
+
+
 #include "Item/ItemBase.h"
 #include "Item/ItemData/ItemDataTable.h"
 #include <Level/Level.h>
@@ -26,9 +29,11 @@ void PS_Roguelike::InitializeSessionData()
 	playerMaxHealth = 100.f;
 	playerCurrentHealth = playerMaxHealth;
 
+	/* 초기 Ability */
+	GrantAbilityToPlayer(1, 1, VK_RBUTTON);
+
 	/* 초기 아이템 */
-	OnPlayerItemGain(1);
-	//OnPlayerItemGain(2);
+	//OnPlayerItemGain(1);
 }
 
 void PS_Roguelike::OnInitializeLevel(std::weak_ptr<Level> level)
@@ -68,8 +73,22 @@ void PS_Roguelike::OnSpawnedPlayerPawn(std::weak_ptr<PlayerPawn> pawn)
 	OnUpdateMonsterKillNum();
 	OnUpdatePlayerHealth(playerCurrentHealth, playerMaxHealth);
 
-	/* 세션 데이터 - 스킬 아이템 리스트를 돌면서 플레이어 스킬 및 HUD를 갱신한다. */
-	for (const auto& iterItem : mapItemlist)
+	/* 플레이어에게 부여된 스킬 업데이트 */
+	for (const auto& iterAbility : mapGrantedAbilities)
+	{
+		const PlayerAbilityInfo* abilityInfo = iterAbility.second.get();
+		if (!abilityInfo)
+		{
+			continue;
+		}
+
+		currentPlayerPawn->GrantAbility(*abilityInfo);
+	}
+
+
+
+	/* 세션 데이터 - 스킬 아이템 리스트를 돌면서 플레이어 스킬 및 HUD를 갱신한다.(TODO : 폐기 예정) */
+	/*for (const auto& iterItem : mapItemlist)
 	{
 		const int itemID = iterItem.second->GetItemID();
 		const ItemData& currentItemData = ItemDataTable::GetItemData(itemID);
@@ -77,7 +96,7 @@ void PS_Roguelike::OnSpawnedPlayerPawn(std::weak_ptr<PlayerPawn> pawn)
 		currentPlayerPawn->GrantAbility(currentItemData.abilityID, iterItem.second->GetItemNum());
 
 		UpdateItemListIconText(*iterItem.second);
-	}
+	}*/
 }
 
 void PS_Roguelike::ChangeFloorLevel(int newFloorLevel)
@@ -98,6 +117,17 @@ void PS_Roguelike::IncrementMonsterKillNum()
 	{
 		OnUpdateMonsterKillNum();
 	}	
+}
+
+void PS_Roguelike::GrantAbilityToPlayer(int abilityID, int level, int keyCode)
+{
+	/* 이미 부여된 스킬이면 추가하지 않음 */
+	if (mapGrantedAbilities.find(abilityID) != mapGrantedAbilities.end())
+	{
+		return;
+	}
+
+	mapGrantedAbilities.insert({ abilityID, std::make_unique<PlayerAbilityInfo>(abilityID, level, keyCode) });
 }
 
 void PS_Roguelike::OnUpdateMonsterKillNum()
@@ -123,7 +153,9 @@ void PS_Roguelike::OnUpdatePlayerHealth(float currentValue, float maxValue)
 
 void PS_Roguelike::OnPlayerItemGain(int itemID)
 {
-	auto finditerItem = mapItemlist.find(itemID);
+	//TODO : 아이템에 맞는 Ability ID 찾아서 부여 또는 강화
+
+	/*auto finditerItem = mapItemlist.find(itemID);
 	if (finditerItem != mapItemlist.end())
 	{
 		ItemBase* findItem = finditerItem->second.get();
@@ -138,7 +170,7 @@ void PS_Roguelike::OnPlayerItemGain(int itemID)
 		assert(insertItem && "Invalid insertItem");
 
 		UpdateItemListIconText(*insertItem);
-	}
+	}*/
 }
 
 void PS_Roguelike::UpdateItemListIconText(const ItemBase& updateItem)

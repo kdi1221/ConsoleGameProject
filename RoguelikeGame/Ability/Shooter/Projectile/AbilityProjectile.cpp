@@ -1,6 +1,6 @@
 ﻿#include "AbilityProjectile.h"
 #include "Actor/Pawn/Pawn.h"
-#include "Actor/Projectile/Projectile.h"
+#include "Actor/Bullet/Bullet.h"
 #include <Math/Vector2Float.h>
 #include <Level/Level.h>
 #include <Util/Util.h>
@@ -80,7 +80,7 @@ void AbilityProjectile::OnIntervalTrigger()
 			projectileAimingPosition = spawnPosition + Vector2Int(static_cast<int>(round(rotateAimingOffset.x)), static_cast<int>(round(rotateAimingOffset.y)));
 		}
 
-		ownerLevel->SpawnActor<Projectile>(spawnPosition,
+		ownerLevel->SpawnActor<Bullet>(spawnPosition,
 			projectileImage,
 			projectileColor,
 			projectileAimingPosition,

@@ -5,7 +5,11 @@
 #include <windows.h>
 
 class PlayerPawn;
+class PlayerAbilityInfo;
+
+//TODO : ItemBase 폐기 예정
 class ItemBase;
+
 
 /* 로그라이크 게임내에서 플레이어의 상태 값 저장 */
 class PS_Roguelike : public Craft::PlayerState
@@ -40,6 +44,14 @@ public:
 	/* 플레이어가 몬스터를 잡을때 호출 */
 	void IncrementMonsterKillNum();
 
+	
+
+private:
+	/* 플레이어에게 특정 스킬 부여 */
+	void GrantAbilityToPlayer(int abilityID, int level, int keyCode);
+
+	/* TODO : 플레이어의 특정 스킬 레벨 올리기 */
+
 private:
 	/* 플레이어의 몬스터 킬수 업데이트 */
 	void OnUpdateMonsterKillNum();
@@ -61,7 +73,7 @@ private:
 
 private:
 	/* HUD 객체 생성 */
-	virtual std::unique_ptr<Craft::HUD> CreateHUD() const;
+	virtual std::unique_ptr<Craft::HUD> CreateHUD() const override;
 
 private:
 	/* 현재 플레이중이 플레이어의 폰 */
@@ -76,8 +88,15 @@ private:
 	/* 플레이어의 최대 체력 */
 	float playerMaxHealth = 0.f;
 
-	/* 플레이어가 소유중인 아이템 */
+	/* 플레이어가 배운 스킬들(abilityID - PlayerAbilityInfo) */
+	std::unordered_map<int, std::unique_ptr<PlayerAbilityInfo>> mapGrantedAbilities;
+
+
+
+	/* 플레이어가 소유중인 아이템(TODO : 폐기 예정) */
 	std::unordered_map<int, std::unique_ptr<ItemBase>> mapItemlist;
+
+
 
 	/* 경과 시간 누적 시작 여부 */
 	bool isCountTime = false;

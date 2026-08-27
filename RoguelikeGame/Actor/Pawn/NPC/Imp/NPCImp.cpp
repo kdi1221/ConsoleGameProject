@@ -11,7 +11,7 @@ NPCImp::NPCImp(const Vector2Int& position, RoomDefines::UNIQUE_INDEX_TYPE roomIn
 	SetFireRange(10.f);
 }
 
-AbilityObject::ABILITY_ID_TYPE NPCImp::grantRangeAttackAbility()
+ABILITY_ID_TYPE NPCImp::grantRangeAttackAbility()
 {
 	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
 	assert(abilitySystemComponent && "Invalid abilitySystemComponent");

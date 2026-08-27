@@ -11,6 +11,6 @@ public:
 	virtual ~NPCGoblinArcher() = default;
 
 private:
-	virtual AbilityObject::ABILITY_ID_TYPE grantRangeAttackAbility() override;
+	virtual ABILITY_ID_TYPE grantRangeAttackAbility() override;
 };
 
