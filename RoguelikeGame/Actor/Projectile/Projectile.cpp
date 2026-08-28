@@ -73,6 +73,21 @@ void Projectile::SetLifeSpan(float lifeTime)
 	isLifeSpan = true;
 }
 
+void Projectile::SetCollisionDestroyFlags(eProjectileCollisionFlags newFlags)
+{
+	collisionFlags = newFlags;
+}
+
+const Vector2Float& Projectile::GetMoveDirection() const
+{
+	if (projectileMoveComponent)
+	{
+		return projectileMoveComponent->GetMoveDirection();
+	}
+
+	return Vector2Float::Zero;
+}
+
 void Projectile::PostMoveCheckBlockCollision()
 {
 	std::shared_ptr<TilemapLevel> tilemapLevel = Cast<TilemapLevel>(GetOwner());
@@ -91,20 +106,20 @@ void Projectile::PostMoveCheckBlockCollision()
 		std::shared_ptr<ActorOnTile> blockingActor = nullptr;
 		const CheckBlockingResult checkBlockingResult = tilemapLevel->CheckBlocking(shared_from_this(), pathTileCoord, blockingActor);
 		
-		bool isBlock = false;
+		bool isBlockDestroy = false;
 		switch (checkBlockingResult)
 		{
 			//벽과 충돌
 		case CheckBlockingResult::BlockWall:
 			{
-				isBlock = true;
+				isBlockDestroy = eProjectileCollisionFlags::None != (collisionFlags & eProjectileCollisionFlags::BlockWall);
 			}
 			break;
 
 			//Actor와 충돌
 		case CheckBlockingResult::BlockActor:
 			{
-				isBlock = true;
+				isBlockDestroy = eProjectileCollisionFlags::None != (collisionFlags & eProjectileCollisionFlags::BlockActor);
 
 				std::shared_ptr<Pawn> blockingPawn = Cast<Pawn>(blockingActor);
 				if (blockingPawn)
@@ -116,12 +131,12 @@ void Projectile::PostMoveCheckBlockCollision()
 
 		default:
 			{
-				isBlock = false;
+				isBlockDestroy = false;
 			}
 			break;
 		}
 
-		if (isBlock)
+		if (isBlockDestroy)
 		{
 			/* 충돌된 상횡에서는 Destroy */
 			Destroy();

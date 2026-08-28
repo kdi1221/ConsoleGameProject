@@ -265,8 +265,8 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 	}
 
 	/* 스폰할 몬스터 수 결정 */
-	const int spawnMinRange = min(8, maxSpawnNum);
-	const int spawnMaxRange = min(14, maxSpawnNum);
+	const int spawnMinRange = min(15, maxSpawnNum);
+	const int spawnMaxRange = min(30, maxSpawnNum);
 	int spawnMonsterNum = Util::RandomRange(spawnMinRange, spawnMaxRange);
 	int currentIndex = 0;
 

@@ -210,6 +210,12 @@
     <ClCompile Include="Ability\PlayerAbility\AbilityFrozenOrb.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Actor\Projectile\FrozenOrb\ProjectileFrozenOrb.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Projectile\FrozenOrb\ProjectileIceBolt.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Level\TestLevel.h">
@@ -420,6 +426,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Ability\PlayerAbility\AbilityFrozenOrb.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Projectile\FrozenOrb\ProjectileFrozenOrb.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Projectile\FrozenOrb\ProjectileIceBolt.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

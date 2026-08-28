@@ -21,6 +21,9 @@ namespace Craft
 		/* 이동방향 지정 */
 		void SetMoveDirection(const Vector2Float& newDirection);
 
+	public:
+		inline const Vector2Float& GetMoveDirection() const { return currentMoveDirection; }
+
 	private:
 		/* 이동 델타 누산값 초기화 */
 		void ResetAccumulatorMoveDelta();

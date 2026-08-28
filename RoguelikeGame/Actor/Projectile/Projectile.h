@@ -11,6 +11,26 @@ namespace Craft
 	class ProjectileMoveComponent;
 }
 
+/* 발사체의 충돌 Destroy Flags */
+enum class eProjectileCollisionFlags : unsigned int
+{
+	None = 0,
+	BlockWall = 1 << 0,
+	BlockActor = 1 << 1,
+};
+
+//eProjectileCollisionFlags의 비트플래그동작을 위한 연산자 오버로딩
+inline constexpr eProjectileCollisionFlags operator|(eProjectileCollisionFlags lhs, eProjectileCollisionFlags rhs)
+{
+	return static_cast<eProjectileCollisionFlags>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
+}
+
+inline constexpr eProjectileCollisionFlags operator&(eProjectileCollisionFlags lhs, eProjectileCollisionFlags rhs)
+{
+	return static_cast<eProjectileCollisionFlags>(static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs));
+}
+
+
 /* 게임 내 표시되는 모든 발사체들의 베이스 클래스 */
 class Projectile : public Craft::Actor
 {
@@ -18,11 +38,11 @@ class Projectile : public Craft::Actor
 
 public:
 	Projectile(const Craft::Vector2Int& inPosition,
-				const std::wstring& inImage,
-				Craft::Color inColor,
-				const float moveSpeed,
-				const eTeamID teamID,
-				float damageValue);
+		const std::wstring& inImage,
+		Craft::Color inColor,
+		const float moveSpeed,
+		const eTeamID teamID,
+		float damageValue);
 	virtual ~Projectile() = default;
 
 public:
@@ -37,9 +57,16 @@ public:
 	/* Projectile의 수명 설정 */
 	void SetLifeSpan(float lifeTime);
 
+	/* Projectile의 충돌 Destroy 플래그 설정 */
+	void SetCollisionDestroyFlags(eProjectileCollisionFlags newFlags);
+
 public:
 	/* 발사체에 지정된 TeamID반환(피아식별) */
 	inline eTeamID GetInstigatorTeamID() const { return instigatorTeamID; }
+
+protected:
+	/* 이동 방향 반환 */
+	const Craft::Vector2Float& GetMoveDirection() const;
 
 private:
 	/* 이동 후 충돌 여부 확인 */
@@ -60,6 +87,9 @@ private:
 
 	/* Projectile의 수명 타이머 */
 	Timer timerLifeSpan;
+
+	/* Projectile의 충돌 Destory 플래그 */
+	eProjectileCollisionFlags collisionFlags = eProjectileCollisionFlags::BlockWall | eProjectileCollisionFlags::BlockActor;
 
 private:
 	/* 발사체 표시 Sprite Component */

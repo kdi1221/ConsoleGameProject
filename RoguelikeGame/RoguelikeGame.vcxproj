@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -132,7 +132,9 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Actor\Pawn\Player\PlayerPawn.cpp" />
     <ClCompile Include="Actor\Bullet\Bullet.cpp" />
     <ClCompile Include="Actor\MapObject\RoomDoor.cpp" />
+    <ClCompile Include="Actor\Projectile\FrozenOrb\ProjectileIceBolt.cpp" />
     <ClCompile Include="Actor\Projectile\Projectile.cpp" />
+    <ClCompile Include="Actor\Projectile\FrozenOrb\ProjectileFrozenOrb.cpp" />
     <ClCompile Include="Component\AbilitySystemComponent.cpp" />
     <ClCompile Include="Component\Attribute\AttributeComponent.cpp" />
     <ClCompile Include="Component\Attribute\PlayerAttributeComponent.cpp" />
@@ -200,7 +202,9 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Actor\Pawn\Player\PlayerPawn.h" />
     <ClInclude Include="Actor\Bullet\Bullet.h" />
     <ClInclude Include="Actor\MapObject\RoomDoor.h" />
+    <ClInclude Include="Actor\Projectile\FrozenOrb\ProjectileIceBolt.h" />
     <ClInclude Include="Actor\Projectile\Projectile.h" />
+    <ClInclude Include="Actor\Projectile\FrozenOrb\ProjectileFrozenOrb.h" />
     <ClInclude Include="Component\AbilitySystemComponent.h" />
     <ClInclude Include="Component\Attribute\AttributeComponent.h" />
     <ClInclude Include="Component\Attribute\PlayerAttributeComponent.h" />

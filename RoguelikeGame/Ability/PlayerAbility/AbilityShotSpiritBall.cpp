@@ -1,6 +1,6 @@
 ﻿#include "AbilityShotSpiritBall.h"
 #include "Actor/Projectile/Projectile.h"
-#include "Actor/Pawn/Player/PlayerPawn.h"
+#include "Actor/Pawn/Pawn.h"
 #include <Level/Level.h>
 #include <cassert>
 
