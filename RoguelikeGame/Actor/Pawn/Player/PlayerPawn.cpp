@@ -2,6 +2,7 @@
 #include "Math/Color.h"
 #include "Component/CameraComponent.h"
 #include "Component/AbilitySystemComponent.h"
+#include "Component/Attribute/PlayerAttributeComponent.h"
 #include "Game/State/PlayerState/PlayerAbilityInfo.h"
 
 
@@ -23,7 +24,7 @@ using namespace Craft;
 using InputTriggerType = InputComponent::FInputTrigger;
 
 PlayerPawn::PlayerPawn(const Craft::Vector2Int& position)
-	:super(position, L"☺", Color::Yellow, 100.f, eTeamID::Player)
+	:super(position, L"☺", Color::Yellow, eTeamID::Player)
 {
 	inputComponent = AddComponent<InputComponent>();
 	assert(inputComponent && "inputComponent create fail..");
@@ -53,10 +54,17 @@ PlayerPawn::PlayerPawn(const Craft::Vector2Int& position)
 	SetFireRange(10.f);
 }
 
-void PlayerPawn::BeginPlay()
+void PlayerPawn::Initialize()
 {
-	super::BeginPlay();
+	super::Initialize();
 
+	playerAttributeComponent = Cast<PlayerAttributeComponent>(attributeComponent);
+	assert(playerAttributeComponent && "Invalid playerAttributeComponent");
+	
+	/* Mana Value 변화에 따른 콜백 설정 */
+	playerAttributeComponent->SetChangeManaEventCallback(std::bind(&PlayerPawn::OnChangeManaValue, this, std::placeholders::_1, std::placeholders::_2));
+
+	/* 카메라가 플레이어를 바라보게 함 */
 	UpdateViewCameraPosition(GetWorldPosition());
 }
 
@@ -71,6 +79,13 @@ void PlayerPawn::PreTick(float deltaTime)
 	//ProcessFireInput();
 }
 
+void PlayerPawn::Tick(float deltaTime)
+{
+	super::Tick(deltaTime);
+
+	ProcessManaRegeneration(deltaTime);
+}
+
 void PlayerPawn::OnUpdatedPosition(const Craft::Vector2Int& prevLocalPosition,
 									const Craft::Vector2Int& prevWorldPosition,
 									const Craft::Vector2Int& localPosition,
@@ -80,6 +95,24 @@ void PlayerPawn::OnUpdatedPosition(const Craft::Vector2Int& prevLocalPosition,
 
 	/* 위치 업데이트 시 카메라의 View Position도 업데이트 한다. */
 	UpdateViewCameraPosition(worldPosition);
+}
+
+std::shared_ptr<AttributeComponent> PlayerPawn::CreateAttributeComponent()
+{
+	return std::make_shared<PlayerAttributeComponent>();
+}
+
+void PlayerPawn::InitializeManaValue(const float currentMana, const float maxMana)
+{
+	assert(playerAttributeComponent && "Invalid attributeComponent");
+
+	/* 초기 속성 값 설정 */
+	playerAttributeComponent->InitialMana(currentMana, maxMana);
+}
+
+void PlayerPawn::SetManaChangeEventCallback(OnChangeManaType callback)
+{
+	onChangeManaEvent = callback;
 }
 
 void PlayerPawn::GainSkillItem(std::shared_ptr<FieldSkillItem> gainItem)
@@ -139,6 +172,32 @@ void PlayerPawn::GrantAbility(const PlayerAbilityInfo& abilityInfo)
 
 	/* KeyCode - grantAbilityID 별로 저장 */
 	mapInputGrantAbilities.insert({ bindingKeyCode, grantAbilityID });
+}
+
+void PlayerPawn::ConsumeMana(float consumeValue)
+{
+	assert(playerAttributeComponent && "Invalid playerAttributeComponent");
+	playerAttributeComponent->SetCurrentMana(playerAttributeComponent->GetCurrentMana() - consumeValue);
+}
+
+void PlayerPawn::RestoreMana(float amount)
+{
+	assert(playerAttributeComponent && "Invalid playerAttributeComponent");
+	playerAttributeComponent->SetCurrentMana(playerAttributeComponent->GetCurrentMana() + amount);
+}
+
+float PlayerPawn::GetCurrentMana() const
+{
+	assert(playerAttributeComponent && "Invalid playerAttributeComponent");
+	return playerAttributeComponent->GetCurrentMana();
+}
+
+void PlayerPawn::OnChangeManaValue(float currentValue, float maxValue)
+{
+	if (onChangeManaEvent)
+	{
+		onChangeManaEvent(currentValue, maxValue);
+	}
 }
 
 void PlayerPawn::OnMoveKeyInput(int keyCode, eInputTrigger inputTrigger)
@@ -250,6 +309,11 @@ void PlayerPawn::OnCheatInputTrigger(int keyCode, Craft::eInputTrigger inputTrig
 		}
 		break;
 	}
+}
+
+void PlayerPawn::ProcessManaRegeneration(float deltaTime)
+{
+	RestoreMana(manaRegenerationSpeed * deltaTime);
 }
 
 void PlayerPawn::UpdateViewCameraPosition(const Craft::Vector2Int& viewPosition)

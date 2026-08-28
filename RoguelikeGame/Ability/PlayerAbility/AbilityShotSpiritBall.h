@@ -11,17 +11,11 @@ class AbilityShotSpiritBall : public AbilityObject
 
 public:
 	AbilityShotSpiritBall(ABILITY_ID_TYPE id, int level);
-	virtual ~AbilityShotSpiritBall();
+	virtual ~AbilityShotSpiritBall() = default;
 
 public:
 	/* Ability 활성화 */
 	virtual void ActivateAbility() override;
-
-	/* Ability 종료 */
-	virtual void EndAbility(bool bCancelAbility) override;
-
-	/* Ability 취소 */
-	virtual void CancelAbility() override;
 
 private:
 	/* 생성할 Projectile의 Image */

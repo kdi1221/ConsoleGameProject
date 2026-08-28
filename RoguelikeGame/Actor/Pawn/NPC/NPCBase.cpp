@@ -16,7 +16,8 @@ NPCBase::NPCBase(const Craft::Vector2Int& position,
 				RoomDefines::UNIQUE_INDEX_TYPE roomIndex,
 				float moveDelay,
 				float chaseDelay)
-	:super(position, image, color, initialHealth, eTeamID::NPC)
+	:super(position, image, color, eTeamID::NPC)
+	,initialiHealthValue(initialHealth)
 	,spawnedRoomIndex(roomIndex)
 {
 	pathMoveComponent = AddComponent<PathMoveComponent>(moveDelay, true);
@@ -24,6 +25,14 @@ NPCBase::NPCBase(const Craft::Vector2Int& position,
 	pathMoveComponent->SetMoveAbortCallback(std::bind(&NPCBase::OnMoveAbort, this));
 
 	timerFindChasePathDelay.SetTargetTime(chaseDelay);
+}
+
+void NPCBase::Initialize()
+{
+	super::Initialize();
+
+	/* 몬스터 Health 초기화 */
+	InitializeHealthValue(initialiHealthValue, initialiHealthValue);
 }
 
 void NPCBase::Tick(float deltaTime)

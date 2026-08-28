@@ -38,6 +38,7 @@ public:
 	~NPCBase() = default;
 
 public:
+	virtual void Initialize() override;
 	virtual void Tick(float deltaTime) override;
 	virtual void Draw() override;
 
@@ -93,6 +94,9 @@ private:
 	std::shared_ptr<Craft::PathMoveComponent> pathMoveComponent;
 
 private:
+	/* 초기 Health Value */
+	float initialiHealthValue = 0.f;
+
 	//생성된 방의 인덱스
 	RoomDefines::UNIQUE_INDEX_TYPE spawnedRoomIndex = RoomDefines::ROOM_INDEX_INVALID;
 

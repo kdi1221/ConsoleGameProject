@@ -32,6 +32,11 @@ namespace Craft
 
 	}
 
+	void Actor::Initialize()
+	{
+
+	}
+
 	void Actor::BeginPlay()
 	{
 		// 중복 호출 방지를 위해 설정.

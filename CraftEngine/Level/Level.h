@@ -54,6 +54,9 @@ namespace Craft
 			//액터의 Owner 지정
 			newActor->SetOwner(weak_from_this());
 
+			//Actor 자체 초기화 함수 호출 
+			newActor->Initialize();
+
 			//레벨에 특정 Actor가 스폰되었음을 알림
 			OnSpawnedActor(newActor);
 

@@ -33,12 +33,12 @@ namespace Craft
 
 	public:
 		Actor(const Vector2Int& position = Vector2Int::Zero);
-		/*Actor(const std::string& image = "", 
-			const Vector2& position = Vector2::Zero, 
-			Color color = Color::White);*/
 		virtual ~Actor();
 
 	public:
+		/* 생성직후 초기화 함수 */
+		virtual void Initialize();
+
 		//프레임 이벤트 함수.
 		virtual void BeginPlay();
 

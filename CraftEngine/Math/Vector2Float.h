@@ -4,6 +4,8 @@
 
 namespace Craft
 {
+	constexpr float EPSILON = 0.00001f;
+
 	class Vector2Int;
 
 	class CRAFT_API Vector2Float

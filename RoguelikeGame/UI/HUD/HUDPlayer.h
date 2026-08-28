@@ -39,6 +39,7 @@ public:
 	void ChangeFloorLevel(int newFloorLevel);
 	void ChangeMonsterKillNum(int newKillNum);
 	void ChangePlayerHealthValue(float current, float maxValue);
+	void ChangePlayerManaValue(float current, float maxValue);
 	void UpdateItemListIcon(const ItemBase& item);
 	void SetStartPlayTime(LARGE_INTEGER startTime);
 	void SetGamePause(bool bPause);
@@ -56,6 +57,8 @@ private:
 	std::weak_ptr<Craft::TextBlock> textBlockKillNum;
 	std::weak_ptr<Craft::ImageWidget> imageHealthIcon;
 	std::weak_ptr<Craft::ProgressBar> healthProgressBar;
+	std::weak_ptr<Craft::ImageWidget> imageManaIcon;
+	std::weak_ptr<Craft::ProgressBar> manaProgressBar;
 	std::weak_ptr<Craft::ImageWidget> imageItemIcon;
 	std::weak_ptr<Craft::TextBlock> textBlockItemList;
 	std::weak_ptr<Craft::ImageWidget> imageControlIcon;

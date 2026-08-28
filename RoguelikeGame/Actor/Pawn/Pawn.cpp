@@ -1,7 +1,7 @@
 ﻿#include "Pawn.h"
 #include "Types/Enums.h"
 #include "Component/SpriteRendererComponent.h"
-#include "Component/AttributeComponent.h"
+#include "Component/Attribute/AttributeComponent.h"
 #include "Component/AbilitySystemComponent.h"
 #include "Actor/MapObject/RoomDoor.h"
 #include "Actor/Projectile/Projectile.h"
@@ -14,21 +14,25 @@ using namespace Craft;
 Pawn::Pawn(const Craft::Vector2Int& position,
 			const std::wstring& image,
 			Craft::Color color,
-			float initialHealth,
 			eTeamID inTeamID)
 	:super(position)
 	,teamID(inTeamID)
 {
 	// 필요한 컴포넌트 추가.
 	AddComponent<SpriteRendererComponent>(image, color, static_cast<int>(eRenderSortingOrder::Pawn));
-
-	attributeComponent = AddComponent<AttributeComponent>(initialHealth);
-	assert(attributeComponent && "Invalid attributeComponent");
-	attributeComponent->SetOutofHealthCallback(std::bind(&Pawn::OnOutOfHealth, this));
-	attributeComponent->SetChangeHealthValueCallback(std::bind(&Pawn::OnChangeHealthValue, this, std::placeholders::_1, std::placeholders::_2));
-
+	
 	abilitySystemComponent = AddComponent<AbilitySystemComponent>();
 	assert(abilitySystemComponent && "Invalid AbilitySystemComponent");
+}
+
+void Pawn::Initialize()
+{
+	/* Pawn마다 다른 attribute component 생성 */
+	attributeComponent = CreateAttributeComponent();
+	assert(attributeComponent && "Invalid attributeComponent");
+
+	/* Health Value 변화에 따른 콜백 설정 */
+	attributeComponent->SetChangeHealthEventCallback(std::bind(&Pawn::OnChangeHealthValue, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void Pawn::BeginPlay()
@@ -40,6 +44,7 @@ void Pawn::BeginPlay()
 
 void Pawn::Destroy()
 {
+	/* TODO : Destory과정에서 모든 Ability 중단? */
 	if (abilitySystemComponent)
 	{
 		abilitySystemComponent->AllAbilitiesTriggerOff();
@@ -79,12 +84,13 @@ bool Pawn::IsBlockActor(std::shared_ptr<Actor> otherActor)
 
 void Pawn::InitializeHealthValue(const float currentHealth, const float maxHealth)
 {
-	if (!attributeComponent)
-	{
-		return;
-	}
+	assert(attributeComponent && "Invalid attributeComponent");
 
-	attributeComponent->InitializeHealthValue(currentHealth, maxHealth);
+	/* 초기 속성 값 설정 */
+	attributeComponent->InitialHealth(currentHealth, maxHealth);
+
+	/* 초기 사망 설정 */
+	bDeath = attributeComponent->GetCurrentHealth() > 0.f;
 }
 
 void Pawn::SetHealthChangeEventCallback(OnChangeHealthType callback)
@@ -104,7 +110,7 @@ void Pawn::TakeDamage(const float inDamage)
 		return;
 	}
 
-	attributeComponent->DecreaseCurrrentHealth(inDamage);
+	attributeComponent->SetCurrentHealth(attributeComponent->GetCurrentHealth() - inDamage);
 
 	int randomHitSoundIndex = Util::RandomRange(1, 3);
 	std::string hitSoundName = "Effect/hit" + std::to_string(randomHitSoundIndex) + ".wav";
@@ -118,17 +124,17 @@ void Pawn::AddHealthValue(const float inHealValue)
 		return;
 	}
 
-	attributeComponent->IncreaseCurrrentHealth(inHealValue);
+	attributeComponent->SetCurrentHealth(attributeComponent->GetCurrentHealth() + inHealValue);
 }
 
 bool Pawn::IsDeath() const
 {
-	if (!attributeComponent)
-	{
-		return false;
-	}
+	return bDeath;
+}
 
-	return attributeComponent->GetCurrentHealth() <= 0;
+std::shared_ptr<AttributeComponent> Pawn::CreateAttributeComponent()
+{
+	return AddComponent<AttributeComponent>();
 }
 
 /* 원거리 공격 범위 지정 */
@@ -170,6 +176,8 @@ void Pawn::OnDeath()
 		onDeathEvent(std::static_pointer_cast<Pawn>(shared_from_this()));
 	}
 
+	/* TODO : 모든 Ability 활성화 중지 */
+
 	/* 모든 Ability Trigger OFF */
 	if (abilitySystemComponent)
 	{
@@ -177,8 +185,10 @@ void Pawn::OnDeath()
 	}
 }
 
-void Pawn::OnOutOfHealth()
+void Pawn::SetDeath()
 {
+	bDeath = true;
+
 	OnDeath();
 
 	Destroy();
@@ -186,8 +196,15 @@ void Pawn::OnOutOfHealth()
 
 void Pawn::OnChangeHealthValue(float currentValue, float maxValue)
 {
-	if (onChangeHealthEvent)
+	if (currentValue > 0.f)
 	{
-		onChangeHealthEvent(currentValue, maxValue);
+		if (onChangeHealthEvent)
+		{
+			onChangeHealthEvent(currentValue, maxValue);
+		}
+	}
+	else
+	{
+		SetDeath();
 	}
 }

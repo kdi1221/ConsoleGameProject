@@ -105,15 +105,28 @@ void HUDPlayer::InitializeHUD(std::weak_ptr<Craft::Level> activeLevel)
 	assert(healthBar && "healthBar invalid..");
 	healthProgressBar = healthBar;
 
+	/* 현재 플레이어 마나 아이콘 표시 */
+	const Vector2Int positionManaIcon(ViewWidth + 2, 17);
+	std::shared_ptr<ImageWidget> manaIcon = currentLevel->CreateWidget<ImageWidget>(positionManaIcon, L"◈", Color::LightBlue);
+	assert(manaIcon && "manaIcon Invalid..");
+	imageManaIcon = manaIcon;
+
+	/* 현재 플레이어 마나 바 표시 */
+	const Vector2Int positionManaProgressbar(ViewWidth + 5, 17);
+	const int manaProgressbarWidth = configBase.GetDisplayWidth() - ViewWidth - 9;
+	std::shared_ptr<ProgressBar> manaBar = currentLevel->CreateWidget<ProgressBar>(positionManaProgressbar, manaProgressbarWidth, Color::DarkGray, Color::LightBlue);
+	assert(manaBar && "manaBar invalid..");
+	manaProgressBar = manaBar;
+
 	/* 아이템 리스트 아이콘 */
-	const Vector2Int positionItemIcon(ViewWidth + 2, 17);
+	const Vector2Int positionItemIcon(ViewWidth + 2, 20);
 	std::shared_ptr<ImageWidget> itemIcon = currentLevel->CreateWidget<ImageWidget>(positionItemIcon, L"♠", Color::BrightYellow);
 	assert(itemIcon && "ItemIcon Invalid..");
 	imageItemIcon = itemIcon;
 
 	/* 아이템 리스트 이름 표시 */
 	const int widthWidgetItemList = 12;
-	const Vector2Int positionWidgetItemList(ViewWidth + 5, 17);
+	const Vector2Int positionWidgetItemList(ViewWidth + 5, 20);
 	std::shared_ptr<TextBlock> createdItemListText = currentLevel->CreateWidget<TextBlock>(positionWidgetItemList, widthWidgetItemList);
 	assert(createdItemListText && "Item List Text Invalid..");
 	createdItemListText->SetTextValue(L"Ability List");
@@ -179,6 +192,17 @@ void HUDPlayer::ChangeMonsterKillNum(int newKillNum)
 void HUDPlayer::ChangePlayerHealthValue(float current, float maxValue)
 {
 	std::shared_ptr<ProgressBar> progressbar = healthProgressBar.lock();
+	if (!progressbar)
+	{
+		return;
+	}
+
+	progressbar->SetValue(current, maxValue);
+}
+
+void HUDPlayer::ChangePlayerManaValue(float current, float maxValue)
+{
+	std::shared_ptr<ProgressBar> progressbar = manaProgressBar.lock();
 	if (!progressbar)
 	{
 		return;

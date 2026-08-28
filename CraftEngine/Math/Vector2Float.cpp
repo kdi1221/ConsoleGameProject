@@ -6,8 +6,6 @@
 
 namespace Craft
 {
-	constexpr float EPSILON = 0.00001f;
-
 	Vector2Float Vector2Float::Zero(0.f, 0.f);
 	Vector2Float Vector2Float::One(1.f, 1.f);
 	Vector2Float Vector2Float::Right(1.f, 0.f);

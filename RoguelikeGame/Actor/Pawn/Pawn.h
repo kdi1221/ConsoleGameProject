@@ -19,12 +19,12 @@ public:
 	Pawn(const Craft::Vector2Int& position,
 		const std::wstring& image,
 		Craft::Color color,
-		float initialHealth,
 		eTeamID inTeamID);
 
 	~Pawn() = default;
 
 public:
+	virtual void Initialize() override;
 	virtual void BeginPlay() override;
 	virtual void Destroy() override;
 
@@ -34,9 +34,17 @@ public:
 public:
 	/* 체력 초기화 */
 	void InitializeHealthValue(const float currentHealth, const float maxHealth);
+
+	/* 체력 변경 이벤트 콜백 바인딩 */
 	void SetHealthChangeEventCallback(OnChangeHealthType callback);
+
+	/* 사망 이벤트 콜백 바인딩 */
 	void SetDeathEventCallback(OnDeathEventType deathEventCallback);
+
+	/* 데미지 처리 함수 */
 	void TakeDamage(const float inDamage);
+
+	/* 체력 회복 함수 */
 	void AddHealthValue(const float inHealValue);
 
 public:
@@ -51,6 +59,9 @@ public:
 
 protected:
 	inline std::shared_ptr<AbilitySystemComponent> GetAbilitySystemComponent() const { return abilitySystemComponent; }
+
+protected:
+	virtual std::shared_ptr<AttributeComponent> CreateAttributeComponent();
 
 protected:
 	/* 원거리 공격 범위 지정 */
@@ -73,8 +84,8 @@ protected:
 	virtual void OnDeath();
 
 private:
-	/* Health가 0이하일때 호출되는 이벤트 */
-	void OnOutOfHealth();
+	/* Pawn 사망 설정 */
+	void SetDeath();
 
 	/* Health 값 업데이트 이벤트 */
 	void OnChangeHealthValue(float currentValue, float maxValue);
@@ -82,6 +93,9 @@ private:
 private:
 	/* 소속된 팀 ID */
 	eTeamID teamID = eTeamID::None;
+
+	/* 사망 여부 */
+	bool bDeath = false;
 	
 	/* 원거리 공격 범위 */
 	float fireRange = 0.f;

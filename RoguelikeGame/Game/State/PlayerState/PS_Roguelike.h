@@ -59,6 +59,9 @@ private:
 	/* 플레이어의 체력 업데이트 */
 	void OnUpdatePlayerHealth(float currentValue, float maxValue);
 
+	/* 플레이어의 마나 업데이트 */
+	void OnUpdatePlayerMana(float currentValue, float maxValue);
+
 	/* 플레이어가 특정 아이템을 획득할때 호출 */
 	void OnPlayerItemGain(int itemID);
 
@@ -87,6 +90,12 @@ private:
 
 	/* 플레이어의 최대 체력 */
 	float playerMaxHealth = 0.f;
+
+	/* 플레이어의 현재 마나 */
+	float playerCurrentMana = 0.f;
+
+	/* 플레이어의 최대 마나 */
+	float playerMaxMana = 0.f;
 
 	/* 플레이어가 배운 스킬들(abilityID - PlayerAbilityInfo) */
 	std::unordered_map<int, std::unique_ptr<PlayerAbilityInfo>> mapGrantedAbilities;

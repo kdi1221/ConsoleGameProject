@@ -1,24 +1,16 @@
 ﻿#include "AbilityShotSpiritBall.h"
-
 #include "Actor/Projectile/Projectile.h"
-#include "Actor/Pawn/Pawn.h"
+#include "Actor/Pawn/Player/PlayerPawn.h"
 #include <Level/Level.h>
 #include <cassert>
-
-
-#include <windows.h>
 
 using namespace Craft;
 
 AbilityShotSpiritBall::AbilityShotSpiritBall(ABILITY_ID_TYPE id, int level)
 	:super(id, level)
 {
-
-}
-
-AbilityShotSpiritBall::~AbilityShotSpiritBall()
-{
-
+	SetCooldownTime(0.5f);
+	SetManaCost(5.f);
 }
 
 void AbilityShotSpiritBall::ActivateAbility()
@@ -54,7 +46,6 @@ void AbilityShotSpiritBall::ActivateAbility()
 		fireAngles.push_back(+currentSpreadAngle);
 	}
 
-
 	for (float fireAngle : fireAngles)
 	{
 		/* 현재 각도에서의 발사 방향 */
@@ -79,16 +70,4 @@ void AbilityShotSpiritBall::ActivateAbility()
 
 
 	EndAbility(false);
-}
-
-void AbilityShotSpiritBall::EndAbility(bool bCancelAbility)
-{
-	super::EndAbility(bCancelAbility);
-
-	OutputDebugStringA("TODO : End Ability\n");
-}
-
-void AbilityShotSpiritBall::CancelAbility()
-{
-	super::CancelAbility();
 }

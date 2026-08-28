@@ -28,9 +28,12 @@ void PS_Roguelike::InitializeSessionData()
 	killMonsterNum = 0;
 	playerMaxHealth = 100.f;
 	playerCurrentHealth = playerMaxHealth;
+	playerMaxMana = 100.f;
+	playerCurrentMana = playerMaxMana;
 
 	/* 초기 Ability */
 	GrantAbilityToPlayer(1, 2, VK_RBUTTON);
+	GrantAbilityToPlayer(2, 1, '1');
 
 	/* 초기 아이템 */
 	//OnPlayerItemGain(1);
@@ -62,8 +65,10 @@ void PS_Roguelike::OnSpawnedPlayerPawn(std::weak_ptr<PlayerPawn> pawn)
 	assert(currentPlayerPawn && "Invalid PlayerPawn");
 	currentPlayerPawn->InitializeHealthValue(playerCurrentHealth, playerMaxHealth);
 	currentPlayerPawn->SetHealthChangeEventCallback(std::bind(&PS_Roguelike::OnUpdatePlayerHealth, this, std::placeholders::_1, std::placeholders::_2));
+	currentPlayerPawn->InitializeManaValue(playerCurrentMana, playerMaxMana);
+	currentPlayerPawn->SetManaChangeEventCallback(std::bind(&PS_Roguelike::OnUpdatePlayerMana, this, std::placeholders::_1, std::placeholders::_2));
 	currentPlayerPawn->SetOnItemGainEvent(std::bind(&PS_Roguelike::OnPlayerItemGain, this, std::placeholders::_1));
-
+	
 	InitializeHUD();
 
 	/* 경과 시간 설정 */
@@ -72,6 +77,7 @@ void PS_Roguelike::OnSpawnedPlayerPawn(std::weak_ptr<PlayerPawn> pawn)
 	/* 세션 데이터들을 새로 만든 위젯에 다시 갱신해준다. */
 	OnUpdateMonsterKillNum();
 	OnUpdatePlayerHealth(playerCurrentHealth, playerMaxHealth);
+	OnUpdatePlayerMana(playerCurrentMana, playerMaxMana);
 
 	/* 플레이어에게 부여된 스킬 업데이트 */
 	for (const auto& iterAbility : mapGrantedAbilities)
@@ -148,6 +154,18 @@ void PS_Roguelike::OnUpdatePlayerHealth(float currentValue, float maxValue)
 	if (hudPlayer)
 	{
 		hudPlayer->ChangePlayerHealthValue(playerCurrentHealth, playerMaxHealth);
+	}
+}
+
+void PS_Roguelike::OnUpdatePlayerMana(float currentValue, float maxValue)
+{
+	playerCurrentMana = currentValue;
+	playerMaxMana = maxValue;
+
+	HUDPlayer* hudPlayer = GetHUD<HUDPlayer>();
+	if (hudPlayer)
+	{
+		hudPlayer->ChangePlayerManaValue(playerCurrentMana, playerMaxMana);
 	}
 }
 

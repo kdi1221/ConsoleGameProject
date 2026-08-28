@@ -17,7 +17,10 @@ public:
 	virtual ~AbilitySystemComponent();
 
 public:
-	virtual void PostTick(float deltaTime) override;
+	//virtual void PostTick(float deltaTime) override;
+
+	/* Ability 별 Tick */
+	virtual void Tick(float deltaTime) override;
 
 	/* Ability 별 상태 Draw */
 	virtual void Draw() override;

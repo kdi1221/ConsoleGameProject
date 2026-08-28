@@ -84,7 +84,7 @@
     <ClCompile Include="Game\State\PlayerState\PS_Roguelike.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Component\AttributeComponent.cpp">
+    <ClCompile Include="Component\Attribute\AttributeComponent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Navigation\NavigationTilemap.cpp">
@@ -204,6 +204,12 @@
     <ClCompile Include="Actor\Projectile\Projectile.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Component\Attribute\PlayerAttributeComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability\PlayerAbility\AbilityFrozenOrb.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Level\TestLevel.h">
@@ -281,7 +287,7 @@
     <ClInclude Include="Game\State\PlayerState\PS_Roguelike.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Component\AttributeComponent.h">
+    <ClInclude Include="Component\Attribute\AttributeComponent.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Navigation\NavigationTilemap.h">
@@ -408,6 +414,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Actor\Projectile\Projectile.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Attribute\PlayerAttributeComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\PlayerAbility\AbilityFrozenOrb.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
