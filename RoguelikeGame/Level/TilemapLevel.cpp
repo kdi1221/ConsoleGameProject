@@ -9,6 +9,8 @@
 #include "Actor/Pawn/Player/PlayerPawn.h"
 #include "Actor/Bullet/Bullet.h"
 #include "Camera/CameraManager.h"
+#include <StaticLibrary/StaticFunctionLibrary.h>
+#include <queue>
 #include <cassert>
 #include <Memory>
 
@@ -369,6 +371,28 @@ CheckBlockingResult TilemapLevel::CheckBlocking(std::shared_ptr<Craft::Actor> ch
 	return CheckBlockingResult::NoBlock;
 }
 
+std::shared_ptr<Pawn> TilemapLevel::GetPawnOnTile(const Craft::Vector2Int& tileCoord) const
+{
+	const auto findIterActorListOnTile = mapActorListOnTilemap.find(tileCoord);
+	if (findIterActorListOnTile != mapActorListOnTilemap.end())
+	{
+		const std::vector<std::weak_ptr<ActorOnTile>>& actorListOnTile = findIterActorListOnTile->second;
+		for (const std::weak_ptr<ActorOnTile>& actorOnTile : actorListOnTile)
+		{
+			std::shared_ptr<ActorOnTile> checkAnotherActor = actorOnTile.lock();
+			if (!checkAnotherActor || !checkAnotherActor->IsTypeOf<Pawn>())
+			{
+				/* 유효하지 않거나 Pawn타입이 아니면 Continue */
+				continue;
+			}
+
+			return Cast<Pawn>(checkAnotherActor);
+		}
+	}
+
+	return {};
+}
+
 const Room* TilemapLevel::GetPostionInRoom(const Craft::Vector2Int& checkPosition) const
 {
 	if (!tileMap)
@@ -406,6 +430,94 @@ RoomDefines::UNIQUE_INDEX_TYPE TilemapLevel::GetRoomIndexInTile(const Craft::Vec
 	}
 
 	return tileMap->GetTileRoomIndex(position);
+}
+
+void TilemapLevel::GetAvailableTilesInRange(std::shared_ptr<Actor> checkActor,
+										const int checkRange,
+										std::vector<Vector2Int>& outerPoints,
+										std::vector<Vector2Int>& innerPoints,
+										const float aspectRatio) const
+{
+	if (!checkActor)
+	{
+		return;
+	}
+
+	/* 타일 내 블로킹 체크할때 반환되는 Actor 포인터 */
+	std::shared_ptr<ActorOnTile> blockingActor;
+
+	/* 실제 체크할 Range는 제곱해줘야함(sqrt 배제) */
+	const float checkRangeSquare = static_cast<float>(checkRange * checkRange);
+
+	/* 외곽 체크용 Range 바로 안쪽의 반지름 제곱값 */
+	const float innerThreshold = static_cast<float>((checkRange - 2) * (checkRange - 2));
+
+	/* 체크할 Actor의 좌표(중심 위치) */
+	const Vector2Int& centerPos = checkActor->GetWorldPosition();
+
+	/* 탐색된 타일 정보 */
+	std::unordered_set<Vector2Int> exploredTileCoords;
+
+	//탐색 대상 타일 queue
+	std::queue<Vector2Int> queueTileCoords;
+
+	/*최초 중심위치를 큐에 삽입 */
+	queueTileCoords.push(centerPos);
+
+	/* 최초 중심위치를 탐색되었다고 마크 */
+	exploredTileCoords.insert(centerPos);
+
+	/* 중심점 좌표는 내부 포인트에 저장 */
+	innerPoints.emplace_back(centerPos);
+
+	while (!queueTileCoords.empty())
+	{
+		const Vector2Int popTileCoord = queueTileCoords.front();
+		queueTileCoords.pop();
+
+		/* 타일 주위 8방면을 탐색 대상으로 추가 */
+		for (const auto& iterDirection : DIRECTION_INT)
+		{
+			/* 다음 탐색할 대상 타일 위치 */
+			const Vector2Int nextTilePos = popTileCoord + iterDirection.second;
+
+			/* 다음 탐색할 타일이 이미 탐색한 위치면 넘어가기 */
+			if (exploredTileCoords.find(nextTilePos) != exploredTileCoords.end())
+			{
+				continue;
+			}
+
+			/* 다음 탐색할 타일이 범위안에 있는지 확인 (종횡비 보정 적용) */
+			const float dx = static_cast<float>(nextTilePos.x - centerPos.x); 
+			const float dy = static_cast<float>(nextTilePos.y - centerPos.y) * aspectRatio;
+			const float distanceLength = (dx * dx) + (dy * dy);
+			if (distanceLength > checkRangeSquare)
+			{
+				continue;
+			}
+
+			/* 현재 체크중인 타일이 벽이거나 충돌대상이있는지 확인 */
+			if (CheckBlockingResult::NoBlock != CheckBlocking(checkActor, nextTilePos, blockingActor))
+			{
+				continue;
+			}
+
+			/* 탐색된 타일 정보에 추가 */
+			exploredTileCoords.insert(nextTilePos);
+
+			/* 유효한 타일이므로 타일 인덱스에 추가(외곽, 내부 구분) */
+			if (distanceLength > innerThreshold)
+			{
+				outerPoints.emplace_back(nextTilePos);
+			}
+			else
+			{
+				innerPoints.emplace_back(nextTilePos);
+			}
+
+			queueTileCoords.push(nextTilePos);
+		}
+	}
 }
 
 void TilemapLevel::BuildTilemapBSP()

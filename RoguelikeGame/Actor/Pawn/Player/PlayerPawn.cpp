@@ -12,6 +12,7 @@
 #include "Actor/FieldItem/FieldSkillItem.h"
 #include "Item/ItemData/ItemDataTable.h"
 #include "Game/State/GameMode/GM_Roguelike.h"
+#include "StaticLibrary/StaticFunctionLibrary.h"
 #include <Engine/Engine.h>
 #include <Engine/Config/ConfigBase.h>
 #include <Core/Input.h>
@@ -214,18 +215,7 @@ void PlayerPawn::OnMoveKeyInput(int keyCode, eInputTrigger inputTrigger)
 		Vector2Float toCursorPosDirection = static_cast<Vector2Float>(cursorWorldPos - currentPos);
 		toCursorPosDirection.Normalize();
 
-		float maxDot = -1.f;
-		for (const auto& moveDirection : MOVE_DIRECTION)
-		{
-			const Vector2Float& currentDirection = moveDirection.second;
-			float dotResult = currentDirection.DotProduct(toCursorPosDirection);
-
-			if (dotResult > maxDot)
-			{
-				maxDot = dotResult;
-				newMoveDirection = moveDirection.first;
-			}
-		}
+		newMoveDirection = StaticFunctionLibrary::GetNearestDirection(toCursorPosDirection);
 	}
 	else
 	{

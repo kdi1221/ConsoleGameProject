@@ -1,6 +1,7 @@
 ﻿#include "RoomDoor.h"
 #include "Actor/Pawn/Pawn.h"
 #include "Actor/Projectile/Projectile.h"
+#include "Actor/SkillObject/SkillObjectActor.h"
 #include <cassert>
 
 RoomDoor::RoomDoor(const Craft::Vector2Int& position)
@@ -21,6 +22,12 @@ bool RoomDoor::IsBlockActor(std::shared_ptr<Actor> otherActor)
 
 	/* Projectile와는 Blocking */
 	if (otherActor->IsTypeOf<Projectile>())
+	{
+		return true;
+	}
+
+	/* SkillObject와는 Blocking */
+	if (otherActor->IsTypeOf<SkillObject>())
 	{
 		return true;
 	}

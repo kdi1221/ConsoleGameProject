@@ -6,6 +6,7 @@
 //Ability 객체 생성을 위한 헤더파일 포함
 #include "PlayerAbility/AbilityShotSpiritBall.h"
 #include "PlayerAbility/AbilityFrozenOrb.h"
+#include "PlayerAbility/AbilityNova.h"
 
 std::unique_ptr<AbilityObject> AbilityObject::CreateNewAbility(const ABILITY_ID_TYPE abilityID, int abilityLevel)
 {
@@ -17,6 +18,9 @@ std::unique_ptr<AbilityObject> AbilityObject::CreateNewAbility(const ABILITY_ID_
 
 	case 2:
 		return std::make_unique<AbilityFrozenOrb>(abilityID, abilityLevel);
+
+	case 3:
+		return std::make_unique<AbilityNova>(abilityID, abilityLevel);
 	}
 
 	return nullptr;

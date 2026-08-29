@@ -111,6 +111,9 @@
     <ClCompile Include="Component\ProjectileMoveComponent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Component\MultiSpriteRendererComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Engine.h">
@@ -219,6 +222,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Component\ProjectileMoveComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\MultiSpriteRendererComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Defines\Enums.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Defines\Consts.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

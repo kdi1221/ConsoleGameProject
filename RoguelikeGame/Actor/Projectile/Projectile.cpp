@@ -10,8 +10,6 @@
 using namespace Craft;
 
 Projectile::Projectile(const Vector2Int& inPosition,
-						const std::wstring& inImage,
-						Craft::Color inColor,
 						const float moveSpeed,
 						const eTeamID teamID,
 						float damageValue)
@@ -20,7 +18,6 @@ Projectile::Projectile(const Vector2Int& inPosition,
 	,instigatorTeamID(teamID)
 	,damageValue(damageValue)
 {
-	spriteComponent = AddComponent<SpriteRendererComponent>(inImage, inColor, static_cast<int>(eRenderSortingOrder::Projectile));
 	projectileMoveComponent = AddComponent<ProjectileMoveComponent>(moveSpeed);
 }
 

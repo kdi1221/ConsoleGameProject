@@ -5,6 +5,7 @@
 #include "Types/Defines.h"
 #include <Memory>
 #include <map>
+#include <unordered_set>
 #include <unordered_map>
 #include <functional>
 
@@ -16,6 +17,7 @@ namespace Craft
 class Tilemap;
 class Room;
 class PlayerStart;
+class Pawn;
 class PlayerPawn;
 class ActorOnTile;
 
@@ -116,6 +118,9 @@ public:
 										const Craft::Vector2Int& tileCoord,
 										std::shared_ptr<ActorOnTile>& outBlockingActor) const;
 
+	/* 해당 위치에 존재하는 Pawn찾아서 반환 */
+	std::shared_ptr<Pawn> GetPawnOnTile(const Craft::Vector2Int& tileCoord) const;
+
 	/* 해당 위치가 속한 방 반환 */
 	const Room* GetPostionInRoom(const Craft::Vector2Int& checkPosition) const;
 
@@ -124,6 +129,13 @@ public:
 
 	/* 해당 위치의 타일이 속한 방 인덱스 반환 */
 	RoomDefines::UNIQUE_INDEX_TYPE GetRoomIndexInTile(const Craft::Vector2Int& position) const;
+
+	/* Actor를 중심으로 주변 내 빈 Ground Tile 반환(BFS) */
+	void GetAvailableTilesInRange(std::shared_ptr<Craft::Actor> checkActor,
+								const int checkRange,
+								std::vector<Craft::Vector2Int>& outerPoints,
+								std::vector<Craft::Vector2Int>& innerPoints,
+								const float aspectRatio = 1.3f) const;
 
 private:
 	/* BSP를 활용한 랜덤타일맵 생성 */

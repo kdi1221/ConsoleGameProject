@@ -8,3 +8,5 @@ namespace RoomDefines
 
 using ABILITY_ID_TYPE = int;
 constexpr ABILITY_ID_TYPE INVALID_ABILITY_ID = 0;
+
+using PawnUniqueIDType = unsigned long long;

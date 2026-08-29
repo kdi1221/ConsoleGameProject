@@ -38,11 +38,9 @@ class Projectile : public Craft::Actor
 
 public:
 	Projectile(const Craft::Vector2Int& inPosition,
-		const std::wstring& inImage,
-		Craft::Color inColor,
-		const float moveSpeed,
-		const eTeamID teamID,
-		float damageValue);
+				const float moveSpeed,
+				const eTeamID teamID,
+				float damageValue);
 	virtual ~Projectile() = default;
 
 public:
@@ -92,9 +90,6 @@ private:
 	eProjectileCollisionFlags collisionFlags = eProjectileCollisionFlags::BlockWall | eProjectileCollisionFlags::BlockActor;
 
 private:
-	/* 발사체 표시 Sprite Component */
-	std::shared_ptr<Craft::SpriteRendererComponent> spriteComponent;
-
 	/* 발사체 이동 Component */
 	std::shared_ptr<Craft::ProjectileMoveComponent> projectileMoveComponent;
 };

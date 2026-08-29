@@ -216,6 +216,18 @@
     <ClCompile Include="Actor\Projectile\FrozenOrb\ProjectileIceBolt.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Actor\Projectile\SpiritBall\ProjectileSpiritBall.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability\PlayerAbility\AbilityNova.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\SkillObject\AbilityNovaActor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\SkillObject\SkillObjectActor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Level\TestLevel.h">
@@ -432,6 +444,18 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Actor\Projectile\FrozenOrb\ProjectileIceBolt.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Projectile\SpiritBall\ProjectileSpiritBall.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\PlayerAbility\AbilityNova.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\SkillObject\AbilityNovaActor.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\SkillObject\SkillObjectActor.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

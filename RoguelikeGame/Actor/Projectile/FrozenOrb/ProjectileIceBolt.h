@@ -5,6 +5,9 @@
 namespace Craft
 {
 	class Vector2Int;
+	class SpriteRendererComponent;
+
+	enum class eDirection : unsigned int;
 }
 
 /* 프로즌 오브 구체 중심으로 퍼져나가는 얼음살 */
@@ -19,5 +22,12 @@ public:
 					float damageValue);
 
 	virtual ~ProjectileIceBolt() = default;
+
+public:
+	void SetIceBoltImage(const Craft::eDirection direction);
+
+private:
+	/* 발사체 표시 Sprite Component */
+	std::shared_ptr<Craft::SpriteRendererComponent> spriteComponent;
 };
 

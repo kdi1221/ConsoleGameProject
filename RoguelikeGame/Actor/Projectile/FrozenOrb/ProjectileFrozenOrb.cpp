@@ -1,8 +1,12 @@
 ﻿#include "ProjectileFrozenOrb.h"
 #include "ProjectileIceBolt.h"
+#include <Component/SpriteRendererComponent.h>
 #include <Math/Vector2Float.h>
 #include <Level/Level.h>
+#include <StaticLibrary/StaticFunctionLibrary.h>
 #include <cassert>
+#include <Util/Util.h>
+#include <Engine/Engine.h>
 
 using namespace Craft;
 
@@ -11,8 +15,10 @@ ProjectileFrozenOrb::ProjectileFrozenOrb(const Vector2Int& inPosition,
 										const eTeamID teamID, 
 										float damageValue,
 										float spawnIceboltDelay)
-	:super(inPosition, L"•", Color::LightBlue, moveSpeed, teamID, damageValue)
+	:super(inPosition, moveSpeed, teamID, damageValue)
 {
+	spriteComponent = AddComponent<SpriteRendererComponent>(L"●", Color::BrightWhite, static_cast<int>(eRenderSortingOrder::Projectile_FX));
+
 	SetCollisionDestroyFlags(eProjectileCollisionFlags::BlockWall);
 
 	timerSpawnIceBoltDelay.SetTargetTime(spawnIceboltDelay);
@@ -91,8 +97,15 @@ void ProjectileFrozenOrb::SpawnIceBolts()
 		/* 생성된 얼음살의 이동 방향 지정 */
 		spawnedIceBolt->SetMoveDirection(rotateDirection);
 
+		/* 생성된 얼음살의 방향에 따른 이미지 지정 */
+		spawnedIceBolt->SetIceBoltImage(StaticFunctionLibrary::GetNearestDirection(rotateDirection));
+
 		/* 생성된 얼음살의 LifeSpan 지정 */
 		spawnedIceBolt->SetLifeSpan(1.f);
 	}
 
+	/* 얼음살 생성 사운드 재생 */
+	const int randomHitSoundIndex = Util::RandomRange(1, 3);
+	std::string hitSoundName = "Effect/icespike" + std::to_string(randomHitSoundIndex) + ".wav";
+	Engine::Get().PlayOneShot(hitSoundName);
 }

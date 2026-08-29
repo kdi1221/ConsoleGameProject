@@ -14,12 +14,5 @@ public:
 public:
 	/* Ability 활성화 */
 	virtual void ActivateAbility() override;
-
-private:
-	/* 생성할 Projectile의 Image */
-	//std::wstring spawnProjectileImage = L"•";
-
-	/* 생성할 Projectile의 Color */
-	//Craft::Color spawnProjectileColor = Craft::Color::LightGreen;
 };
 

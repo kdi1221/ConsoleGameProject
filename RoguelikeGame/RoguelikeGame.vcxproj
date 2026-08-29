@@ -103,6 +103,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Ability\AbilityPeriodicDelay.cpp" />
     <ClCompile Include="Ability\Melee\AbilityMelee.cpp" />
     <ClCompile Include="Ability\PlayerAbility\AbilityFrozenOrb.cpp" />
+    <ClCompile Include="Ability\PlayerAbility\AbilityNova.cpp" />
     <ClCompile Include="Ability\PlayerAbility\AbilityShotSpiritBall.cpp" />
     <ClCompile Include="Ability\Shooter\Projectile\AbilityDarkBall.cpp" />
     <ClCompile Include="Ability\Shooter\Projectile\AbilityGoblinArrow.cpp" />
@@ -135,6 +136,9 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Actor\Projectile\FrozenOrb\ProjectileIceBolt.cpp" />
     <ClCompile Include="Actor\Projectile\Projectile.cpp" />
     <ClCompile Include="Actor\Projectile\FrozenOrb\ProjectileFrozenOrb.cpp" />
+    <ClCompile Include="Actor\Projectile\SpiritBall\ProjectileSpiritBall.cpp" />
+    <ClCompile Include="Actor\SkillObject\AbilityNovaActor.cpp" />
+    <ClCompile Include="Actor\SkillObject\SkillObjectActor.cpp" />
     <ClCompile Include="Component\AbilitySystemComponent.cpp" />
     <ClCompile Include="Component\Attribute\AttributeComponent.cpp" />
     <ClCompile Include="Component\Attribute\PlayerAttributeComponent.cpp" />
@@ -173,6 +177,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Ability\AbilityPeriodicDelay.h" />
     <ClInclude Include="Ability\Melee\AbilityMelee.h" />
     <ClInclude Include="Ability\PlayerAbility\AbilityFrozenOrb.h" />
+    <ClInclude Include="Ability\PlayerAbility\AbilityNova.h" />
     <ClInclude Include="Ability\PlayerAbility\AbilityShotSpiritBall.h" />
     <ClInclude Include="Ability\Shooter\Projectile\AbilityDarkBall.h" />
     <ClInclude Include="Ability\Shooter\Projectile\AbilityGoblinArrow.h" />
@@ -205,6 +210,9 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Actor\Projectile\FrozenOrb\ProjectileIceBolt.h" />
     <ClInclude Include="Actor\Projectile\Projectile.h" />
     <ClInclude Include="Actor\Projectile\FrozenOrb\ProjectileFrozenOrb.h" />
+    <ClInclude Include="Actor\Projectile\SpiritBall\ProjectileSpiritBall.h" />
+    <ClInclude Include="Actor\SkillObject\AbilityNovaActor.h" />
+    <ClInclude Include="Actor\SkillObject\SkillObjectActor.h" />
     <ClInclude Include="Component\AbilitySystemComponent.h" />
     <ClInclude Include="Component\Attribute\AttributeComponent.h" />
     <ClInclude Include="Component\Attribute\PlayerAttributeComponent.h" />

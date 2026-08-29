@@ -11,6 +11,22 @@
 
 using namespace Craft;
 
+PawnUniqueIDType Pawn::GenerateUnqueID()
+{
+	static PawnUniqueIDType currentID = 1;
+
+	PawnUniqueIDType allocUniqueID = currentID;
+
+	++currentID;
+	if (0 == currentID)
+	{
+		/* 계속 증가하다 순환되어 0이되면 1로 설정 */
+		currentID = 1;
+	}
+
+	return allocUniqueID;
+}
+
 Pawn::Pawn(const Craft::Vector2Int& position,
 			const std::wstring& image,
 			Craft::Color color,
@@ -18,6 +34,8 @@ Pawn::Pawn(const Craft::Vector2Int& position,
 	:super(position)
 	,teamID(inTeamID)
 {
+	uniqueID = GenerateUnqueID();
+
 	// 필요한 컴포넌트 추가.
 	AddComponent<SpriteRendererComponent>(image, color, static_cast<int>(eRenderSortingOrder::Pawn));
 	

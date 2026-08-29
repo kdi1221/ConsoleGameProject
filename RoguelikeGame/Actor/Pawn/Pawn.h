@@ -2,6 +2,7 @@
 
 #include "Actor/ActorOnTile.h"
 #include "Component/AbilitySystemComponent.h"
+#include "Types/Defines.h"
 #include <Math/Vector2Float.h>
 #include <functional>
 
@@ -14,6 +15,9 @@ class Pawn : public ActorOnTile
 public:
 	using OnDeathEventType = std::function<void(std::shared_ptr<Pawn>)>;
 	using OnChangeHealthType = std::function<void(float, float)>;
+
+private:
+	static PawnUniqueIDType GenerateUnqueID();
 
 public:
 	Pawn(const Craft::Vector2Int& position,
@@ -51,6 +55,7 @@ public:
 	bool IsDeath() const;
 
 public:
+	inline PawnUniqueIDType GetUniqueID() const { return uniqueID; }
 	inline eTeamID GetTeamID() const { return teamID; }
 	inline float GetFireRange() const { return fireRange; }
 	inline const Craft::Vector2Int& GetProjectileSpawnOffset() const { return projectileSpawnOffset; }
@@ -91,13 +96,16 @@ private:
 	void OnChangeHealthValue(float currentValue, float maxValue);
 
 private:
+	/* Pawn의 고유 유니크 ID */
+	PawnUniqueIDType uniqueID = 0;
+
 	/* 소속된 팀 ID */
 	eTeamID teamID = eTeamID::None;
 
 	/* 사망 여부 */
 	bool bDeath = false;
 	
-	/* 원거리 공격 범위 */
+	/* 원거리 공격 범위(폐기 예정) */
 	float fireRange = 0.f;
 
 	/* Projectile 스폰 시 Offset(타일 기반)*/

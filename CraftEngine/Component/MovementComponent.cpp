@@ -2,23 +2,12 @@
 #include "Actor/Actor.h"
 #include "Navigation/NavigationBase.h"
 #include "Engine/Engine.h"
+#include "Defines/Consts.h"
+#include "StaticLibrary/StaticFunctionLibrary.h"
 #include <cassert>
 
 namespace Craft
 {
-	const std::unordered_map<eDirection, Vector2Float> MOVE_DIRECTION =
-	{
-		{eDirection::Left, Vector2Float(-1.f, 0.f)},
-		{eDirection::Top, Vector2Float(0.f, -1.f)},
-		{eDirection::Right, Vector2Float(1.f, 0.f)},
-		{eDirection::Bottom, Vector2Float(0.f, 1.f)},
-
-		{eDirection::LeftTop, Vector2Float(-DIAGONAL_VALUE, -DIAGONAL_VALUE)},
-		{eDirection::RightTop, Vector2Float(DIAGONAL_VALUE, -DIAGONAL_VALUE)},
-		{eDirection::LeftBottom, Vector2Float(-DIAGONAL_VALUE, DIAGONAL_VALUE)},
-		{eDirection::RightBottom, Vector2Float(DIAGONAL_VALUE, DIAGONAL_VALUE)},
-	};
-
 	MovementComponent::MovementComponent(float inMoveSpeed)
 		:moveSpeed(inMoveSpeed)
 	{
@@ -136,7 +125,7 @@ namespace Craft
 			};
 
 		/* 이동값 계산(방향 * 속도 * 델타타임) */
-		const Vector2Float& moveDirection = MOVE_DIRECTION.at(currentMoveDirection);
+		const Vector2Float& moveDirection = DIRECTION.at(currentMoveDirection);
 		const float moveDistance = moveSpeed * deltaTime;
 
 		/* 처음 이동 시도 */

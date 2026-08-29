@@ -1,6 +1,7 @@
 ﻿#include "AbilityFrozenOrb.h"
 #include "Actor/Pawn/Pawn.h"
 #include "Actor/Projectile/FrozenOrb/ProjectileFrozenOrb.h"
+#include <Engine/Engine.h>
 #include <Level/Level.h>
 #include <cassert>
 
@@ -60,6 +61,9 @@ void AbilityFrozenOrb::ActivateAbility()
 
 	/* 생성되는 얼음살의 데미지 지정 */
 	spawnedOrbProjectile->SetSpawnIceBoltDamage(5.f);
+
+	/* 사운드 재생 */
+	Engine::Get().PlayOneShot("Effect/coldcast.wav");
 	
 	EndAbility(false);
 }

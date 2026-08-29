@@ -1,5 +1,5 @@
 ﻿#include "AbilityShotSpiritBall.h"
-#include "Actor/Projectile/Projectile.h"
+#include "Actor/Projectile/SpiritBall/ProjectileSpiritBall.h"
 #include "Actor/Pawn/Pawn.h"
 #include <Level/Level.h>
 #include <cassert>
@@ -52,9 +52,8 @@ void AbilityShotSpiritBall::ActivateAbility()
 		const Vector2Float rotateShootDirection = Vector2Float::RotateVector(static_cast<Vector2Float>(aimingDirection), fireAngle);
 
 		//Projectile 스폰
-		std::shared_ptr<Projectile> spawnedProjectile = ownerLevel->SpawnActor<Projectile>(spawnPosition,
-			spawnProjectileImage,
-			spawnProjectileColor,
+		std::shared_ptr<ProjectileSpiritBall> spawnedProjectile = ownerLevel->SpawnActor<ProjectileSpiritBall>(
+			spawnPosition,
 			60.f,
 			instigatorTeamID,
 			10.f);

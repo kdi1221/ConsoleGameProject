@@ -6,6 +6,7 @@
 namespace Craft
 {
 	class Vector2Int;
+	class SpriteRendererComponent;
 }
 
 /* 프로즌오브 중심 구체 */
@@ -57,6 +58,10 @@ private:
 
 	/* 얼음살 Damage */
 	float damageIceBolt = 5.f;
+
+private:
+	/* 구체 표시 Sprite Component*/
+	std::shared_ptr<Craft::SpriteRendererComponent> spriteComponent;
 
 };
 

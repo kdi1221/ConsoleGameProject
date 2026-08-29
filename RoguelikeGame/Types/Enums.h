@@ -103,6 +103,9 @@ enum class eRenderSortingOrder : int
 	//≈∫»Ø
 	Projectile,
 
+	//≈∫»Ø
+	Projectile_FX,
+
 	//∏  ªÛ¿« ø¿∫Í¡ß∆Æ
 	MapObject,
 
