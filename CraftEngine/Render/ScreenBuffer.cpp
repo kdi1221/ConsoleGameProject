@@ -129,7 +129,7 @@ namespace Craft
 		bufferSize.Y = static_cast<short>(screenSize.y);
 
 		COORD bufferPosition = {};
-		bufferPosition.X = 0;
+		bufferPosition.X = 0; 
 		bufferPosition.Y = 0;
 
 		//설정할 글자 영역

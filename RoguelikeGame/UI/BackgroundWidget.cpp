@@ -1,12 +1,15 @@
 ﻿#include "BackgroundWidget.h"
 #include "Render/Renderer.h"
 
+#include <UI/Widget/Image/ImageWidget.h>
+
 using namespace Craft;
 
 BackgroundWidget::BackgroundWidget(const Vector2Int& positionLT, int widgetWidth, int widgetHeight, Craft::Color color)
 	:super(positionLT, widgetWidth, widgetHeight)
 	,drawColor(color)
 {
+	
 }
 
 void BackgroundWidget::Draw()

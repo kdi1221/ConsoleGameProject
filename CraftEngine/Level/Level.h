@@ -73,7 +73,7 @@ namespace Craft
 			addRequestedwidgetList.emplace_back(createdWidget);
 
 			//Widget의 Owner 지정
-			createdWidget->SetOwner(weak_from_this());
+			createdWidget->SetOwnerLevel(weak_from_this());
 
 			return createdWidget;
 		}

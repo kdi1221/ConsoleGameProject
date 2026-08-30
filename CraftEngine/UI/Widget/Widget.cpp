@@ -17,6 +17,22 @@ namespace Craft
 
 	void Widget::BeginPlay()
 	{
+		if (hasBeganPlay)
+		{
+			return;
+		}
+
+		//자식 위젯들의 BeginPlay 호출
+		for (std::shared_ptr<Widget>& childWidget : widgetTree)
+		{
+			if (!childWidget || childWidget->HasBeganPlay())
+			{
+				continue;
+			}
+
+			childWidget->BeginPlay();
+		}
+
 		// 중복 호출 방지를 위해 설정.
 		hasBeganPlay = true;
 	}
@@ -28,6 +44,17 @@ namespace Craft
 		{
 			return;
 		}
+
+		//자식 위젯들 Tick 호출
+		for (std::shared_ptr<Widget>& childWidget : widgetTree)
+		{
+			if (!childWidget || !childWidget->IsActive())
+			{
+				continue;
+			}
+
+			childWidget->Tick(deltaTime);
+		}
 	}
 
 	void Widget::Draw()
@@ -37,10 +64,32 @@ namespace Craft
 		{
 			return;
 		}
+
+		//자식 위젯들 Draw 호출
+		for (std::shared_ptr<Widget>& childWidget : widgetTree)
+		{
+			if (!childWidget || !childWidget->IsActive())
+			{
+				continue;
+			}
+
+			childWidget->Draw();
+		}
 	}
 
 	void Widget::Destroy()
 	{
+		//자식 위젯들의 Destory 이벤트 호출 
+		for (std::shared_ptr<Widget>& childWidget : widgetTree)
+		{
+			if (!childWidget)
+			{
+				continue;
+			}
+
+			childWidget->Destroy();
+		}
+
 		// 삭제 예약
 		// 다음 프레임에 위젯이 레벨에서 제거됨.
 		hasExpired = true;
@@ -54,10 +103,37 @@ namespace Craft
 	void Widget::SetRenderSortingOrder(int order)
 	{
 		renderSortingOrder = order;
+
+		//자식 위젯들 Owner 설정
+		for (std::shared_ptr<Widget>& childWidget : widgetTree)
+		{
+			if (!childWidget)
+			{
+				continue;
+			}
+
+			childWidget->SetRenderSortingOrder(order);
+		}
 	}
 
-	void Widget::SetOwner(std::weak_ptr<Level> newOwner)
+	void Widget::SetOwnerLevel(std::weak_ptr<Level> newOwner)
 	{
-		owner = newOwner;
+		ownerLevel = newOwner;
+
+		//자식 위젯들 Owner 설정
+		for (std::shared_ptr<Widget>& childWidget : widgetTree)
+		{
+			if (!childWidget)
+			{
+				continue;
+			}
+
+			childWidget->SetOwnerLevel(newOwner);
+		}
+	}
+
+	void Widget::SetOwnerWidget(std::weak_ptr<Widget> newOwner)
+	{
+		ownerWidget = newOwner;
 	}
 }

@@ -2,16 +2,16 @@
 framerate = 120
 
 # screen width
-width = 150
+width = 180
 
 # screen height
-height = 40
+height = 60
 
 # View Width
-viewWidth = 120
+viewWidth = 150
 
 # View Height
-viewHeight = 40
+viewHeight = 60
 
 # tilemap width
 tilemapWidth = 800
