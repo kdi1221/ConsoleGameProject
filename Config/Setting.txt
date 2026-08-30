@@ -20,10 +20,10 @@ tilemapWidth = 800
 tilemapHeight = 600
 
 # BSP room min width(min 10)
-bspMinRoomWidth = 50;
+bspMinRoomWidth = 40;
 
 # BSP room min height(min 10)
-bspMinRoomHeight = 30;
+bspMinRoomHeight = 25;
 
 # BSP room Wall Thickness(min 2)
 bspRoomWallThickness = 2;

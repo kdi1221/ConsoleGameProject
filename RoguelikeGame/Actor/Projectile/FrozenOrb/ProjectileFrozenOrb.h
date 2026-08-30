@@ -1,7 +1,9 @@
 ﻿#pragma once
 
 #include "Actor/Projectile/Projectile.h"
+#include "Types/Defines.h"
 #include <Util/Timer.h>
+#include <unordered_set>
 
 namespace Craft
 {
@@ -25,6 +27,10 @@ public:
 
 public:
 	virtual void Tick(float deltaTime) override;
+
+private:
+	/* 다른 Actor와 충돌했을때 호출(true면 destroy, false면 유지) */
+	virtual bool OnBlockActor(std::shared_ptr<ActorOnTile> blockingActor) override;
 
 public:
 	/* 매 딜레이 얼음살 생성 수 지정 */
@@ -58,6 +64,9 @@ private:
 
 	/* 얼음살 Damage */
 	float damageIceBolt = 5.f;
+
+	/* 데미지를 준 Pawn 정보 저장(중복 데미지 처리 방지) */
+	std::unordered_set<PawnUniqueIDType> setDamagedPawns;
 
 private:
 	/* 구체 표시 Sprite Component*/

@@ -35,6 +35,7 @@ void PS_Roguelike::InitializeSessionData()
 	GrantAbilityToPlayer(1, 2, VK_RBUTTON);
 	GrantAbilityToPlayer(2, 1, '1');
 	GrantAbilityToPlayer(3, 1, '2');
+	GrantAbilityToPlayer(4, 1, '3');
 
 	/* 초기 아이템 */
 	//OnPlayerItemGain(1);

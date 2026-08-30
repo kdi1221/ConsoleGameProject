@@ -41,6 +41,10 @@ public:
 	/* 치트키용 : 다음 층으로 가는 방의 입구 타일 위치 반환 */
 	const Craft::Vector2Int& GetNextFloorRoomDoorPosition() const;
 
+public:
+	/* 전투방 내에서 전투 진행 여부 */
+	inline bool IsBattleRoomProcess() const { return bBattleRoomProcess; }
+
 private:
 	/* 플레이어 상태 객체 생성 */
 	virtual std::unique_ptr<Craft::PlayerState> CreatePlayerState() const override;
@@ -103,6 +107,9 @@ private:
 
 	/* BattleRoom에서 진행중일때 방 입구에 배치된 Door */
 	std::vector<std::shared_ptr<RoomDoor>> spawnedRoomDoors;
+
+	/* BattleRoom에서 전투 진행 여부 */
+	bool bBattleRoomProcess = false;
 
 	/* 현재 진행 층수 */
 	int currentFloorLevel = 0;

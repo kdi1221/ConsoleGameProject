@@ -11,25 +11,7 @@ namespace Craft
 	class ProjectileMoveComponent;
 }
 
-/* 발사체의 충돌 Destroy Flags */
-enum class eProjectileCollisionFlags : unsigned int
-{
-	None = 0,
-	BlockWall = 1 << 0,
-	BlockActor = 1 << 1,
-};
-
-//eProjectileCollisionFlags의 비트플래그동작을 위한 연산자 오버로딩
-inline constexpr eProjectileCollisionFlags operator|(eProjectileCollisionFlags lhs, eProjectileCollisionFlags rhs)
-{
-	return static_cast<eProjectileCollisionFlags>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
-}
-
-inline constexpr eProjectileCollisionFlags operator&(eProjectileCollisionFlags lhs, eProjectileCollisionFlags rhs)
-{
-	return static_cast<eProjectileCollisionFlags>(static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs));
-}
-
+class ActorOnTile;
 
 /* 게임 내 표시되는 모든 발사체들의 베이스 클래스 */
 class Projectile : public Craft::Actor
@@ -55,12 +37,19 @@ public:
 	/* Projectile의 수명 설정 */
 	void SetLifeSpan(float lifeTime);
 
-	/* Projectile의 충돌 Destroy 플래그 설정 */
-	void SetCollisionDestroyFlags(eProjectileCollisionFlags newFlags);
-
 public:
 	/* 발사체에 지정된 TeamID반환(피아식별) */
 	inline eTeamID GetInstigatorTeamID() const { return instigatorTeamID; }
+
+	/* 발사체의 데미지 */
+	inline float GetDamageValue() const { return damageValue; }
+
+protected:
+	/* 벽과 충돌했을때 호출(true면 destroy, false면 유지) */
+	virtual bool OnBlockWall();
+
+	/* 다른 Actor와 충돌했을때 호출(true면 destroy, false면 유지) */
+	virtual bool OnBlockActor(std::shared_ptr<ActorOnTile> blockingActor);
 
 protected:
 	/* 이동 방향 반환 */
@@ -85,9 +74,6 @@ private:
 
 	/* Projectile의 수명 타이머 */
 	Timer timerLifeSpan;
-
-	/* Projectile의 충돌 Destory 플래그 */
-	eProjectileCollisionFlags collisionFlags = eProjectileCollisionFlags::BlockWall | eProjectileCollisionFlags::BlockActor;
 
 private:
 	/* 발사체 이동 Component */

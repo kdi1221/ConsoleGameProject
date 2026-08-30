@@ -1,5 +1,7 @@
 ﻿#include "ProjectileFrozenOrb.h"
 #include "ProjectileIceBolt.h"
+#include "Actor/Pawn/Pawn.h"
+#include "Actor/MapObject/RoomDoor.h"
 #include <Component/SpriteRendererComponent.h>
 #include <Math/Vector2Float.h>
 #include <Level/Level.h>
@@ -18,8 +20,6 @@ ProjectileFrozenOrb::ProjectileFrozenOrb(const Vector2Int& inPosition,
 	:super(inPosition, moveSpeed, teamID, damageValue)
 {
 	spriteComponent = AddComponent<SpriteRendererComponent>(L"●", Color::BrightWhite, static_cast<int>(eRenderSortingOrder::Projectile_FX));
-
-	SetCollisionDestroyFlags(eProjectileCollisionFlags::BlockWall);
 
 	timerSpawnIceBoltDelay.SetTargetTime(spawnIceboltDelay);
 	timerSpawnIceBoltDelay.ReserveNextTick();
@@ -40,6 +40,45 @@ void ProjectileFrozenOrb::Tick(float deltaTime)
 
 		timerSpawnIceBoltDelay.Reset();
 	}
+}
+
+bool ProjectileFrozenOrb::OnBlockActor(std::shared_ptr<ActorOnTile> blockingActor)
+{
+	/* 유효한 액터가 아니면 false */
+	if (!blockingActor)
+	{
+		return false;
+	}
+
+	/* 방의 문과 충돌했으면 Block 처리 */
+	if (blockingActor->IsTypeOf<RoomDoor>())
+	{
+		return true;
+	}
+	else if (blockingActor->IsTypeOf<Pawn>())
+	{
+		std::shared_ptr<Pawn> blockingPawn = Cast<Pawn>(blockingActor);
+		if (!blockingPawn || blockingPawn->GetTeamID() == GetInstigatorTeamID())
+		{
+			/* 충돌한 다른 Pawn이 유효하지 않거나 소속 팀이 같으면 데미지 적용하지 않음 */
+			return false;
+		}
+
+		const PawnUniqueIDType pawnUniqueID = blockingPawn->GetUniqueID();
+
+		/* 이미 데미지를 준 대상이면 처리하지 않음 */
+		if (setDamagedPawns.find(pawnUniqueID) != setDamagedPawns.end())
+		{
+			return false;
+		}
+
+		/* 충돌한 다른 Pawn에게 데미지 적용 */
+		setDamagedPawns.insert(pawnUniqueID);
+		blockingPawn->TakeDamage(GetDamageValue());
+	}
+
+	/* 그 외 충돌은 모두 지나가게 함*/
+	return false;
 }
 
 void ProjectileFrozenOrb::SetSpawnIceBoltNum(int IceBoltNum)

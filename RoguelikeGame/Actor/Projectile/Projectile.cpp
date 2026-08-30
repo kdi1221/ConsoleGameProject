@@ -70,9 +70,21 @@ void Projectile::SetLifeSpan(float lifeTime)
 	isLifeSpan = true;
 }
 
-void Projectile::SetCollisionDestroyFlags(eProjectileCollisionFlags newFlags)
+bool Projectile::OnBlockWall()
 {
-	collisionFlags = newFlags;
+	return true;
+}
+
+bool Projectile::OnBlockActor(std::shared_ptr<ActorOnTile> blockingActor)
+{
+	std::shared_ptr<Pawn> blockingPawn = Cast<Pawn>(blockingActor);
+	if (blockingPawn && blockingPawn->GetTeamID() != GetInstigatorTeamID())
+	{
+		/* 충돌한 다른 Actor가 Pawn이고 소속 팀이 다르면 데미지 적용 */
+		blockingPawn->TakeDamage(damageValue);
+	}
+
+	return true;
 }
 
 const Vector2Float& Projectile::GetMoveDirection() const
@@ -109,20 +121,14 @@ void Projectile::PostMoveCheckBlockCollision()
 			//벽과 충돌
 		case CheckBlockingResult::BlockWall:
 			{
-				isBlockDestroy = eProjectileCollisionFlags::None != (collisionFlags & eProjectileCollisionFlags::BlockWall);
+				isBlockDestroy = OnBlockWall();
 			}
 			break;
 
 			//Actor와 충돌
 		case CheckBlockingResult::BlockActor:
 			{
-				isBlockDestroy = eProjectileCollisionFlags::None != (collisionFlags & eProjectileCollisionFlags::BlockActor);
-
-				std::shared_ptr<Pawn> blockingPawn = Cast<Pawn>(blockingActor);
-				if (blockingPawn)
-				{
-					blockingPawn->TakeDamage(damageValue);
-				}
+				isBlockDestroy = OnBlockActor(blockingActor);
 			}
 			break;
 

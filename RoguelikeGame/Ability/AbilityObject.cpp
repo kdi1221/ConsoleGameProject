@@ -7,6 +7,7 @@
 #include "PlayerAbility/AbilityShotSpiritBall.h"
 #include "PlayerAbility/AbilityFrozenOrb.h"
 #include "PlayerAbility/AbilityNova.h"
+#include "PlayerAbility/AbilityTeleport.h"
 
 std::unique_ptr<AbilityObject> AbilityObject::CreateNewAbility(const ABILITY_ID_TYPE abilityID, int abilityLevel)
 {
@@ -21,6 +22,9 @@ std::unique_ptr<AbilityObject> AbilityObject::CreateNewAbility(const ABILITY_ID_
 
 	case 3:
 		return std::make_unique<AbilityNova>(abilityID, abilityLevel);
+
+	case 4:
+		return std::make_unique<AbilityTeleport>(abilityID, abilityLevel);
 	}
 
 	return nullptr;

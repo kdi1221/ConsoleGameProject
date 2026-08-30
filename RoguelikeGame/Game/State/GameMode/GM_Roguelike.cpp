@@ -379,6 +379,9 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 		spawnedRoomDoors.emplace_back(spawnedRoomDoor);
 	}
 
+	/* 전투 진행여부 설정 */
+	bBattleRoomProcess = true;
+
 	/* 몬스터들에게 플레이어 추적 명령 내림 */
 	for (std::shared_ptr<NPCBase>& SpawnNPC : spawnedNPCList)
 	{
@@ -498,6 +501,8 @@ void GM_Roguelike::OnRoomBattleEnd()
 		roomDoor->Destroy();
 	}
 	spawnedRoomDoors.clear();
+
+	bBattleRoomProcess = false;
 }
 
 void GM_Roguelike::OnEventNPCDeath(std::shared_ptr<Pawn> deathPawn)

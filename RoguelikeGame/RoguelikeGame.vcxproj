@@ -105,6 +105,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Ability\PlayerAbility\AbilityFrozenOrb.cpp" />
     <ClCompile Include="Ability\PlayerAbility\AbilityNova.cpp" />
     <ClCompile Include="Ability\PlayerAbility\AbilityShotSpiritBall.cpp" />
+    <ClCompile Include="Ability\PlayerAbility\AbilityTeleport.cpp" />
     <ClCompile Include="Ability\Shooter\Projectile\AbilityDarkBall.cpp" />
     <ClCompile Include="Ability\Shooter\Projectile\AbilityGoblinArrow.cpp" />
     <ClCompile Include="Ability\Shooter\Projectile\AbilityImpFireball.cpp" />
@@ -179,6 +180,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Ability\PlayerAbility\AbilityFrozenOrb.h" />
     <ClInclude Include="Ability\PlayerAbility\AbilityNova.h" />
     <ClInclude Include="Ability\PlayerAbility\AbilityShotSpiritBall.h" />
+    <ClInclude Include="Ability\PlayerAbility\AbilityTeleport.h" />
     <ClInclude Include="Ability\Shooter\Projectile\AbilityDarkBall.h" />
     <ClInclude Include="Ability\Shooter\Projectile\AbilityGoblinArrow.h" />
     <ClInclude Include="Ability\Shooter\Projectile\AbilityImpFireball.h" />
