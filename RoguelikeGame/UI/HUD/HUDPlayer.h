@@ -18,6 +18,10 @@ class TextBlockElapsedTime;
 class BackgroundWidget;
 class ItemBase;
 
+
+
+class BottomPanel;
+
 struct FItemWidget
 {
 	std::weak_ptr<Craft::ImageWidget> iconWidget;
@@ -45,6 +49,9 @@ public:
 	void SetGamePause(bool bPause);
 
 private:
+	std::weak_ptr<BottomPanel> bottomPanel;
+
+
 	std::weak_ptr<TextBlockFPS> textBlockFPS;
 	std::weak_ptr<TextBlockMousePos> textBlockMousePos;
 	std::weak_ptr<TextBlockMouseButton> textBlockMouseBtn;

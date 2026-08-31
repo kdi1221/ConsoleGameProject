@@ -9,7 +9,7 @@ class TestLevel : public TilemapLevel
 
 public:
 	TestLevel() = default;
-	virtual ~TestLevel() = default;
+	virtual ~TestLevel();
 
 private:
 	virtual void OnInitialized() override;

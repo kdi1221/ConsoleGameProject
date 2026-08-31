@@ -3,10 +3,17 @@
 #include "Level/MainMenuLevel.h"
 #include "Level/DummyLevel.h"
 
+//#define _CRTDBG_MAP_ALLOC
+//#include <stdlib.h>
+//#include <crtdbg.h>
+
 using namespace Craft;
 
 int main(void)
 {
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//_CrtSetBreakAlloc(355);
+
 	SetConsoleTitle(L"Rogue Wizard");
 
 

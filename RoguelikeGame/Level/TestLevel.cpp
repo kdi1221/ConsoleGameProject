@@ -2,6 +2,11 @@
 #include "Engine/Engine.h"
 #include "Core/Input.h"
 
+TestLevel::~TestLevel()
+{
+	
+}
+
 void TestLevel::OnInitialized()
 {
 	/*Craft::Engine::Get().DestroyGameSessionData();

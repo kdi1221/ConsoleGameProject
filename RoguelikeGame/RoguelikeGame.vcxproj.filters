@@ -231,6 +231,18 @@
     <ClCompile Include="Ability\PlayerAbility\AbilityTeleport.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="UI\HUD\BottomPanel\BottomPanel.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\AttributeBar\AttributeBar.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\HUD\SkillQuickSlot\SkillQuickSlot.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\HUD\QuickSlotIcon\QuickSlotIcon.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Level\TestLevel.h">
@@ -462,6 +474,18 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Ability\PlayerAbility\AbilityTeleport.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\HUD\BottomPanel\BottomPanel.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\AttributeBar\AttributeBar.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\HUD\SkillQuickSlot\SkillQuickSlot.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\HUD\QuickSlotIcon\QuickSlotIcon.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

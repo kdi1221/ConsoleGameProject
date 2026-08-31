@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -152,6 +152,10 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Level\DummyLevel.cpp" />
     <ClCompile Include="Level\GameLevel.cpp" />
     <ClCompile Include="Level\MainMenuLevel.cpp" />
+    <ClCompile Include="UI\AttributeBar\AttributeBar.cpp" />
+    <ClCompile Include="UI\HUD\BottomPanel\BottomPanel.cpp" />
+    <ClCompile Include="UI\HUD\QuickSlotIcon\QuickSlotIcon.cpp" />
+    <ClCompile Include="UI\HUD\SkillQuickSlot\SkillQuickSlot.cpp" />
     <ClCompile Include="UI\TextBlock\TextBlockMouseButton.cpp" />
     <ClCompile Include="UI\MainMenu\MainMenu.cpp" />
     <ClCompile Include="UI\PlayerDeathMenu\PlayerDeathMenu.cpp" />
@@ -228,6 +232,10 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Level\DummyLevel.h" />
     <ClInclude Include="Level\GameLevel.h" />
     <ClInclude Include="Level\MainMenuLevel.h" />
+    <ClInclude Include="UI\AttributeBar\AttributeBar.h" />
+    <ClInclude Include="UI\HUD\BottomPanel\BottomPanel.h" />
+    <ClInclude Include="UI\HUD\QuickSlotIcon\QuickSlotIcon.h" />
+    <ClInclude Include="UI\HUD\SkillQuickSlot\SkillQuickSlot.h" />
     <ClInclude Include="UI\TextBlock\TextBlockMouseButton.h" />
     <ClInclude Include="UI\MainMenu\MainMenu.h" />
     <ClInclude Include="UI\MenuItem.h" />

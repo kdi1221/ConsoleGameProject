@@ -11,7 +11,7 @@ namespace Craft
 
 	Level::~Level()
 	{
-
+		
 	}
 
 	void Level::OnInitialized()
