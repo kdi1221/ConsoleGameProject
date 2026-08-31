@@ -80,6 +80,7 @@ ABILITY_ID_TYPE AbilitySystemComponent::AddNewAbility(ABILITY_ID_TYPE abilityID,
 {
 	std::unique_ptr<AbilityObject> newAbility = AbilityObject::CreateNewAbility(abilityID, abilityLevel);
 	newAbility->SetOwnerPawn(GetOwnerPawn());
+	newAbility->SetCooldownChangeCallback(std::bind(&AbilitySystemComponent::OnAbilityCooldownStateChange, this, std::placeholders::_1, std::placeholders::_2));
 
 	const ABILITY_ID_TYPE newAbilityID = newAbility->GetAbilityID();
 	mapAbilities.emplace(newAbilityID, std::move(newAbility));
@@ -108,6 +109,11 @@ void AbilitySystemComponent::ActivateAbility(ABILITY_ID_TYPE abilityID)
 	grantAbility->ActivateAbility();
 }
 
+void AbilitySystemComponent::SetAbilityCooldownChangeCallback(AbilityCooldownChangeCallback callback)
+{
+	onAbilityCooldownChange = callback;
+}
+
 void AbilitySystemComponent::AllAbilitiesTriggerOff()
 {
 	for (auto& iterMapAbility : mapAbilities)
@@ -119,6 +125,14 @@ void AbilitySystemComponent::AllAbilitiesTriggerOff()
 		}
 
 		ability->TriggerOff();
+	}
+}
+
+void AbilitySystemComponent::OnAbilityCooldownStateChange(const AbilityObject& ability, bool bCooldown)
+{
+	if (onAbilityCooldownChange)
+	{
+		onAbilityCooldownChange(ability, bCooldown);
 	}
 }
 

@@ -20,6 +20,8 @@ class ItemBase;
 
 
 
+class AbilityObject;
+class PlayerAbilityInfo;
 class BottomPanel;
 
 struct FItemWidget
@@ -42,9 +44,13 @@ public:
 public:
 	void ChangeFloorLevel(int newFloorLevel);
 	void ChangeMonsterKillNum(int newKillNum);
+
 	void ChangePlayerHealthValue(float current, float maxValue);
 	void ChangePlayerManaValue(float current, float maxValue);
-	void UpdateItemListIcon(const ItemBase& item);
+	void UpdateAbilityIcon(const PlayerAbilityInfo& playerAbilityInfo);
+	void AbilityCooldownChange(const AbilityObject& ability, const PlayerAbilityInfo& playerAbilityInfo, bool bCooldown);
+
+	//void UpdateItemListIcon(const ItemBase& item);
 	void SetStartPlayTime(LARGE_INTEGER startTime);
 	void SetGamePause(bool bPause);
 
@@ -62,10 +68,6 @@ private:
 	std::weak_ptr<Craft::TextBlock> textBlockFloor;
 	std::weak_ptr<Craft::ImageWidget> imageKillNumIcon;
 	std::weak_ptr<Craft::TextBlock> textBlockKillNum;
-	std::weak_ptr<Craft::ImageWidget> imageHealthIcon;
-	std::weak_ptr<Craft::ProgressBar> healthProgressBar;
-	std::weak_ptr<Craft::ImageWidget> imageManaIcon;
-	std::weak_ptr<Craft::ProgressBar> manaProgressBar;
 	std::weak_ptr<Craft::ImageWidget> imageItemIcon;
 	std::weak_ptr<Craft::TextBlock> textBlockItemList;
 	std::weak_ptr<Craft::ImageWidget> imageControlIcon;

@@ -81,7 +81,7 @@ public:
 	inline int GetAbilityLevel() const { return abilityLevel; }
 	inline bool IsActivate() const { return bActivated; }
 	inline bool IsCooldown() const { return bCooldownActive; }
-
+	inline float GetCooldownTime() const { return cooldownTime; }
 
 
 	inline bool IsTrigger() const { return bTrigger; }

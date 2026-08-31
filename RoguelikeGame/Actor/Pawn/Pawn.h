@@ -51,6 +51,9 @@ public:
 	/* 체력 회복 함수 */
 	void AddHealthValue(const float inHealValue);
 
+	/* 보유한 Ability Cooldown 이벤트 콜백 바인딩 */
+	void SetAbilityCooldownChangeCallback();
+
 public:
 	bool IsDeath() const;
 

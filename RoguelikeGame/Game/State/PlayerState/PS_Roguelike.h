@@ -6,6 +6,7 @@
 
 class PlayerPawn;
 class PlayerAbilityInfo;
+class AbilityObject;
 
 //TODO : ItemBase 폐기 예정
 class ItemBase;
@@ -65,8 +66,14 @@ private:
 	/* 플레이어가 특정 아이템을 획득할때 호출 */
 	void OnPlayerItemGain(int itemID);
 
+	/* 플레이어 스킬 쿨타임 업데이트 이벤트 */
+	void OnPlayerAbilityCooldownChange(const AbilityObject& ability, bool bCooldown);
+
+	/* 플레이어 스킬 아이콘 업데이트 */
+	void UpdateAbilityIcon(const PlayerAbilityInfo& abilityInfo);
+
 	/* 특정 아이템 아이콘 및 텍스트 업데이트 */
-	void UpdateItemListIconText(const ItemBase& updateItem);
+	//void UpdateItemListIconText(const ItemBase& updateItem);
 
 	/* 경과 시간 카운트 시작 */
 	void BeginGameElapsedTimeCount();

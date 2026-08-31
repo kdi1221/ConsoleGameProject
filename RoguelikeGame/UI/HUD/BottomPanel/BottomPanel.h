@@ -4,6 +4,8 @@
 
 class AttributeBar;
 class SkillQuickSlot;
+class PlayerAbilityInfo;
+class AbilityObject;
 
 //하단 HUD 패널 
 class BottomPanel : public Craft::Widget
@@ -28,5 +30,8 @@ private:
 public:
 	void SetHealthValue(float amount, float maxValue);
 	void SetManaValue(float amount, float maxValue);
+	void UpdateAbilityIcon(const PlayerAbilityInfo& abilityInfo);
+	void AbilityCooldownChange(const AbilityObject& ability, const PlayerAbilityInfo& playerAbilityInfo, bool bCooldown);
+	void SetGamePause(bool bPause);
 };
 

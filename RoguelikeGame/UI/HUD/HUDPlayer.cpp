@@ -9,6 +9,7 @@
 #include "UI/BackgroundWidget.h"
 #include "Item/ItemBase.h"
 #include "Item/ItemData/ItemDataTable.h"
+#include "Types/Enums.h"
 #include <UI/Widget/Image/ImageWidget.h>
 #include <UI/Widget/ProgressBar/ProgressBar.h>
 #include <Engine/Engine.h>
@@ -35,7 +36,9 @@ void HUDPlayer::InitializeHUD(std::weak_ptr<Craft::Level> activeLevel)
 	const int viewHeight = configBase.GetViewHeight();
 
 	const Vector2Int positionBottomPanel(0, viewHeight - 10);
-	bottomPanel = currentLevel->CreateWidget<BottomPanel>(positionBottomPanel, viewWidth, 10);
+	std::shared_ptr<BottomPanel> createdBottomPanel = currentLevel->CreateWidget<BottomPanel>(positionBottomPanel, viewWidth, 10);
+	createdBottomPanel->SetRenderSortingOrder(static_cast<int>(eRenderSortingOrder::UI));
+	bottomPanel = createdBottomPanel;
 
 
 	//const int ViewWidth = configBase.GetViewWidth();
@@ -101,32 +104,6 @@ void HUDPlayer::InitializeHUD(std::weak_ptr<Craft::Level> activeLevel)
 	//assert(createdKillNumText && "Kill Num Text Invalid..");
 	//createdKillNumText->SetTextValue(L"Kill Count : 0");
 	//textBlockKillNum = createdKillNumText;
-
-	///* 현재 플레이어 체력 아이콘 표시 */
-	//const Vector2Int positionHealthIcon(ViewWidth + 2, 14);
-	//std::shared_ptr<ImageWidget> healthIcon = currentLevel->CreateWidget<ImageWidget>(positionHealthIcon, L"♥", Color::LightRed);
-	//assert(healthIcon && "healthIcon Invalid..");
-	//imageHealthIcon = healthIcon;
-
-	///* 현재 플레이어 체력 바 표시 */
-	//const Vector2Int positionHealthProgressbar(ViewWidth + 5, 14);
-	//const int ProgressbarWidth = configBase.GetDisplayWidth() - ViewWidth - 9;
-	//std::shared_ptr<ProgressBar> healthBar = currentLevel->CreateWidget<ProgressBar>(positionHealthProgressbar, ProgressbarWidth, Color::DarkGray, Color::LightRed);
-	//assert(healthBar && "healthBar invalid..");
-	//healthProgressBar = healthBar;
-
-	///* 현재 플레이어 마나 아이콘 표시 */
-	//const Vector2Int positionManaIcon(ViewWidth + 2, 17);
-	//std::shared_ptr<ImageWidget> manaIcon = currentLevel->CreateWidget<ImageWidget>(positionManaIcon, L"◈", Color::LightBlue);
-	//assert(manaIcon && "manaIcon Invalid..");
-	//imageManaIcon = manaIcon;
-
-	///* 현재 플레이어 마나 바 표시 */
-	//const Vector2Int positionManaProgressbar(ViewWidth + 5, 17);
-	//const int manaProgressbarWidth = configBase.GetDisplayWidth() - ViewWidth - 9;
-	//std::shared_ptr<ProgressBar> manaBar = currentLevel->CreateWidget<ProgressBar>(positionManaProgressbar, manaProgressbarWidth, Color::DarkGray, Color::LightBlue);
-	//assert(manaBar && "manaBar invalid..");
-	//manaProgressBar = manaBar;
 
 	///* 아이템 리스트 아이콘 */
 	//const Vector2Int positionItemIcon(ViewWidth + 2, 20);
@@ -205,14 +182,6 @@ void HUDPlayer::ChangePlayerHealthValue(float current, float maxValue)
 	{
 		bottomPanelWidget->SetHealthValue(current, maxValue);
 	}
-
-	/*std::shared_ptr<ProgressBar> progressbar = healthProgressBar.lock();
-	if (!progressbar)
-	{
-		return;
-	}
-
-	progressbar->SetValue(current, maxValue);*/
 }
 
 void HUDPlayer::ChangePlayerManaValue(float current, float maxValue)
@@ -221,60 +190,68 @@ void HUDPlayer::ChangePlayerManaValue(float current, float maxValue)
 	{
 		bottomPanelWidget->SetManaValue(current, maxValue);
 	}
-
-	/*std::shared_ptr<ProgressBar> progressbar = manaProgressBar.lock();
-	if (!progressbar)
-	{
-		return;
-	}
-
-	progressbar->SetValue(current, maxValue);*/
 }
 
-void HUDPlayer::UpdateItemListIcon(const ItemBase& item)
+void HUDPlayer::UpdateAbilityIcon(const PlayerAbilityInfo& playerAbilityInfo)
 {
-	/*std::shared_ptr<Level> currentLevel = GetLevel();
-	if (!currentLevel)
+	if (std::shared_ptr<BottomPanel> bottomPanelWidget = bottomPanel.lock())
 	{
-		return;
+		bottomPanelWidget->UpdateAbilityIcon(playerAbilityInfo);
 	}
-
-	const int itemID = item.GetItemID();
-	const ItemData& findItemData = ItemDataTable::GetItemData(itemID);
-
-	auto iterFindItemWidget = mapItemWidgets.find(itemID);
-	if (iterFindItemWidget != mapItemWidgets.end())
-	{
-		std::shared_ptr<TextBlock> itemNameText = iterFindItemWidget->second.nameWidget.lock();
-		if (itemNameText)
-		{
-			wchar_t itemNumText[16] = { 0 };
-			_itow_s(item.GetItemNum(), itemNumText, _countof(itemNumText), 10);
-			itemNameText->SetTextValue(findItemData.itemName + L" - Lv" + itemNumText);
-		}
-	}
-	else
-	{
-		const ConfigBase& configBase = Engine::Get().GetConfig<Craft::ConfigBase>();
-		const int ViewWidth = configBase.GetViewWidth();
-		const int currentItemIconNum = static_cast<int>(mapItemWidgets.size());
-
-		const int addYPos = 20 + (currentItemIconNum * 2);
-		const Vector2Int positionItemIcon(ViewWidth + 5, addYPos);
-		std::shared_ptr<ImageWidget> itemIcon = currentLevel->CreateWidget<ImageWidget>(positionItemIcon, findItemData.itemIconImage, findItemData.color);
-		assert(itemIcon && "ItemIcon Invalid..");
-
-		const Vector2Int positionWidgetItemName(ViewWidth + 8, addYPos);
-		std::shared_ptr<TextBlock> itemNameText = currentLevel->CreateWidget<TextBlock>(positionWidgetItemName, static_cast<int>(findItemData.itemName.length()) + 5);
-		assert(itemNameText && "Item Name Text Invalid..");
-
-		wchar_t itemNumText[16] = { 0 };
-		_itow_s(item.GetItemNum(), itemNumText, _countof(itemNumText), 10);
-		itemNameText->SetTextValue(findItemData.itemName + L" - Lv" + itemNumText);
-
-		mapItemWidgets.insert(std::pair<int, FItemWidget>(itemID, { itemIcon, itemNameText }));
-	}*/
 }
+
+void HUDPlayer::AbilityCooldownChange(const AbilityObject& ability, const PlayerAbilityInfo& playerAbilityInfo, bool bCooldown)
+{
+	if (std::shared_ptr<BottomPanel> bottomPanelWidget = bottomPanel.lock())
+	{
+		bottomPanelWidget->AbilityCooldownChange(ability, playerAbilityInfo, bCooldown);
+	}
+}
+
+//void HUDPlayer::UpdateItemListIcon(const ItemBase& item)
+//{
+//	std::shared_ptr<Level> currentLevel = GetLevel();
+//	if (!currentLevel)
+//	{
+//		return;
+//	}
+//
+//	const int itemID = item.GetItemID();
+//	const ItemData& findItemData = ItemDataTable::GetItemData(itemID);
+//
+//	auto iterFindItemWidget = mapItemWidgets.find(itemID);
+//	if (iterFindItemWidget != mapItemWidgets.end())
+//	{
+//		std::shared_ptr<TextBlock> itemNameText = iterFindItemWidget->second.nameWidget.lock();
+//		if (itemNameText)
+//		{
+//			wchar_t itemNumText[16] = { 0 };
+//			_itow_s(item.GetItemNum(), itemNumText, _countof(itemNumText), 10);
+//			itemNameText->SetTextValue(findItemData.itemName + L" - Lv" + itemNumText);
+//		}
+//	}
+//	else
+//	{
+//		const ConfigBase& configBase = Engine::Get().GetConfig<Craft::ConfigBase>();
+//		const int ViewWidth = configBase.GetViewWidth();
+//		const int currentItemIconNum = static_cast<int>(mapItemWidgets.size());
+//
+//		const int addYPos = 20 + (currentItemIconNum * 2);
+//		const Vector2Int positionItemIcon(ViewWidth + 5, addYPos);
+//		std::shared_ptr<ImageWidget> itemIcon = currentLevel->CreateWidget<ImageWidget>(positionItemIcon, findItemData.itemIconImage, findItemData.color);
+//		assert(itemIcon && "ItemIcon Invalid..");
+//
+//		const Vector2Int positionWidgetItemName(ViewWidth + 8, addYPos);
+//		std::shared_ptr<TextBlock> itemNameText = currentLevel->CreateWidget<TextBlock>(positionWidgetItemName, static_cast<int>(findItemData.itemName.length()) + 5);
+//		assert(itemNameText && "Item Name Text Invalid..");
+//
+//		wchar_t itemNumText[16] = { 0 };
+//		_itow_s(item.GetItemNum(), itemNumText, _countof(itemNumText), 10);
+//		itemNameText->SetTextValue(findItemData.itemName + L" - Lv" + itemNumText);
+//
+//		mapItemWidgets.insert(std::pair<int, FItemWidget>(itemID, { itemIcon, itemNameText }));
+//	}
+//}
 
 void HUDPlayer::SetStartPlayTime(LARGE_INTEGER startTime)
 {
@@ -286,6 +263,12 @@ void HUDPlayer::SetStartPlayTime(LARGE_INTEGER startTime)
 
 void HUDPlayer::SetGamePause(bool bPause)
 {
+	if (std::shared_ptr<BottomPanel> bottomPanelWidget = bottomPanel.lock())
+	{
+		bottomPanelWidget->SetGamePause(bPause);
+	}
+
+
 	/*if (std::shared_ptr<TextBlockElapsedTime> timeText = textBlockTime.lock())
 	{
 		timeText->SetGamePause(bPause);

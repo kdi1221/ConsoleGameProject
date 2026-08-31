@@ -2,6 +2,7 @@
 #include "UI/HUD/HUDPlayer.h"
 #include "Actor/Pawn/Player/PlayerPawn.h"
 #include "PlayerAbilityInfo.h"
+#include "Component/AbilitySystemComponent.h"
 
 
 #include "Item/ItemBase.h"
@@ -65,11 +66,25 @@ void PS_Roguelike::OnSpawnedPlayerPawn(std::weak_ptr<PlayerPawn> pawn)
 	/* 새로 스폰된 플레이어 폰의 체력및 체력 변경 콜백을 설정한다. */
 	std::shared_ptr<PlayerPawn> currentPlayerPawn = playerPawn.lock();
 	assert(currentPlayerPawn && "Invalid PlayerPawn");
+
+	/* 플레이어 체력, 마나 설정(세션 데이터 유지) */
 	currentPlayerPawn->InitializeHealthValue(playerCurrentHealth, playerMaxHealth);
 	currentPlayerPawn->SetHealthChangeEventCallback(std::bind(&PS_Roguelike::OnUpdatePlayerHealth, this, std::placeholders::_1, std::placeholders::_2));
 	currentPlayerPawn->InitializeManaValue(playerCurrentMana, playerMaxMana);
 	currentPlayerPawn->SetManaChangeEventCallback(std::bind(&PS_Roguelike::OnUpdatePlayerMana, this, std::placeholders::_1, std::placeholders::_2));
+
+	/* 플레이어가 아이템 주울때 호출되는 이벤트 */
 	currentPlayerPawn->SetOnItemGainEvent(std::bind(&PS_Roguelike::OnPlayerItemGain, this, std::placeholders::_1));
+
+	std::shared_ptr<AbilitySystemComponent> playerPawnASC = currentPlayerPawn->GetComponent<AbilitySystemComponent>();
+	assert(playerPawnASC && "Invalid PlayerPawnASC");
+
+	/* TODO : 저장해둔 스킬별 쿨타임 정보 적용.. */
+
+	playerPawnASC->SetAbilityCooldownChangeCallback(std::bind(&PS_Roguelike::OnPlayerAbilityCooldownChange, this, std::placeholders::_1, std::placeholders::_2));
+
+	
+	
 	
 	InitializeHUD();
 
@@ -91,6 +106,8 @@ void PS_Roguelike::OnSpawnedPlayerPawn(std::weak_ptr<PlayerPawn> pawn)
 		}
 
 		currentPlayerPawn->GrantAbility(*abilityInfo);
+
+		UpdateAbilityIcon(*abilityInfo);
 	}
 
 
@@ -193,14 +210,38 @@ void PS_Roguelike::OnPlayerItemGain(int itemID)
 	}*/
 }
 
-void PS_Roguelike::UpdateItemListIconText(const ItemBase& updateItem)
+void PS_Roguelike::OnPlayerAbilityCooldownChange(const AbilityObject& ability, bool bCooldown)
+{
+	auto iterGrantedAbility = mapGrantedAbilities.find(ability.GetAbilityID());
+	if (iterGrantedAbility == mapGrantedAbilities.end())
+	{
+		return;
+	}
+
+	HUDPlayer* hudPlayer = GetHUD<HUDPlayer>();
+	if (hudPlayer)
+	{
+		hudPlayer->AbilityCooldownChange(ability, *iterGrantedAbility->second, bCooldown);
+	}
+}
+
+void PS_Roguelike::UpdateAbilityIcon(const PlayerAbilityInfo& abilityInfo)
 {
 	HUDPlayer* hudPlayer = GetHUD<HUDPlayer>();
 	if (hudPlayer)
 	{
-		hudPlayer->UpdateItemListIcon(updateItem);
+		hudPlayer->UpdateAbilityIcon(abilityInfo);
 	}
 }
+
+//void PS_Roguelike::UpdateItemListIconText(const ItemBase& updateItem)
+//{
+//	HUDPlayer* hudPlayer = GetHUD<HUDPlayer>();
+//	if (hudPlayer)
+//	{
+//		hudPlayer->UpdateItemListIcon(updateItem);
+//	}
+//}
 
 void PS_Roguelike::BeginGameElapsedTimeCount()
 {
