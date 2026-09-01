@@ -7,7 +7,8 @@
 
 namespace Craft
 {
-	class PathMoveComponent;
+	//class PathMoveComponent;
+	class NavMovementComponent;
 }
 
 /* 모든 NPC(몬스터)의 상위 클래스 */
@@ -58,7 +59,7 @@ private:
 	void SetBehaviorState(eMonsterBehavior newState);
 
 	/* 타겟을 향한 경로를 구해서 이동 시작 */
-	void BeginPathfindingToTarget();
+	bool BeginPathfindingToTarget();
 
 	/* 이동 중단 */
 	void StopMove();
@@ -90,8 +91,8 @@ protected:
 	virtual void AttackAbilitiesTriggerOFF() = 0;
 
 private:
-	/* 이동 컴포넌트 */
-	std::shared_ptr<Craft::PathMoveComponent> pathMoveComponent;
+	/* 네비게이션 기반 이동 컴포넌트 */
+	std::shared_ptr<Craft::NavMovementComponent> navMovementComponent;
 
 private:
 	/* 초기 Health Value */
@@ -111,5 +112,8 @@ private:
 
 	//마지막에 추적한 대상의 위치
 	Craft::Vector2Int lastChaseTargetPos = INVALID_LAST_POS;
+
+	//직전에 경로 추적 실패 시 다음 번 경로 강제 업데이트 여부
+	bool bForceNextPathUpdate = false;
 };
 

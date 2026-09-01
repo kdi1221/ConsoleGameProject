@@ -2,7 +2,7 @@
 #include "Engine/Engine.h"
 #include "Navigation/NavigationTileMap.h"
 #include <Util/Util.h>
-#include <Component/PathMoveComponent.h>
+#include <Component/NavMovementComponent.h>
 #include "Render/Renderer.h"
 
 using namespace Craft;
@@ -20,9 +20,9 @@ NPCBase::NPCBase(const Craft::Vector2Int& position,
 	,initialiHealthValue(initialHealth)
 	,spawnedRoomIndex(roomIndex)
 {
-	pathMoveComponent = AddComponent<PathMoveComponent>(moveDelay, true);
-	pathMoveComponent->SetMoveFinishCallback(std::bind(&NPCBase::OnMoveFinish, this));
-	pathMoveComponent->SetMoveAbortCallback(std::bind(&NPCBase::OnMoveAbort, this));
+	navMovementComponent = AddComponent<NavMovementComponent>(10.f);
+	navMovementComponent->SetMoveFinishCallback(std::bind(&NPCBase::OnMoveFinish, this));
+	navMovementComponent->SetMoveAbortCallback(std::bind(&NPCBase::OnMoveAbort, this));
 
 	timerFindChasePathDelay.SetTargetTime(chaseDelay);
 }
@@ -71,9 +71,9 @@ void NPCBase::Draw()
 	/* 경로 확인 디버깅용 */
 	if (Engine::Get().GetDrawAIPaths())
 	{
-		if (pathMoveComponent)
+		if (navMovementComponent)
 		{
-			pathMoveComponent->Foreach_Path([&](const Vector2Int& path)
+			navMovementComponent->Foreach_Path([&](const Vector2Int& path)
 				{
 					Renderer::Get().Submit(L" ", path, Color::BG_LightGreen, static_cast<int>(eRenderSortingOrder::MapObject));
 				}
@@ -100,51 +100,51 @@ void NPCBase::SetBehaviorState(eMonsterBehavior newState)
 		switch (beforeState)
 		{
 		case eMonsterBehavior::Idle:
-			{
-				
-			}
-			break;
+		{
+			OutputDebugStringA("On Idle Exit\n");
+		}
+		break;
 
 		case eMonsterBehavior::TargetChase:
-			{
-				timerFindChasePathDelay.Reset();
-				StopMove();
-			}
-			break;
+		{
+			timerFindChasePathDelay.Reset();
+			StopMove();
+		}
+		break;
 
 		case eMonsterBehavior::Attack:
-			{
-				AttackAbilitiesTriggerOFF();
-			}
-			break;
+		{
+			AttackAbilitiesTriggerOFF();
+		}
+		break;
 		}
 
 		/* 새로운 상태 시작 */
 		switch (behaviorState)
 		{
 		case eMonsterBehavior::Idle:
-			{
-				
-			}
-			break;
+		{
+			OutputDebugStringA("On Idle Begin\n");
+		}
+		break;
 
 		case eMonsterBehavior::TargetChase:
-			{
-				//다음 프레임에 바로 대상을 쫓을 수 있도록 함
-				timerFindChasePathDelay.ReserveNextTick();
-			}
-			break;
+		{
+			//다음 프레임에 바로 대상을 쫓을 수 있도록 함
+			timerFindChasePathDelay.ReserveNextTick();
+		}
+		break;
 
 		case eMonsterBehavior::Attack:
-			{
-				AttackAbilitiesTriggerON();
-			}
-			break;
+		{
+			AttackAbilitiesTriggerON();
+		}
+		break;
 		}
 	}
 }
 
-void NPCBase::BeginPathfindingToTarget()
+bool NPCBase::BeginPathfindingToTarget()
 {
 	std::shared_ptr<Pawn> target = chaseTarget.lock();
 	assert(target && "Invalid target");
@@ -157,8 +157,10 @@ void NPCBase::BeginPathfindingToTarget()
 	GetAvailableChaseTargetPosition(targetPos, availablePosition);
 	if (availablePosition.empty())
 	{
+		OutputDebugStringA("available Position empty..\n");
+
 		//타겟 주변에 이동할 곳이 없는경우 정지
-		return;
+		return false;
 	}
 
 	for (size_t i = availablePosition.size() - 1; i > 0; --i)
@@ -171,32 +173,46 @@ void NPCBase::BeginPathfindingToTarget()
 	}
 
 	/* 타겟 주변위치를 향한 경로를 탐색한다. */
-	std::vector<Craft::Vector2Int> movePaths;
-	const NavigationTilemap& navigationSystem = Engine::Get().GetNavigationSystem<NavigationTilemap>();
-	if (!navigationSystem.FindPath(shared_from_this(), startPos, availablePosition[0], movePaths))
+	//std::vector<Craft::Vector2Int> movePaths;
+	//const NavigationTilemap& navigationSystem = Engine::Get().GetNavigationSystem<NavigationTilemap>();
+	//if (!navigationSystem.FindPath(shared_from_this(), startPos, availablePosition[0], movePaths))
+	//{
+	//	// 이동할 경로를 찾지 못하면 정지
+	//	return;
+	//}
+
+	////마지막에 추적한 타겟의 위치를 기록해둔다.
+	//lastChaseTargetPos = targetPos;
+
+	////movePaths기반으로 이동 시작
+	//assert(pathMoveComponent && "Invalid pathMoveComponent");
+	//pathMoveComponent->StartMove(std::move(movePaths));
+
+
+	//목표 주위 위치로 이동 시작 
+	assert(navMovementComponent && "Invalid NavMovementComponent");
+	if(navMovementComponent->StartMove(availablePosition[0]))
 	{
-		// 이동할 경로를 찾지 못하면 정지
-		return;
+		//마지막에 추적한 타겟의 위치를 기록해둔다.
+		lastChaseTargetPos = targetPos;
+	}
+	else
+	{
+		OutputDebugStringA("Fail StartMove..\n");
+		return false;
 	}
 
-	//마지막에 추적한 타겟의 위치를 기록해둔다.
-	lastChaseTargetPos = targetPos;
-
-	//movePaths기반으로 이동 시작
-	assert(pathMoveComponent && "Invalid pathMoveComponent");
-	pathMoveComponent->StartMove(std::move(movePaths));
+	return true;
 }
 
 void NPCBase::StopMove()
 {
-	assert(pathMoveComponent && "Invalid pathMoveComponent");
-	pathMoveComponent->StopPathMove();
+	assert(navMovementComponent && "Invalid NavMovementComponent");
+	navMovementComponent->StopMove();
 }
 
 void NPCBase::CheckTargetWhileChase(bool bForcePathUpdate)
 {
-	assert(pathMoveComponent && "Invalid pathMoveComponent");
-
 	//이동이 끝난뒤 Target이 살아있는지 확인 
 	std::shared_ptr<Pawn> targetPawn = chaseTarget.lock();
 	if (!targetPawn || targetPawn->IsDeath())
@@ -215,12 +231,13 @@ void NPCBase::CheckTargetWhileChase(bool bForcePathUpdate)
 		else
 		{
 			/* 강제 경로업데이트 또는 기존에 이동하려는 목적지가 타겟의 위치가 아닌경우에만 경로 새로 업데이트*/
-			const bool isPathUpdate = bForcePathUpdate || lastChaseTargetPos != targetPawn->GetWorldPosition();
+			const bool isPathUpdate = bForcePathUpdate || 
+										lastChaseTargetPos != targetPawn->GetWorldPosition();
 
 			if (isPathUpdate)
 			{
-				//다시 이동 시작
-				BeginPathfindingToTarget();
+				//다시 이동 시작(타겟 추적 실패시 다음번에 강제 경로 업데이트)
+				bForceNextPathUpdate = !BeginPathfindingToTarget();
 			}
 
 			timerFindChasePathDelay.Reset();
@@ -240,7 +257,7 @@ void NPCBase::OnBehaviorChaseTarget(float deltaTime)
 	if (timerFindChasePathDelay.IsTimeOut())
 	{
 		/* 일정 딜레이마다 타겟과 주변 환경 변화를 인지해서 경로를 새로잡거나 공격범위 안에 있으면 공격한다. */
-		CheckTargetWhileChase(false);
+		CheckTargetWhileChase(bForceNextPathUpdate);
 	}
 }
 
