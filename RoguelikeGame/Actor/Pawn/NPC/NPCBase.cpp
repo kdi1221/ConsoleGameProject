@@ -40,7 +40,7 @@ void NPCBase::Tick(float deltaTime)
 	super::Tick(deltaTime);
 
 	//TODO : 테스트를 위해 AI 비활성화
-	return;
+	//return;
 
 	switch (behaviorState)
 	{

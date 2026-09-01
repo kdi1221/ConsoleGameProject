@@ -6,7 +6,7 @@
 #include "Game/State/PlayerState/PlayerAbilityInfo.h"
 
 
-//#include "Ability/AbilityBeam.h"
+
 
 
 #include "Actor/FieldItem/FieldSkillItem.h"
@@ -75,9 +75,6 @@ void PlayerPawn::PreTick(float deltaTime)
 
 	/* 이동 입력 처리 */
 	ProcessMoveInput();
-
-	/* fire 입력 처리 */
-	//ProcessFireInput();
 }
 
 void PlayerPawn::Tick(float deltaTime)
@@ -173,6 +170,16 @@ void PlayerPawn::GrantAbility(const PlayerAbilityInfo& abilityInfo)
 
 	/* KeyCode - grantAbilityID 별로 저장 */
 	mapInputGrantAbilities.insert({ bindingKeyCode, grantAbilityID });
+
+	/* 이전에 저장해둔 Ability Cooldown 재지정 */
+	const float cooldownElapsedTime = abilityInfo.GetSavedCooldownTime();
+	if (cooldownElapsedTime > 0.f)
+	{
+		AbilityObject* grantedAbility = abilitySystemComponent->GetAbility<AbilityObject>(grantAbilityID);
+		assert(grantedAbility && "Invalid grantedAbility");
+
+		grantedAbility->SetCooldownElapsedTime(cooldownElapsedTime);
+	}
 }
 
 void PlayerPawn::ConsumeMana(float consumeValue)
@@ -244,39 +251,6 @@ void PlayerPawn::OnAbilityActiveKeyDown(int keyCode, Craft::eInputTrigger inputT
 	abilitySystemComponent->ActivateAbility(inputAbilityID);
 }
 
-//void PlayerPawn::OnProjectileFireKeyInput(int keyCode, eInputTrigger inputTrigger)
-//{
-//	Vector2Int addInputValue = Vector2Int::Zero;
-//	switch (keyCode)
-//	{
-//	case VK_UP:
-//		{
-//			addInputValue = eInputTrigger::None != (inputTrigger & eInputTrigger::Down) ? Vector2Int::Up : Vector2Int::Down;
-//		}
-//		break;
-//
-//	case VK_DOWN:
-//		{
-//			addInputValue = eInputTrigger::None != (inputTrigger & eInputTrigger::Down) ? Vector2Int::Down : Vector2Int::Up;
-//		}
-//		break;
-//
-//	case VK_LEFT:
-//		{
-//			addInputValue = eInputTrigger::None != (inputTrigger & eInputTrigger::Down) ? Vector2Int::Left : Vector2Int::Right;
-//		}
-//		break;
-//
-//	case VK_RIGHT:
-//		{
-//			addInputValue = eInputTrigger::None != (inputTrigger & eInputTrigger::Down) ? Vector2Int::Right : Vector2Int::Left;
-//		}
-//		break;
-//	}
-//
-//	fireInputValue += addInputValue;
-//}
-
 void PlayerPawn::OnCheatInputTrigger(int keyCode, Craft::eInputTrigger inputTrigger)
 {
 	Engine& engine = Engine::Get();
@@ -312,41 +286,6 @@ void PlayerPawn::UpdateViewCameraPosition(const Craft::Vector2Int& viewPosition)
 	cameraComponent->SetViewPosition(viewPosition);
 }
 
-//void PlayerPawn::ProcessFireInput()
-//{
-//	/* Projectile이 생성될 Offset 지정 */
-//	if (fireInputValue != Vector2Int::Zero)
-//	{
-//		/* Projectile이 생성될 Offset 지정 */
-//		const Vector2Int& spawnOffset = fireInputValue;
-//		SetProjectileSpawnOffset(spawnOffset);
-//
-//		/* 조준 방향 지정(to offset) */
-//		SetAimingDirection(static_cast<Vector2Float>(spawnOffset));
-//
-//		/* 조준 위치 지정(offset 위치로 향하는 방향 * Range) */
-//		const Vector2Float aimingPosition = static_cast<Vector2Float>(GetWorldPosition()) + (GetAimingDirection() * GetFireRange());
-//		SetAimingPostion(Vector2Int(static_cast<int>(round(aimingPosition.x)), static_cast<int>(round(aimingPosition.y))));
-//	}
-//
-//	if (prevFireInputValue != fireInputValue)
-//	{
-//		if (fireInputValue == Vector2Int::Zero)
-//		{
-//			/* 이전에 발사중이었다가 중지 됨 */
-//			SetProjectileAbilityTrigger(false);
-//		}
-//		else if (prevFireInputValue == Vector2Int::Zero)
-//		{
-//			/* 발사 중지 상태에서 발사 상태로 전환 */
-//			SetProjectileAbilityTrigger(true);
-//		}
-//
-//		prevFireInputValue = fireInputValue;
-//	}
-//}
-
-
 void PlayerPawn::ProcessMoveInput()
 {
 	assert(movementComponent && "Invalid movementComponent");
@@ -380,27 +319,3 @@ void PlayerPawn::UpdateAimingDirectionToCursorPos()
 
 	SetAimingDirection(newAimingDirection);
 }
-
-//void PlayerPawn::SetProjectileAbilityTrigger(bool bTrigger)
-//{
-//	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
-//	assert(abilitySystemComponent && "Invalid abilitySystemComponent");
-//
-//	for (AbilityObject::ABILITY_ID_TYPE grantProjectileAbilityID : grantProjectileAbilities)
-//	{
-//		AbilityObject* grantAbility = abilitySystemComponent->GetAbility<AbilityObject>(grantProjectileAbilityID);
-//		if (!grantAbility)
-//		{
-//			continue;
-//		}
-//
-//		if(bTrigger)
-//		{
-//			grantAbility->TriggerOn();
-//		}
-//		else
-//		{
-//			grantAbility->TriggerOff();
-//		}
-//	}
-//}

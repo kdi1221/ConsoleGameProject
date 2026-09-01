@@ -144,6 +144,15 @@ void AbilityObject::SetCooldownTime(float delayTime)
 	cooldownTime = delayTime;
 }
 
+void AbilityObject::SetCooldownElapsedTime(float elapsedTime)
+{
+	/* 진행시간이 0초보다 큰 경우 쿨다운 활성화 */
+	if (elapsedTime > 0.f)
+	{
+		ActivateCooldown(elapsedTime);
+	}
+}
+
 void AbilityObject::SetManaCost(float amount)
 {
 	costManaValue = amount;
@@ -154,7 +163,7 @@ void AbilityObject::SetCooldownChangeCallback(AbilityCooldownChangeCallback call
 	onCooldownChange = callback;
 }
 
-void AbilityObject::ActivateCooldown()
+void AbilityObject::ActivateCooldown(float elapsedTime)
 {
 	/* 쿨다운 타임이 지정되어있지않으면 쿨다운 활성화 x */
 	if (cooldownTime <= Craft::EPSILON)
@@ -164,6 +173,11 @@ void AbilityObject::ActivateCooldown()
 
 	timerCooldown.Reset();
 	timerCooldown.SetTargetTime(cooldownTime);
+	if (elapsedTime > 0.f)
+	{
+		timerCooldown.SetElapsedTime(elapsedTime);
+	}
+
 	bCooldownActive = true;
 
 	/* 쿨다운 설정되었으니 콜백 호출 */

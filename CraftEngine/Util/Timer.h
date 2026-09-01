@@ -21,12 +21,18 @@ public:
 	// 목표 시간 재설정 함수.
 	void SetTargetTime(float newTargetTime);
 
+	// 경과 시간 설정 함수
+	void SetElapsedTime(float newElapsedTime);
+
 public:
 	// 설정한 시간만큼 흘렀는지 확인하는 함수.
 	inline bool IsTimeOut() const { return elapsedTime >= targetTime; }
 
 	/* 경과 시간 반환 */
 	inline float GetElapsedTime() const { return elapsedTime; }
+	
+	/* 타이머 목표 시간 반환 */
+	inline float GetTargetTime() const { return targetTime; }
 
 private:
 	// 경과 시간 계산용 변수.

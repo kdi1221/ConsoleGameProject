@@ -56,6 +56,31 @@ void PS_Roguelike::OnDestroyedCurrentLevel()
 {
 	super::OnDestroyedCurrentLevel();
 
+	/* PlayerPawn의 Ability Cooltime 저장 */
+	std::shared_ptr<PlayerPawn> currentPlayerPawn = playerPawn.lock();
+	assert(currentPlayerPawn && "Invalid PlayerPawn");
+
+	std::shared_ptr<AbilitySystemComponent> playerPawnASC = currentPlayerPawn->GetComponent<AbilitySystemComponent>();
+	assert(playerPawnASC && "Invalid PlayerPawnASC");
+
+	for (auto& grantedAbility : mapGrantedAbilities)
+	{
+		AbilityObject* findAbilityObject = playerPawnASC->GetAbility<AbilityObject>(grantedAbility.first);
+		assert(findAbilityObject && "Invalid abilityObject");
+
+		std::unique_ptr<PlayerAbilityInfo>& playerAbilityInfo = grantedAbility.second;
+		assert(playerAbilityInfo && "Invalid playerAbilityInfo");
+
+		if (findAbilityObject->IsCooldown())
+		{
+			playerAbilityInfo->SaveCooldownElapsedTime(findAbilityObject->GetCooldownElapsedTime());
+		}
+		else
+		{
+			playerAbilityInfo->ResetCooldownElapsedTime();
+		}
+	}
+
 	playerPawn.reset();
 }
 
@@ -78,8 +103,6 @@ void PS_Roguelike::OnSpawnedPlayerPawn(std::weak_ptr<PlayerPawn> pawn)
 
 	std::shared_ptr<AbilitySystemComponent> playerPawnASC = currentPlayerPawn->GetComponent<AbilitySystemComponent>();
 	assert(playerPawnASC && "Invalid PlayerPawnASC");
-
-	/* TODO : 저장해둔 스킬별 쿨타임 정보 적용.. */
 
 	playerPawnASC->SetAbilityCooldownChangeCallback(std::bind(&PS_Roguelike::OnPlayerAbilityCooldownChange, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -105,23 +128,12 @@ void PS_Roguelike::OnSpawnedPlayerPawn(std::weak_ptr<PlayerPawn> pawn)
 			continue;
 		}
 
-		currentPlayerPawn->GrantAbility(*abilityInfo);
-
+		/* Ability Icon 먼저 업데이트 */
 		UpdateAbilityIcon(*abilityInfo);
+
+		/* Player Pawn에게 Ability 부여(이 과정에서 Cooltime등 Ability 정보들도 HUD에 업데이트) */
+		currentPlayerPawn->GrantAbility(*abilityInfo);
 	}
-
-
-
-	/* 세션 데이터 - 스킬 아이템 리스트를 돌면서 플레이어 스킬 및 HUD를 갱신한다.(TODO : 폐기 예정) */
-	/*for (const auto& iterItem : mapItemlist)
-	{
-		const int itemID = iterItem.second->GetItemID();
-		const ItemData& currentItemData = ItemDataTable::GetItemData(itemID);
-
-		currentPlayerPawn->GrantAbility(currentItemData.abilityID, iterItem.second->GetItemNum());
-
-		UpdateItemListIconText(*iterItem.second);
-	}*/
 }
 
 void PS_Roguelike::ChangeFloorLevel(int newFloorLevel)

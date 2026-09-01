@@ -17,3 +17,13 @@ void PlayerAbilityInfo::SetBindingKeyCode(int newKeyCode)
 {
 	bindingKeyCode = newKeyCode;
 }
+
+void PlayerAbilityInfo::SaveCooldownElapsedTime(float elapsedTime)
+{
+	savedCooldownTime = elapsedTime;
+}
+
+void PlayerAbilityInfo::ResetCooldownElapsedTime()
+{
+	savedCooldownTime = 0.f;
+}

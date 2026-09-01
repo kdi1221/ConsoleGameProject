@@ -70,6 +70,9 @@ public:
 	/* 쿨다운 타임 지정 */
 	void SetCooldownTime(float delayTime);
 
+	/* 쿨다운 진행시간 지정 */
+	void SetCooldownElapsedTime(float elapsedTime);
+
 	/* 마나 코스트 지정 */
 	void SetManaCost(float amount);
 
@@ -82,13 +85,15 @@ public:
 	inline bool IsActivate() const { return bActivated; }
 	inline bool IsCooldown() const { return bCooldownActive; }
 	inline float GetCooldownTime() const { return cooldownTime; }
+	inline float GetCooldownElapsedTime() const { return timerCooldown.GetElapsedTime(); }
 
 
+	/* 폐기 예정 */
 	inline bool IsTrigger() const { return bTrigger; }
 
 private:
 	/* 쿨다운 활성화 */
-	void ActivateCooldown();
+	void ActivateCooldown(float elapsedTime = 0.f);
 
 	/* 쿨다운 초기화 */
 	void ResetCooldown();
@@ -124,6 +129,9 @@ private:
 
 	// Ability Trigger 여부(폐기 예정)
 	bool bTrigger = false;
+
+
+
 
 	// 이 Ability를 소유중인 Pawn
 	std::weak_ptr<Pawn> ownerPawn;

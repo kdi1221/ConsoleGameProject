@@ -14,10 +14,17 @@ public:
 	/* 스킬 사용 키 입력 바인딩 수정 */
 	void SetBindingKeyCode(int newKeyCode);
 
+	/* 쿨다운 진행시간 저장 */
+	void SaveCooldownElapsedTime(float elapsedTime);
+
+	/* 쿨다운 진행시간 초기화 */
+	void ResetCooldownElapsedTime();
+
 public:
 	inline int GetAbilityID() const { return abilityID; }
 	inline int GetAbilityLevel() const { return currentLevel; }
 	inline int GetBindingKeyCode() const { return bindingKeyCode; }
+	inline float GetSavedCooldownTime() const { return savedCooldownTime; }
 
 private:
 	/* Ability ID */
@@ -29,5 +36,7 @@ private:
 	/* 바인딩 된 입력 키 */
 	int bindingKeyCode = 0;
 
+	/* 레벨 전환 직전 저장된 Ability Cooldown Time */
+	float savedCooldownTime = 0.f;
 };
 

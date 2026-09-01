@@ -111,7 +111,20 @@ void TilemapLevel::OnDestroyedActorInLevel(std::weak_ptr<Actor> destoryedActor)
 	UnregisterActorOnTilemap(actorOnTile);
 }
 
-CheckPlacementResult TilemapLevel::CanNextMove(std::shared_ptr<Actor> checkActor, const Vector2Int& nextPosition) const
+CheckPlacementResult TilemapLevel::CanNextMove(std::shared_ptr<Actor> checkActor, 
+												const Vector2Int& nextPosition) const
+{
+	if (!checkActor || !checkActor->IsActive())
+	{
+		return CheckPlacementResult::InactiveActor;
+	}
+
+	return CanNextMove(checkActor, checkActor->GetWorldPosition(), nextPosition);
+}
+
+CheckPlacementResult TilemapLevel::CanNextMove(std::shared_ptr<Actor> checkActor, 
+												const Vector2Int& currentPosition, 
+												const Vector2Int& nextPosition) const
 {
 	if (!checkActor || !checkActor->IsActive())
 	{
@@ -119,14 +132,15 @@ CheckPlacementResult TilemapLevel::CanNextMove(std::shared_ptr<Actor> checkActor
 	}
 
 	/* 같은 위치라면 이동 불가 */
-	if (checkActor->GetWorldPosition() == nextPosition)
+	if (currentPosition == nextPosition)
 	{
 		return CheckPlacementResult::SamePosition;
 	}
 
 	/* 다음에 이동할 위치가 벽타일이면 이동 불가 */
 	const eTileCategory nextTileCategory = tileMap->GetTileCategory(nextPosition);
-	if (eTileCategory::Wall == nextTileCategory)
+	if (eTileCategory::Wall == nextTileCategory ||
+		eTileCategory::None == nextTileCategory)
 	{
 		return CheckPlacementResult::BlockWall;
 	}
@@ -164,6 +178,39 @@ CheckPlacementResult TilemapLevel::CanNextMove(std::shared_ptr<Actor> checkActor
 
 	/* 그 외의 경우 모두 이동 가능*/
 	return CheckPlacementResult::CanMove;
+}
+
+bool TilemapLevel::IsDiagonalBlocked(std::shared_ptr<Actor> checkActor, 
+									const Vector2Int& currentPosition, 
+									const Vector2Int& direction) const
+{
+	/* 확인할 Actor가 유효하지않으면 false 반환 */
+	if (!checkActor)
+	{
+		return false;
+	}
+
+	/* 두 축의 성분중 하나라도 0이면 대각방향이 아니므로 return false */
+	if (0 == abs(direction.x) || 0 == abs(direction.y))
+	{
+		return false;
+	}
+
+	/* x축 방향에 장애물이 있으면 이동 불가 */
+	const Vector2Int toXAxisPosition = currentPosition + Vector2Int(direction.x, 0);
+	if (CheckPlacementResult::CanMove != CanNextMove(checkActor, currentPosition, toXAxisPosition))
+	{
+		return true;
+	}
+
+	/* y축 방향에 장애물이 있으면 이동 불가 */
+	const Vector2Int toYAxisPosition = currentPosition + Vector2Int(0, direction.y);
+	if (CheckPlacementResult::CanMove != CanNextMove(checkActor, currentPosition, toYAxisPosition))
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void TilemapLevel::ProcessTilemapCollision()

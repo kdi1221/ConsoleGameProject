@@ -31,3 +31,8 @@ void Timer::SetTargetTime(float newTargetTime)
 {
 	targetTime = newTargetTime;
 }
+
+void Timer::SetElapsedTime(float newElapsedTime)
+{
+	elapsedTime = newElapsedTime;
+}

@@ -47,7 +47,7 @@ bool NavigationTilemap::FindPath(std::shared_ptr<Actor> agent,
 			const int maxValue = max(dx, dy);
 
 			//최소거리만큼은 대각선으로 이동, 나머지는 직선방향으로 움직임
-			return (minValue * 14) + ((maxValue - minValue) * 10);
+			return (minValue * costDiagonal) + ((maxValue - minValue) * costStraight);
 		};
 
 	/* 오픈 리스트 : 우선순위큐로 가장 비용이 적은 노드를 꺼내오도록 한다. */
@@ -91,7 +91,8 @@ bool NavigationTilemap::FindPath(std::shared_ptr<Actor> agent,
 					continue;
 				}
 
-				const Vector2Int checkTileCoord = currentNode.pathCoord + Vector2Int(xAdd, yAdd);
+				const Vector2Int direction = Vector2Int(xAdd, yAdd);
+				const Vector2Int checkTileCoord = currentNode.pathCoord + direction;
 
 				/* 이미 클로즈 리스트에 들어간 타일은 제외한다. */
 				if (mapCloseNodeCoords.find(checkTileCoord) != mapCloseNodeCoords.end())
@@ -113,6 +114,12 @@ bool NavigationTilemap::FindPath(std::shared_ptr<Actor> agent,
 					continue;
 				}
 
+				/* 대각 방향의 타일일때 그 방향의 X,Y 분리 방향 타일이 막혀있으면 지나가지 못한다. */
+				if (tilemapLevel->IsDiagonalBlocked(agent, currentNode.pathCoord, direction))
+				{
+					continue;
+				}
+				
 				/* 현재 노드까지의 비용 + 현재 노드에서 체크중인 노드까지의 비용(대각 : 14, 직선 : 10)*/
 				const int CurrentToCheckNodeCost = (1 == abs(yAdd) && 1 == abs(xAdd)) ? costDiagonal : costStraight;
 				

@@ -63,6 +63,7 @@ void SkillQuickSlot::AbilityCooldownChange(const AbilityObject& ability, const P
 	if (bCooldown)
 	{
 		slotIcon->StartCooldown(ability.GetCooldownTime());
+		slotIcon->SetCooldownElapsed(ability.GetCooldownElapsedTime());
 	}
 	else
 	{

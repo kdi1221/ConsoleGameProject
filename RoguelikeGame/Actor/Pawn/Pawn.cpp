@@ -108,7 +108,7 @@ void Pawn::InitializeHealthValue(const float currentHealth, const float maxHealt
 	attributeComponent->InitialHealth(currentHealth, maxHealth);
 
 	/* 초기 사망 설정 */
-	bDeath = attributeComponent->GetCurrentHealth() > 0.f;
+	bDeath = attributeComponent->GetCurrentHealth() <= 0.f;
 }
 
 void Pawn::SetHealthChangeEventCallback(OnChangeHealthType callback)

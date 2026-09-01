@@ -279,7 +279,7 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 			switch (currentFloorLevel)
 			{
 			case 1:
-				if (randomValue < 30)
+				/*if (randomValue < 30)
 				{
 					spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnTilePos, roomIndex);
 				}
@@ -290,7 +290,8 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 				else
 				{
 					spawnedNPC = level->SpawnActor<NPCOrc>(spawnTilePos, roomIndex);
-				}
+				}*/
+				spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
 				break;
 
 			case 2:

@@ -57,10 +57,6 @@ public:
 	/* 플레이어 폰, 특정 스킬 부여 */
 	void GrantAbility(const PlayerAbilityInfo& abilityInfo);
 
-
-	/* 플레이어에 특정 스킬 부여(폐기 예정) */
-	//void GrantAbility(int abilityID, int abilityLevel);
-
 public:
 	/* 마나 소모 */
 	void ConsumeMana(float consumeValue);
@@ -83,8 +79,6 @@ private:
 	/* Ability 사용 키 입력 콜백 */
 	void OnAbilityActiveKeyDown(int keyCode, Craft::eInputTrigger inputTrigger);
 
-	//void OnProjectileFireKeyInput(int keyCode, Craft::eInputTrigger inputTrigger);
-
 	/* 치트키 입력 콜백 */
 	void OnCheatInputTrigger(int keyCode, Craft::eInputTrigger inputTrigger);
 
@@ -95,17 +89,11 @@ private:
 	/* 위치 이동 시 호출되는 카메라 뷰 위치 변경 함수 */
 	void UpdateViewCameraPosition(const Craft::Vector2Int& viewPosition);
 
-	/* 발사 입력 처리 */
-	//void ProcessFireInput();
-
 	/* 이동 입력 처리 */
 	void ProcessMoveInput();
 
 	/* 조준 방향 결정(마우스 커서 위치를 향해) */
 	void UpdateAimingDirectionToCursorPos();
-
-	/* Projectile Ability의 트리거 ON/OFF*/
-	//void SetProjectileAbilityTrigger(bool bTrigger);
 
 private:
 	/* 초당 마나 회복 속도 */
@@ -116,9 +104,6 @@ private:
 
 	/* 바인딩된 입력 별 Ability ID */
 	std::unordered_map<int, ABILITY_ID_TYPE> mapInputGrantAbilities;
-
-	/* 부여된 Projectile Ability ID들(폐기 예정) */
-	//std::unordered_set<ABILITY_ID_TYPE> grantProjectileAbilities;
 
 private:
 	/* 아이템 획득 시 호출되는 이벤트 */

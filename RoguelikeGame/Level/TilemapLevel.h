@@ -96,6 +96,12 @@ public:
 	/* 다음 위치(nextPosition)로 actor가 이동할 수 있는지 확인 */
 	eCheckPlacementResult CanNextMove(std::shared_ptr<Craft::Actor> checkActor, const Craft::Vector2Int& nextPosition) const;
 
+	/* checkActor와 충돌되는 대상을 장애물로 인식하고 currentPosition에서 nextPosition으로 움직일 수 있는지 확인 */
+	eCheckPlacementResult CanNextMove(std::shared_ptr<Craft::Actor> checkActor, const Craft::Vector2Int& currentPosition, const Craft::Vector2Int& nextPosition) const;
+
+	/* direction이 대각 방향인 경우 x, y 각 방향에 장애물이 있는지 체크 */
+	bool IsDiagonalBlocked(std::shared_ptr<Craft::Actor> checkActor, const Craft::Vector2Int& currentPosition, const Craft::Vector2Int& direction) const;
+
 public:
 	/* 타일맵 기반 충돌 처리 */
 	void ProcessTilemapCollision();
