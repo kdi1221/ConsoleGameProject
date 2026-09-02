@@ -114,7 +114,7 @@ void TilemapLevel::OnDestroyedActorInLevel(std::weak_ptr<Actor> destoryedActor)
 CheckPlacementResult TilemapLevel::CanNextMove(std::shared_ptr<Actor> checkActor, 
 												const Vector2Int& nextPosition) const
 {
-	if (!checkActor || !checkActor->IsActive())
+	if (!checkActor || checkActor->HasExpired())
 	{
 		return CheckPlacementResult::InactiveActor;
 	}
@@ -126,7 +126,7 @@ CheckPlacementResult TilemapLevel::CanNextMove(std::shared_ptr<Actor> checkActor
 												const Vector2Int& currentPosition, 
 												const Vector2Int& nextPosition) const
 {
-	if (!checkActor || !checkActor->IsActive())
+	if (!checkActor || checkActor->HasExpired())
 	{
 		return CheckPlacementResult::InactiveActor;
 	}

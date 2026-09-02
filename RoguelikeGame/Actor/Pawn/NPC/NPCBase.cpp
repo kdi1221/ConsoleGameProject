@@ -73,6 +73,17 @@ void NPCBase::Draw()
 	}
 }
 
+void NPCBase::Destroy()
+{
+	/* Destroy전에 Stop Move 호출해야 함*/
+	if (navMovementComponent)
+	{
+		navMovementComponent->StopMove();
+	}
+
+	super::Destroy();
+}
+
 void NPCBase::SetChaseTarget(std::weak_ptr<Pawn> target)
 {
 	assert(!target.expired() && "target invalid..");
@@ -248,7 +259,8 @@ void NPCBase::OnBehaviorChaseTarget(float deltaTime)
 	timerFindChasePathDelay.Tick(deltaTime);
 	if (timerFindChasePathDelay.IsTimeOut())
 	{
-		/* 일정 딜레이마다 타겟과 주변 환경 변화를 인지해서 경로를 새로잡거나 공격범위 안에 있으면 공격한다. */
+		StopMove();
+		/* 일정 딜레이마다 타겟 추적 경로를 갱신한다. */
 		BeginPathfindingToTarget();
 
 		/* 다음 이동 체크 딜레이 설정 */

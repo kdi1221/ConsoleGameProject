@@ -4,6 +4,7 @@
 #include <Core/CraftObject.h>
 #include <Math/Vector2Int.h>
 #include <vector>
+#include <Defines/Defines.h>
 #include <Defines/Enums.h>
 
 namespace Craft
@@ -36,6 +37,9 @@ namespace Craft
 			/* 타겟 위치로 이동 중 다른 충돌 Actor와 부딪침 */
 			BlockActor,
 
+			/* 대각 이동 Block*/
+			BlockDiagonal,
+
 			/* 기타 알 수 없는 이유로 실패 */
 			Unknown,
 		};
@@ -49,15 +53,25 @@ namespace Craft
 		virtual void ProcessPathFindRequests();
 
 		/* 경로찾기 요청 */
-		virtual void RequestFindPath(std::shared_ptr<NavMovementComponent> requester,
-									const Vector2Int& startPos,
-									const Vector2Int& endPos);
+		virtual eFindPathResult RequestFindPath(std::shared_ptr<NavMovementComponent> requester,
+												const Vector2Int& startPos,
+												const Vector2Int& endPos,
+												RequestPathHandleType& outRequestPathHandle);
+
+		/* 경로 찾기 요청 취소 */
+		virtual void CancelFindPathRequest(std::shared_ptr<NavMovementComponent> requester);
+
 
 		/* 시작위치 - 종료위치를 연결하는 경로 생성 반환 */
 		virtual eFindPathResult FindPath(std::shared_ptr<Actor> agent,
 								const Vector2Int& startPos, 
 								const Vector2Int& endPos, 
 								std::vector<Vector2Int>& resultPath) const;
+
+		/* agent가 prevPosition에서 nextPosition으로 이동가능한지 체크 */
+		virtual bool SimulatePreviousToNextMove(std::shared_ptr<Actor> agent,
+												const Vector2Int& prevPosition, 
+												const Vector2Int& nextPosition) const;
 
 		/* 해당 지점으로 이동 가능한지 여부 반환 */
 		virtual bool CanNextMove(std::shared_ptr<Actor> agent, const Vector2Int& checkPos) const;
@@ -68,7 +82,11 @@ namespace Craft
 																	Vector2Int& enableMovePosition) const;
 
 	public:
-		void SetCurrentLevel(std::weak_ptr<Level> level);
+		/* 기존 레벨이 정리될 때 호출 */
+		virtual void ResetCurrentLevel();
+
+		/* 새로운 레벨이 설정될 때 호출 */
+		virtual void SetCurrentLevel(std::weak_ptr<Level> level);
 
 	protected:
 		// 현재 활성화된 레벨 캐스팅 반환
@@ -78,8 +96,12 @@ namespace Craft
 			return Cast<T>(currentLevel.lock());
 		}
 
+	protected:
+		/* 경로 찾기 요청에 대한 핸들값 생성 */
+		RequestPathHandleType GenerateRequestPathHandle() const;
+
 	private:
-		// 현재 활성화된 레벨
+		/* 현재 활성화된 레벨 */
 		std::weak_ptr<Level> currentLevel;
 	};
 }

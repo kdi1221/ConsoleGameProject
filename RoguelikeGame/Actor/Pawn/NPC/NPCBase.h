@@ -42,6 +42,7 @@ public:
 	virtual void Initialize() override;
 	virtual void Tick(float deltaTime) override;
 	virtual void Draw() override;
+	virtual void Destroy() override;
 
 public:
 	/* 타겟을 추적 대상으로 삼음 */

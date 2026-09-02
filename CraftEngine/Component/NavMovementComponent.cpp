@@ -8,9 +8,27 @@ namespace Craft
 {
 	const size_t NavMovementComponent::PATH_RESERVE_SIZE = 128;
 
+	NavigationUniqueIDType NavMovementComponent::GenerateUniqueID()
+	{
+		static NavigationUniqueIDType currentID = 1;
+
+		NavigationUniqueIDType allocUniqueID = currentID;	
+
+		++currentID;
+		if (0 == currentID)
+		{
+			/* 계속 증가하다 순환되어 0이되면 1로 설정 */
+			currentID = 1;
+		}
+
+		return allocUniqueID;
+	}
+
 	NavMovementComponent::NavMovementComponent(float moveSpeed)
 		:moveSpeed(moveSpeed)
 	{
+		uniqueID = GenerateUniqueID();
+
 		/* 경로 저장 Vector의 예약 크기 지정 */
 		movePaths.reserve(PATH_RESERVE_SIZE);
 	}
@@ -40,6 +58,44 @@ namespace Craft
 		moveSpeed = newMoveSpeed;
 	}
 
+	//bool NavMovementComponent::StartMove(const Vector2Int& destination)
+	//{
+	//	std::shared_ptr<Actor> ownerActor = GetOwner();
+	//	assert(ownerActor && "Invalid ownerActor");
+
+	//	const Vector2Int currentPosition = ownerActor->GetWorldPosition();
+
+	//	// 현재위치와 같은 위치면 이동하지 않음
+	//	if (currentPosition == destination)
+	//	{
+	//		return false;
+	//	}
+
+	//	//네비게이션 시스템을 통해 경로 찾기
+	//	const NavigationBase& navigationSystem = Engine::Get().GetNavigationSystem<NavigationBase>();
+	//	findPathResult = navigationSystem.FindPath(ownerActor, currentPosition, destination, movePaths);
+
+	//	if (findPathResult == eFindPathResult::Fail ||
+	//		findPathResult == eFindPathResult::None)
+	//	{
+	//		//경로를 찾지 못했으면 이동 중단.
+	//		return false;
+	//	}
+
+	//	/* 이동 시작 지정 */
+	//	isMoveProcess = true;
+
+	//	/* 시작 위치 저장 */
+	//	currentPositionTemp = static_cast<Vector2Float>(currentPosition);
+
+	//	/* 첫 경로 지정(현재 위치) */
+	//	nextPathIndex = 0;
+
+	//	/* 이동할 다음 위치 인덱스 지정 */
+	//	ToNextPosition();
+
+	//	return true;
+	//}
 	bool NavMovementComponent::StartMove(const Vector2Int& destination)
 	{
 		std::shared_ptr<Actor> ownerActor = GetOwner();
@@ -54,33 +110,45 @@ namespace Craft
 		}
 
 		//네비게이션 시스템을 통해 경로 찾기
-		const NavigationBase& navigationSystem = Engine::Get().GetNavigationSystem<NavigationBase>();
-		findPathResult = navigationSystem.FindPath(ownerActor, currentPosition, destination, movePaths);
+		NavigationBase& navigationSystem = Engine::Get().GetNavigationSystem<NavigationBase>();
 
-		if (findPathResult == eFindPathResult::Fail ||
-			findPathResult == eFindPathResult::None)
+		RequestPathHandleType newRequestHandle = INVALID_REQUEST_PATH_HANDLE;
+		const eFindPathResult requestPathResult = navigationSystem.RequestFindPath(shared_from_this(), currentPosition, destination, newRequestHandle);
+		if(requestPathResult == eFindPathResult::Fail)
 		{
-			//경로를 찾지 못했으면 이동 중단.
+			// 경로 탐색 요청에 실패하면 return false;
 			return false;
 		}
 
-		/* 이동 시작 지정 */
-		isMoveProcess = true;
+		if (requestPathResult == eFindPathResult::AlreadyRequested)
+		{
+			// 이전에 요청했던 경로 탐색 정보가 남아있으면 아직 결과가 나오지 않은것이므로 우선은 true를 반환한다.
+			return true;
+		}
 
-		/* 시작 위치 저장 */
-		currentPositionTemp = static_cast<Vector2Float>(currentPosition);
+		if (requestPathResult == eFindPathResult::Queued)
+		{
+			// 경로 탐색 요청이 대기풀에 들어갔으면 핸들 정보를 갱신하고 대기한다.
+			findPathResult = requestPathResult;
+			currentRequestHandle = newRequestHandle;
 
-		/* 첫 경로 지정(현재 위치) */
-		nextPathIndex = 0;
+			return true;
+		}
 
-		/* 이동할 다음 위치 인덱스 지정 */
-		ToNextPosition();
-
-		return true;
+		//그 외의 경우 모두 실패
+		return false;
 	}
 
 	void NavMovementComponent::StopMove()
 	{
+		/* 이전에 요청했던 경로 탐색을 취소하고 초기화해야 함 */
+		if (findPathResult == eFindPathResult::Queued)
+		{
+			NavigationBase& navigationSystem = Engine::Get().GetNavigationSystem<NavigationBase>();
+			navigationSystem.CancelFindPathRequest(shared_from_this());
+		}
+		currentRequestHandle = INVALID_REQUEST_PATH_HANDLE;
+
 		/* 이동 경로 정보 초기화 */
 		movePaths.clear();
 		findPathResult = eFindPathResult::None;
@@ -102,6 +170,41 @@ namespace Craft
 		{
 			callback(movePaths[drawPathIndex]);
 		}
+	}
+
+	void NavMovementComponent::OnPathFindRequestProcessed(const RequestPathHandleType requestHandle, const eFindPathResult result, const std::vector<Vector2Int>& findPaths)
+	{
+		if (currentRequestHandle != requestHandle || findPathResult != eFindPathResult::Queued)
+		{
+			//결과로 받아온 requestHandle과 현재 저장해둔 requestHandle이 같아야 함
+			//경로 찾기 결과 수신대기 상태여야 함
+			return;
+		}
+
+		/* 핸들 정보 리셋 */
+		currentRequestHandle = INVALID_REQUEST_PATH_HANDLE;
+
+		/* 경로 탐색 결과 저장 */
+		findPathResult = result;
+		if (findPathResult == eFindPathResult::Fail || findPathResult == eFindPathResult::None)
+		{
+			return;
+		}
+
+		/* 결과 경로를 저장 */
+		movePaths.assign(findPaths.begin(), findPaths.end());
+
+		/* 이동시작 */
+		isMoveProcess = true;
+
+		/* 시작 위치 저장 */
+		currentPositionTemp = static_cast<Vector2Float>(findPaths[0]);
+
+		/* 첫 경로 지정(현재 위치) */
+		nextPathIndex = 0;
+
+		/* 이동할 다음 위치 인덱스 지정 */
+		ToNextPosition();
 	}
 
 	void NavMovementComponent::SetOwnerPosition(const Vector2Int& inPosition)
@@ -165,9 +268,6 @@ namespace Craft
 		/* 현재 프레임에서의 이동 델타 값 */
 		float moveDelta =  deltaTime * moveSpeed;
 
-		/* Length sqrt연산 제외를 위해 제곱 */
-		//const float sqrMoveDelta = moveDelta * moveDelta;
-
 		/* 이동 델타값과, 이동할 경로가 남아있는동안 반복 */
 		while (moveDelta > 0.f && isMoveProcess)
 		{
@@ -217,11 +317,15 @@ namespace Craft
 			return false;
 		}
 
+		std::shared_ptr<Actor> ownerActor = GetOwner();
+		assert(ownerActor && "Invalid ownerActor");
+
+		const Vector2Int currentPosition = ownerActor->GetWorldPosition();
 		const Vector2Int& nextPathPos = movePaths[nextPathIndex];
 		const NavigationBase& navigationSystem = Engine::Get().GetNavigationSystem<NavigationBase>();
 	
-		//TODO : CanNextMove내에서 대각선 이동 체크 필요 
-		return navigationSystem.CanNextMove(GetOwner(), nextPathPos);
+		//다음 위치에 대해 대각선 이동 가능 여부 등 체크
+		return navigationSystem.SimulatePreviousToNextMove(GetOwner(), currentPosition, nextPathPos);
 	}
 }
 

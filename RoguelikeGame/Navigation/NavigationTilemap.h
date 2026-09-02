@@ -3,6 +3,8 @@
 #include "Navigation/NavigationBase.h"
 #include "Types/Defines.h"
 #include "Types/Enums.h"
+#include <Defines/Defines.h>
+#include <unordered_map>
 #include <queue>
 
 namespace Craft
@@ -25,7 +27,7 @@ private:
 	static constexpr float heuristicWeight = 1.3f;
 
 	/* 한 프레임당 최대 요청 처리 갯수 */
-	static constexpr int maxProcessFindPathRequestFrame = 30;
+	static constexpr int maxProcessFindPathRequestFrame = 5;
 
 	struct FNodePath
 	{
@@ -78,7 +80,14 @@ private:
 	struct FRequestPathFind
 	{
 	public:
+		/* 요청자 참조 포인터 */
 		std::weak_ptr<Craft::NavMovementComponent> requester;
+
+		/* 요청자의 Unique ID(요청자가 유효하지 않을 수 있으므로) */
+		NavigationUniqueIDType requesterUniqueID = 0;
+
+		/* 요청 Handle */
+		RequestPathHandleType requestHandle = 0;
 			
 		Craft::Vector2Int startPos = Craft::Vector2Int::Zero;
 
@@ -90,8 +99,14 @@ private:
 
 		}
 
-		FRequestPathFind(std::shared_ptr<Craft::NavMovementComponent> requester, const Craft::Vector2Int& startPos, const Craft::Vector2Int& endPos)
+		FRequestPathFind(std::shared_ptr<Craft::NavMovementComponent> requester, 
+							const NavigationUniqueIDType uniqueID,
+							const RequestPathHandleType requestHandle,
+							const Craft::Vector2Int& startPos, 
+							const Craft::Vector2Int& endPos)
 			:requester(requester)
+			,requesterUniqueID(uniqueID)
+			,requestHandle(requestHandle)
 			,startPos(startPos)
 			,endPos(endPos)
 		{
@@ -108,11 +123,13 @@ public:
 	virtual void ProcessPathFindRequests() override;
 
 	/* 경로찾기 요청 */
-	virtual void RequestFindPath(std::shared_ptr<Craft::NavMovementComponent> requester,
-								const Craft::Vector2Int& startPos,
-								const Craft::Vector2Int& endPos) override;
+	virtual Craft::eFindPathResult RequestFindPath(std::shared_ptr<Craft::NavMovementComponent> requester,
+													const Craft::Vector2Int& startPos,
+													const Craft::Vector2Int& endPos,
+													RequestPathHandleType& outRequestPathHandle) override;
 
-
+	/* 경로찾기 취소 요청 */
+	virtual void CancelFindPathRequest(std::shared_ptr<Craft::NavMovementComponent> requester) override;
 
 
 
@@ -123,12 +140,22 @@ public:
 									const Craft::Vector2Int& endPos,
 									std::vector<Craft::Vector2Int>& resultPath) const override;
 
+	/* agent가 prevPosition에서 nextPosition으로 이동가능한지 체크 */
+	virtual bool SimulatePreviousToNextMove(std::shared_ptr<Craft::Actor> agent,
+											const Craft::Vector2Int& prevPosition,
+											const Craft::Vector2Int& nextPosition) const override;
+
 	virtual bool CanNextMove(std::shared_ptr<Craft::Actor> agent, const Craft::Vector2Int& checkPos) const override;
 
 	/* 타겟까지 이동 시뮬레이션 도중 충돌되는 대상이 있는지 여부 반환 */
 	virtual CheckMoveResultType CheckEnableMoveToTargetPosition(std::shared_ptr<Craft::Actor> agent,
 																const Craft::Vector2Int& checkPos,
 																Craft::Vector2Int& enableMovePosition) const override;
+
+	
+public:
+	/* 기존 레벨이 정리될 때 호출 */
+	virtual void ResetCurrentLevel() override;
 
 public:
 	/* 해당 위치의 타일이 속한 방 인덱스 반환 */
@@ -138,7 +165,13 @@ public:
 	eTileCategory GetTileCategory(const Craft::Vector2Int& tileCoord) const;
 
 private:
+	/* 이전에 경로 찾기 요청했던 요청자의 유니크 ID와 요청 Handle */
+	std::unordered_map<NavigationUniqueIDType, RequestPathHandleType> requesterHandles;
+
 	/* 경로 찾기 요청 정보가 담긴 큐 */
 	std::queue<FRequestPathFind> queueRequestPathFind;
+
+	/* 경로 찾기 요청에 대한 결과를 임시로 받을 버퍼 */
+	std::vector<Craft::Vector2Int> cachedPathFindBuffer;
 };
 

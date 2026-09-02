@@ -12,43 +12,153 @@ using namespace Craft;
 
 NavigationTilemap::NavigationTilemap()
 {
-	
+	/* 경로 탐색에 쓰이는 캐시 경로 버퍼 크기 미리 할당 */
+	cachedPathFindBuffer.reserve(NavMovementComponent::PATH_RESERVE_SIZE);
 }
 
 void NavigationTilemap::ProcessPathFindRequests()
 {
+	/* 레벨이 유효하지 않거나, 현재 게임이 일시정지 상태인경우 처리하지 않음 */
+	std::shared_ptr<TilemapLevel> tilemapLevel = GetCurrentLevel<TilemapLevel>();
+	if (!tilemapLevel || tilemapLevel->GetGamePaused())
+	{
+		return;
+	}
+
 	/* 처리된 경로 찾기 요청 횟수 */
 	int countProcessRequest = 0;
 
 	/* 요청 처리 최대횟수를 안넘기고, 큐에 요청이 남아있는동안 반복 */
 	while (countProcessRequest < maxProcessFindPathRequestFrame && !queueRequestPathFind.empty())
 	{
+		/* 큐에 담긴 경로 찾기 요청정보를 꺼내옴 */
 		FRequestPathFind currentRequestPathFind = queueRequestPathFind.front();
 		queueRequestPathFind.pop();
 
-		//TODO : 경로 찾기 정보에 대한 유효성 검증 후 경로 찾기 실행
+		/* 요청자 핸들 리스트에 남아있는지 확인 */
+		auto findRequestHandle = requesterHandles.find(currentRequestPathFind.requesterUniqueID);
+		if (findRequestHandle == requesterHandles.end())
+		{
+			/* 만약 요청자 핸들 리스트에 남아있지 않다면 취소된 요청이므로 continue;*/
+			continue;
+		}
+		else if (findRequestHandle->second != currentRequestPathFind.requestHandle)
+		{
+			/* 요청자 핸들 리스트에 남아있는 핸들과 큐에 담겨있던 경로찾기 요청정보의 핸들이 다른 경우 */
+			/* 즉 요청자가 이전 요청을 취소하고 새로운 요청을 신청한 상태이므로 넘어감 */
+			continue;
+		}
 
+		/* 요청자 핸들 리스트에서 제거 */
+		requesterHandles.erase(findRequestHandle);
+
+		//경로 찾기 정보에 대한 유효성 검증
+		std::shared_ptr<NavMovementComponent> requester = currentRequestPathFind.requester.lock();
+		if (!requester)
+		{
+			continue;
+		}
+
+		/* 요청자 및 요청자의 Owner Actor가 모두 유효하지 않으면 처리하지 않는다. */
+		std::shared_ptr<Actor> requesterOwner = requester->GetOwner();
+		if (!requesterOwner || requesterOwner->HasExpired())
+		{
+			continue;
+		}
+
+		/* 경로 요청에 대한 결과 경로 */
+		cachedPathFindBuffer.clear();
+
+		//경로 찾기 실행
+		const eFindPathResult findPathResult = FindPath(requesterOwner, currentRequestPathFind.startPos, currentRequestPathFind.endPos, cachedPathFindBuffer);
+		requester->OnPathFindRequestProcessed(currentRequestPathFind.requestHandle, findPathResult, cachedPathFindBuffer);
+
+		/* 경로 요청 처리 횟수 증가 */
 		++countProcessRequest;
 	}
+
+	/* 캐시 경로 버퍼 초기화 */
+	cachedPathFindBuffer.clear();
 }
 
-void NavigationTilemap::RequestFindPath(std::shared_ptr<NavMovementComponent> requester, 
+eFindPathResult NavigationTilemap::RequestFindPath(std::shared_ptr<NavMovementComponent> requester,
 										const Vector2Int& startPos, 
-										const Vector2Int& endPos)
+										const Vector2Int& endPos,
+										RequestPathHandleType& outRequestPathHandle)
 {
+	if (!requester)
+	{
+		return eFindPathResult::Fail;
+	}
+
+	/* 요청자가 유효하지 않은경우 Fail 반환 */
+	std::shared_ptr<Actor> requesterOwner = requester->GetOwner(); 
+	if (!requesterOwner || requesterOwner->HasExpired())
+	{
+		return eFindPathResult::Fail;
+	}
+
+	const NavigationUniqueIDType requesterUniqueID = requester->GetUniqueID();
+
+	//경로 찾기 요청한 requester의 uniqueID를 통해 이전 요청이 남아있는지 확인하고, 남아있다면 현재 요청은 무시한다.
+	if (requesterHandles.find(requesterUniqueID) != requesterHandles.end())
+	{
+		return eFindPathResult::AlreadyRequested;
+	}
+	
+	/* 타일맵이 유효해야 함 */
+	std::shared_ptr<TilemapLevel> tilemapLevel = GetCurrentLevel<TilemapLevel>();
+	if (!tilemapLevel)
+	{
+		return eFindPathResult::Fail;
+	}
+
+	/* 같은 위치라면 아무것도 하지 않는다. */
+	if (startPos == endPos)
+	{
+		return eFindPathResult::Fail;
+	}
+
+	/* 목적지가 갈 수 없는 위치면 아무것도 하지 않는다. */
+	if (CheckPlacementResult::CanMove != tilemapLevel->CanNextMove(requesterOwner, endPos))
+	{
+		return eFindPathResult::Fail;
+	}
+	
+	/* 경로 탐색 요청 정보에 대한 Handle 생성 */
+	const RequestPathHandleType requestPathHandle = GenerateRequestPathHandle();
+
+	/* 요청 정보를 큐에 담음 */
+	queueRequestPathFind.push(FRequestPathFind(requester, requesterUniqueID, requestPathHandle, startPos, endPos));
+
+	/* 요청자의 정보 추가 */
+	requesterHandles.insert({ requesterUniqueID, requestPathHandle });
+
+	/* 핸들 반환 */
+	outRequestPathHandle = requestPathHandle;
+
+	return eFindPathResult::Queued;
+}
+
+void NavigationTilemap::CancelFindPathRequest(std::shared_ptr<NavMovementComponent> requester)
+{
+	/* 요청자가 유효하지 않으면 리턴 */
 	if (!requester)
 	{
 		return;
 	}
 
-	std::shared_ptr<Actor> requesterOwner = requester->GetOwner(); 
-	if (!requesterOwner || !requesterOwner->IsActive())
+	auto findRequestHandle = requesterHandles.find(requester->GetUniqueID());
+	if (findRequestHandle == requesterHandles.end())
 	{
 		return;
 	}
 
-	queueRequestPathFind.push(FRequestPathFind(requester, startPos, endPos));
+	/* 요청자 핸들 리스트에서 제거하여 이후 큐에서 무효화된 이전 정보가 꺼내져와도 처리가 되지 않도록 함 */
+	requesterHandles.erase(findRequestHandle);
 }
+
+
 
 eFindPathResult NavigationTilemap::FindPath(std::shared_ptr<Actor> agent,
 											const Vector2Int& startPos, 
@@ -218,50 +328,39 @@ eFindPathResult NavigationTilemap::FindPath(std::shared_ptr<Actor> agent,
 	std::reverse(resultPath.begin(), resultPath.end());
 
 	return findPathResult;
+}
 
+bool NavigationTilemap::SimulatePreviousToNextMove(std::shared_ptr<Actor> agent, const Vector2Int& prevPosition, const Vector2Int& nextPosition) const
+{
+	if (!agent)
+	{
+		return false;
+	}
 
+	if (prevPosition == nextPosition)
+	{
+		return false;
+	}
 
-	//도착 지점이 map에 존재하는경우 성공적으로 경로탐색이 된 것	
-	//resultPath.clear();
-	//auto iterFindEndPosNode = mapCloseNodeCoords.find(endPos);
+	std::shared_ptr<TilemapLevel> tilemapLevel = GetCurrentLevel<TilemapLevel>();
+	if (!tilemapLevel)
+	{
+		return false;
+	}
 
-	////For Debug
-	//const bool bFindPathSuccess = iterFindEndPosNode != mapCloseNodeCoords.end();
-	//char szTmp[512] = { 0 };
-	//sprintf_s(szTmp, "FindPath, Start[%d, %d] => End[%d, %d], %s, CloseNodeNum[%d]\n",
-	//	startPos.x, startPos.y,
-	//	endPos.x, endPos.y,
-	//	bFindPathSuccess ? "Success" : "Fail",
-	//	static_cast<int>(mapCloseNodeCoords.size()));
-	//OutputDebugStringA(szTmp);
+	const Vector2Int direction = nextPosition - prevPosition;
+	
+	//이동 방향이 대각성분이면 대각선 이동 체크 
+	if (abs(direction.x) == 1 && abs(direction.y))
+	{
+		//대각선 이동시 대각선 방향의 X,Y 분리 방향 타일이 막혀있으면 지나가지 못한다. */
+		if (tilemapLevel->IsDiagonalBlocked(agent, prevPosition, direction))
+		{
+			return false;
+		}
+	}
 
-	//if (iterFindEndPosNode == mapCloseNodeCoords.end())
-	//{
-	//	//TODO : 최적화 지점? 애초에 가지 못하는 경로에는 접근 못하게??
-	//	int a = 10;
-	//	a = a;
-	//}
-
-	//while (iterFindEndPosNode != mapCloseNodeCoords.end())
-	//{
-	//	resultPath.emplace_back(iterFindEndPosNode->first);
-
-	//	if (iterFindEndPosNode->first == startPos)
-	//	{
-	//		break;
-	//	}
-
-	//	iterFindEndPosNode = mapCloseNodeCoords.find(iterFindEndPosNode->second);
-	//}
-
-	////마지막으로 역순으로 뒤집어서 시작->종료 경로순으로 완성한다.
-	//std::reverse(resultPath.begin(), resultPath.end());
-
-	//const bool result = (!resultPath.empty()) &&
-	//					(*resultPath.begin() == startPos) &&
-	//					(*(resultPath.end() - 1) == endPos);
-
-	//return result;
+	return CheckPlacementResult::CanMove == tilemapLevel->CanNextMove(agent, prevPosition, nextPosition);
 }
 
 bool NavigationTilemap::CanNextMove(std::shared_ptr<Actor> agent, const Vector2Int& checkPos) const
@@ -289,7 +388,7 @@ CheckMoveResultType NavigationTilemap::CheckEnableMoveToTargetPosition(std::shar
 																		const Craft::Vector2Int& checkPos, 
 																		Vector2Int& enableMovePosition) const
 {
-	if (!agent || !agent->IsActive())
+	if (!agent || agent->HasExpired())
 	{
 		return eCheckMoveTargetResult::Unknown;
 	}
@@ -323,6 +422,18 @@ CheckMoveResultType NavigationTilemap::CheckEnableMoveToTargetPosition(std::shar
 	for (; iterMoveNextTileCoord != pathTiles.end(); ++iterMoveNextTileCoord)
 	{
 		const Vector2Int& checkTileCoord = *iterMoveNextTileCoord;
+
+		/* 직전 위치에서 현재 위치까지의 방향 */
+		const Vector2Int prevToCheckDirection = checkTileCoord - *iterlastMoveEnableTileCoord;
+		if(abs(prevToCheckDirection.x) == 1 && abs(prevToCheckDirection.y) == 1)
+		{
+			//대각선 이동시 대각선 방향의 X,Y 분리 방향 타일이 막혀있으면 지나가지 못한다. */
+			if (tilemapLevel->IsDiagonalBlocked(agent, *iterlastMoveEnableTileCoord, prevToCheckDirection))
+			{
+				checkResult = CheckMoveResultType::BlockDiagonal;
+				break;
+			}
+		}
 
 		//이동 불가능한 이유에 대해 Return 값 결정
 		const CheckPlacementResult checkMoveResult = tilemapLevel->CanNextMove(agent, checkTileCoord);
@@ -367,6 +478,20 @@ CheckMoveResultType NavigationTilemap::CheckEnableMoveToTargetPosition(std::shar
 	enableMovePosition = *iterlastMoveEnableTileCoord;
 
 	return checkResult;
+}
+
+void NavigationTilemap::ResetCurrentLevel()
+{
+	NavigationBase::ResetCurrentLevel();
+
+	/* 경로 찾기 큐의 정보들을 모두 다 초기화한다. */
+	requesterHandles.clear();
+
+	/* 큐의 경우 빈 큐와 swap하여 정리 */
+	std::queue<FRequestPathFind>().swap(queueRequestPathFind);
+
+	/* Path Find Buffer 초기화 */
+	cachedPathFindBuffer.clear();
 }
 
 RoomDefines::UNIQUE_INDEX_TYPE NavigationTilemap::GetRoomIndexInTile(const Craft::Vector2Int& tileCoord) const

@@ -4,6 +4,7 @@
 #include "Component.h"
 #include <Math/Vector2Float.h>
 #include <Math/Vector2Int.h>
+#include <Defines/Defines.h>
 #include <Defines/Enums.h>
 #include <vector>
 #include <functional>
@@ -12,12 +13,17 @@ namespace Craft
 {
 	/* 네비게이션 시스템 기반 이동 */
 	class CRAFT_API NavMovementComponent : public Component
+										, public std::enable_shared_from_this<NavMovementComponent>
 	{
 		TYPE_DECLARATIONS(NavMovementComponent, Component)
 
-	private:
+	public:
 		/* 초기 movePaths 예약 사이즈 크기 */
 		static const size_t PATH_RESERVE_SIZE;
+
+	private:
+		/* NavMovementComponent의 Unique ID 생성 */
+		static NavigationUniqueIDType GenerateUniqueID();
 	
 	public:
 		using OnMoveFinishType = std::function<void()>;
@@ -49,8 +55,12 @@ namespace Craft
 		/* 경로별 콜백 호출 */
 		void Foreach_Path(std::function<void(const Vector2Int&)> callback);
 
+		/* 이동 요청에 대한 응답으로 호출되는 함수 */
+		void OnPathFindRequestProcessed(const RequestPathHandleType requestHandle, const eFindPathResult result, const std::vector<Vector2Int>& findPaths);
+
 	public:
 		inline eFindPathResult GetFindPathResult() const { return findPathResult; }
+		inline NavigationUniqueIDType GetUniqueID() const { return uniqueID; }
 
 	private:
 		/* Owner 위치 설정 */
@@ -66,6 +76,15 @@ namespace Craft
 		bool IsValidNextMove() const;
 
 	private:
+		/* NavMovementComponent 고유 ID */
+		NavigationUniqueIDType uniqueID = 0;
+
+		/* 현재 이동 요청에 대한 Handle */
+		RequestPathHandleType currentRequestHandle = INVALID_REQUEST_PATH_HANDLE;
+
+
+
+
 		/* 현재 이동 진행중인지 여부 */
 		bool isMoveProcess = false;
 

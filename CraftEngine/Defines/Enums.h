@@ -85,7 +85,13 @@ namespace Craft
 		/* 경로 탐색 도중 제한 걸림 */
 		Throttled,
 
-		/* 실패(목표 지점까지의 경로 없음) */
-		Fail
+		/* 실패(목표 지점까지의 경로 없음, 기타 오류) */
+		Fail,
+
+		/* 이미 이전에 요청을 한적이 있음 */
+		AlreadyRequested,
+
+		/* 요청이 대기풀에 들어감 */
+		Queued,
 	};
 }

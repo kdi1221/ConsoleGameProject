@@ -83,6 +83,15 @@ namespace Craft
 			return static_cast<const T&>(*ptrNavigation);
 		}
 
+		template<typename T, typename = std::enable_if_t<std::is_base_of<NavigationBase, T>::value>>
+		T& GetNavigationSystem()
+		{
+			NavigationBase* ptrNavigation = navigationSystem.get();
+			assert(ptrNavigation && "Invalid config..");
+
+			return static_cast<T&>(*ptrNavigation);
+		}
+
 		// GameMode 반환
 		template<typename T, typename = std::enable_if_t<std::is_base_of<GameMode, T>::value>>
 		T* GetGameMode() const

@@ -338,6 +338,11 @@ namespace Craft
 		// 기존 레벨 정리
 		if (mainLevel)
 		{
+			if (navigationSystem)
+			{
+				navigationSystem->ResetCurrentLevel();
+			}
+
 			//기존 레벨이 정리되었음을 알림
 			if (GameMode* currentGameMode = GetGameMode<GameMode>())
 			{
