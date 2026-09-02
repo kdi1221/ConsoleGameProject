@@ -9,6 +9,18 @@ namespace Craft
 
 	}
 
+	void NavigationBase::ProcessPathFindRequests()
+	{
+		
+	}
+
+	void NavigationBase::RequestFindPath(std::shared_ptr<NavMovementComponent> requester, 
+										const Vector2Int& startPos, 
+										const Vector2Int& endPos)
+	{
+		
+	}
+
 	eFindPathResult NavigationBase::FindPath(std::shared_ptr<Actor> agent,
 															const Vector2Int& startPos,
 															const Vector2Int& endPos,

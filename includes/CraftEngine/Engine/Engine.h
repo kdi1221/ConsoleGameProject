@@ -115,6 +115,9 @@ namespace Craft
 		// 화면에 그리는 함수.
 		virtual void Draw();
 
+		// 경로 찾기 요청 처리  .
+		virtual void ProcessNavigation();
+
 		// 충돌 처리 함수.
 		virtual void ProcessColiision();
 

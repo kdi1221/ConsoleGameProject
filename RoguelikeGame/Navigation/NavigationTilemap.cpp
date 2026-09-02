@@ -1,5 +1,6 @@
 ﻿#include "NavigationTilemap.h"
 #include "Level/TilemapLevel.h"
+#include "Component/NavMovementComponent.h"
 #include <StaticLibrary/StaticFunctionLibrary.h>
 #include <Math/Vector2Float.h>
 #include <Actor/Actor.h>
@@ -12,6 +13,41 @@ using namespace Craft;
 NavigationTilemap::NavigationTilemap()
 {
 	
+}
+
+void NavigationTilemap::ProcessPathFindRequests()
+{
+	/* 처리된 경로 찾기 요청 횟수 */
+	int countProcessRequest = 0;
+
+	/* 요청 처리 최대횟수를 안넘기고, 큐에 요청이 남아있는동안 반복 */
+	while (countProcessRequest < maxProcessFindPathRequestFrame && !queueRequestPathFind.empty())
+	{
+		FRequestPathFind currentRequestPathFind = queueRequestPathFind.front();
+		queueRequestPathFind.pop();
+
+		//TODO : 경로 찾기 정보에 대한 유효성 검증 후 경로 찾기 실행
+
+		++countProcessRequest;
+	}
+}
+
+void NavigationTilemap::RequestFindPath(std::shared_ptr<NavMovementComponent> requester, 
+										const Vector2Int& startPos, 
+										const Vector2Int& endPos)
+{
+	if (!requester)
+	{
+		return;
+	}
+
+	std::shared_ptr<Actor> requesterOwner = requester->GetOwner(); 
+	if (!requesterOwner || !requesterOwner->IsActive())
+	{
+		return;
+	}
+
+	queueRequestPathFind.push(FRequestPathFind(requester, startPos, endPos));
 }
 
 eFindPathResult NavigationTilemap::FindPath(std::shared_ptr<Actor> agent,

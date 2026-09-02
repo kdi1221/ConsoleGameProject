@@ -10,6 +10,7 @@ namespace Craft
 {
 	class Actor;
 	class Level;
+	class NavMovementComponent;
 
 	/* 게임 내 길찾기 시스템 기반 */
 	class CRAFT_API NavigationBase : public CraftObject
@@ -44,6 +45,14 @@ namespace Craft
 		virtual ~NavigationBase() = default;
 
 	public:
+		/* 모아둔 경로 찾기 요청 처리 */
+		virtual void ProcessPathFindRequests();
+
+		/* 경로찾기 요청 */
+		virtual void RequestFindPath(std::shared_ptr<NavMovementComponent> requester,
+									const Vector2Int& startPos,
+									const Vector2Int& endPos);
+
 		/* 시작위치 - 종료위치를 연결하는 경로 생성 반환 */
 		virtual eFindPathResult FindPath(std::shared_ptr<Actor> agent,
 								const Vector2Int& startPos, 

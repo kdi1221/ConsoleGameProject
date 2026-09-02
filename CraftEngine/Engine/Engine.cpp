@@ -107,6 +107,9 @@ namespace Craft
 				//레벨의 액터 업데이트 함수.
 				Tick(deltaTime);
 
+				//경로 찾기 요청 처리
+				ProcessNavigation();
+
 				// 충돌 처리.
 				ProcessColiision();
 
@@ -273,6 +276,14 @@ namespace Craft
 
 		//렌더러의 Draw 이벤트 호출
 		renderer->Draw(GetCameraManager());
+	}
+
+	void Engine::ProcessNavigation()
+	{
+		if (navigationSystem)
+		{
+			navigationSystem->ProcessPathFindRequests();
+		}
 	}
 
 	void Engine::ProcessColiision()

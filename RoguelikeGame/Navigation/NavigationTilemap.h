@@ -3,10 +3,12 @@
 #include "Navigation/NavigationBase.h"
 #include "Types/Defines.h"
 #include "Types/Enums.h"
+#include <queue>
 
 namespace Craft
 {
 	class Actor;
+	class NavMovementComponent;
 }
 
 /* 타일맵 내에서 경로 찾기를 실행하는 Navigation 클래스 */
@@ -21,6 +23,9 @@ private:
 
 	/* 휴리스틱 가중치, 예상 거리에 곱하여 가깝다고 여겨지는 타일이 더 빨리 탐색되도록 한다. */
 	static constexpr float heuristicWeight = 1.3f;
+
+	/* 한 프레임당 최대 요청 처리 갯수 */
+	static constexpr int maxProcessFindPathRequestFrame = 30;
 
 	struct FNodePath
 	{
@@ -69,11 +74,50 @@ private:
 		}
 	};
 
+	/* 경로 찾기 요청 정보 */
+	struct FRequestPathFind
+	{
+	public:
+		std::weak_ptr<Craft::NavMovementComponent> requester;
+			
+		Craft::Vector2Int startPos = Craft::Vector2Int::Zero;
+
+		Craft::Vector2Int endPos = Craft::Vector2Int::Zero;
+
+	public:
+		FRequestPathFind()
+		{
+
+		}
+
+		FRequestPathFind(std::shared_ptr<Craft::NavMovementComponent> requester, const Craft::Vector2Int& startPos, const Craft::Vector2Int& endPos)
+			:requester(requester)
+			,startPos(startPos)
+			,endPos(endPos)
+		{
+
+		}
+	};
+
 public:
 	NavigationTilemap();
 	virtual ~NavigationTilemap() = default;
 
 public:
+	/* 모아둔 경로 찾기 요청 처리 */
+	virtual void ProcessPathFindRequests() override;
+
+	/* 경로찾기 요청 */
+	virtual void RequestFindPath(std::shared_ptr<Craft::NavMovementComponent> requester,
+								const Craft::Vector2Int& startPos,
+								const Craft::Vector2Int& endPos) override;
+
+
+
+
+
+
+
 	virtual Craft::eFindPathResult FindPath(std::shared_ptr<Craft::Actor> agent,
 									const Craft::Vector2Int& startPos,
 									const Craft::Vector2Int& endPos,
@@ -92,5 +136,9 @@ public:
 
 	/* 해당 위치의 타일 카테고리 반환*/
 	eTileCategory GetTileCategory(const Craft::Vector2Int& tileCoord) const;
+
+private:
+	/* 경로 찾기 요청 정보가 담긴 큐 */
+	std::queue<FRequestPathFind> queueRequestPathFind;
 };
 
