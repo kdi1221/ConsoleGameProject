@@ -6,10 +6,13 @@
 
 namespace Craft
 {
+	const size_t NavMovementComponent::PATH_RESERVE_SIZE = 128;
+
 	NavMovementComponent::NavMovementComponent(float moveSpeed)
 		:moveSpeed(moveSpeed)
 	{
-
+		/* 경로 저장 Vector의 예약 크기 지정 */
+		movePaths.reserve(PATH_RESERVE_SIZE);
 	}
 
 	void NavMovementComponent::Tick(float deltaTime)
@@ -52,11 +55,12 @@ namespace Craft
 
 		//네비게이션 시스템을 통해 경로 찾기
 		const NavigationBase& navigationSystem = Engine::Get().GetNavigationSystem<NavigationBase>();
-		const bool findPathResult = navigationSystem.FindPath(ownerActor, currentPosition, destination, movePaths);
+		findPathResult = navigationSystem.FindPath(ownerActor, currentPosition, destination, movePaths);
 
-		if(!findPathResult || movePaths.empty())
+		if (findPathResult == eFindPathResult::Fail ||
+			findPathResult == eFindPathResult::None)
 		{
-			//경로를 찾지 못했거나 경로가 비어있으면 이동 중단
+			//경로를 찾지 못했으면 이동 중단.
 			return false;
 		}
 
@@ -79,6 +83,7 @@ namespace Craft
 	{
 		/* 이동 경로 정보 초기화 */
 		movePaths.clear();
+		findPathResult = eFindPathResult::None;
 		nextPathIndex = -1;
 		currentPositionTemp = Vector2Float::Zero;
 		isMoveProcess = false;

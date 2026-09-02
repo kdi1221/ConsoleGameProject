@@ -4,6 +4,7 @@
 #include "Component.h"
 #include <Math/Vector2Float.h>
 #include <Math/Vector2Int.h>
+#include <Defines/Enums.h>
 #include <vector>
 #include <functional>
 
@@ -13,6 +14,10 @@ namespace Craft
 	class CRAFT_API NavMovementComponent : public Component
 	{
 		TYPE_DECLARATIONS(NavMovementComponent, Component)
+
+	private:
+		/* 초기 movePaths 예약 사이즈 크기 */
+		static const size_t PATH_RESERVE_SIZE;
 	
 	public:
 		using OnMoveFinishType = std::function<void()>;
@@ -44,6 +49,9 @@ namespace Craft
 		/* 경로별 콜백 호출 */
 		void Foreach_Path(std::function<void(const Vector2Int&)> callback);
 
+	public:
+		inline eFindPathResult GetFindPathResult() const { return findPathResult; }
+
 	private:
 		/* Owner 위치 설정 */
 		void SetOwnerPosition(const Vector2Int& inPosition);
@@ -64,8 +72,11 @@ namespace Craft
 		/* 이동 속도 */
 		float moveSpeed = 0.f;
 
-		/* 이동 경로 좌표*/
+		/* 이동 경로 좌표 */
 		std::vector<Vector2Int> movePaths;
+		
+		/* 직전 경로 탐색 결과 */
+		eFindPathResult findPathResult = eFindPathResult::None;
 
 		/* 현재 지정된 이동 경로 위치 */
 		int nextPathIndex = -1;

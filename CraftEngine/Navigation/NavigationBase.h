@@ -4,6 +4,7 @@
 #include <Core/CraftObject.h>
 #include <Math/Vector2Int.h>
 #include <vector>
+#include <Defines/Enums.h>
 
 namespace Craft
 {
@@ -16,6 +17,8 @@ namespace Craft
 		TYPE_DECLARATIONS(NavigationBase, CraftObject)
 
 	public:
+		/* 경로 탐색 횟수 최대 제한*/
+		static const int LIMIT_PATH_FIND_NUM;
 
 		/* 타겟 위치까지 선을 그었을때 충돌되는 대상이 있는지 여부 반환 */
 		enum class eCheckMoveTargetResult
@@ -42,7 +45,7 @@ namespace Craft
 
 	public:
 		/* 시작위치 - 종료위치를 연결하는 경로 생성 반환 */
-		virtual bool FindPath(std::shared_ptr<Actor> agent,
+		virtual eFindPathResult FindPath(std::shared_ptr<Actor> agent,
 								const Vector2Int& startPos, 
 								const Vector2Int& endPos, 
 								std::vector<Vector2Int>& resultPath) const;

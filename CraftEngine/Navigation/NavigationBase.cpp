@@ -2,17 +2,19 @@
 
 namespace Craft
 {
+	const int NavigationBase::LIMIT_PATH_FIND_NUM = 50;
+
 	NavigationBase::NavigationBase()
 	{
 
 	}
 
-	bool NavigationBase::FindPath(std::shared_ptr<Actor> agent,
-								const Vector2Int& startPos,
-								const Vector2Int& endPos,
-								std::vector<Vector2Int>& resultPath) const
+	eFindPathResult NavigationBase::FindPath(std::shared_ptr<Actor> agent,
+															const Vector2Int& startPos,
+															const Vector2Int& endPos,
+															std::vector<Vector2Int>& resultPath) const
 	{
-		return false;
+		return eFindPathResult::Fail;
 	}
 
 	bool NavigationBase::CanNextMove(std::shared_ptr<Actor> agent, const Vector2Int& checkPos) const

@@ -14,26 +14,32 @@ NavigationTilemap::NavigationTilemap()
 	
 }
 
-bool NavigationTilemap::FindPath(std::shared_ptr<Actor> agent,
-								const Vector2Int& startPos, 
-								const Vector2Int& endPos, 
-								std::vector<Vector2Int>& resultPath) const
+eFindPathResult NavigationTilemap::FindPath(std::shared_ptr<Actor> agent,
+											const Vector2Int& startPos, 
+											const Vector2Int& endPos, 
+											std::vector<Vector2Int>& resultPath) const
 {
 	if (!agent)
 	{
-		return false;
+		return eFindPathResult::Fail;
 	}
 
 	std::shared_ptr<TilemapLevel> tilemapLevel = GetCurrentLevel<TilemapLevel>();
 	if (!tilemapLevel)
 	{
-		return false;
+		return eFindPathResult::Fail;
 	}
 
 	/* 같은 위치라면 아무것도 하지 않는다. */
 	if (startPos == endPos)
 	{
-		return false;
+		return eFindPathResult::Fail;
+	}
+
+	/* 목적지가 갈 수 없는 위치면 아무것도 하지 않는다. */
+	if (CheckPlacementResult::CanMove != tilemapLevel->CanNextMove(agent, endPos))
+	{
+		return eFindPathResult::Fail;
 	}
 
 	/* A* 알고리즘 */
@@ -47,7 +53,8 @@ bool NavigationTilemap::FindPath(std::shared_ptr<Actor> agent,
 			const int maxValue = max(dx, dy);
 
 			//최소거리만큼은 대각선으로 이동, 나머지는 직선방향으로 움직임
-			return (minValue * costDiagonal) + ((maxValue - minValue) * costStraight);
+			//예상거리에 가중치를 둬서 목표지점까지의 거리가 가깝다고 여겨지는 타일이 탐색순서상 더 앞으로 오도록 한다.
+			return static_cast<int>(heuristicWeight * (minValue * costDiagonal) + ((maxValue - minValue) * costStraight));
 		};
 
 	/* 오픈 리스트 : 우선순위큐로 가장 비용이 적은 노드를 꺼내오도록 한다. */
@@ -58,6 +65,12 @@ bool NavigationTilemap::FindPath(std::shared_ptr<Actor> agent,
 	
 	/* 시작 위치를 오픈리스트에 삽입 */
 	pqOpenNodes.push(FNodePath(startPos, 0, getHeuristic(startPos), startPos));
+
+	/* 마지막으로 CloseList에 넣은 타일 좌표 */
+	Vector2Int lastInsertClostListCoord(-1, -1);
+
+	/* 탐색 결과(성공 또는 제한 걸림 )*/
+	eFindPathResult findPathResult = eFindPathResult::None;
 
 	while (!pqOpenNodes.empty())
 	{
@@ -74,9 +87,20 @@ bool NavigationTilemap::FindPath(std::shared_ptr<Actor> agent,
 		/* 꺼내온 노드를 Close List에 넣는다. */
 		mapCloseNodeCoords.insert(std::make_pair(currentNode.pathCoord, currentNode.parentCoord));
 
+		/* 마지막에 CloseList에 삽입한 위치 저장 */
+		lastInsertClostListCoord = currentNode.pathCoord;
+
 		/* 꺼낸 노드가 도착 지점인 경우 탐색 종료 */
 		if (currentNode.pathCoord == endPos)
 		{
+			findPathResult = eFindPathResult::Success;
+			break;
+		}
+
+		/* Close List에 저장된 노드의 탐색 제한 갯수가 초과된 경우 벗어난다. */
+		if (NavigationBase::LIMIT_PATH_FIND_NUM == mapCloseNodeCoords.size())
+		{
+			findPathResult = eFindPathResult::Throttled;
 			break;
 		}
 		
@@ -132,9 +156,16 @@ bool NavigationTilemap::FindPath(std::shared_ptr<Actor> agent,
 		}		
 	}
 
-	//도착 지점이 map에 존재하는경우 성공적으로 경로탐색이 된 것	
+	/* 여기서 None이라면 도착지점까지의 경로가 존재하지 않는다는 것 */
+	if (findPathResult == eFindPathResult::None)
+	{
+		return eFindPathResult::Fail;
+	}
+
+	//Success, 또는 Throttled상태에서는 마지막 탐색 지점까지의 경로를 완성한다.
 	resultPath.clear();
-	auto iterFindEndPosNode = mapCloseNodeCoords.find(endPos);
+	auto iterFindEndPosNode = mapCloseNodeCoords.find(lastInsertClostListCoord);
+
 	while (iterFindEndPosNode != mapCloseNodeCoords.end())
 	{
 		resultPath.emplace_back(iterFindEndPosNode->first);
@@ -150,11 +181,51 @@ bool NavigationTilemap::FindPath(std::shared_ptr<Actor> agent,
 	//마지막으로 역순으로 뒤집어서 시작->종료 경로순으로 완성한다.
 	std::reverse(resultPath.begin(), resultPath.end());
 
-	const bool result = (!resultPath.empty()) &&
-						(*resultPath.begin() == startPos) &&
-						(*(resultPath.end() - 1) == endPos);
+	return findPathResult;
 
-	return result;
+
+
+	//도착 지점이 map에 존재하는경우 성공적으로 경로탐색이 된 것	
+	//resultPath.clear();
+	//auto iterFindEndPosNode = mapCloseNodeCoords.find(endPos);
+
+	////For Debug
+	//const bool bFindPathSuccess = iterFindEndPosNode != mapCloseNodeCoords.end();
+	//char szTmp[512] = { 0 };
+	//sprintf_s(szTmp, "FindPath, Start[%d, %d] => End[%d, %d], %s, CloseNodeNum[%d]\n",
+	//	startPos.x, startPos.y,
+	//	endPos.x, endPos.y,
+	//	bFindPathSuccess ? "Success" : "Fail",
+	//	static_cast<int>(mapCloseNodeCoords.size()));
+	//OutputDebugStringA(szTmp);
+
+	//if (iterFindEndPosNode == mapCloseNodeCoords.end())
+	//{
+	//	//TODO : 최적화 지점? 애초에 가지 못하는 경로에는 접근 못하게??
+	//	int a = 10;
+	//	a = a;
+	//}
+
+	//while (iterFindEndPosNode != mapCloseNodeCoords.end())
+	//{
+	//	resultPath.emplace_back(iterFindEndPosNode->first);
+
+	//	if (iterFindEndPosNode->first == startPos)
+	//	{
+	//		break;
+	//	}
+
+	//	iterFindEndPosNode = mapCloseNodeCoords.find(iterFindEndPosNode->second);
+	//}
+
+	////마지막으로 역순으로 뒤집어서 시작->종료 경로순으로 완성한다.
+	//std::reverse(resultPath.begin(), resultPath.end());
+
+	//const bool result = (!resultPath.empty()) &&
+	//					(*resultPath.begin() == startPos) &&
+	//					(*(resultPath.end() - 1) == endPos);
+
+	//return result;
 }
 
 bool NavigationTilemap::CanNextMove(std::shared_ptr<Actor> agent, const Vector2Int& checkPos) const

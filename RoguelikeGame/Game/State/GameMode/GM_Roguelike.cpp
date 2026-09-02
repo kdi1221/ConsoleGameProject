@@ -269,7 +269,7 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 	const int spawnMaxRange = min(30, maxSpawnNum);
 	int spawnMonsterNum = Util::RandomRange(spawnMinRange, spawnMaxRange);
 	/* 테스트용 */
-	spawnMonsterNum = 30;
+	spawnMonsterNum = 80;
 	int currentIndex = 0;
 
 	auto spawnRandomNPC = [this, level](const Vector2Int& spawnTilePos, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)

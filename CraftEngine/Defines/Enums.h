@@ -72,4 +72,20 @@ namespace Craft
 
 		return L"None";
 	}
+
+	/* 경로 찾기 결과 */
+	enum class eFindPathResult
+	{
+		/* 기본값 */
+		None,
+
+		/* 목표까지의 경로 탐색 완료 */
+		Success,
+
+		/* 경로 탐색 도중 제한 걸림 */
+		Throttled,
+
+		/* 실패(목표 지점까지의 경로 없음) */
+		Fail
+	};
 }

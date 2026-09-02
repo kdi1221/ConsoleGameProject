@@ -64,8 +64,17 @@ private:
 	/* 이동 중단 */
 	void StopMove();
 
-	/* 타겟 추적 중 타겟과의 거리 및 상태 확인 */
-	void CheckTargetWhileChase(bool bForcePathUpdate);
+	/* 타겟 추적 중 다음 상태로 전환 */
+	bool TransitionNextStateWhileChase();
+
+	/* 타겟 추적 딜레이 설정(무작위) */
+	void SetTargetChaseDelayTime();
+
+	/* 다음 프레임에서 타겟 추적 설정 */
+	void SetTargetChaseNextTick();
+
+	/* 현재 이동중인 경로 표시 */
+	void DrawMovePaths();
 
 protected:
 	virtual void OnBehaviorIdle(float deltaTime);
@@ -110,10 +119,13 @@ private:
 	//현재 추적중인 대상
 	std::weak_ptr<Pawn> chaseTarget;
 
-	//마지막에 추적한 대상의 위치
-	Craft::Vector2Int lastChaseTargetPos = INVALID_LAST_POS;
-
 	//직전에 경로 추적 실패 시 다음 번 경로 강제 업데이트 여부
 	bool bForceNextPathUpdate = false;
+
+	//경로 탐색 딜레이 min Value
+	float minFindPathdelay = 0.5f;
+
+	//경로 탐색 딜레이 max Value
+	float maxFindPathdelay = 1.5f;
 };
 

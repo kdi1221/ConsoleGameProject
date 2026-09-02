@@ -19,6 +19,9 @@ private:
 	/* 대각선 비용 */
 	static constexpr int costDiagonal = 14;
 
+	/* 휴리스틱 가중치, 예상 거리에 곱하여 가깝다고 여겨지는 타일이 더 빨리 탐색되도록 한다. */
+	static constexpr float heuristicWeight = 1.3f;
+
 	struct FNodePath
 	{
 	public:
@@ -71,10 +74,10 @@ public:
 	virtual ~NavigationTilemap() = default;
 
 public:
-	virtual bool FindPath(std::shared_ptr<Craft::Actor> agent,
-						const Craft::Vector2Int& startPos,
-						const Craft::Vector2Int& endPos,
-						std::vector<Craft::Vector2Int>& resultPath) const override;
+	virtual Craft::eFindPathResult FindPath(std::shared_ptr<Craft::Actor> agent,
+									const Craft::Vector2Int& startPos,
+									const Craft::Vector2Int& endPos,
+									std::vector<Craft::Vector2Int>& resultPath) const override;
 
 	virtual bool CanNextMove(std::shared_ptr<Craft::Actor> agent, const Craft::Vector2Int& checkPos) const override;
 

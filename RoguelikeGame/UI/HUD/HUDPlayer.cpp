@@ -43,10 +43,10 @@ void HUDPlayer::InitializeHUD(std::weak_ptr<Craft::Level> activeLevel)
 
 	//const int ViewWidth = configBase.GetViewWidth();
 
-	///* FPS 표시 위젯 생성 */
-	//const int widthWidgetFPS = 12;
-	//const Vector2Int positionWidgetFPS(configBase.GetDisplayWidth() - widthWidgetFPS - 1, 0);
-	//textBlockFPS = currentLevel->CreateWidget<TextBlockFPS>(positionWidgetFPS, widthWidgetFPS);
+	/* FPS 표시 위젯 생성 */
+	const int widthWidgetFPS = 12;
+	const Vector2Int positionWidgetFPS(configBase.GetDisplayWidth() - widthWidgetFPS - 1, 0);
+	textBlockFPS = currentLevel->CreateWidget<TextBlockFPS>(positionWidgetFPS, widthWidgetFPS);
 
 	///* 마우스 위치 표시 위젯 생성 */
 	//const int widthWidgetMousePos = 24;

@@ -23,8 +23,6 @@ NPCBase::NPCBase(const Craft::Vector2Int& position,
 	navMovementComponent = AddComponent<NavMovementComponent>(10.f);
 	navMovementComponent->SetMoveFinishCallback(std::bind(&NPCBase::OnMoveFinish, this));
 	navMovementComponent->SetMoveAbortCallback(std::bind(&NPCBase::OnMoveAbort, this));
-
-	timerFindChasePathDelay.SetTargetTime(chaseDelay);
 }
 
 void NPCBase::Initialize()
@@ -71,14 +69,7 @@ void NPCBase::Draw()
 	/* 경로 확인 디버깅용 */
 	if (Engine::Get().GetDrawAIPaths())
 	{
-		if (navMovementComponent)
-		{
-			navMovementComponent->Foreach_Path([&](const Vector2Int& path)
-				{
-					Renderer::Get().Submit(L" ", path, Color::BG_LightGreen, static_cast<int>(eRenderSortingOrder::MapObject));
-				}
-			);
-		}
+		DrawMovePaths();
 	}
 }
 
@@ -101,7 +92,7 @@ void NPCBase::SetBehaviorState(eMonsterBehavior newState)
 		{
 		case eMonsterBehavior::Idle:
 		{
-			OutputDebugStringA("On Idle Exit\n");
+			//OutputDebugStringA("On Idle Exit\n");
 		}
 		break;
 
@@ -124,14 +115,14 @@ void NPCBase::SetBehaviorState(eMonsterBehavior newState)
 		{
 		case eMonsterBehavior::Idle:
 		{
-			OutputDebugStringA("On Idle Begin\n");
+			//OutputDebugStringA("On Idle Begin\n");
 		}
 		break;
 
 		case eMonsterBehavior::TargetChase:
 		{
-			//다음 프레임에 바로 대상을 쫓을 수 있도록 함
-			timerFindChasePathDelay.ReserveNextTick();
+			//다음 타겟 추적 딜레이 설정 
+			SetTargetChaseDelayTime();
 		}
 		break;
 
@@ -157,9 +148,7 @@ bool NPCBase::BeginPathfindingToTarget()
 	GetAvailableChaseTargetPosition(targetPos, availablePosition);
 	if (availablePosition.empty())
 	{
-		OutputDebugStringA("available Position empty..\n");
-
-		//타겟 주변에 이동할 곳이 없는경우 정지
+		//타겟 주변에 이동할 곳이 없는경우 진행하지 않음(이후 이동할곳이 생길때까지 대기)
 		return false;
 	}
 
@@ -172,37 +161,9 @@ bool NPCBase::BeginPathfindingToTarget()
 		std::swap(availablePosition[i], availablePosition[j]);
 	}
 
-	/* 타겟 주변위치를 향한 경로를 탐색한다. */
-	//std::vector<Craft::Vector2Int> movePaths;
-	//const NavigationTilemap& navigationSystem = Engine::Get().GetNavigationSystem<NavigationTilemap>();
-	//if (!navigationSystem.FindPath(shared_from_this(), startPos, availablePosition[0], movePaths))
-	//{
-	//	// 이동할 경로를 찾지 못하면 정지
-	//	return;
-	//}
-
-	////마지막에 추적한 타겟의 위치를 기록해둔다.
-	//lastChaseTargetPos = targetPos;
-
-	////movePaths기반으로 이동 시작
-	//assert(pathMoveComponent && "Invalid pathMoveComponent");
-	//pathMoveComponent->StartMove(std::move(movePaths));
-
-
 	//목표 주위 위치로 이동 시작 
 	assert(navMovementComponent && "Invalid NavMovementComponent");
-	if(navMovementComponent->StartMove(availablePosition[0]))
-	{
-		//마지막에 추적한 타겟의 위치를 기록해둔다.
-		lastChaseTargetPos = targetPos;
-	}
-	else
-	{
-		OutputDebugStringA("Fail StartMove..\n");
-		return false;
-	}
-
-	return true;
+	return navMovementComponent->StartMove(availablePosition[0]);
 }
 
 void NPCBase::StopMove()
@@ -211,14 +172,15 @@ void NPCBase::StopMove()
 	navMovementComponent->StopMove();
 }
 
-void NPCBase::CheckTargetWhileChase(bool bForcePathUpdate)
+/* 타겟을 향해 추적중 타겟의 상태 및 거리에 따라 다음 상태로 전환한다. */
+bool NPCBase::TransitionNextStateWhileChase()
 {
-	//이동이 끝난뒤 Target이 살아있는지 확인 
 	std::shared_ptr<Pawn> targetPawn = chaseTarget.lock();
 	if (!targetPawn || targetPawn->IsDeath())
 	{
 		//Idle 상태로 전환한다.
 		SetBehaviorState(eMonsterBehavior::Idle);
+		return true;
 	}
 	else
 	{
@@ -227,21 +189,45 @@ void NPCBase::CheckTargetWhileChase(bool bForcePathUpdate)
 		{
 			//공격 실행
 			SetBehaviorState(eMonsterBehavior::Attack);
+			return true;
 		}
-		else
-		{
-			/* 강제 경로업데이트 또는 기존에 이동하려는 목적지가 타겟의 위치가 아닌경우에만 경로 새로 업데이트*/
-			const bool isPathUpdate = bForcePathUpdate || 
-										lastChaseTargetPos != targetPawn->GetWorldPosition();
+	}
 
-			if (isPathUpdate)
+	return false;
+}
+
+void NPCBase::SetTargetChaseDelayTime()
+{
+	/* 타겟 추적을 위한 경로 탐색 딜레이 무작위 지정 */
+	const float nextFindPathDelay = Util::RandomRange(minFindPathdelay, maxFindPathdelay);
+	timerFindChasePathDelay.SetTargetTime(nextFindPathDelay);
+	timerFindChasePathDelay.Reset();
+}
+
+void NPCBase::SetTargetChaseNextTick()
+{
+	/* 다음 프레임에서 경로 탐색이 실행되도록 타이머 타임 끝으로 설정 */
+	timerFindChasePathDelay.ReserveNextTick();
+}
+
+void NPCBase::DrawMovePaths()
+{
+	if (!navMovementComponent)
+	{
+		return;
+	}
+
+	const eFindPathResult findPathResult = navMovementComponent->GetFindPathResult();
+	if (findPathResult == eFindPathResult::Success || findPathResult == eFindPathResult::Throttled)
+	{
+		Renderer& renderer = Renderer::Get();
+		const Color drawPathColor = findPathResult == eFindPathResult::Success ? Color::BG_LightGreen : Color::BG_LightBlue;
+
+		navMovementComponent->Foreach_Path([&](const Vector2Int& path)
 			{
-				//다시 이동 시작(타겟 추적 실패시 다음번에 강제 경로 업데이트)
-				bForceNextPathUpdate = !BeginPathfindingToTarget();
+				renderer.Submit(L" ", path, drawPathColor, static_cast<int>(eRenderSortingOrder::MapObject));
 			}
-
-			timerFindChasePathDelay.Reset();
-		}
+		);
 	}
 }
 
@@ -252,12 +238,21 @@ void NPCBase::OnBehaviorIdle(float deltaTime)
 
 void NPCBase::OnBehaviorChaseTarget(float deltaTime)
 {
+	//타겟의 상태 및 거리를 확인하여 다른 상태로 전이되었으면 타겟 추적 실행 안함
+	if (TransitionNextStateWhileChase())
+	{
+		return;
+	}
+
 	/* 타겟 추적 타이머 딜레이 갱신(일정 딜레이마다 타겟과 주변의 환경변화를 인지해서 경로를 새로 잡는다) */
 	timerFindChasePathDelay.Tick(deltaTime);
 	if (timerFindChasePathDelay.IsTimeOut())
 	{
 		/* 일정 딜레이마다 타겟과 주변 환경 변화를 인지해서 경로를 새로잡거나 공격범위 안에 있으면 공격한다. */
-		CheckTargetWhileChase(bForceNextPathUpdate);
+		BeginPathfindingToTarget();
+
+		/* 다음 이동 체크 딜레이 설정 */
+		SetTargetChaseDelayTime();
 	}
 }
 
@@ -279,12 +274,32 @@ void NPCBase::OnBehaviorAttack(float deltaTime)
 
 void NPCBase::OnMoveFinish()
 {
-	//목적지 도착 : 타겟이 거리에 있으므로 타겟과의 거리 및 상태 체크
-	CheckTargetWhileChase(true);
+	//이동 목적지에 도착한 경우
+
+	//현재 타겟 추적중인 상태라면 
+	if (eMonsterBehavior::TargetChase == GetBehaviorState())
+	{
+		// 타겟의 상태 및 거리 체크 후 상태 변화가 없다면 
+		if (!TransitionNextStateWhileChase())
+		{
+			//다음 프레임에서 다시 추적
+			SetTargetChaseNextTick();
+		}
+	}
 }
 
 void NPCBase::OnMoveAbort()
 {
 	//다른 객체에 충돌하여 멈춘경우 : 그 객체가 타겟일수 있으므로 타겟과의 거리 및 상태 체크
-	CheckTargetWhileChase(true);
+	
+	//현재 타겟 추적중인 상태라면 
+	if (eMonsterBehavior::TargetChase == GetBehaviorState())
+	{
+		// 타겟의 상태 및 거리 체크 후 상태 변화가 없다면 
+		if (!TransitionNextStateWhileChase())
+		{
+			//다음 프레임에서 다시 추적
+			SetTargetChaseNextTick();
+		}
+	}
 }
