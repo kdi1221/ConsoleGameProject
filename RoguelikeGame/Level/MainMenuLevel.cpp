@@ -72,7 +72,7 @@ void MainMenuLevel::OnPlay()
 	Game& game = dynamic_cast<Game&>(Engine::Get());
 
 	game.InitializeGameSessionData();
-	game.AddNewLevel<GameLevel>();
+	game.AddNewLevel<GameLevel>(TilemapLevel::eLevelCategory::MAZE_BSP);
 }
 
 void MainMenuLevel::OnQuitGame()

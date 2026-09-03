@@ -82,6 +82,9 @@ private:
 	/* 다음 층으로 향하는 출구 방 처리 */
 	void OnPlayerVisitedNextRoom(const Room& visitRoom, const Craft::Vector2Int& playerPosition);
 
+	/* 보스 방 처리 */
+	void OnPlayerVisitedBossRoom(const Room& visitRoom, const Craft::Vector2Int& playerPosition);
+
 	/* 배틀 종료 처리 */
 	void OnRoomBattleEnd();
 

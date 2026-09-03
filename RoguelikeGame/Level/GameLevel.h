@@ -15,7 +15,7 @@ class GameLevel : public TilemapLevel
 	TYPE_DECLARATIONS(GameLevel, TilemapLevel)
 
 public:
-	GameLevel() = default;
+	GameLevel(eLevelCategory category);
 	virtual ~GameLevel() = default;
 
 private:

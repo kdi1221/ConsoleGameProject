@@ -46,6 +46,18 @@ public:
 		BlockActor,
 	};
 
+	/* 현재 타일맵 레벨 종류 */
+	enum class eLevelCategory
+	{
+		None = 0,
+
+		/* BSP로 생성된 랜덤 미로 */
+		MAZE_BSP,
+
+		/* 보스 방 */
+		BOSS_ROOM
+	};
+
 private:
 	struct FTilemapDamageInfo
 	{
@@ -72,7 +84,7 @@ public:
 	using TilemapDamageListType = std::unordered_map<Craft::Vector2Int, std::vector<FTilemapDamageInfo>>;
 
 public:
-	TilemapLevel();
+	TilemapLevel(eLevelCategory category);
 	virtual ~TilemapLevel();
 
 protected:
@@ -119,6 +131,9 @@ public:
 	void AddDamageInfoToTile(const Craft::Vector2Int& tileCoord, float damageValue, eTeamID teamID);
 
 public:
+	/* 현재 레벨 종류 반환 */
+	eLevelCategory GetLevelCategory() const;
+
 	/* 해당 위치에 Block되는 Actor가 존재하는지 여부 반환 */
 	eBlockingCheckResult CheckBlocking(std::shared_ptr<Craft::Actor> checkActor, 
 										const Craft::Vector2Int& tileCoord,
@@ -147,8 +162,11 @@ private:
 	/* BSP를 활용한 랜덤타일맵 생성 */
 	void BuildTilemapBSP();
 
-	/* 각 방의 종류 지정 */
+	/* 각 방의 종류 지정(BSP) */
 	void AssignRoomType();
+
+	/* 보스방 고정 타일맵 생성 */
+	void BuildTilemapBossRoom();
 
 	/* 타일맵 인덱스별로 Actor 등록 */
 	void RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile);
@@ -162,6 +180,9 @@ private:
 	void OnMovePlayerEvent(const Craft::Vector2Int& prevWorldPosition, const Craft::Vector2Int& worldPosition);
 
 private:
+	/* 현재 레벨 종류(일반 필드 / 보스방) */
+	eLevelCategory levelCategory = eLevelCategory::None;
+
 	/* 맵 상의 존재하는 타일맵 객체 */
 	std::unique_ptr<Tilemap> tileMap;
 

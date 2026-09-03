@@ -85,7 +85,10 @@ enum class eRoomType
 	Treasure,
 
 	//전투
-	Battle
+	Battle,
+
+	//보스 등장 방
+	BossRoom,
 };
 
 //오브젝트 랜더링시 그릴 순서
@@ -93,6 +96,9 @@ enum class eRenderSortingOrder : int
 {
 	//타일
 	Tile = 0,
+
+	//보스
+	Boss,
 
 	//필드 내 존재하는 아이템
 	FieldItem,

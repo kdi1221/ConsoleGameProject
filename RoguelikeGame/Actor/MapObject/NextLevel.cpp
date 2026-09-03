@@ -16,6 +16,6 @@ void NextLevel::OnCollision(const std::shared_ptr<Actor>& other)
 	if (other->IsTypeOf<PlayerPawn>())
 	{
 		/* 플레이어가 접근했으면 다음 레벨로 이동 */
-		Craft::Engine::Get().AddNewLevel<GameLevel>();
+		Craft::Engine::Get().AddNewLevel<GameLevel>(TilemapLevel::eLevelCategory::MAZE_BSP);
 	}
 }

@@ -4,11 +4,14 @@
 #include "TileMap/Room/Room.h"
 #include "Tilemap/BSP/RoomSpace/RoomSpace.h"
 #include "Game/State/PlayerState/PS_Roguelike.h"
+
 #include "Actor/MapObject/RoomDoor.h"
 #include "Actor/MapObject/PlayerStart.h"
 #include "Actor/MapObject/NextLevel.h"
 #include "Actor/MapObject/Exit.h"
+
 #include "Actor/Pawn/Player/PlayerPawn.h"
+
 #include "Actor/Pawn/NPC/Slime/NPCSlime.h"
 #include "Actor/Pawn/NPC/GoblinArcher/NPCGoblinArcher.h"
 #include "Actor/Pawn/NPC/Orc/NPCOrc.h"
@@ -16,6 +19,9 @@
 #include "Actor/Pawn/NPC/Golem/NPCGolem.h"
 #include "Actor/Pawn/NPC/Imp/NPCImp.h"
 #include "Actor/Pawn/NPC/Sharman/NPCSharman.h"
+
+#include "Actor/Boss/BossOneEye.h"
+
 #include "Actor/FieldItem/HealthPotion.h"
 #include "Actor/FieldItem/FieldSkillItem.h"
 #include <Engine/Engine.h>
@@ -204,6 +210,12 @@ void GM_Roguelike::OnPlayerVisitedRoom(const Room& visitRoom, const Craft::Vecto
 	case eRoomType::NextLevel:
 		{
 			OnPlayerVisitedNextRoom(visitRoom, playerPosition);
+		}
+		break;
+
+	case eRoomType::BossRoom:
+		{
+			OnPlayerVisitedBossRoom(visitRoom, playerPosition);
 		}
 		break;
 	}
@@ -491,6 +503,34 @@ void GM_Roguelike::OnPlayerVisitedNextRoom(const Room& visitRoom, const Craft::V
 	//다음 층으로 이동할 입구 오브젝트 생성
 	const Vector2Int& selectTilePos = visitRoomSpace.GetPositionCenter();
 	level->SpawnActor<NextLevel>(selectTilePos);
+}
+
+void GM_Roguelike::OnPlayerVisitedBossRoom(const Room& visitRoom, const Craft::Vector2Int& playerPosition)
+{
+	std::shared_ptr<Level> level = GetCurrentLevel<Level>();
+	if (!level)
+	{
+		return;
+	}
+
+	const RoomSpace& visitRoomSpace = visitRoom.GetRoomSpace();
+
+	/* 방의 입구에 문 Actor 생성 */
+	const RoomSpace::RoomDoorTileIndices& doorTileIndices = visitRoomSpace.GetDoorTileIndices();
+	for (const Vector2Int& doorTileIndex : doorTileIndices)
+	{
+		std::shared_ptr<RoomDoor> spawnedRoomDoor = level->SpawnActor<RoomDoor>(doorTileIndex);
+		assert(spawnedRoomDoor && "Spawn Door Actor Fail..");
+
+		spawnedRoomDoors.emplace_back(spawnedRoomDoor);
+	}
+
+	/* 테스트, 보스 액터 소환 */
+	const Vector2Int spawnBossPosition = visitRoomSpace.GetPositionCenter();
+	level->SpawnActor<BossOneEye>(spawnBossPosition);
+
+	/* 전투 진행여부 설정 */
+	bBattleRoomProcess = true;
 }
 
 void GM_Roguelike::OnRoomBattleEnd()

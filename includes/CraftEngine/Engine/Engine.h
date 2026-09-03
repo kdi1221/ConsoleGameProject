@@ -54,10 +54,10 @@ namespace Craft
 		void DestroyGameSessionData();
 
 		// 레벨 추가 요청 함수
-		template<typename T, typename = std::enable_if_t<std::is_base_of<Level, T>::value>>
-		void AddNewLevel()
+		template<typename T, typename... Args, typename = std::enable_if_t<std::is_base_of<Level, T>::value>>
+		void AddNewLevel(Args&& ...args)
 		{
-			nextLevel = std::make_shared<T>();
+			nextLevel = std::make_shared<T>(std::forward<Args>(args)...);
 		}
 
 		// 싱글톤 접근 함수

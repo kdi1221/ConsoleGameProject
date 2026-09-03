@@ -6,6 +6,11 @@
 
 using namespace Craft;
 
+GameLevel::GameLevel(eLevelCategory category)
+	:super(category)
+{
+}
+
 void GameLevel::OnInitialized()
 {
 	super::OnInitialized();

@@ -16,7 +16,8 @@
 using namespace Craft;
 using namespace RoomDefines;
 
-TilemapLevel::TilemapLevel()
+TilemapLevel::TilemapLevel(eLevelCategory category)
+	:levelCategory(category)
 {
 
 }
@@ -30,11 +31,25 @@ void TilemapLevel::OnInitialized()
 {
 	Level::OnInitialized();
 
-	/* BSP로 타일맵 구성 */
-	BuildTilemapBSP();
+	switch (levelCategory)
+	{
+	case eLevelCategory::MAZE_BSP:
+		{
+			/* BSP로 타일맵 구성 */
+			BuildTilemapBSP();
 
-	/* 만들어진 방들의 종류 지정 */
-	AssignRoomType();
+			/* 만들어진 방들의 종류 지정 */
+			AssignRoomType();
+		}
+		break;
+
+	case eLevelCategory::BOSS_ROOM:
+		{
+			/* 보스방 타일맵 구성 */
+			BuildTilemapBossRoom();
+		}
+		break;
+	}
 }
 
 void TilemapLevel::Tick(float deltaTime)
@@ -381,7 +396,12 @@ void TilemapLevel::AddDamageInfoToTile(const Vector2Int& tileCoord, float damage
 	damageListOnTile.emplace_back(FTilemapDamageInfo(damageValue, teamID));
 }
 
-CheckBlockingResult TilemapLevel::CheckBlocking(std::shared_ptr<Craft::Actor> checkActor, 
+TilemapLevel::eLevelCategory TilemapLevel::GetLevelCategory() const
+{
+	return levelCategory;
+}
+
+CheckBlockingResult TilemapLevel::CheckBlocking(std::shared_ptr<Craft::Actor> checkActor,
 												const Craft::Vector2Int& tileCoord,
 												std::shared_ptr<ActorOnTile>& outBlockingActor) const
 {
@@ -663,6 +683,58 @@ void TilemapLevel::AssignRoomType()
 	{
 		mapRooms[*iterTreasureRoom]->SetRoomType(eRoomType::Treasure);
 	}
+}
+
+void TilemapLevel::BuildTilemapBossRoom()
+{
+	//이전 타일맵 정보 초기화
+	tileMap.reset();
+
+	//새로운 타일맵 생성
+	tileMap = std::make_unique<Tilemap>(*this);
+	assert(tileMap && "Fail Tilemap Alloc..");
+
+	auto lambdaOpenPath = [this](const std::vector<Craft::Vector2Int>& pathTileIndices)
+		{
+			for (const Vector2Int& pathTileIndex : pathTileIndices)
+			{
+				//경로상의 타일 뚫기
+				tileMap->SetTileCategory(pathTileIndex.x, pathTileIndex.y, eTileCategory::Ground);
+			}
+		};
+
+	auto lambdaGenerateRoom = [this](std::unique_ptr<RoomSpace> roomSpace, bool bBossRoom)
+		{
+			//방 객체 생성 및 타일 구성
+			UNIQUE_INDEX_TYPE newRoomIndex = static_cast<UNIQUE_INDEX_TYPE>(mapRooms.size() + 1);
+
+			std::unique_ptr<Room> newRoom = std::make_unique<Room>(newRoomIndex, std::move(roomSpace));
+			assert(newRoom && "Invalid newRoom");
+
+			newRoom->SetRoomType(bBossRoom ? eRoomType::BossRoom : eRoomType::Start);
+
+			//방 안의 타일들 생성
+			const RoomSpace::RoomTileIndices& newRoomInnerTiles = newRoom->GetRoomSpace().GetInnerTileIndices();
+			for (const Vector2Int& tileIndex : newRoomInnerTiles)
+			{
+				tileMap->SetTileRoomIndex(tileIndex.x, tileIndex.y, newRoomIndex);
+				tileMap->SetTileCategory(tileIndex.x, tileIndex.y, eTileCategory::Ground);
+			}
+
+			mapRooms.insert(std::pair<UNIQUE_INDEX_TYPE, std::unique_ptr<Room>>(newRoomIndex, std::move(newRoom)));
+			newRoom.reset();
+		};
+
+	const Config& config = Engine::Get().GetConfig<Config>();
+	const Vector2Int tilemapSize(config.GetTilemapWidth(), config.GetTilemapHeight());
+	tileMap->InitializeTilemapBossRoom(tilemapSize, lambdaOpenPath, lambdaGenerateRoom);
+
+	/* 카메라 제한 설정, 타일맵 외곽을 벗어나지 못하게 한다. */
+	const Vector2Int& tileMapLeftTopPos = tileMap->GetLeftTopPos();
+	const Vector2Int& tileMapInnerRect = tileMap->GetInnerTileRect();
+
+	CameraManager& cameraManager = Engine::Get().GetCameraManager();
+	cameraManager.SetLimitPosition(tileMapLeftTopPos, tileMapLeftTopPos + tileMapInnerRect - Vector2Int::One);
 }
 
 void TilemapLevel::RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile)

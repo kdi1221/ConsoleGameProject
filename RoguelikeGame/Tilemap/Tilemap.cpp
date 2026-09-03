@@ -1,5 +1,6 @@
 ﻿#include "Tilemap.h"
 #include "Engine/Engine.h"
+#include "Game/Config/Config.h"
 #include "Render/Renderer.h"
 #include "Tile.h"
 #include "BSP/BSPNode.h"
@@ -72,6 +73,122 @@ void Tilemap::InitializeTilemap(const Vector2Int& inMapSize,
 
 	//현재 카메라가 표시하는 화면의 길이만큼 타일맵이 한줄씩 표시되므로 DrawBuffer의 크기를 미리 지정해둔다.
 	drawTileLineBuffer.reserve(cameraViewWidth);
+}
+
+void Tilemap::InitializeTilemapBossRoom(const Vector2Int& inMapSize, 
+										std::function<void(const std::vector<Craft::Vector2Int>&)> CorridorCallback, 
+										std::function<void(std::unique_ptr<RoomSpace>, bool)> RoomCallback)
+{
+	const Config& config = Engine::Get().GetConfig<Config>();
+	const CameraManager& cameraManager = Engine::Get().GetCameraManager();
+
+	/* 맵 외곽 가로 길이*/
+	const int cameraViewWidth = cameraManager.GetViewWidth();
+	const int mapBoundaryWidth = cameraViewWidth >> 1;
+
+	/* 맵 외곽 세로 길이*/
+	const int cameraViewHeight = cameraManager.GetViewHeight();
+	const int mapBoundaryHeight = cameraViewHeight >> 1;
+
+	/* 맵의 사이즈 (지정된 맵사이즈 + 카메라가 최대 볼 수 있는 외곽영역 포함 사이즈 )*/
+	mapSize.x = inMapSize.x + cameraViewWidth;
+	mapSize.y = inMapSize.y + cameraViewHeight;
+
+	//생성할 타일 갯수
+	const size_t GenerateMapTileNum = mapSize.x * mapSize.y;
+
+	//벡터 공간 미리 확보
+	tileList.reserve(GenerateMapTileNum);
+
+	//맵 내의 타일 초기화 및 벽으로 채우기
+	for (size_t TileIndex = 0; TileIndex < GenerateMapTileNum; ++TileIndex)
+	{
+		const int PosX = static_cast<int>(TileIndex % mapSize.x);
+		const int PosY = static_cast<int>(TileIndex / mapSize.x);
+
+		tileList.emplace_back(std::make_unique<Tile>(eTileCategory::Wall, Vector2Int(PosX, PosY), TileIndex));
+	}
+
+	leftTopPos.x = mapBoundaryWidth;
+	leftTopPos.y = mapBoundaryHeight;
+	innerTileRect.x = mapSize.x - cameraViewWidth;
+	innerTileRect.y = mapSize.y - cameraViewHeight;
+
+	//방 외곽 벽 두께
+	const int wallThickness = config.GetBSPRoomWallThickness();
+
+	auto generateRoomSpace = [&](int roomWidth, int roomHeight, const Vector2Int& roomStart)
+		{
+			const int roomOuterWidth = roomWidth + (wallThickness << 1);
+			const int roomOuterHeight = roomHeight + (wallThickness << 1);
+			const Vector2Int roomOuterStart(roomStart - Vector2Int(wallThickness, wallThickness));
+
+			std::unique_ptr<RoomSpace> roomSpace = std::make_unique<RoomSpace>(roomStart, roomWidth, roomHeight,
+																				roomOuterStart, roomOuterWidth, roomOuterHeight);
+			assert(roomSpace);
+			roomSpace->InitializeRoomSpace();
+
+			return roomSpace;
+		};
+
+	//보스방 생성
+	static const int bossRoomWidth = 200;
+	static const int bossRoomHeight = 60;
+
+	const Vector2Int bossRoomStart(leftTopPos.x + (innerTileRect.x >> 1) - (bossRoomWidth >> 1), 
+									leftTopPos.y + (innerTileRect.y >> 1) - (bossRoomHeight >> 1));
+
+	std::unique_ptr<RoomSpace> generateBossRoomSpace = generateRoomSpace(bossRoomWidth, bossRoomHeight, bossRoomStart);
+	assert(generateBossRoomSpace && "generate fail BossRoom Space");
+	
+	//보스방 밑 시작 방 공간 생성
+	static const int startRoomWidth = 60;
+	static const int startRoomHeight = 40;
+
+	//시작방과 보스방을 연결하는 통로의 길이
+	static const int corridorWidth = 4;
+	static const int corridorHeight = 20;
+	
+	const Vector2Int startRoomStart(leftTopPos.x + (innerTileRect.x >> 1) - (startRoomWidth >> 1),
+									bossRoomStart.y + bossRoomHeight + corridorHeight);
+
+	std::unique_ptr<RoomSpace> generateStartRoomSpace = generateRoomSpace(startRoomWidth, startRoomHeight, startRoomStart);
+	assert(generateStartRoomSpace && "generate fail StartRoom Space");
+
+
+	//보스방과 시작방 연결 통로 생성
+	const int startCorridorXPos = startRoomStart.x + (startRoomWidth >> 1) - (corridorWidth >> 1);
+	const int endCorridorXPos = startCorridorXPos + corridorWidth;
+	const int startCorridorYPos = bossRoomStart.y + bossRoomHeight;
+	const int endCorridorYPos = startCorridorYPos + corridorHeight;
+
+	std::vector<Vector2Int> corridorTiles;
+	corridorTiles.reserve(corridorWidth * corridorHeight);
+	for (int yPos = startCorridorYPos; yPos < endCorridorYPos; ++yPos)
+	{
+		for (int xPos = startCorridorXPos; xPos < endCorridorXPos; ++xPos)
+		{
+			corridorTiles.emplace_back(Vector2Int(xPos, yPos));
+		}
+	}
+
+	// 보스방과 시작방 문 타일위치 저장.
+	for (int xPos = startCorridorXPos; xPos < endCorridorXPos; ++xPos)
+	{
+		generateBossRoomSpace->AddDoorTile(eRoomSides::Bottom, Vector2Int(xPos, startCorridorYPos));
+		generateStartRoomSpace->AddDoorTile(eRoomSides::Top, Vector2Int(xPos, endCorridorYPos - 1));
+	}
+
+	if (CorridorCallback)
+	{
+		CorridorCallback(corridorTiles);
+	}
+	
+	assert(RoomCallback && "Invalid RoomCallback");
+	RoomCallback(std::move(generateBossRoomSpace), true);
+
+	assert(RoomCallback && "Invalid RoomCallback");
+	RoomCallback(std::move(generateStartRoomSpace), false);
 }
 
 void Tilemap::Tick(float deltaTime)

@@ -28,7 +28,8 @@ int main(void)
 
 	//테스트 : 인게임 곧바로 시작
 	game.InitializeGameSessionData();
-	game.AddNewLevel<GameLevel>();
+	//game.AddNewLevel<GameLevel>(TilemapLevel::eLevelCategory::MAZE_BSP);
+	game.AddNewLevel<GameLevel>(TilemapLevel::eLevelCategory::BOSS_ROOM);
 
 	//더미 - 프레임 테스트용
 	//game.AddNewLevel<DummyLevel>();

@@ -31,6 +31,11 @@ public:
 	void InitializeTilemap(const Craft::Vector2Int& inMapSize, 
 							std::function<void(const std::vector<Craft::Vector2Int>&)> CorridorCallback,
 							std::function<void(std::unique_ptr<RoomSpace>)> RoomCallback);
+
+	void InitializeTilemapBossRoom(const Craft::Vector2Int& inMapSize,
+									std::function<void(const std::vector<Craft::Vector2Int>&)> CorridorCallback,
+									std::function<void(std::unique_ptr<RoomSpace>, bool)> RoomCallback);
+
 	void Tick(float deltaTime);
 	void Draw();
 
