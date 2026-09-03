@@ -78,9 +78,6 @@
     <ClCompile Include="StaticLibrary\StaticFunctionLibrary.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Component\PathMoveComponent.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="GameState\GameMode\GameMode.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -189,9 +186,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="StaticLibrary\StaticFunctionLibrary.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\PathMoveComponent.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="GameState\GameMode\GameMode.h">

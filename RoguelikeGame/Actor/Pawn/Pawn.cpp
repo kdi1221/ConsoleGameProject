@@ -62,10 +62,10 @@ void Pawn::BeginPlay()
 
 void Pawn::Destroy()
 {
-	/* TODO : Destory과정에서 모든 Ability 중단? */
+	/* Destory과정에서 모든 Ability 중단 */
 	if (abilitySystemComponent)
 	{
-		abilitySystemComponent->AllAbilitiesTriggerOff();
+		abilitySystemComponent->CancelAllAbility();
 	}
 
 	super::Destroy();
@@ -155,24 +155,6 @@ std::shared_ptr<AttributeComponent> Pawn::CreateAttributeComponent()
 	return AddComponent<AttributeComponent>();
 }
 
-/* 원거리 공격 범위 지정 */
-void Pawn::SetFireRange(float range)
-{
-	fireRange = range;
-}
-
-/* 투사체 Spawn Offset 지정 */
-void Pawn::SetProjectileSpawnOffset(const Craft::Vector2Int& spawnOffset)
-{
-	projectileSpawnOffset = spawnOffset;
-}
-
-/* 조준 위치 지정 */
-void Pawn::SetAimingPostion(const Craft::Vector2Int& position)
-{
-	aimingPosition = position;
-}
-
 /* 조준 방향 지정 */
 void Pawn::SetAimingDirection(const Craft::Vector2Float& direction)
 {
@@ -187,20 +169,18 @@ void Pawn::InitializeAbility()
 
 void Pawn::OnDeath()
 {
-	Engine::Get().PlayOneShot("Effect/death.wav");
+	/* 모든 Ability 활성화 중지 */
+	if (abilitySystemComponent)
+	{
+		abilitySystemComponent->CancelAllAbility();
+	}
 
 	if (onDeathEvent)
 	{
 		onDeathEvent(std::static_pointer_cast<Pawn>(shared_from_this()));
 	}
 
-	/* TODO : 모든 Ability 활성화 중지 */
-
-	/* 모든 Ability Trigger OFF */
-	if (abilitySystemComponent)
-	{
-		abilitySystemComponent->AllAbilitiesTriggerOff();
-	}
+	Engine::Get().PlayOneShot("Effect/death.wav");
 }
 
 void Pawn::SetDeath()

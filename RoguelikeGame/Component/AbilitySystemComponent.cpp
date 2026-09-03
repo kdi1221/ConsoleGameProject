@@ -8,40 +8,6 @@ AbilitySystemComponent::AbilitySystemComponent()
 
 AbilitySystemComponent::~AbilitySystemComponent() = default;
 
-
-//폐기 예정
-//void AbilitySystemComponent::PostTick(float deltaTime)
-//{
-//	super::PostTick(deltaTime);
-//
-//	for (auto& iterMapAbility : mapAbilities)
-//	{
-//		AbilityObject* ability = iterMapAbility.second.get();
-//		if (!ability || !ability->IsTrigger())
-//		{
-//			continue;
-//		}
-//
-//		ability->Tick(deltaTime);
-//	}
-//}
-
-//void AbilitySystemComponent::Draw()
-//{
-//	super::Draw();
-//
-//	for (auto& iterMapAbility : mapAbilities)
-//	{
-//		AbilityObject* ability = iterMapAbility.second.get();
-//		if (!ability || !ability->IsTrigger())
-//		{
-//			continue;
-//		}
-//
-//		ability->Draw();
-//	}
-//}
-
 void AbilitySystemComponent::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
@@ -120,7 +86,7 @@ void AbilitySystemComponent::SetAbilityActivateCallback(AbilityActivateCallback 
 	onAbilityActivate = callback;
 }
 
-void AbilitySystemComponent::AllAbilitiesTriggerOff()
+void AbilitySystemComponent::CancelAllAbility()
 {
 	for (auto& iterMapAbility : mapAbilities)
 	{
@@ -130,7 +96,7 @@ void AbilitySystemComponent::AllAbilitiesTriggerOff()
 			continue;
 		}
 
-		ability->TriggerOff();
+		ability->CancelAbility();
 	}
 }
 

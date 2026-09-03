@@ -24,8 +24,6 @@ public:
 	virtual ~AbilitySystemComponent();
 
 public:
-	//virtual void PostTick(float deltaTime) override;
-
 	/* Ability 별 Tick */
 	virtual void Tick(float deltaTime) override;
 
@@ -45,17 +43,8 @@ public:
 	/* Ability Activate / End 이벤트 콜백 지정 */
 	void SetAbilityActivateCallback(AbilityActivateCallback callback);
 
-	template<typename T, typename... Args, typename = std::enable_if_t<std::is_base_of<AbilityObject, T>::value>>
-	ABILITY_ID_TYPE AddNewAbility(Args&& ...args)
-	{
-		std::unique_ptr<T> newAbility = std::make_unique<T>(std::forward<Args>(args)...);
-		newAbility->SetOwnerPawn(GetOwnerPawn());
-
-		const ABILITY_ID_TYPE newAbilityID = newAbility->GetAbilityID();
-		mapAbilities.emplace(newAbilityID, std::move(newAbility));
-
-		return newAbilityID;
-	}
+	/* 모든 Ability 활성 중지 */
+	void CancelAllAbility();
 
 	template<typename T, typename = std::enable_if_t<std::is_base_of<AbilityObject, T>::value>>
 	T* GetAbility(const ABILITY_ID_TYPE abilityID)
@@ -68,9 +57,6 @@ public:
 
 		return Cast<T>(iterFindAbility->second);
 	}
-
-public:
-	void AllAbilitiesTriggerOff();
 
 private:
 	/* 보유한 Ability의 Cooldown 상태 변경시 호출 */

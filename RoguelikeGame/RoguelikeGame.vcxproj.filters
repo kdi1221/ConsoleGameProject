@@ -63,9 +63,6 @@
     <ClCompile Include="Actor\Pawn\Player\PlayerPawn.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Actor\Bullet\Bullet.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Actor\ActorOnTile.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -93,16 +90,7 @@
     <ClCompile Include="Ability\AbilityObject.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Ability\Shooter\AbilityShooter.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Ability\Shooter\Projectile\AbilityProjectile.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Component\AbilitySystemComponent.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Ability\AbilityPeriodicDelay.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Ability\NPCAbility\Melee\AbilityMelee.cpp">
@@ -138,12 +126,6 @@
     <ClCompile Include="Actor\FieldItem\FieldSkillItem.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Ability\Shooter\Projectile\AbilitySpiritBall.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Ability\Shooter\Projectile\AbilityGoblinArrow.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Ability\AbilityBeam.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -160,12 +142,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Actor\Pawn\NPC\Imp\NPCImp.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Ability\Shooter\Projectile\AbilityImpFireball.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Ability\Shooter\Projectile\AbilityDarkBall.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Actor\Pawn\NPC\Sharman\NPCSharman.cpp">
@@ -311,9 +287,6 @@
     <ClInclude Include="Actor\Pawn\Player\PlayerPawn.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Actor\Bullet\Bullet.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Actor\ActorOnTile.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -341,16 +314,7 @@
     <ClInclude Include="Ability\AbilityObject.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Ability\Shooter\AbilityShooter.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Ability\Shooter\Projectile\AbilityProjectile.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Component\AbilitySystemComponent.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Ability\AbilityPeriodicDelay.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Ability\NPCAbility\Melee\AbilityMelee.h">
@@ -389,12 +353,6 @@
     <ClInclude Include="Actor\FieldItem\FieldSkillItem.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Ability\Shooter\Projectile\AbilitySpiritBall.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Ability\Shooter\Projectile\AbilityGoblinArrow.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Ability\AbilityBeam.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -411,12 +369,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Actor\Pawn\NPC\Imp\NPCImp.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Ability\Shooter\Projectile\AbilityImpFireball.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Ability\Shooter\Projectile\AbilityDarkBall.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Actor\Pawn\NPC\Sharman\NPCSharman.h">

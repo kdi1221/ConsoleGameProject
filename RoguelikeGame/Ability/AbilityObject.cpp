@@ -131,23 +131,6 @@ void AbilityObject::CancelAbility()
 	EndAbility(true);
 }
 
-
-
-
-
-void AbilityObject::TriggerOn()
-{
-	bTrigger = true;
-}
-
-void AbilityObject::TriggerOff()
-{
-	bTrigger = false;
-}
-
-
-
-
 void AbilityObject::SetOwnerPawn(std::weak_ptr<Pawn> newOwner)
 {
 	ownerPawn = newOwner;

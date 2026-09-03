@@ -73,9 +73,6 @@ private:
 	/* 현재 이동중인 경로 표시 */
 	void DrawMovePaths();
 
-//protected:
-//	virtual void OnBehaviorAttack(float deltaTime);
-
 private:
 	/* NavMovementComponent에서 이동 완료되었을때 호출 */
 	void OnMoveFinish();
@@ -85,20 +82,6 @@ private:
 
 	/* AbilitySystemComponent에서 Ability 활성화 되었을때 호출 */
 	void OnActivateAbility(const AbilityObject& ability, bool bActivate);
-
-//protected:
-//	/* 타겟을 추적할때 추적 목적지 반환 */
-//	virtual void GetAvailableChaseTargetPosition(const Craft::Vector2Int& targetPos, 
-//												std::vector<Craft::Vector2Int>& availablePosition);
-//
-//	/* 타겟이 공격 범위 안에 있는지 확인 */
-//	virtual bool IsTargetAttackRange(std::shared_ptr<Pawn> targetPawn) const;
-//
-//	/* 공격 Ability Trigger On */
-//	virtual void AttackAbilitiesTriggerON();
-//
-//	/* 공격 Ability Trigger Off */
-//	virtual void AttackAbilitiesTriggerOFF();
 
 private:
 	/* 네비게이션 기반 이동 컴포넌트 */

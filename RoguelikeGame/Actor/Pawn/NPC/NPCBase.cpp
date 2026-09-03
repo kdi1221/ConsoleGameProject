@@ -140,11 +140,6 @@ void NPCBase::DrawMovePaths()
 	}
 }
 
-//void NPCBase::OnBehaviorAttack(float deltaTime)
-//{
-//
-//}
-
 void NPCBase::OnMoveFinish()
 {
 	//이동 목적지에 도착한 경우
@@ -174,26 +169,3 @@ void NPCBase::OnActivateAbility(const AbilityObject& ability, bool bActivate)
 		}
 	}
 }
-
-//void NPCBase::GetAvailableChaseTargetPosition(const Craft::Vector2Int& targetPos, std::vector<Craft::Vector2Int>& availablePosition)
-//{
-//
-//}
-//
-///* 타겟이 공격 범위 안에 있는지 확인 */
-//bool NPCBase::IsTargetAttackRange(std::shared_ptr<Pawn> targetPawn) const
-//{
-//	return false;
-//}
-//
-///* 공격 Ability Trigger On */
-//void NPCBase::AttackAbilitiesTriggerON()
-//{
-//
-//}
-//
-///* 공격 Ability Trigger Off */
-//void NPCBase::AttackAbilitiesTriggerOFF()
-//{
-//
-//}

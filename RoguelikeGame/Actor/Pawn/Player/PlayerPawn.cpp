@@ -51,9 +51,6 @@ PlayerPawn::PlayerPawn(const Craft::Vector2Int& position)
 	/* 카메라 컴포넌트 */
 	cameraComponent = AddComponent<CameraComponent>();
 	assert(cameraComponent && "cameraComponent create fail..");
-
-	// 공격 범위 지정(TODO : 폐기 예정)
-	SetFireRange(10.f);
 }
 
 void PlayerPawn::Initialize()

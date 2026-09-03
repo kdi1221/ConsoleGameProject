@@ -109,7 +109,6 @@ xcopy ..\Config\Setting.txt $(OutDir)..\Config\ /e /y /i</Command>
     <ClCompile Include="Component\MovementComponent.cpp" />
     <ClCompile Include="Component\MultiSpriteRendererComponent.cpp" />
     <ClCompile Include="Component\NavMovementComponent.cpp" />
-    <ClCompile Include="Component\PathMoveComponent.cpp" />
     <ClCompile Include="Component\ProjectileMoveComponent.cpp" />
     <ClCompile Include="Component\SpriteRendererComponent.cpp" />
     <ClCompile Include="Component\TransformComponent.cpp" />
@@ -145,7 +144,6 @@ xcopy ..\Config\Setting.txt $(OutDir)..\Config\ /e /y /i</Command>
     <ClInclude Include="Component\MovementComponent.h" />
     <ClInclude Include="Component\MultiSpriteRendererComponent.h" />
     <ClInclude Include="Component\NavMovementComponent.h" />
-    <ClInclude Include="Component\PathMoveComponent.h" />
     <ClInclude Include="Component\ProjectileMoveComponent.h" />
     <ClInclude Include="Component\SpriteRendererComponent.h" />
     <ClInclude Include="Component\TransformComponent.h" />

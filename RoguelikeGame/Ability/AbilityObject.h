@@ -48,21 +48,6 @@ public:
 	/* Ability 취소 */
 	virtual void CancelAbility();
 
-
-
-
-
-	//--------------이 아래로 폐기 예정 ------------------//
-	/* Ability 트리거 켜기 */
-	virtual void TriggerOn();
-
-	/* Ability 트리거 끄기 */
-	virtual void TriggerOff();
-	//--------------이 위로 폐기 예정 ------------------//
-
-
-
-
 public:
 	/* Ability의 소유 폰 지정 */
 	void SetOwnerPawn(std::weak_ptr<Pawn> newOwner);
@@ -92,10 +77,6 @@ public:
 	inline bool IsCooldown() const { return bCooldownActive; }
 	inline float GetCooldownTime() const { return cooldownTime; }
 	inline float GetCooldownElapsedTime() const { return timerCooldown.GetElapsedTime(); }
-
-
-	/* 폐기 예정 */
-	inline bool IsTrigger() const { return bTrigger; }
 
 private:
 	/* 쿨다운 활성화 */
@@ -134,14 +115,6 @@ private:
 
 	//Ability 활성화 및 종료 시 발생하는 이벤트
 	AbilityActivateCallback onActiveAbility;
-
-
-
-	// Ability Trigger 여부(폐기 예정)
-	bool bTrigger = false;
-
-
-
 
 	// 이 Ability를 소유중인 Pawn
 	std::weak_ptr<Pawn> ownerPawn;

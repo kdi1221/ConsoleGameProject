@@ -100,19 +100,12 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
   <ItemGroup>
     <ClCompile Include="Ability\AbilityBeam.cpp" />
     <ClCompile Include="Ability\AbilityObject.cpp" />
-    <ClCompile Include="Ability\AbilityPeriodicDelay.cpp" />
     <ClCompile Include="Ability\NPCAbility\Melee\AbilityMelee.cpp" />
     <ClCompile Include="Ability\NPCAbility\Range\AbilityRange.cpp" />
     <ClCompile Include="Ability\PlayerAbility\AbilityFrozenOrb.cpp" />
     <ClCompile Include="Ability\PlayerAbility\AbilityNova.cpp" />
     <ClCompile Include="Ability\PlayerAbility\AbilityShotSpiritBall.cpp" />
     <ClCompile Include="Ability\PlayerAbility\AbilityTeleport.cpp" />
-    <ClCompile Include="Ability\Shooter\Projectile\AbilityDarkBall.cpp" />
-    <ClCompile Include="Ability\Shooter\Projectile\AbilityGoblinArrow.cpp" />
-    <ClCompile Include="Ability\Shooter\Projectile\AbilityImpFireball.cpp" />
-    <ClCompile Include="Ability\Shooter\Projectile\AbilityProjectile.cpp" />
-    <ClCompile Include="Ability\Shooter\AbilityShooter.cpp" />
-    <ClCompile Include="Ability\Shooter\Projectile\AbilitySpiritBall.cpp" />
     <ClCompile Include="Actor\ActorOnTile.cpp" />
     <ClCompile Include="Actor\FieldItem\FieldItem.cpp" />
     <ClCompile Include="Actor\FieldItem\FieldSkillItem.cpp" />
@@ -133,7 +126,6 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Actor\Pawn\NPC\Troll\NPCTroll.cpp" />
     <ClCompile Include="Actor\Pawn\Pawn.cpp" />
     <ClCompile Include="Actor\Pawn\Player\PlayerPawn.cpp" />
-    <ClCompile Include="Actor\Bullet\Bullet.cpp" />
     <ClCompile Include="Actor\MapObject\RoomDoor.cpp" />
     <ClCompile Include="Actor\Projectile\FrozenOrb\ProjectileIceBolt.cpp" />
     <ClCompile Include="Actor\Projectile\Projectile.cpp" />
@@ -183,19 +175,12 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Ability\AbilityBeam.h" />
     <ClInclude Include="Ability\AbilityDataTable.h" />
     <ClInclude Include="Ability\AbilityObject.h" />
-    <ClInclude Include="Ability\AbilityPeriodicDelay.h" />
     <ClInclude Include="Ability\NPCAbility\Melee\AbilityMelee.h" />
     <ClInclude Include="Ability\NPCAbility\Range\AbilityRange.h" />
     <ClInclude Include="Ability\PlayerAbility\AbilityFrozenOrb.h" />
     <ClInclude Include="Ability\PlayerAbility\AbilityNova.h" />
     <ClInclude Include="Ability\PlayerAbility\AbilityShotSpiritBall.h" />
     <ClInclude Include="Ability\PlayerAbility\AbilityTeleport.h" />
-    <ClInclude Include="Ability\Shooter\Projectile\AbilityDarkBall.h" />
-    <ClInclude Include="Ability\Shooter\Projectile\AbilityGoblinArrow.h" />
-    <ClInclude Include="Ability\Shooter\Projectile\AbilityImpFireball.h" />
-    <ClInclude Include="Ability\Shooter\Projectile\AbilityProjectile.h" />
-    <ClInclude Include="Ability\Shooter\AbilityShooter.h" />
-    <ClInclude Include="Ability\Shooter\Projectile\AbilitySpiritBall.h" />
     <ClInclude Include="Actor\ActorOnTile.h" />
     <ClInclude Include="Actor\FieldItem\FieldItem.h" />
     <ClInclude Include="Actor\FieldItem\FieldSkillItem.h" />
@@ -216,7 +201,6 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Actor\Pawn\NPC\Troll\NPCTroll.h" />
     <ClInclude Include="Actor\Pawn\Pawn.h" />
     <ClInclude Include="Actor\Pawn\Player\PlayerPawn.h" />
-    <ClInclude Include="Actor\Bullet\Bullet.h" />
     <ClInclude Include="Actor\MapObject\RoomDoor.h" />
     <ClInclude Include="Actor\Projectile\FrozenOrb\ProjectileIceBolt.h" />
     <ClInclude Include="Actor\Projectile\Projectile.h" />

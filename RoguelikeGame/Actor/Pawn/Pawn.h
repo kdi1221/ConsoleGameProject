@@ -55,34 +55,19 @@ public:
 	void SetAbilityCooldownChangeCallback();
 
 public:
+	/* 폰의 사망 여부 */
 	bool IsDeath() const;
 
 public:
 	inline PawnUniqueIDType GetUniqueID() const { return uniqueID; }
 	inline eTeamID GetTeamID() const { return teamID; }
-	inline float GetFireRange() const { return fireRange; }
-	inline const Craft::Vector2Int& GetProjectileSpawnOffset() const { return projectileSpawnOffset; }
-	inline const Craft::Vector2Int& GetAimingPosition() const { return aimingPosition; }
 	inline const Craft::Vector2Float& GetAimingDirection() const { return aimingDirection; }
 
 protected:
 	inline std::shared_ptr<AbilitySystemComponent> GetAbilitySystemComponent() const { return abilitySystemComponent; }
 
 protected:
-	virtual std::shared_ptr<AttributeComponent> CreateAttributeComponent();
-
-protected:
-	/* 원거리 공격 범위 지정 */
-	void SetFireRange(float range);
-
-	/* 투사체 Spawn Offset 지정 */
-	virtual void SetProjectileSpawnOffset(const Craft::Vector2Int& spawnOffset);
-
-	/* 조준 위치 지정 */
-	virtual void SetAimingPostion(const Craft::Vector2Int& position);
-
-	/* 조준 방향 지정 */
-	virtual void SetAimingDirection(const Craft::Vector2Float& direction);
+	virtual std::shared_ptr<AttributeComponent> CreateAttributeComponent();	
 
 protected:
 	/* Pawn의 초기 Ability 구성 */
@@ -90,6 +75,9 @@ protected:
 
 	/* Pawn의 Death 이벤트 */
 	virtual void OnDeath();
+
+	/* 조준 방향 지정 */
+	virtual void SetAimingDirection(const Craft::Vector2Float& direction);
 
 private:
 	/* Pawn 사망 설정 */
@@ -107,15 +95,6 @@ private:
 
 	/* 사망 여부 */
 	bool bDeath = false;
-	
-	/* 원거리 공격 범위(폐기 예정) */
-	float fireRange = 0.f;
-
-	/* Projectile 스폰 시 Offset(타일 기반)*/
-	Craft::Vector2Int projectileSpawnOffset = Craft::Vector2Int::Up;
-
-	/* 조준 위치 */
-	Craft::Vector2Int aimingPosition = Craft::Vector2Int::Zero;
 
 	/* 조준 방향 */
 	Craft::Vector2Float aimingDirection = Craft::Vector2Float::Zero;
