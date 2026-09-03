@@ -27,9 +27,9 @@ PS_Roguelike::~PS_Roguelike()
 void PS_Roguelike::InitializeSessionData()
 {
 	killMonsterNum = 0;
-	playerMaxHealth = 100.f;
+	playerMaxHealth = 400.f;
 	playerCurrentHealth = playerMaxHealth;
-	playerMaxMana = 100.f;
+	playerMaxMana = 400.f;
 	playerCurrentMana = playerMaxMana;
 
 	/* 초기 Ability */

@@ -288,8 +288,6 @@ void BehaviorTreeComponent::ClearPreviouseBehaviorState(eBehaviorState prevState
 	case eBehaviorState::Attack:
 		{
 			bActivateAttackAbility = false;
-			//OutputDebugStringA("TODO : Attack End\n");
-			//AttackAbilitiesTriggerOFF();
 		}
 		break;
 	}

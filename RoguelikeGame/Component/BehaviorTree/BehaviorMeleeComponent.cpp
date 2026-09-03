@@ -33,6 +33,10 @@ void BehaviorMeleeComponent::GetAvailableChaseTargetPosition(const Craft::Vector
 		return;
 	}
 
+	/* NPC의 현재 위치 */
+	const Vector2Int& npcCurrentPosition = npcOwnerPtr->GetWorldPosition();
+
+	/* NPC가 현재 위치한 방 인덱스 */
 	const RoomDefines::UNIQUE_INDEX_TYPE npcPlaceRoomIndex = npcOwnerPtr->GetSpawnedRoomIndex();
 
 	const NavigationTilemap& navigationSystem = Engine::Get().GetNavigationSystem<NavigationTilemap>();
@@ -48,12 +52,16 @@ void BehaviorMeleeComponent::GetAvailableChaseTargetPosition(const Craft::Vector
 
 			const Vector2Int checkPos(targetPos + Vector2Int(x, y));
 
-			//TODO : 대각 이동 체크?
-
-			if (!navigationSystem.CanNextMove(npcOwnerPtr, checkPos))
+			//대각 이동 까지 체크
+			if (!navigationSystem.SimulatePreviousToNextMove(npcOwnerPtr, npcCurrentPosition, checkPos))
 			{
 				continue;
 			}
+
+			/*if (!navigationSystem.CanNextMove(npcOwnerPtr, checkPos))
+			{
+				continue;
+			}*/
 
 			//생성된 방 내의 타일이어야만 가능
 			if (npcPlaceRoomIndex != navigationSystem.GetRoomIndexInTile(checkPos))

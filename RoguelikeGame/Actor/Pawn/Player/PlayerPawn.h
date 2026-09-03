@@ -97,7 +97,7 @@ private:
 
 private:
 	/* 초당 마나 회복 속도 */
-	float manaRegenerationSpeed = 3.f;
+	float manaRegenerationSpeed = 8.f;
 
 	/* 현재 프레임에서의 이동 입력 방향 */
 	Craft::eDirection moveInputDirection = Craft::eDirection::None;

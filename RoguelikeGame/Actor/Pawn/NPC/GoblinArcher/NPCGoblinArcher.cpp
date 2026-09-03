@@ -6,7 +6,7 @@
 using namespace Craft;
 
 NPCGoblinArcher::NPCGoblinArcher(const Vector2Int& position, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
-	:super(position, L"g", Color::Green, 15.f, 10.f, 2.f, 0.8f, 10.f, roomIndex)
+	:super(position, L"g", Color::Green, 15.f, 10.f, 2.4f, 1.2f, 10.f, roomIndex)
 {
 
 }

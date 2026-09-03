@@ -351,7 +351,7 @@ bool NavigationTilemap::SimulatePreviousToNextMove(std::shared_ptr<Actor> agent,
 	const Vector2Int direction = nextPosition - prevPosition;
 	
 	//이동 방향이 대각성분이면 대각선 이동 체크 
-	if (abs(direction.x) == 1 && abs(direction.y))
+	if (abs(direction.x) == 1 && abs(direction.y) == 1)
 	{
 		//대각선 이동시 대각선 방향의 X,Y 분리 방향 타일이 막혀있으면 지나가지 못한다. */
 		if (tilemapLevel->IsDiagonalBlocked(agent, prevPosition, direction))

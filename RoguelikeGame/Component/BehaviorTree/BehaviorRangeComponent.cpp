@@ -58,13 +58,18 @@ void BehaviorRangeComponent::GetAvailableChaseTargetPosition(const Craft::Vector
 
 			if (distanceLength >= minRange && distanceLength <= maxRange)
 			{
-				//TODO : 대각 이동 체크?
-
 				const Vector2Int checkPos(targetPos + Vector2Int(x, y));
-				if (!navigationSystem.CanNextMove(npcOwnerPtr, checkPos))
+
+				//대각 이동 까지 체크
+				if (!navigationSystem.SimulatePreviousToNextMove(npcOwnerPtr, currentPos, checkPos))
 				{
 					continue;
 				}
+
+				/*if (!navigationSystem.CanNextMove(npcOwnerPtr, checkPos))
+				{
+					continue;
+				}*/
 
 				//생성된 방 내의 타일이어야만 가능
 				if (npcPlaceRoomIndex != navigationSystem.GetRoomIndexInTile(checkPos))

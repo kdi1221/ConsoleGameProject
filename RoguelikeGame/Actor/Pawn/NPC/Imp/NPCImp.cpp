@@ -7,7 +7,7 @@
 using namespace Craft;
 
 NPCImp::NPCImp(const Vector2Int& position, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
-	:super(position, L"I", Color::Red, 35.f, 10.f, 1.2f, 0.6f, 15.f, roomIndex)
+	:super(position, L"I", Color::Red, 35.f, 10.f, 1.5f, 0.75f, 15.f, roomIndex)
 {
 
 }

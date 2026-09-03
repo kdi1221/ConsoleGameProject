@@ -265,11 +265,11 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 	}
 
 	/* 스폰할 몬스터 수 결정 */
-	const int spawnMinRange = min(15, maxSpawnNum);
-	const int spawnMaxRange = min(30, maxSpawnNum);
+	const int spawnMinRange = min(25, maxSpawnNum);
+	const int spawnMaxRange = min(40, maxSpawnNum);
 	int spawnMonsterNum = Util::RandomRange(spawnMinRange, spawnMaxRange);
 	/* 테스트용 */
-	spawnMonsterNum = 50;
+	//spawnMonsterNum = 50;
 	int currentIndex = 0;
 
 	auto spawnRandomNPC = [this, level](const Vector2Int& spawnTilePos, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
@@ -295,7 +295,7 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 				}
 
 				/* 테스트용 */
-				//spawnedNPC = level->SpawnActor<NPCSharman>(spawnTilePos, roomIndex);
+				//spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
 				break;
 
 			case 2:

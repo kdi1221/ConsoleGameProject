@@ -7,7 +7,7 @@
 using namespace Craft;
 
 NPCSharman::NPCSharman(const Vector2Int& position, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
-	:super(position, L"S", Color::Yellow, 50.f, 10.f, 1.5f, 0.9f, 12.f, roomIndex)
+	:super(position, L"S", Color::Yellow, 50.f, 10.f, 2.f, 1.2f, 12.f, roomIndex)
 {
 	
 }
@@ -38,9 +38,9 @@ void NPCSharman::SpawnProjectile(const Craft::Vector2Int& spawnPosition, const C
 		//발사체 생성
 		std::shared_ptr<Projectile> spawnedProjectile = ownerLevel->SpawnActor<Projectile>(
 			spawnPosition,
-			20.f,
+			15.f,
 			instigatorTeamID,
-			8.f);
+			5.f);
 
 		assert(spawnedProjectile && "Spawn Fail Projectile..");
 
