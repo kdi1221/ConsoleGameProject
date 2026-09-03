@@ -105,7 +105,7 @@
     <ClCompile Include="Ability\AbilityPeriodicDelay.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Ability\Melee\AbilityMelee.cpp">
+    <ClCompile Include="Ability\NPCAbility\Melee\AbilityMelee.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Actor\Pawn\NPC\NPCMeleeBase.cpp">
@@ -243,6 +243,18 @@
     <ClCompile Include="UI\HUD\QuickSlotIcon\QuickSlotIcon.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Component\BehaviorTree\BehaviorTreeComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BehaviorTree\BehaviorMeleeComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BehaviorTree\BehaviorRangeComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability\NPCAbility\Range\AbilityRange.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Level\TestLevel.h">
@@ -341,7 +353,7 @@
     <ClInclude Include="Ability\AbilityPeriodicDelay.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Ability\Melee\AbilityMelee.h">
+    <ClInclude Include="Ability\NPCAbility\Melee\AbilityMelee.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Actor\Pawn\NPC\NPCMeleeBase.h">
@@ -486,6 +498,18 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="UI\HUD\QuickSlotIcon\QuickSlotIcon.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BehaviorTree\BehaviorTreeComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BehaviorTree\BehaviorMeleeComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BehaviorTree\BehaviorRangeComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\NPCAbility\Range\AbilityRange.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

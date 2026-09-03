@@ -19,7 +19,9 @@ ProjectileFrozenOrb::ProjectileFrozenOrb(const Vector2Int& inPosition,
 										float spawnIceboltDelay)
 	:super(inPosition, moveSpeed, teamID, damageValue)
 {
-	spriteComponent = AddComponent<SpriteRendererComponent>(L"●", Color::BrightWhite, static_cast<int>(eRenderSortingOrder::Projectile_FX));
+	SetImage(L"●");
+	SetImageColor(Color::BrightWhite);
+	SetSortingOrder(eRenderSortingOrder::Projectile_FX);
 
 	timerSpawnIceBoltDelay.SetTargetTime(spawnIceboltDelay);
 	timerSpawnIceBoltDelay.ReserveNextTick();

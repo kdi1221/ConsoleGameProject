@@ -7,18 +7,14 @@ using namespace Craft;
 ProjectileIceBolt::ProjectileIceBolt(const Vector2Int& inPosition, const float moveSpeed, const eTeamID teamID, float damageValue)
 	:super(inPosition, moveSpeed, teamID, damageValue)
 {
-	spriteComponent = AddComponent<SpriteRendererComponent>(L"◥", Color::LightBlue, static_cast<int>(eRenderSortingOrder::Projectile));
+	SetImage(L"◥");
+	SetImageColor(Color::LightBlue);
 
 	SetLifeSpan(1.f);
 }
 
 void ProjectileIceBolt::SetIceBoltImage(const eDirection direction)
 {
-	if (!spriteComponent)
-	{
-		return;
-	}
-
 	std::wstring boltImage;
 	switch (direction)
 	{
@@ -32,6 +28,6 @@ void ProjectileIceBolt::SetIceBoltImage(const eDirection direction)
 	case eDirection::RightBottom: boltImage = L"◢"; break;
 	}
 
-	spriteComponent->SetImage(boltImage);
+	SetImage(boltImage);
 }
 	

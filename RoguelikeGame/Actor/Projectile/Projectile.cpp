@@ -19,6 +19,8 @@ Projectile::Projectile(const Vector2Int& inPosition,
 	,damageValue(damageValue)
 {
 	projectileMoveComponent = AddComponent<ProjectileMoveComponent>(moveSpeed);
+
+	spriteComponent = AddComponent<SpriteRendererComponent>(L"", Color::White, static_cast<int>(eRenderSortingOrder::Projectile));
 }
 
 void Projectile::PreTick(float deltaTime)
@@ -68,6 +70,30 @@ void Projectile::SetLifeSpan(float lifeTime)
 {
 	timerLifeSpan.SetTargetTime(lifeTime);
 	isLifeSpan = true;
+}
+
+void Projectile::SetImage(const std::wstring& image)
+{
+	if (spriteComponent)
+	{
+		spriteComponent->SetImage(image);
+	}
+}
+
+void Projectile::SetImageColor(const Color color)
+{
+	if (spriteComponent)
+	{
+		spriteComponent->SetColor(color);
+	}
+}
+
+void Projectile::SetSortingOrder(eRenderSortingOrder order)
+{
+	if (spriteComponent)
+	{
+		spriteComponent->SetSortingOrder(static_cast<int>(order));
+	}
 }
 
 bool Projectile::OnBlockWall()

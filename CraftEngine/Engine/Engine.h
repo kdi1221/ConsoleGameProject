@@ -108,6 +108,12 @@ namespace Craft
 		//AI 경로 그리기 여부 설정
 		inline void SetDrawAIPaths(bool bDraw) { bDrawAIPath = bDraw; }
 
+		//AI 상태 그리기 여부 반환
+		inline bool GetDrawAIState() const { return bDrawAIState; }
+
+		//AI 상태 그리기 여부 설정
+		inline void SetDrawAIState(bool bDraw) { bDrawAIState = bDraw; }
+
 	protected:
 		// 입력 처리 함수. (입력 폴링)
 		virtual void ProcessInput();
@@ -190,8 +196,11 @@ namespace Craft
 		std::unique_ptr<GameMode> gameMode;
 
 	private:
-		/* AI 경로 표시 */
+		/* AI 경로 표시(디버깅용) */
 		bool bDrawAIPath = false;
+
+		/* AI 상태 표시(디버깅용) */
+		bool bDrawAIState = false;
 
 	};
 }

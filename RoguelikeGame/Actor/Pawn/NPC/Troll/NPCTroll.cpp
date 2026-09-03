@@ -3,7 +3,7 @@
 using namespace Craft;
 
 NPCTroll::NPCTroll(const Vector2Int& position, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
-	:NPCMeleeBase(position, L"T", Color::BrightGray, 80.f, roomIndex, 0.14f, 0.5f, 1.2f, 7.f)
+	:super(position, L"T", Color::BrightGray, 80.f, 15.f, 10.f, 1.5f, 0.7f, roomIndex)
 {
 
 }

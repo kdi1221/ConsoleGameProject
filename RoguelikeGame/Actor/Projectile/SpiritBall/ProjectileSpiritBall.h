@@ -5,7 +5,6 @@
 namespace Craft
 {
 	class Vector2Int;
-	class SpriteRendererComponent;
 }
 
 /* 플레이어의 기본 공격 구체 */
@@ -20,8 +19,4 @@ public:
 		float damageValue);
 
 	virtual ~ProjectileSpiritBall() = default;
-
-private:
-	/* 발사체 표시 Sprite Component */
-	std::shared_ptr<Craft::SpriteRendererComponent> spriteComponent;
 };

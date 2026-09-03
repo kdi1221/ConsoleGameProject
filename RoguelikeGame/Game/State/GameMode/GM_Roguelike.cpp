@@ -269,7 +269,7 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 	const int spawnMaxRange = min(30, maxSpawnNum);
 	int spawnMonsterNum = Util::RandomRange(spawnMinRange, spawnMaxRange);
 	/* 테스트용 */
-	spawnMonsterNum = 100;
+	spawnMonsterNum = 50;
 	int currentIndex = 0;
 
 	auto spawnRandomNPC = [this, level](const Vector2Int& spawnTilePos, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
@@ -281,7 +281,7 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 			switch (currentFloorLevel)
 			{
 			case 1:
-				/*if (randomValue < 30)
+				if (randomValue < 30)
 				{
 					spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnTilePos, roomIndex);
 				}
@@ -292,9 +292,10 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 				else
 				{
 					spawnedNPC = level->SpawnActor<NPCOrc>(spawnTilePos, roomIndex);
-				}*/
+				}
+
 				/* 테스트용 */
-				spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
+				//spawnedNPC = level->SpawnActor<NPCSharman>(spawnTilePos, roomIndex);
 				break;
 
 			case 2:

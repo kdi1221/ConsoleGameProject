@@ -9,41 +9,38 @@ class NPCMeleeBase : public NPCBase
 
 public:
 	NPCMeleeBase(const Craft::Vector2Int& position,
-				const std::wstring& image,
-				Craft::Color color,
-				float initialHealth,
-				RoomDefines::UNIQUE_INDEX_TYPE roomIndex,
-				float moveDelay,
-				float chaseDelay,
-				float attackDelay,
-				float damageValue);
+		const std::wstring& image,
+		Craft::Color color,
+		float initialHealth,
+		float moveSpeed,
+		float damageValue,
+		float attackDuration,
+		float attackFrameTime,
+		RoomDefines::UNIQUE_INDEX_TYPE roomIndex);
+
 	virtual ~NPCMeleeBase() = default;
 
 private:
 	/* Pawn의 초기 Ability 구성 */
 	virtual void InitializeAbility() override;
 
-private:
-	/* 타겟을 추적할때 추적 목적지 반환 */
-	virtual void GetAvailableChaseTargetPosition(const Craft::Vector2Int& targetPos, std::vector<Craft::Vector2Int>& availablePosition) override;
+	/* 공격 실행 */
+	virtual void ExecuteAttack() override;
 
-	/* 타겟이 공격 범위 안에 있는지 확인 */
-	virtual bool IsTargetAttackRange(std::shared_ptr<Pawn> targetPawn) const override;
-
-	/* 공격 Ability Trigger On */
-	virtual void AttackAbilitiesTriggerON();
-
-	/* 공격 Ability Trigger Off */
-	virtual void AttackAbilitiesTriggerOFF();
+	/* 공격 프레임에서 호출되는 함수 */
+	virtual void OnNotifyAttackFrame(const AbilityObject& ability) override;
 
 private:
-	/* 부여된 근접 공격 Ability */
-	ABILITY_ID_TYPE grantMeleeAttackID = INVALID_ABILITY_ID;
+	/* 근접공격 실행시 적용할 데미지 수치 */
+	float damageAmount = 0.f;
 
-	/* 공격 딜레이 */
-	float attackDelayInterval = 0.f;
+	/* 근접 공격 실행 시간(총 길이) */
+	float attackDuration = 0.f;
 
-	/* 데미지 수치 */
-	float attackDamage = 0.f;
+	/* 근접 공격 중 공격 프레임 시간 */
+	float attackFrameTime = 0.f;
+
+	/* 부여된 근접공격 Ability ID */
+	ABILITY_ID_TYPE grantedAttackAbilityID = INVALID_ABILITY_ID;
 };
 

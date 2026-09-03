@@ -11,6 +11,6 @@ public:
 	virtual ~NPCSharman() = default;
 
 private:
-	virtual ABILITY_ID_TYPE grantRangeAttackAbility() override;
+	virtual void SpawnProjectile(const Craft::Vector2Int& spawnPosition, const Craft::Vector2Float& aimingDireciton) override;
 };
 

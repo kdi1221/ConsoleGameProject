@@ -1,5 +1,5 @@
 ﻿#include "NPCMeleeBase.h"
-#include "Ability/Melee/AbilityMelee.h"
+#include "Ability/NPCAbility/Melee/AbilityMelee.h"
 #include "Component/AbilitySystemComponent.h"
 #include "Engine/Engine.h"
 #include "Navigation/NavigationTilemap.h"
@@ -11,97 +11,49 @@ NPCMeleeBase::NPCMeleeBase(const Craft::Vector2Int& position,
 							const std::wstring& image,
 							Craft::Color color,
 							float initialHealth,
-							RoomDefines::UNIQUE_INDEX_TYPE roomIndex,
-							float moveDelay,
-							float chaseDelay,
-							float attackDelay,
-							float damageValue)
-	:super(position, image, color, initialHealth, roomIndex, moveDelay, chaseDelay)
-	,attackDelayInterval(attackDelay)
-	,attackDamage(damageValue)
+							float moveSpeed,
+							float damageValue,
+							float attackDuration,
+							float attackFrameTime,
+							RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
+	:super(position, image, color, initialHealth, moveSpeed, eMonsterPattern::Melee, roomIndex)
+	,damageAmount(damageValue)
+	,attackDuration(attackDuration)
+	,attackFrameTime(attackFrameTime)
 {
 	
 }
 
 void NPCMeleeBase::InitializeAbility()
 {
-	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
-	assert(abilitySystemComponent && "Invalid abilitySystemComponent");
-
-	/* 근접 공격 Ability 추가 */
-	grantMeleeAttackID = abilitySystemComponent->AddNewAbility<AbilityMelee>(1, attackDelayInterval, attackDamage);
+	/* 근접 공격 Ability 부여 */
+	grantedAttackAbilityID = abilitySystemComponent->AddNewAbility(1000, 1);
+	AbilityMelee* grantedAttackAbility = abilitySystemComponent->GetAbility<AbilityMelee>(grantedAttackAbilityID);
+	assert(grantedAttackAbility && "Invalid grantedAttackAbility");
+	grantedAttackAbility->SetAttackFrame(attackDuration, attackFrameTime);
 }
 
-void NPCMeleeBase::GetAvailableChaseTargetPosition(const Vector2Int& targetPos,
-													std::vector<Vector2Int>& availablePosition)
+void NPCMeleeBase::ExecuteAttack()
 {
-	const NavigationTilemap& navigationSystem = Engine::Get().GetNavigationSystem<NavigationTilemap>();
+	std::shared_ptr<AbilitySystemComponent> abilitySystemComponentPtr = GetAbilitySystemComponent();
+	assert(abilitySystemComponentPtr && "Invalid abilitySystemComponent");
 
-	for (int y = -1; y <= 1; ++y)
-	{
-		for (int x = -1; x <= 1; ++x)
-		{
-			if (y == 0 && x == 0)
-			{
-				continue;
-			}
-
-			const Vector2Int checkPos(targetPos + Vector2Int(x, y));
-			if (!navigationSystem.CanNextMove(shared_from_this(), checkPos))
-			{
-				continue;
-			}
-
-			//생성된 방 내의 타일이어야만 가능
-			if (GetSpawnedRoomIndex() != navigationSystem.GetRoomIndexInTile(checkPos))
-			{
-				continue;
-			}
-
-			availablePosition.emplace_back(checkPos);
-		}
-	}
+	abilitySystemComponentPtr->ActivateAbility(grantedAttackAbilityID);
 }
 
-bool NPCMeleeBase::IsTargetAttackRange(std::shared_ptr<Pawn> targetPawn) const
+void NPCMeleeBase::OnNotifyAttackFrame(const AbilityObject& ability)
 {
-	if (!targetPawn)
-	{
-		return false;
-	}
-
-	const Vector2Int& targetPos = targetPawn->GetWorldPosition();
-	const Vector2Int& worldPos = GetWorldPosition();
-	const Vector2Int distance = targetPos - worldPos;
-
-	return abs(distance.x) <= 1 && abs(distance.y) <= 1;
-}
-
-void NPCMeleeBase::AttackAbilitiesTriggerON()
-{
-	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
-	assert(abilitySystemComponent && "Invalid abilitySystemComponent");
-
-	AbilityMelee* attackAbility = abilitySystemComponent->GetAbility<AbilityMelee>(grantMeleeAttackID);
-	if (!attackAbility)
+	std::shared_ptr<Pawn> chaseTarget = GetChaseTarget();
+	if (!chaseTarget || chaseTarget->IsDeath())
 	{
 		return;
 	}
 
-	attackAbility->SetTargetPawn(GetChaseTarget());
-	attackAbility->TriggerOn();
-}
+	const Vector2Int distance = chaseTarget->GetWorldPosition() - GetWorldPosition();
 
-void NPCMeleeBase::AttackAbilitiesTriggerOFF()
-{
-	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
-	assert(abilitySystemComponent && "Invalid abilitySystemComponent");
-
-	AbilityMelee* attackAbility = abilitySystemComponent->GetAbility<AbilityMelee>(grantMeleeAttackID);
-	if (!attackAbility)
+	/* 타겟이 사정거리 안에 있을때만(8방향) 공격 가능 */
+	if (abs(distance.x) <= 1 && abs(distance.y) <= 1)
 	{
-		return;
+		chaseTarget->TakeDamage(damageAmount);
 	}
-
-	attackAbility->TriggerOff();
 }

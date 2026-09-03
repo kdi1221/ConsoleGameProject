@@ -17,6 +17,9 @@ private:
 	/* 쿨다운 상태 변경에 따른 이벤트 타입 */
 	using AbilityCooldownChangeCallback = std::function<void(const AbilityObject&, bool)>;
 
+	/* Ability 활성화 이벤트 알림 타입 */
+	using AbilityActivateCallback = std::function<void(const AbilityObject&, bool)>;
+
 public:
 	/* Ability ID에 대한 AbilityObject생성*/
 	static std::unique_ptr<AbilityObject> CreateNewAbility(const ABILITY_ID_TYPE abilityID, int abilityLevel);
@@ -79,6 +82,9 @@ public:
 	/* 쿨다운 상태 변경에 대한 이벤트 콜백 지정 */
 	void SetCooldownChangeCallback(AbilityCooldownChangeCallback callback);
 
+	/* Ability 활성화 상태 변경에 대한 이벤트 콜백 지정 */
+	void SetActivateCallback(AbilityActivateCallback callback);
+
 public:
 	inline ABILITY_ID_TYPE GetAbilityID() const { return abilityID; }
 	inline int GetAbilityLevel() const { return abilityLevel; }
@@ -125,6 +131,10 @@ private:
 
 	/* Ability 사용에 필요한 Mana(플레이어 전용) */
 	float costManaValue = 0.f;
+
+	//Ability 활성화 및 종료 시 발생하는 이벤트
+	AbilityActivateCallback onActiveAbility;
+
 
 
 	// Ability Trigger 여부(폐기 예정)

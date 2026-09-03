@@ -27,10 +27,10 @@ void TextBlockFPS::FormatFPSString(const float deltaTime)
 	swprintf_s(szFormat, L"FPS : %.2f", fps);
 	SetTextValue(szFormat);
 
-	if(fps < 110.f)
+	/*if(fps < 110.f)
 	{ 
 		std::wstring outputString = szFormat;
 		outputString += L"\n";
 		OutputDebugString(outputString.c_str());
-	}
+	}*/
 }

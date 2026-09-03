@@ -9,6 +9,9 @@
 #include "PlayerAbility/AbilityNova.h"
 #include "PlayerAbility/AbilityTeleport.h"
 
+#include "NPCAbility/Melee/AbilityMelee.h"
+#include "NPCAbility/Range/AbilityRange.h"
+
 std::unique_ptr<AbilityObject> AbilityObject::CreateNewAbility(const ABILITY_ID_TYPE abilityID, int abilityLevel)
 {
 	//TODO : abilityID에 따른 생성 Ability 구분 필요..
@@ -25,6 +28,12 @@ std::unique_ptr<AbilityObject> AbilityObject::CreateNewAbility(const ABILITY_ID_
 
 	case 4:
 		return std::make_unique<AbilityTeleport>(abilityID, abilityLevel);
+
+	case 1000:
+		return std::make_unique<AbilityMelee>(abilityID, abilityLevel);
+
+	case 1001:
+		return std::make_unique<AbilityRange>(abilityID, abilityLevel);
 	}
 
 	return nullptr;
@@ -98,6 +107,11 @@ void AbilityObject::ConsumeCost()
 void AbilityObject::ActivateAbility()
 {
 	bActivated = true;
+
+	if (onActiveAbility)
+	{
+		onActiveAbility(*this, true);
+	}
 }
 
 void AbilityObject::EndAbility(bool bCancelAbility)
@@ -105,6 +119,11 @@ void AbilityObject::EndAbility(bool bCancelAbility)
 	bActivated = false;
 
 	ActivateCooldown();
+
+	if (onActiveAbility)
+	{
+		onActiveAbility(*this, false);
+	}
 }
 
 void AbilityObject::CancelAbility()
@@ -161,6 +180,11 @@ void AbilityObject::SetManaCost(float amount)
 void AbilityObject::SetCooldownChangeCallback(AbilityCooldownChangeCallback callback)
 {
 	onCooldownChange = callback;
+}
+
+void AbilityObject::SetActivateCallback(AbilityActivateCallback callback)
+{
+	onActiveAbility = callback;
 }
 
 void AbilityObject::ActivateCooldown(float elapsedTime)

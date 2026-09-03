@@ -37,6 +37,15 @@ public:
 	/* Projectile의 수명 설정 */
 	void SetLifeSpan(float lifeTime);
 
+	/* Projectile의 Image 결정 */
+	void SetImage(const std::wstring& image);
+
+	/* Projectile의 Color 결정 */
+	void SetImageColor(const Craft::Color color);
+
+	/* Projectile의 SortingOrder 결정 */
+	void SetSortingOrder(eRenderSortingOrder order);
+
 public:
 	/* 발사체에 지정된 TeamID반환(피아식별) */
 	inline eTeamID GetInstigatorTeamID() const { return instigatorTeamID; }
@@ -78,5 +87,8 @@ private:
 private:
 	/* 발사체 이동 Component */
 	std::shared_ptr<Craft::ProjectileMoveComponent> projectileMoveComponent;
+
+	/* 발사체 표시 Sprite Component */
+	std::shared_ptr<Craft::SpriteRendererComponent> spriteComponent;
 };
 

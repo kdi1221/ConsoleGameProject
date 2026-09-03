@@ -25,9 +25,5 @@ public:
 
 public:
 	void SetIceBoltImage(const Craft::eDirection direction);
-
-private:
-	/* 발사체 표시 Sprite Component */
-	std::shared_ptr<Craft::SpriteRendererComponent> spriteComponent;
 };
 

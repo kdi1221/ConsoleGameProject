@@ -82,9 +82,6 @@ namespace Craft
 		/* 현재 이동 요청에 대한 Handle */
 		RequestPathHandleType currentRequestHandle = INVALID_REQUEST_PATH_HANDLE;
 
-
-
-
 		/* 현재 이동 진행중인지 여부 */
 		bool isMoveProcess = false;
 

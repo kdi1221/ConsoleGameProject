@@ -42,6 +42,7 @@ PlayerPawn::PlayerPawn(const Craft::Vector2Int& position)
 
 	inputComponent->AddInputCallback('P', cheatInputTrigger);
 	inputComponent->AddInputCallback('I', cheatInputTrigger);
+	inputComponent->AddInputCallback(VK_OEM_7, cheatInputTrigger);
 	
 	/* 이동 컴포넌트 */
 	movementComponent = AddComponent<MovementComponent>(30.f);
@@ -270,6 +271,12 @@ void PlayerPawn::OnCheatInputTrigger(int keyCode, Craft::eInputTrigger inputTrig
 				const Vector2Int& nextFloorRoomDoorPos = gameMode->GetNextFloorRoomDoorPosition();
 				SetPosition(nextFloorRoomDoorPos);
 			}
+		}
+		break;
+
+	case VK_OEM_7:
+		{
+			engine.SetDrawAIState(!engine.GetDrawAIState());
 		}
 		break;
 	}

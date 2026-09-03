@@ -4,6 +4,7 @@
 #include <string>
 #include <Math/Color.h>
 
+//원거리 공격 몬스터 베이스 
 class NPCRangeBase : public NPCBase
 {
 	TYPE_DECLARATIONS(NPCRangeBase, NPCBase)
@@ -13,39 +14,34 @@ public:
 		const std::wstring& image,
 		Craft::Color color,
 		float initialHealth,
-		RoomDefines::UNIQUE_INDEX_TYPE roomIndex,
-		float moveDelay,
-		float chaseDelay);
+		float moveSpeed,
+		float attackDuration,
+		float attackFrameTime,
+		float enableFireRange,
+		RoomDefines::UNIQUE_INDEX_TYPE roomIndex);
+
 	virtual ~NPCRangeBase() = default;
+
+protected:
+	virtual void SpawnProjectile(const Craft::Vector2Int& spawnPosition, const Craft::Vector2Float& aimingDireciton) = 0;
 
 private:
 	/* Pawn의 초기 Ability 구성 */
 	virtual void InitializeAbility() override;
 
-private:
-	/* 타겟을 추적할때 추적 목적지 반환 */
-	virtual void GetAvailableChaseTargetPosition(const Craft::Vector2Int& targetPos, std::vector<Craft::Vector2Int>& availablePosition) override;
+	/* 공격 실행 */
+	virtual void ExecuteAttack() override;
 
-	/* 타겟이 공격 범위 안에 있는지 확인 */
-	virtual bool IsTargetAttackRange(std::shared_ptr<Pawn> targetPawn) const override;
-
-	/* 공격 Ability Trigger On */
-	virtual void AttackAbilitiesTriggerON() override;
-
-	/* 공격 Ability Trigger Off */
-	virtual void AttackAbilitiesTriggerOFF() override;
-
-	/* 공격 도중 호출 */
-	virtual void OnBehaviorAttack(float deltaTime) override;
-
-protected:
-	virtual ABILITY_ID_TYPE grantRangeAttackAbility() = 0;
+	/* 공격 프레임에서 호출되는 함수 */
+	virtual void OnNotifyAttackFrame(const AbilityObject& ability) override;
 
 private:
-	void AdjustAimDirection();
+	/* 원거리 공격 실행 시간(총 길이) */
+	float attackDuration = 0.f;
 
-private:
+	/* 원거리 공격 중 실제 공격 프레임 시간 */
+	float attackFrameTime = 0.f;
+
 	/* 부여된 원거리 공격 Ability */
-	ABILITY_ID_TYPE grantRangeAttackID = INVALID_ABILITY_ID;
+	ABILITY_ID_TYPE grantRangeAttackAbilityID = INVALID_ABILITY_ID;
 };
-

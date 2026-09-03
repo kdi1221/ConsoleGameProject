@@ -67,10 +67,5 @@ private:
 
 	/* 데미지를 준 Pawn 정보 저장(중복 데미지 처리 방지) */
 	std::unordered_set<PawnUniqueIDType> setDamagedPawns;
-
-private:
-	/* 구체 표시 Sprite Component*/
-	std::shared_ptr<Craft::SpriteRendererComponent> spriteComponent;
-
 };
 
