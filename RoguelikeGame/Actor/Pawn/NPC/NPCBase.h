@@ -27,6 +27,9 @@ public:
 
 		/* 원거리 */
 		Range,	
+
+		/* 보스 패턴(One Eye) */
+		Boss
 	};
 
 public:
@@ -35,6 +38,11 @@ public:
 			Craft::Color color,
 			float initialHealth,
 			float moveSpeed,
+			eMonsterPattern pattern,
+			RoomDefines::UNIQUE_INDEX_TYPE roomIndex);
+
+	NPCBase(const Craft::Vector2Int& position,
+			float initialHealth,
 			eMonsterPattern pattern,
 			RoomDefines::UNIQUE_INDEX_TYPE roomIndex);
 

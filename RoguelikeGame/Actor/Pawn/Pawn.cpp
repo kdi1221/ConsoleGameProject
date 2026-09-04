@@ -43,6 +43,17 @@ Pawn::Pawn(const Craft::Vector2Int& position,
 	assert(abilitySystemComponent && "Invalid AbilitySystemComponent");
 }
 
+Pawn::Pawn(const Craft::Vector2Int& position, 
+			eTeamID inTeamID)
+	:super(position)
+	,teamID(inTeamID)
+{
+	uniqueID = GenerateUnqueID();
+
+	abilitySystemComponent = AddComponent<AbilitySystemComponent>();
+	assert(abilitySystemComponent && "Invalid AbilitySystemComponent");
+}
+
 void Pawn::Initialize()
 {
 	/* Pawn마다 다른 attribute component 생성 */

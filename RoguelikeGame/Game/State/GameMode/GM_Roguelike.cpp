@@ -20,7 +20,7 @@
 #include "Actor/Pawn/NPC/Imp/NPCImp.h"
 #include "Actor/Pawn/NPC/Sharman/NPCSharman.h"
 
-#include "Actor/Boss/BossOneEye.h"
+#include "Actor/Pawn/NPC/Boss/BossOneEye.h"
 
 #include "Actor/FieldItem/HealthPotion.h"
 #include "Actor/FieldItem/FieldSkillItem.h"
@@ -527,8 +527,14 @@ void GM_Roguelike::OnPlayerVisitedBossRoom(const Room& visitRoom, const Craft::V
 
 	/* 테스트, 보스 액터 소환 */
 	const Vector2Int spawnBossPosition = visitRoomSpace.GetPositionCenter();
-	std::shared_ptr<BossOneEye> spawnedBossActor = level->SpawnActor<BossOneEye>(spawnBossPosition);
+	std::shared_ptr<BossOneEye> spawnedBossActor = level->SpawnActor<BossOneEye>(spawnBossPosition, currentPlayerVisitRoomIndex);
 	spawnedBossActor->SetChaseTarget(playerPawn);
+
+
+	/* 생성된 NPC가 사망했을때의 이벤트 설정 */
+	//spawnedNPC->SetDeathEventCallback(std::bind(&GM_Roguelike::OnEventNPCDeath, this, std::placeholders::_1));
+
+
 
 	/* 전투 진행여부 설정 */
 	bBattleRoomProcess = true;

@@ -168,13 +168,24 @@ private:
 	/* 보스방 고정 타일맵 생성 */
 	void BuildTilemapBossRoom();
 
-	/* 타일맵 인덱스별로 Actor 등록 */
+	/* Actor가 점유하는 타일 등록 */
 	void RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile);
-	void RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Craft::Vector2Int& position);
+
+	/* Actor가 점유하는 타일 등록 해제 */
+	void UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile);
+	void UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Craft::Vector2Int& centerPosition);
+
+
+	/* 타일맵 인덱스별로 Actor 등록 */
+	//void RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile);
+	//void RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Craft::Vector2Int& position);
 
 	/* 타일맵 인덱스별로 Actor 등록 해제 */
-	void UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile);
-	void UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Craft::Vector2Int& position);
+	//void UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile);
+	//void UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Craft::Vector2Int& position);
+
+
+
 
 	/* 플레이어 캐릭터의 이동에 따른 이벤트 구성 */
 	void OnMovePlayerEvent(const Craft::Vector2Int& prevWorldPosition, const Craft::Vector2Int& worldPosition);

@@ -231,13 +231,16 @@
     <ClCompile Include="Ability\NPCAbility\Range\AbilityRange.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Actor\Boss\BossOneEye.cpp">
+    <ClCompile Include="Actor\Pawn\NPC\Boss\BossOneEye.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Resource\ResourceBossEye.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Resource\GameResources.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BehaviorTree\BehaviorBossComponent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -473,13 +476,16 @@
     <ClInclude Include="Ability\NPCAbility\Range\AbilityRange.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Actor\Boss\BossOneEye.h">
+    <ClInclude Include="Actor\Pawn\NPC\Boss\BossOneEye.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Resource\ResourceBossEye.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Resource\GameResources.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BehaviorTree\BehaviorBossComponent.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

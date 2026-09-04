@@ -2,6 +2,7 @@
 
 #include <Actor/Actor.h>
 #include <Types/Enums.h>
+#include <functional>
 
 /* Tile 기반 위에서 움직이는 모든 Actor들의 부모 */
 class ActorOnTile : public Craft::Actor
@@ -18,5 +19,8 @@ public:
 
 	/* 다른 종류의 Actor와 Block되는지 체크 */
 	virtual bool IsBlockActor(std::shared_ptr<Craft::Actor> otherActor) = 0;
+
+	/* 점유하는 타일 좌표들에 대한 조회 */
+	virtual void ForEachOccupiedTileOffset(std::function<void(const Craft::Vector2Int&)> callbackFunc) const;
 };
 

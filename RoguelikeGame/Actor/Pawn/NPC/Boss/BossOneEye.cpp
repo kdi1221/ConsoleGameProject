@@ -9,8 +9,8 @@
 
 using namespace Craft;
 
-BossOneEye::BossOneEye(const Craft::Vector2Int& position)
-	:super(position)
+BossOneEye::BossOneEye(const Craft::Vector2Int& position, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
+	:super(position, 5000.f, eMonsterPattern::Boss, roomIndex)
 {
 	timerAwakeDelay.SetTargetTime(5.f);
 }
@@ -27,11 +27,6 @@ void BossOneEye::Initialize()
 	const ResourceManager& resourceManager = Engine::Get().GetResourceManager<ResourceManager>();
 	resourceBossEye = Cast<ResourceBossEye>(resourceManager.FindGameResource(ResourceManager::eResourceCategory::Image, 1));
 	assert(resourceBossEye && "Invalid resourceBossEye..");
-}
-
-void BossOneEye::BeginPlay()
-{
-	super::BeginPlay();
 }
 
 void BossOneEye::Tick(float deltaTime)
@@ -148,25 +143,25 @@ void BossOneEye::Draw()
 			renderer.Submit(outlineImage.lineImages[downOutlineIndex].image, drawLinePos, outlineImage.drawColor, static_cast<int>(eRenderSortingOrder::Boss));
 		}
 	}
-		
-
-	//테스트 : 눈 감기 시도?
-	/*const ResourceBossEye::FEyeImage& outlineImage = resourceBossEye->GetEyeImage(ResourceBossEye::eEyeImageCategory::Outline);
-
-	for (int i = 1; i < 8; ++i)
-	{
-		Vector2Int drawLinePos = centerPos + outlineImage.lineImages[i].centerOffset;
-		renderer.Submit(outlineImage.lineImages[i].image, drawLinePos, outlineImage.drawColor, static_cast<int>(eRenderSortingOrder::Boss));
-
-		drawLinePos = centerPos + outlineImage.lineImages[outlineImage.lineImages.size() - i - 1].centerOffset;
-		renderer.Submit(outlineImage.lineImages[outlineImage.lineImages.size() - i - 1].image, drawLinePos, outlineImage.drawColor, static_cast<int>(eRenderSortingOrder::Boss));
-	}*/
-	
 }
 
-void BossOneEye::SetChaseTarget(std::weak_ptr<Pawn> target)
+void BossOneEye::ForEachOccupiedTileOffset(std::function<void(const Craft::Vector2Int&)> callbackFunc) const
 {
-	chaseTarget = target;
+	if (!resourceBossEye)
+	{
+		return;
+	}
+
+	/* 외곽 라인의 각 라인별로 offset들을 계산하여 점유 타일 오프셋으로 넘겨준다. */
+	const ResourceBossEye::FEyeImage& outlineImage = resourceBossEye->GetEyeImage(ResourceBossEye::eEyeImageCategory::Outline);
+	for (const ResourceBossEye::FEyeLineImage& lineImage : outlineImage.lineImages)
+	{
+		const int imageLength = static_cast<int>(lineImage.image.length());
+		for (int xAdd = 0; xAdd < imageLength; ++xAdd)
+		{
+			callbackFunc(lineImage.centerOffset + Vector2Int(xAdd, 0));
+		}
+	}
 }
 
 void BossOneEye::UpdateChaseTargetOffset(float deltaTime)
@@ -174,7 +169,7 @@ void BossOneEye::UpdateChaseTargetOffset(float deltaTime)
 	/* 새로 지정할 타겟을 향한 오프셋 */
 	Vector2Float newTargetOffset = Vector2Float::Zero;
 
-	std::shared_ptr<Pawn> chaseTargetPtr = chaseTarget.lock();
+	std::shared_ptr<Pawn> chaseTargetPtr = GetChaseTarget();
 	if (chaseTargetPtr && !chaseTargetPtr->HasExpired() && !chaseTargetPtr->IsDeath())
 	{
 		/* 중심 위치 */
@@ -187,7 +182,8 @@ void BossOneEye::UpdateChaseTargetOffset(float deltaTime)
 		Vector2Float toTargetDistanceFloat = static_cast<Vector2Float>(targetPos - centerPos);
 
 		/* 눈 타원의 가로, 세로 반지름 */
-		const float xRadius = 13.f, yRadius = 3.f;
+		const float xRadius = 12.f, yRadius = 3.f;
+		//const float xRadius = 8.f, yRadius = 1.f;
 
 		/* x의 제곱 / 가로 반지름의 제곱 */
 		const float xRatio = (toTargetDistanceFloat.x * toTargetDistanceFloat.x) / (xRadius * xRadius);
@@ -294,7 +290,4 @@ void BossOneEye::OnFinishEyeOpenCloseAnimation(eEyeOpenAnimation prevAnimation)
 			bChaseTarget = true;
 		}	
 	}
-	
-
-	//TODO : 주기적으로 깜빡이는 애니메이션 플레이 필요
 }

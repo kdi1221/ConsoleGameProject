@@ -25,6 +25,9 @@ public:
 		Craft::Color color,
 		eTeamID inTeamID);
 
+	Pawn(const Craft::Vector2Int& position, 
+		eTeamID inTeamID);
+
 	~Pawn() = default;
 
 public:

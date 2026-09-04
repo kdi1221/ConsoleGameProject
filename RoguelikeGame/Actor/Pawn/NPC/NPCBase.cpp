@@ -2,6 +2,7 @@
 #include "Navigation/NavigationTileMap.h"
 #include "Component/BehaviorTree/BehaviorMeleeComponent.h"
 #include "Component/BehaviorTree/BehaviorRangeComponent.h"
+#include "Component/BehaviorTree/BehaviorBossComponent.h"
 #include <Util/Util.h>
 #include <Component/NavMovementComponent.h>
 #include <Render/Renderer.h>
@@ -39,6 +40,41 @@ NPCBase::NPCBase(const Vector2Int& position,
 
 	case eMonsterPattern::Range:
 		behaviorTreeComponent = AddComponent<BehaviorRangeComponent>();
+		break;
+
+	case eMonsterPattern::Boss:
+		behaviorTreeComponent = AddComponent<BehaviorBossComponent>();
+		break;
+	}
+}
+
+NPCBase::NPCBase(const Vector2Int& position, 
+				float initialHealth, 
+				eMonsterPattern pattern, 
+				RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
+	:super(position, eTeamID::NPC)
+	,initialiHealthValue(initialHealth)
+	,spawnedRoomIndex(roomIndex)
+
+{
+	/* asc에 이벤트 설정 */
+	std::shared_ptr<AbilitySystemComponent> abilitySystemComponentPtr = GetAbilitySystemComponent();
+	assert(abilitySystemComponentPtr && "Invalid abilitySystemComponent");
+	abilitySystemComponentPtr->SetAbilityActivateCallback(std::bind(&NPCBase::OnActivateAbility, this, std::placeholders::_1, std::placeholders::_2));
+
+	/* 몬스터 패턴 지정 */
+	switch (pattern)
+	{
+	case eMonsterPattern::Melee:
+		behaviorTreeComponent = AddComponent<BehaviorMeleeComponent>();
+		break;
+
+	case eMonsterPattern::Range:
+		behaviorTreeComponent = AddComponent<BehaviorRangeComponent>();
+		break;
+
+	case eMonsterPattern::Boss:
+		behaviorTreeComponent = AddComponent<BehaviorBossComponent>();
 		break;
 	}
 }

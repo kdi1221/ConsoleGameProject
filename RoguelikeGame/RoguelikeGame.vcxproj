@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -107,7 +107,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Ability\PlayerAbility\AbilityShotSpiritBall.cpp" />
     <ClCompile Include="Ability\PlayerAbility\AbilityTeleport.cpp" />
     <ClCompile Include="Actor\ActorOnTile.cpp" />
-    <ClCompile Include="Actor\Boss\BossOneEye.cpp" />
+    <ClCompile Include="Actor\Pawn\NPC\Boss\BossOneEye.cpp" />
     <ClCompile Include="Actor\FieldItem\FieldItem.cpp" />
     <ClCompile Include="Actor\FieldItem\FieldSkillItem.cpp" />
     <ClCompile Include="Actor\FieldItem\HealthPotion.cpp" />
@@ -134,6 +134,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Actor\Projectile\SpiritBall\ProjectileSpiritBall.cpp" />
     <ClCompile Include="Actor\SkillObject\AbilityNovaActor.cpp" />
     <ClCompile Include="Actor\SkillObject\SkillObjectActor.cpp" />
+    <ClCompile Include="Component\BehaviorTree\BehaviorBossComponent.cpp" />
     <ClCompile Include="Component\AbilitySystemComponent.cpp" />
     <ClCompile Include="Component\Attribute\AttributeComponent.cpp" />
     <ClCompile Include="Component\Attribute\PlayerAttributeComponent.cpp" />
@@ -185,7 +186,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Ability\PlayerAbility\AbilityShotSpiritBall.h" />
     <ClInclude Include="Ability\PlayerAbility\AbilityTeleport.h" />
     <ClInclude Include="Actor\ActorOnTile.h" />
-    <ClInclude Include="Actor\Boss\BossOneEye.h" />
+    <ClInclude Include="Actor\Pawn\NPC\Boss\BossOneEye.h" />
     <ClInclude Include="Actor\FieldItem\FieldItem.h" />
     <ClInclude Include="Actor\FieldItem\FieldSkillItem.h" />
     <ClInclude Include="Actor\FieldItem\HealthPotion.h" />
@@ -212,6 +213,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Actor\Projectile\SpiritBall\ProjectileSpiritBall.h" />
     <ClInclude Include="Actor\SkillObject\AbilityNovaActor.h" />
     <ClInclude Include="Actor\SkillObject\SkillObjectActor.h" />
+    <ClInclude Include="Component\BehaviorTree\BehaviorBossComponent.h" />
     <ClInclude Include="Component\AbilitySystemComponent.h" />
     <ClInclude Include="Component\Attribute\AttributeComponent.h" />
     <ClInclude Include="Component\Attribute\PlayerAttributeComponent.h" />

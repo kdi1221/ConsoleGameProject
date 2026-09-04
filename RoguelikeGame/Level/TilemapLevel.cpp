@@ -745,20 +745,15 @@ void TilemapLevel::RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTi
 		return;
 	}
 
-	const Vector2Int& newWorldPosition = actorOnTile->GetWorldPosition();
-	RegisterActorOnTilemap(actorOnTile, newWorldPosition);
-}
+	auto callbackActorOccupiedTile = [&](const Vector2Int& offset)
+		{
+			const Vector2Int position = actorOnTile->GetWorldPosition() + offset;
 
-void TilemapLevel::RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Vector2Int& position)
-{
-	if (!actorOnTile)
-	{
-		return;
-	}
+			auto& actorListOnTile = mapActorListOnTilemap[position];
+			actorListOnTile.emplace_back(actorOnTile);
+		};
 
-	/* 해당 위치 타일의 Actor 리스트에 대상 Actor를 추가한다. */
-	auto& actorListOnTile = mapActorListOnTilemap[position];
-	actorListOnTile.emplace_back(actorOnTile);
+	actorOnTile->ForEachOccupiedTileOffset(callbackActorOccupiedTile);
 }
 
 void TilemapLevel::UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile)
@@ -771,36 +766,107 @@ void TilemapLevel::UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOn
 	UnregisterActorOnTilemap(actorOnTile, actorOnTile->GetWorldPosition());
 }
 
-void TilemapLevel::UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Vector2Int& position)
+void TilemapLevel::UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Craft::Vector2Int& centerPosition)
 {
 	if (!actorOnTile)
 	{
 		return;
 	}
 
-	const auto& findActorListOnTile = mapActorListOnTilemap.find(position);
-	if (findActorListOnTile == mapActorListOnTilemap.end())
-	{
-		return;
-	}
-
-	auto& actorListOnTile = findActorListOnTile->second;
-
-	auto remove_pred = [&actorOnTile](const std::weak_ptr<Actor>& weakPtr)
+	auto callbackActorOccupiedTile = [&](const Vector2Int& offset)
 		{
-			auto ptr = weakPtr.lock();
+			const Vector2Int position = centerPosition + offset;
 
-			//만료되었거나 대상 액터와 포인터 주소가 같은 경우 제거 대상
-			return weakPtr.lock() == actorOnTile;
+			const auto& findActorListOnTile = mapActorListOnTilemap.find(position);
+			if (findActorListOnTile == mapActorListOnTilemap.end())
+			{
+				return;
+			}
+
+			auto& actorListOnTile = findActorListOnTile->second;
+
+			auto remove_pred = [&actorOnTile](const std::weak_ptr<Actor>& weakPtr)
+				{
+					auto ptr = weakPtr.lock();
+
+					//만료되었거나 대상 액터와 포인터 주소가 같은 경우 제거 대상
+					return ptr == actorOnTile;
+				};
+
+			actorListOnTile.erase(std::remove_if(actorListOnTile.begin(), actorListOnTile.end(), remove_pred), actorListOnTile.end());
+			if (actorListOnTile.empty())
+			{
+				/* Actor 리스트가 비었으면 map에서도 제거해준다. */
+				mapActorListOnTilemap.erase(position);
+			}
 		};
 
-	actorListOnTile.erase(std::remove_if(actorListOnTile.begin(), actorListOnTile.end(), remove_pred), actorListOnTile.end());
-	if (actorListOnTile.empty())
-	{
-		/* Actor 리스트가 비었으면 map에서도 제거해준다. */
-		mapActorListOnTilemap.erase(position);
-	}
+	actorOnTile->ForEachOccupiedTileOffset(callbackActorOccupiedTile);
 }
+
+//void TilemapLevel::RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile)
+//{
+//	if (!actorOnTile)
+//	{
+//		return;
+//	}
+//
+//	const Vector2Int& newWorldPosition = actorOnTile->GetWorldPosition();
+//	RegisterActorOnTilemap(actorOnTile, newWorldPosition);
+//}
+//
+//void TilemapLevel::RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Vector2Int& position)
+//{
+//	if (!actorOnTile)
+//	{
+//		return;
+//	}
+//
+//	/* 해당 위치 타일의 Actor 리스트에 대상 Actor를 추가한다. */
+//	auto& actorListOnTile = mapActorListOnTilemap[position];
+//	actorListOnTile.emplace_back(actorOnTile);
+//}
+//
+//void TilemapLevel::UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile)
+//{
+//	if (!actorOnTile)
+//	{
+//		return;
+//	}
+//
+//	UnregisterActorOnTilemap(actorOnTile, actorOnTile->GetWorldPosition());
+//}
+//
+//void TilemapLevel::UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Vector2Int& position)
+//{
+//	if (!actorOnTile)
+//	{
+//		return;
+//	}
+//
+//	const auto& findActorListOnTile = mapActorListOnTilemap.find(position);
+//	if (findActorListOnTile == mapActorListOnTilemap.end())
+//	{
+//		return;
+//	}
+//
+//	auto& actorListOnTile = findActorListOnTile->second;
+//
+//	auto remove_pred = [&actorOnTile](const std::weak_ptr<Actor>& weakPtr)
+//		{
+//			auto ptr = weakPtr.lock();
+//
+//			//만료되었거나 대상 액터와 포인터 주소가 같은 경우 제거 대상
+//			return weakPtr.lock() == actorOnTile;
+//		};
+//
+//	actorListOnTile.erase(std::remove_if(actorListOnTile.begin(), actorListOnTile.end(), remove_pred), actorListOnTile.end());
+//	if (actorListOnTile.empty())
+//	{
+//		/* Actor 리스트가 비었으면 map에서도 제거해준다. */
+//		mapActorListOnTilemap.erase(position);
+//	}
+//}
 
 void TilemapLevel::OnMovePlayerEvent(const Vector2Int& prevWorldPosition, const Vector2Int& worldPosition)
 {
