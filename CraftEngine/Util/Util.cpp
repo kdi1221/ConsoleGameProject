@@ -39,4 +39,14 @@ namespace Util
 		//랜덤 엔진을 통해 무작위 수 반환
 		return distribution(GetRandomEngine());
 	}
+
+	//선형 보간
+	float Lerp(float a, float b, float t)
+	{
+		// t clamp
+		t = std::min(1.f, t);
+		t = std::max(0.f, t);
+
+		return ((1.f - t) * a) + t * b;
+	}
 }

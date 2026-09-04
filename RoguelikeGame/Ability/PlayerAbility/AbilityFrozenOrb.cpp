@@ -40,10 +40,10 @@ void AbilityFrozenOrb::ActivateAbility()
 	//오브 구체 생성
 	std::shared_ptr<ProjectileFrozenOrb> spawnedOrbProjectile = ownerLevel->SpawnActor<ProjectileFrozenOrb>(
 		spawnPosition,		
-		20.f,
+		15.f,
 		instigatorTeamID,
 		10.f,
-		0.1f);
+		0.2f);
 
 	assert(spawnedOrbProjectile && "Spawn Fail Orb Projectile");
 
@@ -51,7 +51,7 @@ void AbilityFrozenOrb::ActivateAbility()
 	spawnedOrbProjectile->SetMoveDirection(aimingDirection);
 
 	/* 생성된 오브 구체의 지속시간 지정 */
-	spawnedOrbProjectile->SetLifeSpan(1.f);
+	spawnedOrbProjectile->SetLifeSpan(1.5f);
 
 	/* 오브 구체의 얼음살 생성 갯수 지정 */
 	spawnedOrbProjectile->SetSpawnIceBoltNum(4);

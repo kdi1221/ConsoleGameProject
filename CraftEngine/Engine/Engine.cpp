@@ -6,6 +6,7 @@
 #include "Util/Util.h"
 #include "SoundSystem/Sound.h"
 #include "Config/ConfigBase.h"
+#include "Resource/ResourceManager.h"
 #include "Camera/CameraManager.h"
 #include "Navigation/NavigationBase.h"
 #include "GameState/GameMode/GameMode.h"
@@ -46,6 +47,9 @@ namespace Craft
 		input = std::make_unique<Input>();
 		const bool bInputInit = input->InitializeInput();
 		assert(bInputInit && "Failed Input Initialize");
+
+		//리소스 매니저 생성
+		resourceManager = CreateResourceManager();
 
 		// 렌더러 객체 생성
 		renderer = std::make_unique<Renderer>(Vector2Int(config.GetDisplayWidth(), config.GetDisplayHeight()));
@@ -368,6 +372,11 @@ namespace Craft
 	std::unique_ptr<ConfigBase> Engine::CreateConfig() const
 	{
 		return std::make_unique<ConfigBase>();
+	}
+
+	std::unique_ptr<ResourceManager> Engine::CreateResourceManager() const
+	{
+		return std::make_unique<ResourceManager>();
 	}
 
 	std::unique_ptr<NavigationBase> Engine::CreateNavigationSystem() const

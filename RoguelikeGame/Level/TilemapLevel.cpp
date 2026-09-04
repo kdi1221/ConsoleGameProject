@@ -726,7 +726,8 @@ void TilemapLevel::BuildTilemapBossRoom()
 		};
 
 	const Config& config = Engine::Get().GetConfig<Config>();
-	const Vector2Int tilemapSize(config.GetTilemapWidth(), config.GetTilemapHeight());
+	//const Vector2Int tilemapSize(config.GetTilemapWidth(), config.GetTilemapHeight());
+	const Vector2Int tilemapSize(200, 200);
 	tileMap->InitializeTilemapBossRoom(tilemapSize, lambdaOpenPath, lambdaGenerateRoom);
 
 	/* 카메라 제한 설정, 타일맵 외곽을 벗어나지 못하게 한다. */

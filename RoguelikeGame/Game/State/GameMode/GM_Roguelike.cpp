@@ -527,7 +527,8 @@ void GM_Roguelike::OnPlayerVisitedBossRoom(const Room& visitRoom, const Craft::V
 
 	/* 테스트, 보스 액터 소환 */
 	const Vector2Int spawnBossPosition = visitRoomSpace.GetPositionCenter();
-	level->SpawnActor<BossOneEye>(spawnBossPosition);
+	std::shared_ptr<BossOneEye> spawnedBossActor = level->SpawnActor<BossOneEye>(spawnBossPosition);
+	spawnedBossActor->SetChaseTarget(playerPawn);
 
 	/* 전투 진행여부 설정 */
 	bBattleRoomProcess = true;

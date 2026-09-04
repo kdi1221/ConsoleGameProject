@@ -18,6 +18,7 @@ namespace Craft
 	class CameraManager;
 	class GameMode;
 	class NavigationBase;
+	class ResourceManager;
 
 	//메인 엔진 클래스
 	//엔진 루프 제공
@@ -71,6 +72,25 @@ namespace Craft
 			assert(ptrConfig && "Invalid config..");
 
 			return static_cast<const T&>(*ptrConfig);
+		}
+
+		//리소스 매니저 반환
+		template<typename T, typename = std::enable_if_t<std::is_base_of<ResourceManager, T>::value>>
+		const T& GetResourceManager() const
+		{
+			const ResourceManager* ptrResManager = resourceManager.get();
+			assert(ptrResManager && "Invalid ptrResManager..");
+
+			return static_cast<const T&>(*ptrResManager);
+		}
+
+		template<typename T, typename = std::enable_if_t<std::is_base_of<ResourceManager, T>::value>>
+		T& GetResourceManager()
+		{
+			ResourceManager* ptrResManager = resourceManager.get();
+			assert(ptrResManager && "Invalid ptrResManager..");
+
+			return static_cast<T&>(*ptrResManager);
 		}
 
 		//네비게이션 시스템 반환
@@ -152,6 +172,9 @@ namespace Craft
 		/* 설정 객체 생성(엔진을 상속받는 클래스마다 다르게 지정 가능 ) */
 		virtual std::unique_ptr<ConfigBase> CreateConfig() const;
 
+		/* 리소스 매니저 객체 생성(엔진을 상속받는 클래스마다 다르게 지정 가능) */
+		virtual std::unique_ptr<ResourceManager> CreateResourceManager() const;
+
 		/* 네비게이션 시스템 객체 생성 */
 		virtual std::unique_ptr<NavigationBase> CreateNavigationSystem() const;
 
@@ -191,6 +214,9 @@ namespace Craft
 
 		//게임 내 네비게이션 시스템 객체
 		std::unique_ptr<NavigationBase> navigationSystem;
+
+		//게임 내 리소스 관리 객체
+		std::unique_ptr<ResourceManager> resourceManager;
 
 		//현재 게임모드(Level과 별도 관리)
 		std::unique_ptr<GameMode> gameMode;

@@ -18,4 +18,7 @@ namespace Util
 
 	//부동소수점 난수 함수.
 	CRAFT_API float RandomRange(float min, float max);
+
+	//실수 선형 보간
+	CRAFT_API float Lerp(float a, float b, float t);
 }

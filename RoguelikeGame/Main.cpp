@@ -2,6 +2,7 @@
 #include "Level/GameLevel.h"
 #include "Level/MainMenuLevel.h"
 #include "Level/DummyLevel.h"
+#include <Resource/ResourceManager.h>
 
 //#define _CRTDBG_MAP_ALLOC
 //#include <stdlib.h>
@@ -23,6 +24,13 @@ int main(void)
 	
 	Game game;
 	game.InitializeEngine();
+
+	//리소스 로드
+	ResourceManager& resourceManager = game.GetResourceManager<ResourceManager>();
+	if (!resourceManager.LoadResources())
+	{
+		return -1;
+	}
 	
 	//game.AddNewLevel<MainMenuLevel>();
 

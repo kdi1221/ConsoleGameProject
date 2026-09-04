@@ -142,4 +142,14 @@ namespace Craft
 		return Vector2Float(newX, newY);
 	}
 
+	Vector2Float Vector2Float::Lerp(const Vector2Float& lhs, const Vector2Float& rhs, float t)
+	{
+		/* t clamp */
+		t = max(0.f, t);
+		t = min(1.f, t);
+	
+		/* (start * (1 - t)) + (end * t) */
+		return (lhs * (1.f - t)) + (rhs * t);
+	}
+
 }

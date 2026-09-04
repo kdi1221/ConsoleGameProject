@@ -70,6 +70,7 @@ namespace Craft
 
 	public:
 		static Vector2Float RotateVector(const Vector2Float& dir, float angleDegree);
+		static Vector2Float Lerp(const Vector2Float& lhs, const Vector2Float& rhs, float t);
 	};
 }
 
