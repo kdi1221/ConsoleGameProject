@@ -1,6 +1,7 @@
 ﻿#include "HUDPlayer.h"
 
 #include "BottomPanel/BottomPanel.h"
+#include "BossStautsPanel/BossStatusPanel.h"
 
 #include "UI/TextBlock/TextBlockFPS.h"
 #include "UI/TextBlock/TextBlockMousePos.h"
@@ -34,11 +35,26 @@ void HUDPlayer::InitializeHUD(std::weak_ptr<Craft::Level> activeLevel)
 	const ConfigBase& configBase = Engine::Get().GetConfig<Craft::ConfigBase>();
 	const int viewWidth = configBase.GetViewWidth();
 	const int viewHeight = configBase.GetViewHeight();
+	const int halfViewWidth = viewWidth >> 1;
 
 	const Vector2Int positionBottomPanel(0, viewHeight - 10);
 	std::shared_ptr<BottomPanel> createdBottomPanel = currentLevel->CreateWidget<BottomPanel>(positionBottomPanel, viewWidth, 10);
 	createdBottomPanel->SetRenderSortingOrder(static_cast<int>(eRenderSortingOrder::UI));
 	bottomPanel = createdBottomPanel;
+
+	const int widthBossStatusPanel = viewWidth - 80;
+	const Vector2Int positionBossStatusPanel(halfViewWidth - (widthBossStatusPanel >> 1), 0);
+	std::shared_ptr<BossStatusPanel> createdBossStatusPanel = currentLevel->CreateWidget<BossStatusPanel>(positionBossStatusPanel, widthBossStatusPanel, 5);
+	createdBossStatusPanel->SetRenderSortingOrder(static_cast<int>(eRenderSortingOrder::UI));
+	createdBossStatusPanel->SetActive(false);
+	bossStatusPanel = createdBossStatusPanel;
+
+
+
+	
+
+
+
 
 
 	//const int ViewWidth = configBase.GetViewWidth();
@@ -205,6 +221,31 @@ void HUDPlayer::AbilityCooldownChange(const AbilityObject& ability, const Player
 	if (std::shared_ptr<BottomPanel> bottomPanelWidget = bottomPanel.lock())
 	{
 		bottomPanelWidget->AbilityCooldownChange(ability, playerAbilityInfo, bCooldown);
+	}
+}
+
+void HUDPlayer::ShowBossStatusBar(const std::wstring& bossNameText)
+{
+	if (std::shared_ptr<BossStatusPanel> bossStatusWidget = bossStatusPanel.lock())
+	{
+		bossStatusWidget->SetActive(true);
+		bossStatusWidget->SetBossNameText(bossNameText);
+	}
+}
+
+void HUDPlayer::ChangeBossHealthValue(float current, float maxValue)
+{
+	if (std::shared_ptr<BossStatusPanel> bossStatusWidget = bossStatusPanel.lock())
+	{
+		bossStatusWidget->SetHealthValue(current, maxValue);
+	}
+}
+
+void HUDPlayer::HideBossStatusBar()
+{
+	if (std::shared_ptr<BossStatusPanel> bossStatusWidget = bossStatusPanel.lock())
+	{
+		bossStatusWidget->SetActive(false);
 	}
 }
 

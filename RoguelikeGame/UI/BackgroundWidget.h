@@ -2,6 +2,8 @@
 
 #include <UI/Widget/Widget.h>
 #include <Math/Color.h>
+#include <vector>
+#include <string>
 
 class BackgroundWidget : public Craft::Widget
 {
@@ -16,5 +18,7 @@ public:
 
 private:
 	Craft::Color drawColor = Craft::Color::White;
+
+	std::vector<std::wstring> drawImageBuffer;
 };
 

@@ -61,10 +61,17 @@ public:
 	/* 폰의 사망 여부 */
 	bool IsDeath() const;
 
+	/* 폰의 현재 체력 반환 */
+	float GetCurrentHealth() const;
+
+	/* 폰의 최대 체력 반환 */
+	float GetMaxHealth() const;
+
 public:
 	inline PawnUniqueIDType GetUniqueID() const { return uniqueID; }
 	inline eTeamID GetTeamID() const { return teamID; }
 	inline const Craft::Vector2Float& GetAimingDirection() const { return aimingDirection; }
+	inline const Craft::Vector2Int& GetAimingLocation() const { return aimingLocation; }
 
 protected:
 	inline std::shared_ptr<AbilitySystemComponent> GetAbilitySystemComponent() const { return abilitySystemComponent; }
@@ -81,6 +88,12 @@ protected:
 
 	/* 조준 방향 지정 */
 	virtual void SetAimingDirection(const Craft::Vector2Float& direction);
+
+	/* 조준 위치 지정 */
+	virtual void SetAimingLocation(const Craft::Vector2Int& location);
+
+	/* 현재 데미지를 받을 수 있는지 여부 */
+	virtual bool CanTakeDamage() const;
 
 private:
 	/* Pawn 사망 설정 */
@@ -101,6 +114,9 @@ private:
 
 	/* 조준 방향 */
 	Craft::Vector2Float aimingDirection = Craft::Vector2Float::Zero;
+
+	/* 조준 위치 */
+	Craft::Vector2Int aimingLocation = Craft::Vector2Int::Zero;
 
 private:
 	/* 체력 수치 변경시 호출되는 이벤트 */

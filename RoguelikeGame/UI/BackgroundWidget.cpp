@@ -9,43 +9,42 @@ BackgroundWidget::BackgroundWidget(const Vector2Int& positionLT, int widgetWidth
 	:super(positionLT, widgetWidth, widgetHeight)
 	,drawColor(color)
 {
-	
+	drawImageBuffer.resize(widgetHeight);
+	for (int i = 0; i < widgetHeight; ++i)
+	{
+		drawImageBuffer[i].resize(widgetWidth);
+	}
+
+	drawImageBuffer[0][0] = L'┏';
+	drawImageBuffer[0][widgetWidth - 2] = L'┓';
+	drawImageBuffer[widgetHeight - 1][0] = L'┗';
+	drawImageBuffer[widgetHeight - 1][widgetWidth - 2] = L'┛';
+
+	/* 상하단 */
+	for (int i = 1; i < widgetWidth - 3; ++i)
+	{
+		drawImageBuffer[0][i] = L'━';
+		drawImageBuffer[widgetHeight - 1][i] = L'━';
+	}
+
+	/* 좌우 */
+	for (int i = 1; i < widgetHeight - 1; ++i)
+	{
+		drawImageBuffer[i][0] = L'┃';
+		drawImageBuffer[i][widgetWidth - 2] = L'┃';
+	}
 }
 
 void BackgroundWidget::Draw()
 {
-	const int drawWidth = GetWidth();
-	const int drawHeight = GetHeight();
+	Renderer& renderer = Renderer::Get();
+	const int sortingOrder = GetRenderSortingOrder();
 	const Vector2Int& positionLT = GetPosition();
-	const int drawRight = positionLT.x + drawWidth - 2;
-	const int drawBottom = positionLT.y + drawHeight;
 
-	/* 뒷 배경 */
-	for (int y = 1; y <= drawHeight - 1; ++y)
+	int yPos = 0;
+	for (const std::wstring& imageBuffer : drawImageBuffer)
 	{
-		for (int x = 1; x < drawWidth-1; ++x)
-		{
-			Renderer::Get().SubmitUI(L" ", Vector2Int(positionLT.x + x, positionLT.y + y), Color::Black, GetRenderSortingOrder());
-		}
-	}
-
-	/* 모서리 */
-	Renderer::Get().SubmitUI(L"┏", Vector2Int(positionLT.x, positionLT.y), drawColor, GetRenderSortingOrder());
-	Renderer::Get().SubmitUI(L"┓", Vector2Int(drawRight, positionLT.y), drawColor, GetRenderSortingOrder());
-	Renderer::Get().SubmitUI(L"┗", Vector2Int(positionLT.x, drawBottom), drawColor, GetRenderSortingOrder());
-	Renderer::Get().SubmitUI(L"┛", Vector2Int(drawRight, drawBottom), drawColor, GetRenderSortingOrder());
-
-	/* 상하단*/
-	for (int i = 1; i < drawWidth-2; ++i)
-	{
-		Renderer::Get().SubmitUI(L"━", Vector2Int(positionLT.x + i, positionLT.y), drawColor, GetRenderSortingOrder());
-		Renderer::Get().SubmitUI(L"━", Vector2Int(positionLT.x + i, drawBottom), drawColor, GetRenderSortingOrder());
-	}
-
-	/* 좌우측 */
-	for (int i = 1; i < drawHeight; ++i)
-	{
-		Renderer::Get().SubmitUI(L"┃", Vector2Int(positionLT.x, positionLT.y + i), drawColor, GetRenderSortingOrder());
-		Renderer::Get().SubmitUI(L"┃", Vector2Int(drawRight, positionLT.y + i), drawColor, GetRenderSortingOrder());
+		renderer.SubmitUI(imageBuffer, Vector2Int(positionLT.x, positionLT.y + yPos), Color::Yellow, sortingOrder);
+		++yPos;
 	}
 }

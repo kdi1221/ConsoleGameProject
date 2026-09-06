@@ -46,7 +46,30 @@ namespace Craft
 											CallbackCirclePointType callback,
 											const float xScale = 1.5f);
 
+		/* 미드포인트 원 그리기(외곽 좌표별 처리를 위한 함수 포인터) */
+		static void MidpointCircleProcess(const Vector2Int& centerPos,
+											const int xRadius,
+											const int yRadius,
+											CallbackCirclePointType callback);
+
+		/* 8방향중 가장 유사한 방향 반환*/
 		static eDirection GetNearestDirection(const Vector2Float& checkDirection);
+
+		/* 펄린 노이즈 */
+		static float perlin(float x, float y);
+
+	private:
+		/* 펄린노이즈 - 격자 내 정점들의 고유 방향 반환 */
+		static Vector2Float randomGradient(int x, int y);
+
+		/* 펄린노이즈 - 모서리에서 정점까지의 방향과 모서리의 고유 방향에 대한 내적값을 계산하여 반환 */
+		static float dotGridGradient(int ix, int iy, float x, float y);
+
+		/* 펄린 노이즈 - 3차 보간 */
+		static float Interpolate(float a0, float a1, float w);
+
+		/* 선형 보간에 사용되는 t값을 부드럽게 만들어 격자 경계에서의 급격한 변화를 완화 */
+		static float fade(float w);
 
 	private:
 		StaticFunctionLibrary() = delete;

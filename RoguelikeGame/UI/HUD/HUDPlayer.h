@@ -3,6 +3,7 @@
 #include <UI/HUD.h>
 #include <unordered_map>
 #include <windows.h>
+#include <string>
 
 namespace Craft
 {
@@ -23,6 +24,7 @@ class ItemBase;
 class AbilityObject;
 class PlayerAbilityInfo;
 class BottomPanel;
+class BossStatusPanel;
 
 struct FItemWidget
 {
@@ -45,17 +47,26 @@ public:
 	void ChangeFloorLevel(int newFloorLevel);
 	void ChangeMonsterKillNum(int newKillNum);
 
+	
 	void ChangePlayerHealthValue(float current, float maxValue);
 	void ChangePlayerManaValue(float current, float maxValue);
 	void UpdateAbilityIcon(const PlayerAbilityInfo& playerAbilityInfo);
 	void AbilityCooldownChange(const AbilityObject& ability, const PlayerAbilityInfo& playerAbilityInfo, bool bCooldown);
 
+	void ShowBossStatusBar(const std::wstring& bossNameText);
+	void ChangeBossHealthValue(float current, float maxValue);
+	void HideBossStatusBar();
+
+
 	//void UpdateItemListIcon(const ItemBase& item);
 	void SetStartPlayTime(LARGE_INTEGER startTime);
 	void SetGamePause(bool bPause);
 
+
+
 private:
 	std::weak_ptr<BottomPanel> bottomPanel;
+	std::weak_ptr<BossStatusPanel> bossStatusPanel;
 
 
 	std::weak_ptr<TextBlockFPS> textBlockFPS;

@@ -41,6 +41,9 @@ public:
 	/* 치트키용 : 다음 층으로 가는 방의 입구 타일 위치 반환 */
 	const Craft::Vector2Int& GetNextFloorRoomDoorPosition() const;
 
+	/* NPC 랜덤 소환(게임모드 내, 그리고 소환 스킬로 사용) */
+	std::shared_ptr<NPCBase> SpawnRandomNPC(const Craft::Vector2Int& spawnPosition, RoomDefines::UNIQUE_INDEX_TYPE roomIndex, int spawnTableIndex);
+
 public:
 	/* 전투방 내에서 전투 진행 여부 */
 	inline bool IsBattleRoomProcess() const { return bBattleRoomProcess; }
@@ -71,6 +74,9 @@ private:
 
 	/* 플레이어의 사망 이벤트 수신 */
 	void OnEventPlayerDeath(std::shared_ptr<Pawn> deathPawn);
+
+	/* 보스 몬스터의 사망 이벤트 수신 */
+	void OnEventBossDeath(std::shared_ptr<Pawn> deathPawn);
 
 private:
 	/* 배틀이 진행되는 방 처리 */

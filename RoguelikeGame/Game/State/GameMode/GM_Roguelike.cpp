@@ -100,6 +100,102 @@ const Craft::Vector2Int& GM_Roguelike::GetNextFloorRoomDoorPosition() const
 	return nextFloorRoomDoorPos;
 }
 
+std::shared_ptr<NPCBase> GM_Roguelike::SpawnRandomNPC(const Vector2Int& spawnPosition, RoomDefines::UNIQUE_INDEX_TYPE roomIndex, int spawnTableIndex)
+{
+	std::shared_ptr<Level> level = GetCurrentLevel<Level>();
+	if (!level)
+	{
+		return nullptr;
+	}
+
+	const int randomValue = Util::RandomRange(0, 99);
+
+	std::shared_ptr<NPCBase> spawnedNPC = nullptr;
+
+	switch (spawnTableIndex)
+	{
+	case 1:
+		{
+			if (randomValue < 30)
+			{
+				spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnPosition, roomIndex);
+			}
+			else if (randomValue < 80)
+			{
+				spawnedNPC = level->SpawnActor<NPCSlime>(spawnPosition, roomIndex);
+			}
+			else
+			{
+				spawnedNPC = level->SpawnActor<NPCOrc>(spawnPosition, roomIndex);
+			}
+
+			/* 테스트용 */
+			//spawnedNPC = level->SpawnActor<NPCSlime>(spawnPosition, roomIndex);
+		}
+		break;
+
+	case 2:
+		{
+			if (randomValue < 10)
+			{
+				spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnPosition, roomIndex);
+			}
+			else if (randomValue < 25)
+			{
+				spawnedNPC = level->SpawnActor<NPCSlime>(spawnPosition, roomIndex);
+			}
+			else if (randomValue < 50)
+			{
+				spawnedNPC = level->SpawnActor<NPCOrc>(spawnPosition, roomIndex);
+			}
+			else if (randomValue < 65)
+			{
+				spawnedNPC = level->SpawnActor<NPCImp>(spawnPosition, roomIndex);
+			}
+			else
+			{
+				spawnedNPC = level->SpawnActor<NPCTroll>(spawnPosition, roomIndex);
+			}
+		}
+		break;
+
+	default:
+		{
+			if (randomValue < 10)
+			{
+				spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnPosition, roomIndex);
+			}
+			else if (randomValue < 15)
+			{
+				spawnedNPC = level->SpawnActor<NPCSlime>(spawnPosition, roomIndex);
+			}
+			else if (randomValue < 30)
+			{
+				spawnedNPC = level->SpawnActor<NPCOrc>(spawnPosition, roomIndex);
+			}
+			else if (randomValue < 40)
+			{
+				spawnedNPC = level->SpawnActor<NPCImp>(spawnPosition, roomIndex);
+			}
+			else if (randomValue < 60)
+			{
+				spawnedNPC = level->SpawnActor<NPCTroll>(spawnPosition, roomIndex);
+			}
+			else if (randomValue < 75)
+			{
+				spawnedNPC = level->SpawnActor<NPCSharman>(spawnPosition, roomIndex);
+			}
+			else
+			{
+				spawnedNPC = level->SpawnActor<NPCGolem>(spawnPosition, roomIndex);
+			}
+		}
+		break;
+	}
+
+	return spawnedNPC;
+}
+
 std::unique_ptr<PlayerState> GM_Roguelike::CreatePlayerState() const
 {
 	return std::make_unique<PS_Roguelike>();
@@ -284,89 +380,89 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 	//spawnMonsterNum = 50;
 	int currentIndex = 0;
 
-	auto spawnRandomNPC = [this, level](const Vector2Int& spawnTilePos, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
-		{
-			const int randomValue = Util::RandomRange(0, 99);
+	//auto spawnRandomNPC = [this, level](const Vector2Int& spawnTilePos, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
+	//	{
+	//		const int randomValue = Util::RandomRange(0, 99);
 
-			std::shared_ptr<NPCBase> spawnedNPC = nullptr;
+	//		std::shared_ptr<NPCBase> spawnedNPC = nullptr;
 
-			switch (currentFloorLevel)
-			{
-			case 1:
-				if (randomValue < 30)
-				{
-					spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnTilePos, roomIndex);
-				}
-				else if (randomValue < 80)
-				{
-					spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
-				}
-				else
-				{
-					spawnedNPC = level->SpawnActor<NPCOrc>(spawnTilePos, roomIndex);
-				}
+	//		switch (currentFloorLevel)
+	//		{
+	//		case 1:
+	//			if (randomValue < 30)
+	//			{
+	//				spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnTilePos, roomIndex);
+	//			}
+	//			else if (randomValue < 80)
+	//			{
+	//				spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
+	//			}
+	//			else
+	//			{
+	//				spawnedNPC = level->SpawnActor<NPCOrc>(spawnTilePos, roomIndex);
+	//			}
 
-				/* 테스트용 */
-				//spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
-				break;
+	//			/* 테스트용 */
+	//			//spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
+	//			break;
 
-			case 2:
-				if (randomValue < 10)
-				{
-					spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnTilePos, roomIndex);
-				}
-				else if (randomValue < 25)
-				{
-					spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
-				}
-				else if (randomValue < 50)
-				{
-					spawnedNPC = level->SpawnActor<NPCOrc>(spawnTilePos, roomIndex);
-				}
-				else if (randomValue < 65)
-				{
-					spawnedNPC = level->SpawnActor<NPCImp>(spawnTilePos, roomIndex);
-				}
-				else
-				{
-					spawnedNPC = level->SpawnActor<NPCTroll>(spawnTilePos, roomIndex);
-				}
-				break;
+	//		case 2:
+	//			if (randomValue < 10)
+	//			{
+	//				spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnTilePos, roomIndex);
+	//			}
+	//			else if (randomValue < 25)
+	//			{
+	//				spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
+	//			}
+	//			else if (randomValue < 50)
+	//			{
+	//				spawnedNPC = level->SpawnActor<NPCOrc>(spawnTilePos, roomIndex);
+	//			}
+	//			else if (randomValue < 65)
+	//			{
+	//				spawnedNPC = level->SpawnActor<NPCImp>(spawnTilePos, roomIndex);
+	//			}
+	//			else
+	//			{
+	//				spawnedNPC = level->SpawnActor<NPCTroll>(spawnTilePos, roomIndex);
+	//			}
+	//			break;
 
-			default:
-				if (randomValue < 10)
-				{
-					spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnTilePos, roomIndex);
-				}
-				else if (randomValue < 15)
-				{
-					spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
-				}
-				else if (randomValue < 30)
-				{
-					spawnedNPC = level->SpawnActor<NPCOrc>(spawnTilePos, roomIndex);
-				}
-				else if (randomValue < 40)
-				{
-					spawnedNPC = level->SpawnActor<NPCImp>(spawnTilePos, roomIndex);
-				}
-				else if(randomValue < 60)
-				{
-					spawnedNPC = level->SpawnActor<NPCTroll>(spawnTilePos, roomIndex);
-				}
-				else if (randomValue < 75)
-				{
-					spawnedNPC = level->SpawnActor<NPCSharman>(spawnTilePos, roomIndex);
-				}
-				else
-				{
-					spawnedNPC = level->SpawnActor<NPCGolem>(spawnTilePos, roomIndex);
-				}
-				break;
-			}	
+	//		default:
+	//			if (randomValue < 10)
+	//			{
+	//				spawnedNPC = level->SpawnActor<NPCGoblinArcher>(spawnTilePos, roomIndex);
+	//			}
+	//			else if (randomValue < 15)
+	//			{
+	//				spawnedNPC = level->SpawnActor<NPCSlime>(spawnTilePos, roomIndex);
+	//			}
+	//			else if (randomValue < 30)
+	//			{
+	//				spawnedNPC = level->SpawnActor<NPCOrc>(spawnTilePos, roomIndex);
+	//			}
+	//			else if (randomValue < 40)
+	//			{
+	//				spawnedNPC = level->SpawnActor<NPCImp>(spawnTilePos, roomIndex);
+	//			}
+	//			else if(randomValue < 60)
+	//			{
+	//				spawnedNPC = level->SpawnActor<NPCTroll>(spawnTilePos, roomIndex);
+	//			}
+	//			else if (randomValue < 75)
+	//			{
+	//				spawnedNPC = level->SpawnActor<NPCSharman>(spawnTilePos, roomIndex);
+	//			}
+	//			else
+	//			{
+	//				spawnedNPC = level->SpawnActor<NPCGolem>(spawnTilePos, roomIndex);
+	//			}
+	//			break;
+	//		}	
 
-			return spawnedNPC;
-		};
+	//		return spawnedNPC;
+	//	};
 
 	while (spawnMonsterNum > 0 && 
 		currentIndex < static_cast<int>(shuffleSpawnIndex.size()))
@@ -375,7 +471,8 @@ void GM_Roguelike::OnPlayerVisitedBattleRoom(const Room& visitRoom, const Craft:
 		const Vector2Int& spawnTilePos = spawnTileIndices[spawnTileIndex];
 
 		//랜덤으로 결정된 위치에 몬스터 스폰
-		std::shared_ptr<NPCBase> spawnedNPC = spawnRandomNPC(spawnTilePos, currentPlayerVisitRoomIndex);
+		//std::shared_ptr<NPCBase> spawnedNPC = spawnRandomNPC(spawnTilePos, currentPlayerVisitRoomIndex);
+		std::shared_ptr<NPCBase> spawnedNPC = SpawnRandomNPC(spawnTilePos, currentPlayerVisitRoomIndex, currentFloorLevel);
 		assert(spawnedNPC && "Spawn NPC Fail..");
 
 		/* 생성된 NPC가 사망했을때의 이벤트 설정 */
@@ -525,11 +622,20 @@ void GM_Roguelike::OnPlayerVisitedBossRoom(const Room& visitRoom, const Craft::V
 		spawnedRoomDoors.emplace_back(spawnedRoomDoor);
 	}
 
-	/* 테스트, 보스 액터 소환 */
+	/* 보스 몬스터 생성 */
 	const Vector2Int spawnBossPosition = visitRoomSpace.GetPositionCenter();
 	std::shared_ptr<BossOneEye> spawnedBossActor = level->SpawnActor<BossOneEye>(spawnBossPosition, currentPlayerVisitRoomIndex);
 	spawnedBossActor->SetChaseTarget(playerPawn);
 
+	/* 보스에 대한 UI 설정 */
+	PS_Roguelike* playerState = GetPlayerState<PS_Roguelike>();
+	if (playerState)
+	{
+		playerState->OnSpawnedBossMonster(spawnedBossActor);
+	}
+
+	/* 보스가 사망했을때의 이벤트 설정 */
+	spawnedBossActor->SetDeathEventCallback(std::bind(&GM_Roguelike::OnEventBossDeath, this, std::placeholders::_1));
 
 	/* 생성된 NPC가 사망했을때의 이벤트 설정 */
 	//spawnedNPC->SetDeathEventCallback(std::bind(&GM_Roguelike::OnEventNPCDeath, this, std::placeholders::_1));
@@ -593,4 +699,16 @@ void GM_Roguelike::OnEventPlayerDeath(std::shared_ptr<Pawn> deathPawn)
 
 		Engine::Get().PlayBackgroundMusic("BGM/defeat.wav");
 	}
+}
+
+void GM_Roguelike::OnEventBossDeath(std::shared_ptr<Pawn> deathPawn)
+{
+	/* 보스에 대한 UI 설정 */
+	PS_Roguelike* playerState = GetPlayerState<PS_Roguelike>();
+	if (playerState)
+	{
+		playerState->OnDeathBossMonster();
+	}
+
+	/* TODO : 엔딩으로 향하는 탈출구 액터 스폰 */
 }

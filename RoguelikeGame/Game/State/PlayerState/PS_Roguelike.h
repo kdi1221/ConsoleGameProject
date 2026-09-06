@@ -7,6 +7,7 @@
 class PlayerPawn;
 class PlayerAbilityInfo;
 class AbilityObject;
+class BossOneEye;
 
 //TODO : ItemBase 폐기 예정
 class ItemBase;
@@ -45,6 +46,11 @@ public:
 	/* 플레이어가 몬스터를 잡을때 호출 */
 	void IncrementMonsterKillNum();
 
+	/* 보스 몬스터가 생성될때 호출 */
+	void OnSpawnedBossMonster(std::shared_ptr<BossOneEye> spawnedBoss);
+
+	/* 보스 몬스터가 사망했을때 호출 */
+	void OnDeathBossMonster();
 	
 
 private:
@@ -80,6 +86,9 @@ private:
 
 	/* 게임 일시정지 여부 이벤트 콜백 */
 	void OnSetGamePaused(bool bPause);
+
+	/* 보스 몬스터의 체력 업데이트 */
+	void OnUpdateBossHealth(float currentValue, float maxValue);
 
 private:
 	/* HUD 객체 생성 */

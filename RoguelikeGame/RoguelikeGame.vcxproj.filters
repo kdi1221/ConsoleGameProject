@@ -243,6 +243,30 @@
     <ClCompile Include="Component\BehaviorTree\BehaviorBossComponent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="UI\HUD\BossStautsPanel\BossStatusPanel.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability\NPCAbility\Boss\AbilitySummon.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability\NPCAbility\Boss\AbilityShockWave.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\SkillObject\AbilityShockWaveActor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle\ParticleSystemVitalityCircle.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Ability\PlayerAbility\AbilityVitalityCircle.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\SkillObject\AbilityVitalityCircleObject.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle\ParticleSystemOnTilemap.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Level\TestLevel.h">
@@ -486,6 +510,30 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Component\BehaviorTree\BehaviorBossComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\HUD\BossStautsPanel\BossStatusPanel.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\NPCAbility\Boss\AbilitySummon.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\NPCAbility\Boss\AbilityShockWave.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\SkillObject\AbilityShockWaveActor.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle\ParticleSystemVitalityCircle.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\PlayerAbility\AbilityVitalityCircle.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\SkillObject\AbilityVitalityCircleObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle\ParticleSystemOnTilemap.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

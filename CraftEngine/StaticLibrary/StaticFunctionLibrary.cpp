@@ -1,6 +1,7 @@
 ﻿#include "StaticFunctionLibrary.h"
 #include <Defines/Consts.h>
 #include <Math/Vector2Float.h>
+#include <Util/Util.h>
 #include <unordered_map>
 
 namespace Craft
@@ -264,6 +265,140 @@ namespace Craft
 		}
 	}
 
+	void StaticFunctionLibrary::MidpointCircleProcess(const Vector2Int& centerPos, 
+														const int xRadius, 
+														const int yRadius, 
+														CallbackCirclePointType callback)
+	{
+		/* 함수 포인터 유효 확인 */
+		if (!callback)
+		{
+			return;
+		}
+		
+		/* 두 반지름 모두 0보다 커야 한다.*/
+		if (xRadius <= 0 || yRadius <= 0)
+		{
+			return;
+		}
+
+		/* 대칭되는 4분면들의 x,y 값을 가지고 callback을 호출하는 람다 */
+		auto SymmetricPointsCallback = [&](int x, int y)
+			{
+				callback(centerPos.x + x, centerPos.y + y);
+
+				/* 중복 방지(ex : 0, 5) */
+				if (x != 0)
+				{
+					callback(centerPos.x + (-x), centerPos.y + y);
+				}
+
+				/* 중복 방지(ex : 5, 0) */
+				if (y != 0)
+				{
+					callback(centerPos.x + x, centerPos.y + (-y));
+
+					/* 중복 방지(ex : 0, 5) */
+					if (x != 0)
+					{
+						callback(centerPos.x + (-x), centerPos.y + (-y));
+					}
+				}
+			};
+
+		/* 식에 사용할 상수 - 반지름 제곱을 미리 정의 */
+		const int a2 = xRadius * xRadius;
+		const int b2 = yRadius * yRadius;
+
+		/* x초기값 0, y 초기값 y반지름 */
+		int x = 0, y = yRadius;
+
+		/* 판별식의 X 증가량(2 * b의 제곱 * x), 판정식의 실수 부분을 제거하기위해 4배를 했으므로 여기서도 4배 적용 */
+		int deltaX4 = 0;
+
+		/* 판별식의 Y 증가량(2 * a의 제곱 * y), 판정식의 실수 부분을 제거하기위해 4배를 했으므로 여기서도 4배 적용 */
+		int deltaY4 = 8 * a2 * y;
+
+		/* 기울기 절대값이 1보다 작은 영역(x가 1씩 증가할때 y의 감소 여부 결정) */
+
+		/* 초기 판별식(x = 1, y = yRadius - 0.5) */
+		/* b의제곱 - (a의 제곱 * yRadius) + (0.25 * a의 제곱)*/
+		/* 소수점 0.25를 없애기 위해 원래 식에 4배를 곱함*/
+		int fValue = (4 * b2) - (4 * (a2 * yRadius)) + a2;
+
+		while (deltaX4 < deltaY4)
+		{
+			/* 현재 x, y값에 대해서 4분면에 대한 좌표 출력 */
+			SymmetricPointsCallback(x, y);
+
+			/* x는 1씩 무조건 증가 */
+			++x;
+
+			/* 판별식의 X 증가량 증가(2 * b의 제곱에 4배 적용) */
+			deltaX4 += 8 * b2;
+
+			/* 다음 판별식 값 계산 */
+			if (fValue < 0)
+			{
+				//중점이 타원 안에 있어 x만 증가한 경우
+				//원래식 dx + b2에 4배 적용
+				fValue += deltaX4 + (4 * b2);
+			}
+			else
+			{
+				//중점이 타원 밖에 있어 x 증가, y가 감소한 경우
+				--y;
+
+				// 판별식의 Y 증가량 감소(2 * a의 제곱에 4배 적용)
+				deltaY4 -= 8 * a2;
+
+				// 원래식 dx - dy + b2에 4배 적용
+				fValue += deltaX4 - deltaY4 + (4 * b2);
+			}
+		}
+
+		/* 기울기 절대값이 1보다 큰 영역(y가 1씩 감소할때 x의 증가 여부 결정) */
+		const int twoXPlueOne = 2 * x + 1;
+		const int yMinusOne = y - 1;
+
+		/* 원래 식 = b2 * (x + 0.5) * (x + 0.5) + a2 * (y - 1) * (y - 1) - a2 * b2*/
+		/* 원래 식에 4를 곱해서 실수 제거 */
+		fValue = b2 * (twoXPlueOne * twoXPlueOne) + (4 * a2 * yMinusOne * yMinusOne) - (4 * a2 * b2);
+		while (y >= 0)
+		{
+			/* 현재 x, y값에 대해서 4분면에 대한 좌표 출력 */
+			SymmetricPointsCallback(x, y);
+
+			/* y는 1씩 무조건 감소*/
+			--y;
+
+			// 판별식의 Y 증가량 감소(2 * a의 제곱에 4배 적용)
+			deltaY4 -= 8 * a2;
+
+			/* 다음 판별식 값 계산 */
+			if (fValue > 0)
+			{
+				//중점이 타원 밖에 있어 y만 감소한 경우
+
+				//원래식 a2 - dy에 4배 적용
+				fValue += (4 * a2) - deltaY4;
+			}
+			else
+			{
+				//중점이 타원 안에 있어 y 감소, x 증가한 경우
+
+				/* x 증가 */
+				++x;
+
+				/* 판별식의 X 증가량 증가(2 * b의 제곱에 4배 적용) */
+				deltaX4 += 8 * b2;
+
+				/* 원래식 dx - dy + a2에 4배 적용 */
+				fValue += deltaX4 - deltaY4 + (4 * a2);
+			}
+		}
+	}
+
 	eDirection StaticFunctionLibrary::GetNearestDirection(const Vector2Float& checkDirection)
 	{
 		if (checkDirection.IsNearlyZero())
@@ -287,6 +422,95 @@ namespace Craft
 		}
 
 		return resultDirection;
+	}
+
+	float StaticFunctionLibrary::perlin(float x, float y)
+	{
+		/* 넘어온 실수형 좌표값을 기준으로 LT, RT, LB, RB의 모서리 좌표값(정수)를 구한다. */
+		const int x0 = static_cast<int>(x);
+		const int y0 = static_cast<int>(y);
+		const int x1 = x0 + 1;
+		const int y1 = y0 + 1;
+
+		/* 보간 인자 - LT로부터 실수형 좌표값까지 얼마나 떨어져있는지 나타냄. */
+		float sx = x - static_cast<float>(x0);
+		float sy = y - static_cast<float>(y0);
+
+		/* LT, RT 코너의 방향벡터와 실수형 좌표값까지의 방향에 대한 내적결과를 보간한다. */
+		float n0 = dotGridGradient(x0, y0, x, y);
+		float n1 = dotGridGradient(x1, y0, x, y);
+		float ix0 = Interpolate(n0, n1, sx);
+
+		/* LB, RB 코너의 방향벡터와 실수형 좌표값까지의 방향에 대한 내적결과를 보간한다. */
+		n0 = dotGridGradient(x0, y1, x, y);
+		n1 = dotGridGradient(x1, y1, x, y);
+		float ix1 = Interpolate(n0, n1, sx);
+
+		/* 두 내적 보간 결과를 위아래로 다시 보간한다. */
+		return Interpolate(ix0, ix1, sy);
+	}
+
+	/* 사전에 계산된 정점의 방향 테이블 대신 해시 연산을 통해 각 정점의 위치에 대응되는 방향값을 반환 */
+	Vector2Float StaticFunctionLibrary::randomGradient(int x, int y)
+	{
+		/* unsigned 총 비트수 계산(32bit) */
+		static const unsigned w = 8 * sizeof(unsigned);
+
+		/* 총 비트수의 절반 */
+		static const unsigned s = w >> 1;
+
+		/* 입력된 좌표값을 가지고 해시 연산을 진행할 변수 정의 */
+		unsigned a = x, b = y;
+
+		/* a에 특정 큰 상수를 곱하여 의사 난수처럼 보이는 비트 패턴을 만듬*/
+		a *= 3284157443;
+
+		/* a의 상위 16비트와 하위 16비트의 위치를 서로 바꾼 뒤 xor연산을 통해 b에 그 정보를 섞음 */
+		b ^= a << s | a >> (w - s);
+
+		/* b에 특정 큰 상수를 곱하여 의사 난수처럼 보이는 비트 패턴을 만듬 */
+		b *= 1911520717;
+
+		/* 다시 b의 상위 16비트와 하위 16비트의 위치를 서로 바꾼 뒤 xor연산을 통해 a에 그 정보를 섞음 */
+		a ^= b << s | b >> (w - s);
+
+		/* a에 특정 큰 상수를 곱하여 최종적으로 해시 연산 결과값 도출 */
+		a *= 2048419325;
+
+		/* 해시 연산 결과값을 비례공식을 이용하여 2 * PI(360도) 범위내의 라디안 값으로 변환한다. */
+		/* ~(~0u >> 1) => 2^31(맨앞이 1이고 나머지가 모두 0) */
+		/* 2 * PI / 2 ^ 32 => PI / 2 ^ 31 */
+		const float random = a * static_cast<float>(3.14159265 / ~(~0u >> 1));
+
+		/* 계산된 방향을 반환한다. */
+		return Vector2Float(cos(random), sin(random));
+	}
+
+	float StaticFunctionLibrary::dotGridGradient(int ix, int iy, float x, float y)
+	{
+		/* 모서리의 고유 방향 */
+		const Vector2Float gradient = randomGradient(ix, iy);
+
+		/* 모서리에서 정점으로 향하는 방향 계산 */
+		const Vector2Float distance = Vector2Float(x, y) - Vector2Float(static_cast<float>(ix), static_cast<float>(iy));
+		
+		/* 두 방향간의 내적값을 반환(방향이 같으면 양수, 방향이 다르면 음수, 수직이면 0)*/
+		return distance.DotProduct(gradient);
+	}
+
+	float StaticFunctionLibrary::Interpolate(float a0, float a1, float w)
+	{
+		/* 격자 경계에서의 변화를 완화하기 위해 선형 보간에 사용할 보간 계수를 부드럽게 변형한다.*/
+		float t = fade(w);
+		return Util::Lerp(a0, a1, t);
+	}
+
+	float StaticFunctionLibrary::fade(float w)
+	{
+		//6t^5 - 15t^4 + 10t^3
+		return (6.f * w * w * w * w * w)
+			- (15.f * w * w * w * w)
+			+ (10.f * w * w * w);
 	}
 
 }

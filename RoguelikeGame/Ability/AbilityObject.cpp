@@ -8,9 +8,13 @@
 #include "PlayerAbility/AbilityFrozenOrb.h"
 #include "PlayerAbility/AbilityNova.h"
 #include "PlayerAbility/AbilityTeleport.h"
+#include "PlayerAbility/AbilityVitalityCircle.h"
 
 #include "NPCAbility/Melee/AbilityMelee.h"
 #include "NPCAbility/Range/AbilityRange.h"
+
+#include "NPCAbility/Boss/AbilitySummon.h"
+#include "NPCAbility/Boss/AbilityShockWave.h"
 
 std::unique_ptr<AbilityObject> AbilityObject::CreateNewAbility(const ABILITY_ID_TYPE abilityID, int abilityLevel)
 {
@@ -29,11 +33,20 @@ std::unique_ptr<AbilityObject> AbilityObject::CreateNewAbility(const ABILITY_ID_
 	case 4:
 		return std::make_unique<AbilityTeleport>(abilityID, abilityLevel);
 
+	case 5:
+		return std::make_unique<AbilityVitalityCircle>(abilityID, abilityLevel);
+
 	case 1000:
 		return std::make_unique<AbilityMelee>(abilityID, abilityLevel);
 
 	case 1001:
 		return std::make_unique<AbilityRange>(abilityID, abilityLevel);
+
+	case 1002:
+		return std::make_unique<AbilitySummon>(abilityID, abilityLevel);
+
+	case 1003:
+		return std::make_unique<AbilityShockWave>(abilityID, abilityLevel);
 	}
 
 	return nullptr;

@@ -131,15 +131,6 @@ void QuickSlotIcon::Draw()
 		const FIconImageLine& borderLine = borderlineImages[borderIndex];
 		renderer.SubmitUI(borderLine.image, borderLine.drawPos, outlineColor, renderSortingOrder);
 	}
-	
-	//cooldownStartBorderIndex
-	/*for (const FIconImageLine& borderLine : borderlineImages)
-	{
-		renderer.SubmitUI(borderLine.image, borderLine.drawPos, outlineColor, renderSortingOrder);
-	}*/
-
-
-
 
 	//가운데 아이콘 표시
 	const Color iconImageColor = bCooldownState ? iconImageColorCooldown : iconImageColorBase;

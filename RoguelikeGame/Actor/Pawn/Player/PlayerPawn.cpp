@@ -3,16 +3,18 @@
 #include "Component/CameraComponent.h"
 #include "Component/AbilitySystemComponent.h"
 #include "Component/Attribute/PlayerAttributeComponent.h"
+#include "Component/ParticleComponent.h"
 #include "Game/State/PlayerState/PlayerAbilityInfo.h"
-
-
 
 
 
 #include "Actor/FieldItem/FieldSkillItem.h"
 #include "Item/ItemData/ItemDataTable.h"
 #include "Game/State/GameMode/GM_Roguelike.h"
-#include "StaticLibrary/StaticFunctionLibrary.h"
+
+#include <Math/define.h>
+
+#include <StaticLibrary/StaticFunctionLibrary.h>
 #include <Engine/Engine.h>
 #include <Engine/Config/ConfigBase.h>
 #include <Core/Input.h>
@@ -51,6 +53,10 @@ PlayerPawn::PlayerPawn(const Craft::Vector2Int& position)
 	/* 카메라 컴포넌트 */
 	cameraComponent = AddComponent<CameraComponent>();
 	assert(cameraComponent && "cameraComponent create fail..");
+
+	/* 파티클 컴포넌트 */
+	particleComponent = AddComponent<ParticleComponent>();
+	assert(particleComponent && "particleComponent create fail..");
 }
 
 void PlayerPawn::Initialize()
@@ -64,7 +70,7 @@ void PlayerPawn::Initialize()
 	playerAttributeComponent->SetChangeManaEventCallback(std::bind(&PlayerPawn::OnChangeManaValue, this, std::placeholders::_1, std::placeholders::_2));
 
 	/* 카메라가 플레이어를 바라보게 함 */
-	UpdateViewCameraPosition(GetWorldPosition());
+	UpdateViewCameraPosition(GetWorldPosition());	
 }
 
 void PlayerPawn::PreTick(float deltaTime)
@@ -73,6 +79,8 @@ void PlayerPawn::PreTick(float deltaTime)
 
 	/* 이동 입력 처리 */
 	ProcessMoveInput();
+
+	/* 월드상의 마우스 위치 저장 */
 }
 
 void PlayerPawn::Tick(float deltaTime)
@@ -104,6 +112,16 @@ void PlayerPawn::InitializeManaValue(const float currentMana, const float maxMan
 
 	/* 초기 속성 값 설정 */
 	playerAttributeComponent->InitialMana(currentMana, maxMana);
+}
+
+void PlayerPawn::AddManaValue(const float inHealValue)
+{
+	if (!playerAttributeComponent)
+	{
+		return;
+	}
+
+	playerAttributeComponent->SetCurrentMana(playerAttributeComponent->GetCurrentMana() + inHealValue);
 }
 
 void PlayerPawn::SetManaChangeEventCallback(OnChangeManaType callback)
@@ -321,5 +339,6 @@ void PlayerPawn::UpdateAimingDirectionToCursorPos()
 		newAimingDirection.Normalize();
 	}
 
+	SetAimingLocation(toMouseCursorPosInWorld);
 	SetAimingDirection(newAimingDirection);
 }

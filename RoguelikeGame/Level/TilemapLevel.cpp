@@ -498,6 +498,60 @@ RoomDefines::UNIQUE_INDEX_TYPE TilemapLevel::GetRoomIndexInTile(const Craft::Vec
 	return tileMap->GetTileRoomIndex(position);
 }
 
+bool TilemapLevel::IsTileCoordinateOccupiedPawn(const Craft::Vector2Int& tileCoordinate) const
+{
+	const auto& findActorListOnTile = mapActorListOnTilemap.find(tileCoordinate);
+
+	/* 해당 타일에 존재하는 Actor가 없는 경우 => 점유한 폰이 없으므로 return false */
+	if (findActorListOnTile == mapActorListOnTilemap.end())
+	{
+		return false;
+	}
+
+	auto& actorListOnTile = findActorListOnTile->second;
+	auto findPawn = [](std::weak_ptr<ActorOnTile> actorOnTile)
+		{
+			std::shared_ptr<ActorOnTile> checkBlockActor = actorOnTile.lock();
+
+			// 액터가 유효하지 않으면 건너뛰기
+			if (!checkBlockActor)
+			{
+				return false;
+			}
+
+			return checkBlockActor->IsTypeOf<Pawn>();
+		};
+
+	/* 해당 위치 타일에 존재하는 Pawn이 있으면 true 반환 */
+	auto iterFindPawnActor = std::find_if(actorListOnTile.begin(), actorListOnTile.end(), findPawn);
+	return iterFindPawnActor != actorListOnTile.end();
+}
+
+std::shared_ptr<ActorOnTile> TilemapLevel::GetActorOnTileCoordinate(const Craft::Vector2Int& tileCoordinate, 
+																	std::function<bool(std::weak_ptr<ActorOnTile>)> compare)
+{
+	const auto& findActorListOnTile = mapActorListOnTilemap.find(tileCoordinate);
+
+	/* 해당 타일에 존재하는 Actor가 없는 경우 => 점유한 Actor가 없으므로 return  */
+	if (findActorListOnTile == mapActorListOnTilemap.end())
+	{
+		return nullptr;
+	}
+
+	auto& actorListOnTile = findActorListOnTile->second;
+
+	auto iterFindActor = std::find_if(actorListOnTile.begin(), actorListOnTile.end(), compare);
+
+	if (iterFindActor != actorListOnTile.end())
+	{
+		return iterFindActor->lock();
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
 void TilemapLevel::GetAvailableTilesInRange(std::shared_ptr<Actor> checkActor,
 										const int checkRange,
 										std::vector<Vector2Int>& outerPoints,
@@ -803,70 +857,6 @@ void TilemapLevel::UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOn
 
 	actorOnTile->ForEachOccupiedTileOffset(callbackActorOccupiedTile);
 }
-
-//void TilemapLevel::RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile)
-//{
-//	if (!actorOnTile)
-//	{
-//		return;
-//	}
-//
-//	const Vector2Int& newWorldPosition = actorOnTile->GetWorldPosition();
-//	RegisterActorOnTilemap(actorOnTile, newWorldPosition);
-//}
-//
-//void TilemapLevel::RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Vector2Int& position)
-//{
-//	if (!actorOnTile)
-//	{
-//		return;
-//	}
-//
-//	/* 해당 위치 타일의 Actor 리스트에 대상 Actor를 추가한다. */
-//	auto& actorListOnTile = mapActorListOnTilemap[position];
-//	actorListOnTile.emplace_back(actorOnTile);
-//}
-//
-//void TilemapLevel::UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile)
-//{
-//	if (!actorOnTile)
-//	{
-//		return;
-//	}
-//
-//	UnregisterActorOnTilemap(actorOnTile, actorOnTile->GetWorldPosition());
-//}
-//
-//void TilemapLevel::UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Vector2Int& position)
-//{
-//	if (!actorOnTile)
-//	{
-//		return;
-//	}
-//
-//	const auto& findActorListOnTile = mapActorListOnTilemap.find(position);
-//	if (findActorListOnTile == mapActorListOnTilemap.end())
-//	{
-//		return;
-//	}
-//
-//	auto& actorListOnTile = findActorListOnTile->second;
-//
-//	auto remove_pred = [&actorOnTile](const std::weak_ptr<Actor>& weakPtr)
-//		{
-//			auto ptr = weakPtr.lock();
-//
-//			//만료되었거나 대상 액터와 포인터 주소가 같은 경우 제거 대상
-//			return weakPtr.lock() == actorOnTile;
-//		};
-//
-//	actorListOnTile.erase(std::remove_if(actorListOnTile.begin(), actorListOnTile.end(), remove_pred), actorListOnTile.end());
-//	if (actorListOnTile.empty())
-//	{
-//		/* Actor 리스트가 비었으면 map에서도 제거해준다. */
-//		mapActorListOnTilemap.erase(position);
-//	}
-//}
 
 void TilemapLevel::OnMovePlayerEvent(const Vector2Int& prevWorldPosition, const Vector2Int& worldPosition)
 {

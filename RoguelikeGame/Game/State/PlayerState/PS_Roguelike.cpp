@@ -1,6 +1,7 @@
 ﻿#include "PS_Roguelike.h"
 #include "UI/HUD/HUDPlayer.h"
 #include "Actor/Pawn/Player/PlayerPawn.h"
+#include "Actor/Pawn/NPC/Boss/BossOneEye.h"
 #include "PlayerAbilityInfo.h"
 #include "Component/AbilitySystemComponent.h"
 
@@ -37,6 +38,7 @@ void PS_Roguelike::InitializeSessionData()
 	GrantAbilityToPlayer(2, 1, '1');
 	GrantAbilityToPlayer(3, 1, '2');
 	GrantAbilityToPlayer(4, 1, '3');
+	GrantAbilityToPlayer(5, 1, '4');
 
 	/* 초기 아이템 */
 	//OnPlayerItemGain(1);
@@ -106,9 +108,6 @@ void PS_Roguelike::OnSpawnedPlayerPawn(std::weak_ptr<PlayerPawn> pawn)
 
 	playerPawnASC->SetAbilityCooldownChangeCallback(std::bind(&PS_Roguelike::OnPlayerAbilityCooldownChange, this, std::placeholders::_1, std::placeholders::_2));
 
-	
-	
-	
 	InitializeHUD();
 
 	/* 경과 시간 설정 */
@@ -154,6 +153,31 @@ void PS_Roguelike::IncrementMonsterKillNum()
 	{
 		OnUpdateMonsterKillNum();
 	}	
+}
+
+void PS_Roguelike::OnSpawnedBossMonster(std::shared_ptr<BossOneEye> spawnedBoss)
+{
+	if (!spawnedBoss)
+	{
+		return;
+	}
+
+	if (HUDPlayer* hudPlayer = GetHUD<HUDPlayer>())
+	{
+		hudPlayer->ShowBossStatusBar(spawnedBoss->GetBossName());
+		hudPlayer->ChangeBossHealthValue(spawnedBoss->GetCurrentHealth(), spawnedBoss->GetMaxHealth());
+
+		spawnedBoss->SetHealthChangeEventCallback(std::bind(&PS_Roguelike::OnUpdateBossHealth, this, std::placeholders::_1, std::placeholders::_2));
+	}
+
+}
+
+void PS_Roguelike::OnDeathBossMonster()
+{
+	if (HUDPlayer* hudPlayer = GetHUD<HUDPlayer>())
+	{
+		hudPlayer->HideBossStatusBar();
+	}
 }
 
 void PS_Roguelike::GrantAbilityToPlayer(int abilityID, int level, int keyCode)
@@ -296,6 +320,14 @@ void PS_Roguelike::OnSetGamePaused(bool bPause)
 		{
 			hudPlayer->SetStartPlayTime(startPlayTime);
 		}
+	}
+}
+
+void PS_Roguelike::OnUpdateBossHealth(float currentValue, float maxValue)
+{
+	if (HUDPlayer* hudPlayer = GetHUD<HUDPlayer>())
+	{
+		hudPlayer->ChangeBossHealthValue(currentValue, maxValue);
 	}
 }
 

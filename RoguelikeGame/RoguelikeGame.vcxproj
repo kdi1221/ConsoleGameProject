@@ -100,12 +100,15 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
   <ItemGroup>
     <ClCompile Include="Ability\AbilityBeam.cpp" />
     <ClCompile Include="Ability\AbilityObject.cpp" />
+    <ClCompile Include="Ability\NPCAbility\Boss\AbilityShockWave.cpp" />
+    <ClCompile Include="Ability\NPCAbility\Boss\AbilitySummon.cpp" />
     <ClCompile Include="Ability\NPCAbility\Melee\AbilityMelee.cpp" />
     <ClCompile Include="Ability\NPCAbility\Range\AbilityRange.cpp" />
     <ClCompile Include="Ability\PlayerAbility\AbilityFrozenOrb.cpp" />
     <ClCompile Include="Ability\PlayerAbility\AbilityNova.cpp" />
     <ClCompile Include="Ability\PlayerAbility\AbilityShotSpiritBall.cpp" />
     <ClCompile Include="Ability\PlayerAbility\AbilityTeleport.cpp" />
+    <ClCompile Include="Ability\PlayerAbility\AbilityVitalityCircle.cpp" />
     <ClCompile Include="Actor\ActorOnTile.cpp" />
     <ClCompile Include="Actor\Pawn\NPC\Boss\BossOneEye.cpp" />
     <ClCompile Include="Actor\FieldItem\FieldItem.cpp" />
@@ -133,7 +136,12 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Actor\Projectile\FrozenOrb\ProjectileFrozenOrb.cpp" />
     <ClCompile Include="Actor\Projectile\SpiritBall\ProjectileSpiritBall.cpp" />
     <ClCompile Include="Actor\SkillObject\AbilityNovaActor.cpp" />
+    <ClCompile Include="Actor\SkillObject\AbilityShockWaveActor.cpp" />
+    <ClCompile Include="Actor\SkillObject\AbilityVitalityCircleObject.cpp" />
     <ClCompile Include="Actor\SkillObject\SkillObjectActor.cpp" />
+    <ClCompile Include="Particle\ParticleSystemOnTilemap.cpp" />
+    <ClCompile Include="Particle\ParticleSystemVitalityCircle.cpp" />
+    <ClCompile Include="UI\HUD\BossStautsPanel\BossStatusPanel.cpp" />
     <ClCompile Include="Component\BehaviorTree\BehaviorBossComponent.cpp" />
     <ClCompile Include="Component\AbilitySystemComponent.cpp" />
     <ClCompile Include="Component\Attribute\AttributeComponent.cpp" />
@@ -179,12 +187,15 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Ability\AbilityBeam.h" />
     <ClInclude Include="Ability\AbilityDataTable.h" />
     <ClInclude Include="Ability\AbilityObject.h" />
+    <ClInclude Include="Ability\NPCAbility\Boss\AbilityShockWave.h" />
+    <ClInclude Include="Ability\NPCAbility\Boss\AbilitySummon.h" />
     <ClInclude Include="Ability\NPCAbility\Melee\AbilityMelee.h" />
     <ClInclude Include="Ability\NPCAbility\Range\AbilityRange.h" />
     <ClInclude Include="Ability\PlayerAbility\AbilityFrozenOrb.h" />
     <ClInclude Include="Ability\PlayerAbility\AbilityNova.h" />
     <ClInclude Include="Ability\PlayerAbility\AbilityShotSpiritBall.h" />
     <ClInclude Include="Ability\PlayerAbility\AbilityTeleport.h" />
+    <ClInclude Include="Ability\PlayerAbility\AbilityVitalityCircle.h" />
     <ClInclude Include="Actor\ActorOnTile.h" />
     <ClInclude Include="Actor\Pawn\NPC\Boss\BossOneEye.h" />
     <ClInclude Include="Actor\FieldItem\FieldItem.h" />
@@ -212,7 +223,12 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Actor\Projectile\FrozenOrb\ProjectileFrozenOrb.h" />
     <ClInclude Include="Actor\Projectile\SpiritBall\ProjectileSpiritBall.h" />
     <ClInclude Include="Actor\SkillObject\AbilityNovaActor.h" />
+    <ClInclude Include="Actor\SkillObject\AbilityShockWaveActor.h" />
+    <ClInclude Include="Actor\SkillObject\AbilityVitalityCircleObject.h" />
     <ClInclude Include="Actor\SkillObject\SkillObjectActor.h" />
+    <ClInclude Include="Particle\ParticleSystemOnTilemap.h" />
+    <ClInclude Include="Particle\ParticleSystemVitalityCircle.h" />
+    <ClInclude Include="UI\HUD\BossStautsPanel\BossStatusPanel.h" />
     <ClInclude Include="Component\BehaviorTree\BehaviorBossComponent.h" />
     <ClInclude Include="Component\AbilitySystemComponent.h" />
     <ClInclude Include="Component\Attribute\AttributeComponent.h" />

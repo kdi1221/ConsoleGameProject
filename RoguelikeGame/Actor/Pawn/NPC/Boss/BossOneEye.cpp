@@ -2,6 +2,8 @@
 #include "Actor/Pawn/Pawn.h"
 #include "Resource/ResourceBossEye.h"
 #include "Types/Enums.h"
+#include "Ability/NPCAbility/Boss/AbilitySummon.h"
+#include "Ability/NPCAbility/Boss/AbilityShockWave.h"
 #include <Util/Util.h>
 #include <Render/Renderer.h>
 #include <Resource/ResourceManager.h>
@@ -27,23 +29,29 @@ void BossOneEye::Initialize()
 	const ResourceManager& resourceManager = Engine::Get().GetResourceManager<ResourceManager>();
 	resourceBossEye = Cast<ResourceBossEye>(resourceManager.FindGameResource(ResourceManager::eResourceCategory::Image, 1));
 	assert(resourceBossEye && "Invalid resourceBossEye..");
+
+	/* 상태 표시할 위치 구하기(외곽라인의 오른쪽 끝)*/
+	const ResourceBossEye::FEyeImage& outlineImage = resourceBossEye->GetEyeImage(ResourceBossEye::eEyeImageCategory::Outline);
+	const ResourceBossEye::FEyeLineImage& outlineEndImage = outlineImage.lineImages[outlineImage.lineImages.size() - 1];
+	SetDrawStatusOffset(outlineEndImage.centerOffset + Vector2Int(static_cast<int>(outlineEndImage.image.length()), 0));
 }
 
 void BossOneEye::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
 
-	if (!bAwake)
+	if (!bStartOpenEye)
 	{
 		timerAwakeDelay.Tick(deltaTime);
 		if (timerAwakeDelay.IsTimeOut())
 		{
 			StartOpenEye();
-			bAwake = true;
+			bStartOpenEye = true;
 		}
 	}
 
-	if (bChaseTarget)
+	/* 눈이 열린뒤에 눈동자 움직임 */
+	if (bOpenEyeAfterActivated)
 	{
 		UpdateChaseTargetOffset(deltaTime);
 		LerpCurrentOffset(deltaTime);
@@ -52,6 +60,12 @@ void BossOneEye::Tick(float deltaTime)
 	if (eEyeOpenAnimation::None != currentEyeOpenAnimation)
 	{
 		LerpOpenCloseAnimation(deltaTime);
+	}
+
+	/* 다음 실행 예약이 걸린 Ability가 있으면 딜레이 타이머 동작 */
+	if (reserveActivateAbilityID != INVALID_ABILITY_ID)
+	{
+		UpdateReserveActivateAbilityTimer(deltaTime);
 	}
 }
 
@@ -164,54 +178,120 @@ void BossOneEye::ForEachOccupiedTileOffset(std::function<void(const Craft::Vecto
 	}
 }
 
+bool BossOneEye::CanTakeDamage() const
+{
+	return bOpenEyeAfterActivated;
+}
+
+void BossOneEye::InitializeAbility()
+{
+	/* 소환 Ability 부여 */
+	grantedSummonAbilityID = abilitySystemComponent->AddNewAbility(1002, 1);
+	AbilitySummon* grantedSummonAbility = abilitySystemComponent->GetAbility<AbilitySummon>(grantedSummonAbilityID);
+	assert(grantedSummonAbility && "Invalid grantedSummon Ability");
+	grantedSummonAbility->SetMaxSummonNum(50);
+	grantedSummonAbility->SetMaxSummonDelayNum(5);
+	grantedSummonAbility->SetSummonDelay(30.f);
+
+	/* ShockWave Ability 부여 */
+	grantedShockWaveAbilityID = abilitySystemComponent->AddNewAbility(1003, 1);
+	AbilityShockWave* grantedShockWaveAbility = abilitySystemComponent->GetAbility<AbilityShockWave>(grantedShockWaveAbilityID);
+	assert(grantedShockWaveAbility && "Invalid grantedShockWave Ability");
+}
+
+void BossOneEye::OnActivateAbility(const AbilityObject& ability, bool bActivate)
+{
+	/* 실행된 Ability가 종료되면 눈동자 추적 활성화 */
+	if (!bActivate)
+	{
+		bEyeChaseTarget = true;
+	}
+
+	super::OnActivateAbility(ability, bActivate);
+}
+
+void BossOneEye::ActivateSummonAbility()
+{
+	std::shared_ptr<AbilitySystemComponent> abilitySystemComponentPtr = GetAbilitySystemComponent();
+	assert(abilitySystemComponentPtr && "Invalid abilitySystemComponent");
+
+	AbilitySummon* grantedSummonAbility = abilitySystemComponent->GetAbility<AbilitySummon>(grantedSummonAbilityID);
+	assert(grantedSummonAbility && "Invalid grantedSummonAbility");
+
+	/* 소환된 몬스터들이 추적할 대상 지정 */
+	grantedSummonAbility->SetSummonNPCChaseTarget(GetChaseTarget());
+
+	/* 소환 능력 활성화 */
+	abilitySystemComponentPtr->ActivateAbility(grantedSummonAbilityID);
+}
+
+void BossOneEye::ActivateShockWaveAbility()
+{
+	/* 활성화 할 Ability를 설정하고 */
+	reserveActivateAbilityID = grantedShockWaveAbilityID;
+
+	/* 눈을 중앙으로 이동 */
+	bEyeChaseTarget = false;
+
+	/* 타이머 설정 */	
+	timerNextActivateAbility.SetTargetTime(10.f);
+}
+
 void BossOneEye::UpdateChaseTargetOffset(float deltaTime)
 {
 	/* 새로 지정할 타겟을 향한 오프셋 */
 	Vector2Float newTargetOffset = Vector2Float::Zero;
 
-	std::shared_ptr<Pawn> chaseTargetPtr = GetChaseTarget();
-	if (chaseTargetPtr && !chaseTargetPtr->HasExpired() && !chaseTargetPtr->IsDeath())
+	if (bEyeChaseTarget)
 	{
-		/* 중심 위치 */
-		const Vector2Int& centerPos = GetWorldPosition();
-
-		/* 추적 타겟의 위치 */
-		const Vector2Int& targetPos = chaseTargetPtr->GetWorldPosition();
-
-		/* 중심위치로부터 추적타겟의 방향 */
-		Vector2Float toTargetDistanceFloat = static_cast<Vector2Float>(targetPos - centerPos);
-
-		/* 눈 타원의 가로, 세로 반지름 */
-		const float xRadius = 12.f, yRadius = 3.f;
-		//const float xRadius = 8.f, yRadius = 1.f;
-
-		/* x의 제곱 / 가로 반지름의 제곱 */
-		const float xRatio = (toTargetDistanceFloat.x * toTargetDistanceFloat.x) / (xRadius * xRadius);
-
-		/* y의 제곱 / 세로 반지름의 제곱 */
-		const float yRatio = (toTargetDistanceFloat.y * toTargetDistanceFloat.y) / (yRadius * yRadius);
-
-		/* 각 축의 제곱의 합 */
-		const float ratioSum = xRatio + yRatio;
-
-		/* 제곱의 합이 1을 넘어서면 타원의 범위를 벗어난 것 */
-		if (ratioSum > 1.f)
+		std::shared_ptr<Pawn> chaseTargetPtr = GetChaseTarget();
+		if (chaseTargetPtr && !chaseTargetPtr->HasExpired() && !chaseTargetPtr->IsDeath())
 		{
-			/* 타원의 범위(1) 안에서 xDistance와 yDistance를 다시 계산한다. */
+			/* 중심 위치 */
+			const Vector2Int& centerPos = GetWorldPosition();
 
-			/* scale의 제곱 * (x의 제곱 / 가로 반지름의 제곱 + y의 제곱 / 세로 반지름의 제곱) = 1 */
-			/* scale의 제곱 = 1 / (x의 제곱 / 가로 반지름의 제곱 + y의 제곱 / 세로 반지름의 제곱) */
-			/* scale = sqrt(1 / (x의 제곱 / 가로 반지름의 제곱 + y의 제곱 / 세로 반지름의 제곱)) */
-			const float innerScale = sqrt(1.f / ratioSum);
+			/* 추적 타겟의 위치 */
+			const Vector2Int& targetPos = chaseTargetPtr->GetWorldPosition();
 
-			toTargetDistanceFloat.x *= innerScale;
-			toTargetDistanceFloat.y *= innerScale;
+			/* 중심위치로부터 추적타겟의 방향 */
+			Vector2Float toTargetDistanceFloat = static_cast<Vector2Float>(targetPos - centerPos);
+
+			/* 눈 타원의 가로, 세로 반지름 */
+			const float xRadius = 12.f, yRadius = 3.f;
+			//const float xRadius = 8.f, yRadius = 1.f;
+
+			/* x의 제곱 / 가로 반지름의 제곱 */
+			const float xRatio = (toTargetDistanceFloat.x * toTargetDistanceFloat.x) / (xRadius * xRadius);
+
+			/* y의 제곱 / 세로 반지름의 제곱 */
+			const float yRatio = (toTargetDistanceFloat.y * toTargetDistanceFloat.y) / (yRadius * yRadius);
+
+			/* 각 축의 제곱의 합 */
+			const float ratioSum = xRatio + yRatio;
+
+			/* 제곱의 합이 1을 넘어서면 타원의 범위를 벗어난 것 */
+			if (ratioSum > 1.f)
+			{
+				/* 타원의 범위(1) 안에서 xDistance와 yDistance를 다시 계산한다. */
+
+				/* scale의 제곱 * (x의 제곱 / 가로 반지름의 제곱 + y의 제곱 / 세로 반지름의 제곱) = 1 */
+				/* scale의 제곱 = 1 / (x의 제곱 / 가로 반지름의 제곱 + y의 제곱 / 세로 반지름의 제곱) */
+				/* scale = sqrt(1 / (x의 제곱 / 가로 반지름의 제곱 + y의 제곱 / 세로 반지름의 제곱)) */
+				const float innerScale = sqrt(1.f / ratioSum);
+
+				toTargetDistanceFloat.x *= innerScale;
+				toTargetDistanceFloat.y *= innerScale;
+			}
+
+			/* 선형보간 타겟 offset 대입 */
+			newTargetOffset = toTargetDistanceFloat;
 		}
-
-		/* 선형보간 타겟 offset 대입 */
-		newTargetOffset = toTargetDistanceFloat;
 	}
-	
+	else
+	{
+		newTargetOffset = Vector2Float::Zero;
+	}
+
 	/* 현재 타겟 오프셋과 다른경우에는 경과 시간 초기화 */
 	if (newTargetOffset != targetIrisPupilOffset)
 	{
@@ -284,10 +364,31 @@ void BossOneEye::OnFinishEyeOpenCloseAnimation(eEyeOpenAnimation prevAnimation)
 {
 	if (prevAnimation == eEyeOpenAnimation::OpenEye)
 	{
-		/* 최초 생성후 눈을 뜬 이후에 타겟을 추적 */
-		if (!bChaseTarget)
-		{
-			bChaseTarget = true;
-		}	
+		/* 눈이 열렸으니 활성화 */
+		bOpenEyeAfterActivated = true;
 	}
+}
+
+void BossOneEye::UpdateReserveActivateAbilityTimer(float deltaTime)
+{
+	timerNextActivateAbility.Tick(deltaTime);
+	if (timerNextActivateAbility.IsTimeOut())
+	{
+		ExecuteReserveAbilityActivate();
+
+		timerNextActivateAbility.Reset();
+	}
+}
+
+void BossOneEye::ExecuteReserveAbilityActivate()
+{
+	assert(reserveActivateAbilityID != INVALID_ABILITY_ID && "reserveActivateAbilityID Invalid");
+
+	/* 예약된 Ability 활성화 */
+	std::shared_ptr<AbilitySystemComponent> abilitySystemComponentPtr = GetAbilitySystemComponent();
+	assert(abilitySystemComponentPtr && "Invalid abilitySystemComponent");
+
+	abilitySystemComponentPtr->ActivateAbility(reserveActivateAbilityID);
+
+	reserveActivateAbilityID = INVALID_ABILITY_ID;
 }

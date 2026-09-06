@@ -2,6 +2,7 @@
 
 #include "UI/Widget/Widget.h"
 #include "Math/Color.h"
+#include <string>
 
 namespace Craft
 {
@@ -32,6 +33,12 @@ namespace Craft
 
 		int drawCurrentValueNum = 0;
 		int drawMaxValueNum = 0;
+
+		Vector2Int currentValueDrawPos;
+		Vector2Int maxValueDrawPos;
+
+		std::wstring currentValueBuffer;
+		std::wstring maxValueBuffer;
 	};
 }
 

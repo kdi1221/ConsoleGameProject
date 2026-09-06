@@ -140,6 +140,11 @@ void NPCBase::OnNotifyAttackFrame(const AbilityObject& ability)
 
 }
 
+Vector2Int NPCBase::GetDrawStatusPosition() const
+{
+	return GetWorldPosition() + drawStatusOffset;
+}
+
 std::shared_ptr<Pawn> NPCBase::GetChaseTarget() const
 {
 	if (!behaviorTreeComponent)
@@ -153,6 +158,11 @@ std::shared_ptr<Pawn> NPCBase::GetChaseTarget() const
 std::shared_ptr<BehaviorTreeComponent> NPCBase::GetBehaviorTreeComponent() const
 {
 	return behaviorTreeComponent;
+}
+
+void NPCBase::SetDrawStatusOffset(const Vector2Int& offset)
+{
+	drawStatusOffset = offset;
 }
 
 void NPCBase::DrawMovePaths()

@@ -28,10 +28,11 @@ public:
 		//임시 하드코딩 테이블
 		static std::unordered_map<int, FAbilityData> abilities =
 		{
-			{1, {1, L"Spirit Ball", L"B", Craft::Color::LightGreen, 3}},
+			{1, {1, L"Fire Ball", L"B", Craft::Color::LightRed, 3}},
 			{2, {2, L"Frozen Orb", L"F", Craft::Color::LightBlue, 3}},
 			{3, {3, L"Nova", L"N", Craft::Color::BrightYellow, 3}},
 			{4, {4, L"Teleport", L"T", Craft::Color::Purple, 3}},
+			{5, {5, L"VitalityCircle", L"V", Craft::Color::LightGreen, 3}},
 		};
 
 		//더미

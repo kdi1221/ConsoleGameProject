@@ -134,6 +134,11 @@ void Pawn::SetDeathEventCallback(OnDeathEventType deathEventCallback)
 
 void Pawn::TakeDamage(const float inDamage)
 {
+	if (!CanTakeDamage())
+	{
+		return;
+	}
+
 	if (!attributeComponent)
 	{
 		return;
@@ -161,6 +166,16 @@ bool Pawn::IsDeath() const
 	return bDeath;
 }
 
+float Pawn::GetCurrentHealth() const
+{
+	return attributeComponent ? attributeComponent->GetCurrentHealth() : 0.f;
+}
+
+float Pawn::GetMaxHealth() const
+{
+	return attributeComponent ? attributeComponent->GetMaxHealth() : 0.f;
+}
+
 std::shared_ptr<AttributeComponent> Pawn::CreateAttributeComponent()
 {
 	return AddComponent<AttributeComponent>();
@@ -171,6 +186,16 @@ void Pawn::SetAimingDirection(const Craft::Vector2Float& direction)
 {
 	aimingDirection = direction;
 	aimingDirection.Normalize();
+}
+
+void Pawn::SetAimingLocation(const Craft::Vector2Int& location)
+{
+	aimingLocation = location;
+}
+
+bool Pawn::CanTakeDamage() const
+{
+	return true;
 }
 
 void Pawn::InitializeAbility()

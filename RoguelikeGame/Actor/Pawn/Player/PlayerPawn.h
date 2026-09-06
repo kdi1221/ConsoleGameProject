@@ -8,6 +8,7 @@
 namespace Craft
 {
 	class CameraComponent;
+	class ParticleComponent;
 }
 
 class PlayerAbilityInfo;
@@ -44,6 +45,9 @@ private:
 public:
 	/* 마나 초기화 */
 	void InitializeManaValue(const float currentMana, const float maxMana);
+
+	/* 마나 회복 함수 */
+	void AddManaValue(const float inHealValue);
 
 	/* 마나 변경 이벤트 콜백 바인딩 */
 	void SetManaChangeEventCallback(OnChangeManaType callback);
@@ -97,7 +101,7 @@ private:
 
 private:
 	/* 초당 마나 회복 속도 */
-	float manaRegenerationSpeed = 8.f;
+	float manaRegenerationSpeed = 2.f;
 
 	/* 현재 프레임에서의 이동 입력 방향 */
 	Craft::eDirection moveInputDirection = Craft::eDirection::None;
@@ -113,6 +117,9 @@ private:
 	OnChangeManaType onChangeManaEvent;
 
 private:
+	/* 파티클 컴포넌트 */
+	std::shared_ptr<Craft::ParticleComponent> particleComponent;
+
 	/* 플레이어 폰을 바라보는 카메라 컴포넌트 */
 	std::shared_ptr<Craft::CameraComponent> cameraComponent;
 

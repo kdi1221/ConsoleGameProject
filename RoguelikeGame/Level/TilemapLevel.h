@@ -151,6 +151,12 @@ public:
 	/* 해당 위치의 타일이 속한 방 인덱스 반환 */
 	RoomDefines::UNIQUE_INDEX_TYPE GetRoomIndexInTile(const Craft::Vector2Int& position) const;
 
+	/* 해당 위치에 Pawn이 점유중인지 여부 반환 */
+	bool IsTileCoordinateOccupiedPawn(const Craft::Vector2Int& tileCoordinate) const;
+
+	/* 해당 위치에 조건을 만족하는 Actor 반환 */
+	std::shared_ptr<ActorOnTile> GetActorOnTileCoordinate(const Craft::Vector2Int& tileCoordinate, std::function<bool(std::weak_ptr<ActorOnTile>)> compare);
+
 	/* Actor를 중심으로 주변 내 빈 Ground Tile 반환(BFS) */
 	void GetAvailableTilesInRange(std::shared_ptr<Craft::Actor> checkActor,
 								const int checkRange,
@@ -174,18 +180,6 @@ private:
 	/* Actor가 점유하는 타일 등록 해제 */
 	void UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile);
 	void UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Craft::Vector2Int& centerPosition);
-
-
-	/* 타일맵 인덱스별로 Actor 등록 */
-	//void RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile);
-	//void RegisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Craft::Vector2Int& position);
-
-	/* 타일맵 인덱스별로 Actor 등록 해제 */
-	//void UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile);
-	//void UnregisterActorOnTilemap(std::shared_ptr<ActorOnTile> actorOnTile, const Craft::Vector2Int& position);
-
-
-
 
 	/* 플레이어 캐릭터의 이동에 따른 이벤트 구성 */
 	void OnMovePlayerEvent(const Craft::Vector2Int& prevWorldPosition, const Craft::Vector2Int& worldPosition);

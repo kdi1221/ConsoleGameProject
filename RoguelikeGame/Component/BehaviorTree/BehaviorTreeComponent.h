@@ -30,7 +30,7 @@ public:
 		TargetChase,
 
 		/* 공격 중 */
-		Attack
+		Attack1
 	};
 
 public:
@@ -43,6 +43,12 @@ protected:
 	virtual void Draw() override;
 
 public:
+	/* Idle 상태로 전환 */
+	void SetIdleState();
+
+	/* 공격 패턴중 하나로 전환 */
+	void SetAttackState(int selectPattern);
+
 	/* 타겟을 추적 대상으로 삼음 */
 	void SetChaseTarget(std::weak_ptr<Pawn> target);
 
@@ -52,8 +58,9 @@ public:
 	/* 이동 목적지로 향하던 도중 충돌하여 멈춘 경우 */
 	void OnMoveAbort();
 
+public:
 	/* 실행한 Ability가 종료되었을때 호출 */
-	void OnEndAbility(const AbilityObject& ability);
+	virtual void OnEndAbility(const AbilityObject& ability);
 
 public:
 	std::shared_ptr<Pawn> GetChaseTarget() const;

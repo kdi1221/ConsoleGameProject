@@ -40,6 +40,26 @@ void BehaviorTreeComponent::Draw()
 	}
 }
 
+void BehaviorTreeComponent::SetIdleState()
+{
+	SetBehaviorState(eBehaviorState::Idle);
+}
+
+void BehaviorTreeComponent::SetAttackState(int selectPattern)
+{
+	const int attackStateStartIndex = static_cast<int>(eBehaviorState::Attack1);
+	const int attackStateEndIndex = static_cast<int>(eBehaviorState::Attack1);
+
+	const int nextAttackState = attackStateStartIndex + selectPattern;
+	if (nextAttackState < attackStateStartIndex ||
+		nextAttackState > attackStateEndIndex)
+	{
+		return;
+	}
+
+	SetBehaviorState(static_cast<eBehaviorState>(nextAttackState));
+}
+
 void BehaviorTreeComponent::SetChaseTarget(std::weak_ptr<Pawn> target)
 {
 	assert(!target.expired() && "target invalid..");
@@ -137,7 +157,7 @@ void BehaviorTreeComponent::OnBehaviorUpdate(float deltaTime)
 		}
 		break;
 
-	case eBehaviorState::Attack:
+	case eBehaviorState::Attack1:
 		{
 			OnBehaviorAttack(deltaTime);
 		}
@@ -215,7 +235,7 @@ bool BehaviorTreeComponent::TransitionNextStateWhileChase()
 		if (IsTargetAttackRange(targetPawn))
 		{
 			//공격 실행
-			SetBehaviorState(eBehaviorState::Attack);
+			SetBehaviorState(eBehaviorState::Attack1);
 			return true;
 		}
 	}
@@ -259,12 +279,12 @@ void BehaviorTreeComponent::DrawCurrentState()
 		stringState = L"TargetChase";
 		break;
 
-	case eBehaviorState::Attack:
+	case eBehaviorState::Attack1:
 		stringState = L"Attack";
 		break;
 	}
 
-	renderer.Submit(stringState, ownerNPCPtr->GetWorldPosition() + Vector2Int::One, Color::Green, static_cast<int>(eRenderSortingOrder::Pawn));
+	renderer.Submit(stringState, ownerNPCPtr->GetDrawStatusPosition(), Color::Green, static_cast<int>(eRenderSortingOrder::Pawn));
 }
 
 void BehaviorTreeComponent::ClearPreviouseBehaviorState(eBehaviorState prevState)
@@ -285,7 +305,7 @@ void BehaviorTreeComponent::ClearPreviouseBehaviorState(eBehaviorState prevState
 		}
 		break;
 
-	case eBehaviorState::Attack:
+	case eBehaviorState::Attack1:
 		{
 			bActivateAttackAbility = false;
 		}
@@ -310,7 +330,7 @@ void BehaviorTreeComponent::BeginNewBehaviorState()
 		}
 		break;
 
-	case eBehaviorState::Attack:
+	case eBehaviorState::Attack1:
 		{
 			ExecuteAttack();
 		}

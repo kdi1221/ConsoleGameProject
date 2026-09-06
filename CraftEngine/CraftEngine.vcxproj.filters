@@ -120,6 +120,15 @@
     <ClCompile Include="Resource\ResourceManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Component\ParticleComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle\ParticleEmitter.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle\ParticleSystem.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Engine.h">
@@ -246,6 +255,18 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Resource\ResourceManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ParticleComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle\ParticleElement.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle\ParticleEmitter.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle\ParticleSystem.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

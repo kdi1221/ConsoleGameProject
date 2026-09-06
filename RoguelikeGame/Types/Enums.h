@@ -103,6 +103,9 @@ enum class eRenderSortingOrder : int
 	//필드 내 존재하는 아이템
 	FieldItem,
 
+	//파티클
+	Particle,
+
 	//빔(트레일)
 	beam,
 
