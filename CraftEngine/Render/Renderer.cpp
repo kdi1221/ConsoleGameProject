@@ -4,6 +4,7 @@
 #include <cassert>
 #include <windows.h>
 #include <iostream>
+#include "Profile/ScopedTimer.h"
 
 namespace Craft
 {
@@ -142,8 +143,8 @@ namespace Craft
 		// 프레임 초기화
 		frame->Clear(screenSize);
 
-		// 콘솔 버퍼 초기화
-		GetCurrentBuffer()->Clear();
+		// 콘솔 버퍼 초기화 -> WriteConsoleOutput에서 콘솔버퍼 전체를 덮어씌우므로 별도의 콘솔버퍼 초기화는 불필요
+		//GetCurrentBuffer()->Clear();
 	}
 
 	void Renderer::DrawRenderQueue(const CameraManager& cameraManager)

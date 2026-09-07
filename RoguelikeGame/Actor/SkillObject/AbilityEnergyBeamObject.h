@@ -1,11 +1,11 @@
 ﻿#pragma once
 
 #include "SkillObjectActor.h"
+#include "Particle/ParticleDefines.h"
 #include "Types/Enums.h"
 #include <Util/Timer.h>
 #include <Math/Vector2Int.h>
 #include <Defines/Enums.h>
-#include <Util/Timer.h>
 #include <string>
 #include <vector>
 
@@ -14,25 +14,12 @@ namespace Craft
 	class ParticleComponent;
 }
 
+class PSEnergyBeam;
+
 /* 보스 Energy Beam Actor */
 class AbilityEnergyBeamObject : public SkillObject
 {
 	TYPE_DECLARATIONS(AbilityEnergyBeamObject, SkillObject)
-
-	/* 빔 확장 모드 */
-	enum class eBeamExpandMode
-	{
-		None = 0,
-		
-		/* 차징 중 */
-		Charging, 
-
-		/* 확장 중 */
-		Expand,
-
-		/* 축소 중 */
-		Shrink,
-	};
 
 public:
 	using OnDestroyBeamCallbackType = std::function<void(const AbilityEnergyBeamObject&)>;
@@ -76,6 +63,9 @@ private:
 
 	/* 영역안의 타겟들에게 데미지 */
 	void ApplyDamage();
+
+	/* 이펙트 사운드 재생 */
+	void PlayFXSound();
 
 public:
 	inline int GetBeamIndex() const { return beamIndex; }
@@ -139,7 +129,10 @@ private:
 
 
 private:
-	/* 마법진 표시 파티클 컴포넌트 */
+	/* 파티클 컴포넌트 */
 	std::shared_ptr<Craft::ParticleComponent> particleComponent;
+
+	/* 빔 표시 파티클 시스템 */
+	std::weak_ptr<PSEnergyBeam> psEnergyBeam;
 };
 

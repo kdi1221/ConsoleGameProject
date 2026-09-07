@@ -10,6 +10,7 @@
 #include "Camera/CameraManager.h"
 #include "Navigation/NavigationBase.h"
 #include "GameState/GameMode/GameMode.h"
+#include "Profile/ScopedTimer.h"
 #include <Windows.h>
 #include <stdint.h>
 #include <iostream>

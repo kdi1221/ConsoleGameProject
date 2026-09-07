@@ -1,150 +1,177 @@
 ﻿#include "PSEnergyBeam.h"
 #include "Particle/ParticleEmitter.h"
 #include "Types/Enums.h"
+#include <Util/Util.h>
 
 using namespace Craft;
 
-PSEnergyBeam::PSEnergyBeam(const Craft::Vector2Int& endPos, int vertical)
-	:super((static_cast<size_t>(endPos.LengthSqrt()) * vertical) * 2)
-	,endPosition(endPos)
-	,verticalRange(vertical)
+PSEnergyBeam::PSEnergyBeam()
+	:super(200)
 {
-	if (abs(endPosition.x) > 0)
-	{
-		progressDirection = endPosition.x > 0 ? eDirection::Right : eDirection::Left;
-		verticalDirection = (progressDirection == eDirection::Right) ? eDirection::Top : eDirection::Bottom;
-	}
-	else if (abs(endPosition.y) > 0)
-	{
-		progressDirection = endPosition.y > 0 ? eDirection::Bottom : eDirection::Top;
-		verticalDirection = (progressDirection == eDirection::Bottom) ? eDirection::Right : eDirection::Left;
-	}
+	
 }
 
 void PSEnergyBeam::Initialize()
 {
 	std::shared_ptr<ParticleEmitter> beamBackgroundEmitter = std::make_shared<ParticleEmitter>();
 
-	/* 빔의 백그라운드 효과 표시 */
-	auto SpawnBackgroundElement = [this](ParticleSystem& particleSystem)
+	auto SpawnElementChargingMode = [this](ParticleSystem& particleSystem)
 		{
-			Vector2Int addDirectionOffset = Vector2Int::Zero;
+			FParticleElement addParticleElement;
+			addParticleElement.moveMode = eParticleElementMoveMode::Velocity;
+
+			Vector2Float targetPosition = Vector2Float::Zero;
+			Vector2Float spawnPosition = Vector2Float::Zero;
 			switch (progressDirection)
 			{
 			case eDirection::Left:
-				addDirectionOffset = Vector2Int::Left;
+				targetPosition = Vector2Float(0.f, Util::RandomRange(0.f, static_cast<float>(verticalRange - 1)));
+				spawnPosition = targetPosition + Vector2Float(-Util::RandomRange(1.f, 10.f), 0.f);
 				break;
 
 			case eDirection::Right:
-				addDirectionOffset = Vector2Int::Right;
+				targetPosition = Vector2Float(0.f, -Util::RandomRange(0.f, static_cast<float>(verticalRange - 1)));
+				spawnPosition = targetPosition + Vector2Float(Util::RandomRange(1.f, 10.f), 0.f);
 				break;
 
 			case eDirection::Top:
-				addDirectionOffset = Vector2Int::Up;
+				targetPosition = Vector2Float(-Util::RandomRange(0.f, static_cast<float>(verticalRange - 1)), 0.f);
+				spawnPosition = targetPosition + Vector2Float(0.f, -Util::RandomRange(1.f, 10.f));
 				break;
 
 			case eDirection::Bottom:
-				addDirectionOffset = Vector2Int::Down;
+				targetPosition = Vector2Float(Util::RandomRange(0.f, static_cast<float>(verticalRange - 1)), 0.f);
+				spawnPosition = targetPosition + Vector2Float(0.f, Util::RandomRange(1.f, 10.f));
 				break;
 			}
 
-			Vector2Int addVerticalOffset = Vector2Int::Zero;
-			switch(verticalDirection)
-			{ 
-			case eDirection::Left:
-				addVerticalOffset = Vector2Int::Left;
-				break;
+			Vector2Float moveDirection = targetPosition - spawnPosition;
+			const float distance = moveDirection.Length();
+			moveDirection.Normalize();
 
-			case eDirection::Right:
-				addVerticalOffset = Vector2Int::Right;
-				break;
+			const float speed = Util::RandomRange(10.f, 15.f);
+			addParticleElement.position = static_cast<Vector2Int>(spawnPosition);
+			addParticleElement.velocity = moveDirection * speed;
+			addParticleElement.lifeTime = max(0.01f, distance / speed);
 
-			case eDirection::Top:
-				addVerticalOffset = Vector2Int::Up;
-				break;
+			addParticleElement.noiseStrength = Util::RandomRange(2.f, 5.f);
+			addParticleElement.noiseSpeed = Util::RandomRange(1.f, 3.f);
 
-			case eDirection::Bottom:
-				addVerticalOffset = Vector2Int::Down;
-				break;
-			}
+			addParticleElement.drawImages = { L"*", L"+", L".", L"·" };
+			const int selectElementImageIndex = Util::RandomRange(0, static_cast<int>(addParticleElement.drawImages.size()) - 1);
+			addParticleElement.image = addParticleElement.drawImages[selectElementImageIndex];
+			addParticleElement.drawChangeImageInterval = Util::RandomRange(0.2f, 0.5f);
 
-			for (Vector2Int directionPos = Vector2Int::Zero;
-				directionPos != endPosition;
-				directionPos += addDirectionOffset)
+			addParticleElement.drawColors = { Color::Purple, Color::LightPurple, Color::Purple, Color::LightPurple, Color::BrightWhite };
+			const int selectElementParticleIndex = Util::RandomRange(0, static_cast<int>(addParticleElement.drawColors.size()) - 1);
+			addParticleElement.drawColor = addParticleElement.drawColors[selectElementParticleIndex];
+			addParticleElement.drawChangeColorInterval = Util::RandomRange(0.2f, 0.5f);
+
+			addParticleElement.renderSortingOrder = static_cast<int>(eRenderSortingOrder::Particle);
+			particleSystem.AddParticleElement(std::move(addParticleElement));
+		};
+
+	auto SpawnElementExpandMode = [this](ParticleSystem& particleSystem)
+		{
+			FParticleElement addParticleElement;
+			addParticleElement.moveMode = eParticleElementMoveMode::Velocity;
+
+			switch (progressDirection)
 			{
-				Vector2Int elementPos = directionPos;
+			case eDirection::Left:
+				addParticleElement.position = Vector2Int(0, Util::RandomRange(0, verticalRange - 1));
+				addParticleElement.velocity = Vector2Float(-Util::RandomRange(120.f, 140.f), 0.f);
+				addParticleElement.lifeTime = Util::RandomRange(4.f, 6.f);
+				addParticleElement.drawImages = { L"*", L"+", L".", L"·", L"-" };
 
-				for (int verticalCount = 0; verticalCount < verticalRange; ++verticalCount)
-				{
-					FParticleElement addParticleElement;
-					addParticleElement.moveMode = eParticleElementMoveMode::Velocity;
+				addParticleElement.noiseStrength = Util::RandomRange(25.f, 35.f);
+				break;
 
-					/* 배경 파티클입자는 따로 움직이지 않는다. */
-					addParticleElement.velocity = Vector2Float::Zero;
+			case eDirection::Top:
+				addParticleElement.position = Vector2Int(-Util::RandomRange(0, verticalRange - 1), 0);
+				addParticleElement.velocity = Vector2Float(0.f, -Util::RandomRange(40.f, 60.f));
+				addParticleElement.lifeTime = Util::RandomRange(0.8f, 1.5f);
+				addParticleElement.drawImages = { L"*", L"+", L".", L"·", L"|" };
 
-					addParticleElement.image = L" ";
-					addParticleElement.drawColor = Color::BG_Purple;
-					addParticleElement.renderSortingOrder = static_cast<int>(eRenderSortingOrder::Particle);
+				addParticleElement.noiseStrength = Util::RandomRange(15.f, 20.f);
+				break;
 
-					/* 시작 - 끝 위치까지 일렬로 추가  */
-					addParticleElement.position = elementPos;
-					particleSystem.AddParticleElement(std::move(addParticleElement));
+			case eDirection::Right:
+				addParticleElement.position = Vector2Int(0, -Util::RandomRange(0, verticalRange - 1));
+				addParticleElement.velocity = Vector2Float(Util::RandomRange(120.f, 140.f), 0.f);
+				addParticleElement.lifeTime = Util::RandomRange(4.f, 6.f);
+				addParticleElement.drawImages = { L"*", L"+", L".", L"·", L"-" };
 
-					elementPos += addVerticalOffset;
-				}
+				addParticleElement.noiseStrength = Util::RandomRange(25.f, 35.f);
+				break;
+
+			case eDirection::Bottom:
+				addParticleElement.position = Vector2Int(Util::RandomRange(0, verticalRange - 1), 0);
+				addParticleElement.velocity = Vector2Float(0.f, Util::RandomRange(40.f, 60.f));
+				addParticleElement.lifeTime = Util::RandomRange(0.8f, 1.5f);
+				addParticleElement.drawImages = { L"*", L"+", L".", L"·", L"|" };
+
+				addParticleElement.noiseStrength = Util::RandomRange(15.f, 20.f);
+				break;
 			}
 
+			addParticleElement.noisePosition = Vector2Float(Util::RandomRange(0.13f, 0.8f));
+			addParticleElement.noiseSpeed = Util::RandomRange(2.f, 5.f);
 
+			const int selectElementImageIndex = Util::RandomRange(0, static_cast<int>(addParticleElement.drawImages.size()) - 1);
+			addParticleElement.image = addParticleElement.drawImages[selectElementImageIndex];
+			addParticleElement.drawChangeImageInterval = Util::RandomRange(0.2f, 0.5f);
+
+			addParticleElement.drawColors = { Color::Purple, Color::LightPurple, Color::Purple, Color::LightPurple, Color::BrightWhite };
+			const int selectElementParticleIndex = Util::RandomRange(0, static_cast<int>(addParticleElement.drawColors.size()) - 1);
+			addParticleElement.drawColor = addParticleElement.drawColors[selectElementParticleIndex];
+			addParticleElement.drawChangeColorInterval = Util::RandomRange(0.2f, 0.5f);
+
+			addParticleElement.renderSortingOrder = static_cast<int>(eRenderSortingOrder::Particle);
+			particleSystem.AddParticleElement(std::move(addParticleElement));
+		};
+
+	/* 빔의 백그라운드 효과 표시 */
+	auto SpawnBackgroundElement = [this, SpawnElementChargingMode, SpawnElementExpandMode](ParticleSystem& particleSystem)
+		{	
+			switch (currentExpandMode)
+			{
+			case eBeamExpandMode::Charging:
+				{
+					SpawnElementChargingMode(particleSystem);
+				}
+				break;
+
+			case eBeamExpandMode::Expand:
+				{
+					SpawnElementExpandMode(particleSystem);
+				}
+				break;
+			}
 			
-
-			
-			
-
-			///* 극 좌표 기준으로 회전하는 효과 */
-			////static const std::wstring elementImages[] = { L"*", L"+", L"#", L"$" };
-
-			//for (int angle = 0; angle < 360; angle += 15)
-			//{
-			//	const float angleRad = DEG_TO_RAD(static_cast<float>(angle));
-
-			//	FParticleElement addParticleElement;
-			//	addParticleElement.moveMode = eParticleElementMoveMode::Orbit;
-
-			//	addParticleElement.orbitAngle = angleRad;
-			//	addParticleElement.orbitRadius = 12.f;
-			//	addParticleElement.orbitAngularSpeed = DEG_TO_RAD(25.f);
-			//	addParticleElement.orbitMinRadius = 12.f;
-			//	addParticleElement.orbitMaxRadius = 25.f;
-			//	addParticleElement.orbitRadiusScale = Vector2Float(1.f, 0.6f);
-
-			//	const Vector2Float initializePos(cos(addParticleElement.orbitAngle) * addParticleElement.orbitRadius * addParticleElement.orbitRadiusScale.x,
-			//		sin(addParticleElement.orbitAngle) * addParticleElement.orbitRadius * addParticleElement.orbitRadiusScale.y);
-
-			//	addParticleElement.position.x = static_cast<int>(round(initializePos.x));
-			//	addParticleElement.position.y = static_cast<int>(round(initializePos.y));
-
-			//	addParticleElement.noisePosition = Vector2Float::Zero;
-			//	addParticleElement.noiseSpeed = 0.5f;
-			//	addParticleElement.noiseStrength = 15.f;
-
-			//	addParticleElement.lifeTime = 0.f;
-
-			//	addParticleElement.drawImages = { L"*", L"+", L"#", L"$" };
-			//	const int selectElementImageIndex = Util::RandomRange(0, static_cast<int>(addParticleElement.drawImages.size()) - 1);
-			//	addParticleElement.image = addParticleElement.drawImages[selectElementImageIndex];
-			//	addParticleElement.drawChangeImageInterval = Util::RandomRange(0.2f, 0.5f);
-
-			//	addParticleElement.drawColors = { Color::LightGreen, Color::LightGreen, Color::Green, Color::Green, Color::BrightWhite };
-			//	const int selectElementParticleIndex = Util::RandomRange(0, static_cast<int>(addParticleElement.drawColors.size()) - 1);
-			//	addParticleElement.drawColor = addParticleElement.drawColors[selectElementParticleIndex];
-			//	addParticleElement.drawChangeColorInterval = Util::RandomRange(0.2f, 0.5f);
-
-			//	addParticleElement.renderSortingOrder = static_cast<int>(eRenderSortingOrder::Particle);
-			//	particleSystem.AddParticleElement(std::move(addParticleElement));
-			//}
 		};
 
 	beamBackgroundEmitter->SetSpawnElementFunction(SpawnBackgroundElement);
-	beamBackgroundEmitter->SetElementSpawnInterval(0.f);
+	beamBackgroundEmitter->SetElementSpawnInterval(0.1f);
 	AddParticleEmitter(beamBackgroundEmitter);
+}
+
+void PSEnergyBeam::SetCurrentBeamExpandMode(eBeamExpandMode expandMode)
+{
+	currentExpandMode = expandMode;
+}
+
+void PSEnergyBeam::SetBeamProgressDirection(eDirection direction)
+{
+	progressDirection = direction;
+}
+
+void PSEnergyBeam::SetBeamRange(int range)
+{
+	currentRange = range;
+}
+
+void PSEnergyBeam::SetBeamVerticalRange(int range)
+{
+	verticalRange = range;
 }

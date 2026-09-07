@@ -3,6 +3,7 @@
 #include "Component/ParticleComponent.h"
 #include "Particle/PSEnergyBeam.h"
 #include "Actor/Pawn/Pawn.h"
+#include <Engine/Engine.h>
 #include <Util/Util.h>
 #include <Render/Renderer.h>
 #include <cassert>
@@ -33,17 +34,6 @@ AbilityEnergyBeamObject::AbilityEnergyBeamObject(const Vector2Int& position,
 	switch (progressDirection)
 	{
 	case eDirection::Right:
-		{
-			drawBeamImageBuffer.resize(beamVerticalRange);
-			for (int i = 0; i < beamVerticalRange; ++i)
-			{
-				drawBeamImageBuffer[i] = std::wstring(width, L' ');
-			}
-
-			maxRange = width;
-		}
-		break;
-
 	case eDirection::Left:
 		{
 			drawBeamImageBuffer.resize(beamVerticalRange);
@@ -57,17 +47,6 @@ AbilityEnergyBeamObject::AbilityEnergyBeamObject(const Vector2Int& position,
 		break;
 
 	case eDirection::Top:
-		{
-			drawBeamImageBuffer.resize(height);
-			for (int i = 0; i < height; ++i)
-			{
-				drawBeamImageBuffer[i] = std::wstring(beamVerticalRange, L' ');
-			}
-
-			maxRange = height;
-		}
-		break;
-
 	case eDirection::Bottom:
 		{
 			drawBeamImageBuffer.resize(height);
@@ -91,15 +70,17 @@ void AbilityEnergyBeamObject::BeginPlay()
 {
 	super::BeginPlay();
 
-	//const Vector2Int& currentPos = GetWorldPosition();
-	//const Vector2Int ToEndDistance = beamEndPosition - currentPos;
-
-	///* 파티클 시스템 : 에너지 빔 표시 */
-	//const int range = 10;
-	//assert(particleComponent && "Invalid particleComponent");
-	//std::shared_ptr<PSEnergyBeam> spawnedParticleSystem = std::make_shared<PSEnergyBeam>(ToEndDistance, range);
-	//spawnedParticleSystem->Initialize();
-	//particleComponent->AddParticleSystem(spawnedParticleSystem);
+	/* 파티클 시스템 : 에너지 빔 표시 */
+	const int range = 10;
+	assert(particleComponent && "Invalid particleComponent");
+	std::shared_ptr<PSEnergyBeam> spawnedParticleSystem = std::make_shared<PSEnergyBeam>();
+	spawnedParticleSystem->SetBeamRange(currentRange);
+	spawnedParticleSystem->SetCurrentBeamExpandMode(beamExpandMode);
+	spawnedParticleSystem->SetBeamProgressDirection(progressDirection);
+	spawnedParticleSystem->SetBeamVerticalRange(beamVerticalRange);
+	spawnedParticleSystem->Initialize();
+	particleComponent->AddParticleSystem(spawnedParticleSystem);
+	psEnergyBeam = spawnedParticleSystem;
 
 	SetCurrentExpandMode(eBeamExpandMode::Charging);
 }
@@ -132,7 +113,6 @@ void AbilityEnergyBeamObject::Tick(float deltaTime)
 				/* 딜레이 후 빔 축소 모드로 전환 */
 				SetNextExpandMode(eBeamExpandMode::Shrink, 5.f);
 			}
-			
 		}
 		break;
 
@@ -245,6 +225,11 @@ void AbilityEnergyBeamObject::ExpandBeamRect(float deltaTime)
 	currentRange = max(minRange, min(static_cast<size_t>(lerpResult), maxRange));
 
 	UpdateBeamStartPosition();
+
+	if (std::shared_ptr<PSEnergyBeam> psEnergyBeamPtr = psEnergyBeam.lock())
+	{
+		psEnergyBeamPtr->SetBeamRange(currentRange);
+	}
 }
 
 void AbilityEnergyBeamObject::DrawBeamRect()
@@ -267,7 +252,7 @@ void AbilityEnergyBeamObject::DrawBeamRect()
 				renderer.Submit(drawBeamImage.substr(0, currentRange),
 								drawLinePos,
 								Color::BG_Purple,
-								static_cast<int>(eRenderSortingOrder::beam));
+								static_cast<int>(eRenderSortingOrder::ParticleBackground));
 				++drawLinePos.y;
 			}
 		}
@@ -281,7 +266,7 @@ void AbilityEnergyBeamObject::DrawBeamRect()
 				renderer.Submit(drawBeamImageBuffer[i],
 								drawLinePos,
 								Color::BG_Purple,
-								static_cast<int>(eRenderSortingOrder::beam));
+								static_cast<int>(eRenderSortingOrder::ParticleBackground));
 				++drawLinePos.y;
 			}
 		}
@@ -336,6 +321,8 @@ void AbilityEnergyBeamObject::SetCurrentExpandMode(eBeamExpandMode current)
 	case eBeamExpandMode::Expand:
 		{
 			expandElapsedTime = 0.f;
+
+			//PlayFXSound();
 		}
 		break;
 
@@ -344,6 +331,11 @@ void AbilityEnergyBeamObject::SetCurrentExpandMode(eBeamExpandMode current)
 			expandElapsedTime = 0.f;
 		}
 		break;
+	}
+
+	if (std::shared_ptr<PSEnergyBeam> psEnergyBeamPtr = psEnergyBeam.lock())
+	{
+		psEnergyBeamPtr->SetCurrentBeamExpandMode(beamExpandMode);
 	}
 }
 
@@ -418,4 +410,10 @@ void AbilityEnergyBeamObject::ApplyDamage()
 			targetPawn->TakeDamage(damageAmount);
 		}
 	}
+}
+
+void AbilityEnergyBeamObject::PlayFXSound()
+{
+
+	Engine::Get().PlayOneShot("Effect/lazer.wav");
 }

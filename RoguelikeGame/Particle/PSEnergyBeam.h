@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Particle/ParticleSystemOnTilemap.h"
+#include "ParticleDefines.h"
 #include <Defines/Enums.h>
 #include <Math/Vector2Int.h>
 
@@ -10,28 +11,30 @@ class PSEnergyBeam : public ParticleSystemOnTilemap
 	TYPE_DECLARATIONS(PSEnergyBeam, ParticleSystemOnTilemap)
 
 public:
-	PSEnergyBeam(const Craft::Vector2Int& endPos, int vertical);
+	PSEnergyBeam();
 	virtual ~PSEnergyBeam() = default;
 
 public:
 	virtual void Initialize() override;
 
+public:
+	void SetCurrentBeamExpandMode(eBeamExpandMode expandMode);
+	void SetBeamProgressDirection(Craft::eDirection direction);
+	void SetBeamRange(int range);
+	void SetBeamVerticalRange(int range);
+
 private:
+	/* 현재 빔의 확장 상태 */
+	eBeamExpandMode currentExpandMode = eBeamExpandMode::None;
+
 	/* 빔의 진행방향 */
 	Craft::eDirection progressDirection = Craft::eDirection::None;
 
-	/* 빔의 수직방향 */
-	Craft::eDirection verticalDirection = Craft::eDirection::None;
+	/* 빔의 범위 */
+	int currentRange = 0;
 
-	/* 빔이 도달할 위치 */
-	Craft::Vector2Int endPosition = Craft::Vector2Int::Zero;
-
-	/* 빔의 진행방향 범위 */
-	int directionRange = 0;
-
-	/* 빔의 수직방향 범위 */
+	/* 빔의 수직방향의 범위 */
 	int verticalRange = 0;
 
-	
 };
 

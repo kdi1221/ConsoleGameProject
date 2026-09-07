@@ -190,9 +190,9 @@ void BossOneEye::InitializeAbility()
 	grantedSummonAbilityID = abilitySystemComponent->AddNewAbility(1002, 1);
 	AbilitySummon* grantedSummonAbility = abilitySystemComponent->GetAbility<AbilitySummon>(grantedSummonAbilityID);
 	assert(grantedSummonAbility && "Invalid grantedSummon Ability");
-	grantedSummonAbility->SetMaxSummonNum(50);
-	grantedSummonAbility->SetMaxSummonDelayNum(5);
-	grantedSummonAbility->SetSummonDelay(30.f);
+	grantedSummonAbility->SetMaxSummonNum(80);
+	grantedSummonAbility->SetMaxSummonDelayNum(8);
+	grantedSummonAbility->SetSummonDelay(20.f);
 
 	/* ShockWave Ability 부여 */
 	grantedShockWaveAbilityID = abilitySystemComponent->AddNewAbility(1003, 1);

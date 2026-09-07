@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -126,6 +126,7 @@ xcopy ..\Config\Setting.txt $(OutDir)..\Config\ /e /y /i</Command>
     <ClCompile Include="Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Particle\ParticleSystem.cpp" />
     <ClCompile Include="Physics\CollisionSystem.cpp" />
+    <ClCompile Include="Profile\ScopedTimer.cpp" />
     <ClCompile Include="Render\Renderer.cpp" />
     <ClCompile Include="Render\ScreenBuffer.cpp" />
     <ClCompile Include="Resource\ResourceBase.cpp" />
@@ -171,6 +172,7 @@ xcopy ..\Config\Setting.txt $(OutDir)..\Config\ /e /y /i</Command>
     <ClInclude Include="Particle\ParticleElement.h" />
     <ClInclude Include="Particle\ParticleEmitter.h" />
     <ClInclude Include="Particle\ParticleSystem.h" />
+    <ClInclude Include="Profile\ScopedTimer.h" />
     <ClInclude Include="Resource\ResourceBase.h" />
     <ClInclude Include="Resource\ResourceManager.h" />
     <ClInclude Include="StaticLibrary\StaticFunctionLibrary.h" />

@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -231,6 +231,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Actor\SkillObject\AbilityShockWaveActor.h" />
     <ClInclude Include="Actor\SkillObject\AbilityVitalityCircleObject.h" />
     <ClInclude Include="Actor\SkillObject\SkillObjectActor.h" />
+    <ClInclude Include="Particle\ParticleDefines.h" />
     <ClInclude Include="Particle\ParticleSystemOnTilemap.h" />
     <ClInclude Include="Particle\ParticleSystemVitalityCircle.h" />
     <ClInclude Include="Particle\PSEnergyBeam.h" />
