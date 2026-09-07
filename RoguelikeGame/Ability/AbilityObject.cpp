@@ -15,6 +15,7 @@
 
 #include "NPCAbility/Boss/AbilitySummon.h"
 #include "NPCAbility/Boss/AbilityShockWave.h"
+#include "NPCAbility/Boss/AbilityEnergyBeam.h"
 
 std::unique_ptr<AbilityObject> AbilityObject::CreateNewAbility(const ABILITY_ID_TYPE abilityID, int abilityLevel)
 {
@@ -47,6 +48,9 @@ std::unique_ptr<AbilityObject> AbilityObject::CreateNewAbility(const ABILITY_ID_
 
 	case 1003:
 		return std::make_unique<AbilityShockWave>(abilityID, abilityLevel);
+
+	case 1004:
+		return std::make_unique<AbilityEnergyBeam>(abilityID, abilityLevel);
 	}
 
 	return nullptr;

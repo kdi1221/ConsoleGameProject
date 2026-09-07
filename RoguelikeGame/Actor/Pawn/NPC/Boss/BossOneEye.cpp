@@ -4,6 +4,7 @@
 #include "Types/Enums.h"
 #include "Ability/NPCAbility/Boss/AbilitySummon.h"
 #include "Ability/NPCAbility/Boss/AbilityShockWave.h"
+#include "Ability/NPCAbility/Boss/AbilityEnergyBeam.h"
 #include <Util/Util.h>
 #include <Render/Renderer.h>
 #include <Resource/ResourceManager.h>
@@ -195,8 +196,9 @@ void BossOneEye::InitializeAbility()
 
 	/* ShockWave Ability 부여 */
 	grantedShockWaveAbilityID = abilitySystemComponent->AddNewAbility(1003, 1);
-	AbilityShockWave* grantedShockWaveAbility = abilitySystemComponent->GetAbility<AbilityShockWave>(grantedShockWaveAbilityID);
-	assert(grantedShockWaveAbility && "Invalid grantedShockWave Ability");
+
+	/* EnergyBeam Ability 부여 */
+	grantedEnergyBeamAbilityID = abilitySystemComponent->AddNewAbility(1004, 1);
 }
 
 void BossOneEye::OnActivateAbility(const AbilityObject& ability, bool bActivate)
@@ -234,6 +236,18 @@ void BossOneEye::ActivateShockWaveAbility()
 	bEyeChaseTarget = false;
 
 	/* 타이머 설정 */	
+	timerNextActivateAbility.SetTargetTime(10.f);
+}
+
+void BossOneEye::ActivateEnergyBeamAbility()
+{
+	/* 활성화 할 Ability를 설정하고 */
+	reserveActivateAbilityID = grantedEnergyBeamAbilityID;
+
+	/* 눈을 중앙으로 이동 */
+	bEyeChaseTarget = false;
+
+	/* 타이머 설정 */
 	timerNextActivateAbility.SetTargetTime(10.f);
 }
 

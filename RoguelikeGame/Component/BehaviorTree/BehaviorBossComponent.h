@@ -32,8 +32,11 @@ private:
 	/* 타겟 추적 상태에서 호출 */
 	virtual void OnBehaviorChaseTarget(float deltaTime) override;
 
-	/* 공격 상태에서 호출 */
-	virtual void OnBehaviorAttack(float deltaTime) override;
+	/* 공격 상태(1)에서 호출 */
+	virtual void OnBehaviorAttack1(float deltaTime) override;
+
+	/* 공격 상태(2)에서 호출 */
+	virtual void OnBehaviorAttack2(float deltaTime) override;
 
 	/* 실행한 Ability가 종료되었을때 호출 */
 	virtual void OnEndAbility(const AbilityObject& ability) override;
@@ -44,6 +47,9 @@ private:
 
 	/* 첫번째 공격 패턴 실행 */
 	void ExecuteAttackPattern1();
+
+	/* 두번째 공격 패턴 실행 */
+	void ExecuteAttackPattern2();
 
 private:
 	/* Idle 상태에서 다음 패턴을 실행할 Delay 타이머 */

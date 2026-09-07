@@ -1,6 +1,5 @@
 ﻿#include "ParticleSystemVitalityCircle.h"
 #include "Particle/ParticleEmitter.h"
-#include "Particle/ParticleSystem.h"
 #include "Util/Util.h"
 #include "Types/Enums.h"
 #include <Math/Define.h>

@@ -29,8 +29,11 @@ public:
 		/* 타겟 추적 중 */
 		TargetChase,
 
-		/* 공격 중 */
-		Attack1
+		/* 공격 상태 1 */
+		Attack1,
+
+		/* 공격 상태 2 */
+		Attack2,
 	};
 
 public:
@@ -113,8 +116,11 @@ protected:
 	/* 타겟 추적 상태에서 호출 */
 	virtual void OnBehaviorChaseTarget(float deltaTime);
 
-	/* 공격 상태에서 호출 */
-	virtual void OnBehaviorAttack(float deltaTime);
+	/* 공격 상태(1)에서 호출 */
+	virtual void OnBehaviorAttack1(float deltaTime);
+
+	/* 공격 상태(2)에서 호출 */
+	virtual void OnBehaviorAttack2(float deltaTime);
 
 	/* 타겟이 공격 범위 안에 있는지 확인 */
 	virtual bool IsTargetAttackRange(std::shared_ptr<Pawn> targetPawn) const = 0;

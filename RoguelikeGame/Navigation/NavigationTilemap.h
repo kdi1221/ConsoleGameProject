@@ -27,7 +27,7 @@ private:
 	static constexpr float heuristicWeight = 1.3f;
 
 	/* 한 프레임당 최대 요청 처리 갯수 */
-	static constexpr int maxProcessFindPathRequestFrame = 5;
+	static constexpr int maxProcessFindPathRequestFrame = 3;
 
 	struct FNodePath
 	{

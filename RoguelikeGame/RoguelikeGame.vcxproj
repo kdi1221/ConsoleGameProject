@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -100,6 +100,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
   <ItemGroup>
     <ClCompile Include="Ability\AbilityBeam.cpp" />
     <ClCompile Include="Ability\AbilityObject.cpp" />
+    <ClCompile Include="Ability\NPCAbility\Boss\AbilityEnergyBeam.cpp" />
     <ClCompile Include="Ability\NPCAbility\Boss\AbilityShockWave.cpp" />
     <ClCompile Include="Ability\NPCAbility\Boss\AbilitySummon.cpp" />
     <ClCompile Include="Ability\NPCAbility\Melee\AbilityMelee.cpp" />
@@ -135,12 +136,14 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Actor\Projectile\Projectile.cpp" />
     <ClCompile Include="Actor\Projectile\FrozenOrb\ProjectileFrozenOrb.cpp" />
     <ClCompile Include="Actor\Projectile\SpiritBall\ProjectileSpiritBall.cpp" />
+    <ClCompile Include="Actor\SkillObject\AbilityEnergyBeamObject.cpp" />
     <ClCompile Include="Actor\SkillObject\AbilityNovaActor.cpp" />
     <ClCompile Include="Actor\SkillObject\AbilityShockWaveActor.cpp" />
     <ClCompile Include="Actor\SkillObject\AbilityVitalityCircleObject.cpp" />
     <ClCompile Include="Actor\SkillObject\SkillObjectActor.cpp" />
     <ClCompile Include="Particle\ParticleSystemOnTilemap.cpp" />
     <ClCompile Include="Particle\ParticleSystemVitalityCircle.cpp" />
+    <ClCompile Include="Particle\PSEnergyBeam.cpp" />
     <ClCompile Include="UI\HUD\BossStautsPanel\BossStatusPanel.cpp" />
     <ClCompile Include="Component\BehaviorTree\BehaviorBossComponent.cpp" />
     <ClCompile Include="Component\AbilitySystemComponent.cpp" />
@@ -187,6 +190,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Ability\AbilityBeam.h" />
     <ClInclude Include="Ability\AbilityDataTable.h" />
     <ClInclude Include="Ability\AbilityObject.h" />
+    <ClInclude Include="Ability\NPCAbility\Boss\AbilityEnergyBeam.h" />
     <ClInclude Include="Ability\NPCAbility\Boss\AbilityShockWave.h" />
     <ClInclude Include="Ability\NPCAbility\Boss\AbilitySummon.h" />
     <ClInclude Include="Ability\NPCAbility\Melee\AbilityMelee.h" />
@@ -222,12 +226,14 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Actor\Projectile\Projectile.h" />
     <ClInclude Include="Actor\Projectile\FrozenOrb\ProjectileFrozenOrb.h" />
     <ClInclude Include="Actor\Projectile\SpiritBall\ProjectileSpiritBall.h" />
+    <ClInclude Include="Actor\SkillObject\AbilityEnergyBeamObject.h" />
     <ClInclude Include="Actor\SkillObject\AbilityNovaActor.h" />
     <ClInclude Include="Actor\SkillObject\AbilityShockWaveActor.h" />
     <ClInclude Include="Actor\SkillObject\AbilityVitalityCircleObject.h" />
     <ClInclude Include="Actor\SkillObject\SkillObjectActor.h" />
     <ClInclude Include="Particle\ParticleSystemOnTilemap.h" />
     <ClInclude Include="Particle\ParticleSystemVitalityCircle.h" />
+    <ClInclude Include="Particle\PSEnergyBeam.h" />
     <ClInclude Include="UI\HUD\BossStautsPanel\BossStatusPanel.h" />
     <ClInclude Include="Component\BehaviorTree\BehaviorBossComponent.h" />
     <ClInclude Include="Component\AbilitySystemComponent.h" />

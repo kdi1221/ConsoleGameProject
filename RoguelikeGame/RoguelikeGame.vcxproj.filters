@@ -267,6 +267,15 @@
     <ClCompile Include="Particle\ParticleSystemOnTilemap.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Ability\NPCAbility\Boss\AbilityEnergyBeam.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\SkillObject\AbilityEnergyBeamObject.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle\PSEnergyBeam.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Level\TestLevel.h">
@@ -534,6 +543,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Particle\ParticleSystemOnTilemap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Ability\NPCAbility\Boss\AbilityEnergyBeam.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\SkillObject\AbilityEnergyBeamObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle\PSEnergyBeam.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

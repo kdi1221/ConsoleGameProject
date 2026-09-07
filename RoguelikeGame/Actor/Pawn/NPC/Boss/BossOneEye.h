@@ -54,6 +54,9 @@ public:
 	/* ShockWave 능력 활성화 */
 	void ActivateShockWaveAbility();
 
+	/* EnergyBeam 능력 활성화 */
+	void ActivateEnergyBeamAbility();
+
 public:
 	/* 보스 이름 반환 */
 	inline const std::wstring& GetBossName() const { return bossName; }
@@ -146,5 +149,8 @@ private:
 
 	/* 부여된 쇼크웨이브 Ability ID */
 	ABILITY_ID_TYPE grantedShockWaveAbilityID = INVALID_ABILITY_ID;
+
+	/* 부여된 EnergyBeam Ability ID */
+	ABILITY_ID_TYPE grantedEnergyBeamAbilityID = INVALID_ABILITY_ID;
 };
 

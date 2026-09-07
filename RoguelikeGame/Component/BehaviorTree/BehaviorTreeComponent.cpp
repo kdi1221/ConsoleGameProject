@@ -48,7 +48,7 @@ void BehaviorTreeComponent::SetIdleState()
 void BehaviorTreeComponent::SetAttackState(int selectPattern)
 {
 	const int attackStateStartIndex = static_cast<int>(eBehaviorState::Attack1);
-	const int attackStateEndIndex = static_cast<int>(eBehaviorState::Attack1);
+	const int attackStateEndIndex = static_cast<int>(eBehaviorState::Attack2);
 
 	const int nextAttackState = attackStateStartIndex + selectPattern;
 	if (nextAttackState < attackStateStartIndex ||
@@ -159,7 +159,13 @@ void BehaviorTreeComponent::OnBehaviorUpdate(float deltaTime)
 
 	case eBehaviorState::Attack1:
 		{
-			OnBehaviorAttack(deltaTime);
+			OnBehaviorAttack1(deltaTime);
+		}
+		break;
+
+	case eBehaviorState::Attack2:
+		{
+			OnBehaviorAttack2(deltaTime);
 		}
 		break;
 	}
@@ -280,7 +286,11 @@ void BehaviorTreeComponent::DrawCurrentState()
 		break;
 
 	case eBehaviorState::Attack1:
-		stringState = L"Attack";
+		stringState = L"Attack1";
+		break;
+
+	case eBehaviorState::Attack2:
+		stringState = L"Attack2";
 		break;
 	}
 
@@ -310,6 +320,12 @@ void BehaviorTreeComponent::ClearPreviouseBehaviorState(eBehaviorState prevState
 			bActivateAttackAbility = false;
 		}
 		break;
+
+	case eBehaviorState::Attack2:
+		{
+			bActivateAttackAbility = false;
+		}	
+		break;
 	}
 }
 
@@ -331,6 +347,12 @@ void BehaviorTreeComponent::BeginNewBehaviorState()
 		break;
 
 	case eBehaviorState::Attack1:
+		{
+			ExecuteAttack();
+		}
+		break;
+
+	case eBehaviorState::Attack2:
 		{
 			ExecuteAttack();
 		}
@@ -366,7 +388,15 @@ void BehaviorTreeComponent::OnBehaviorChaseTarget(float deltaTime)
 	}
 }
 
-void BehaviorTreeComponent::OnBehaviorAttack(float deltaTime)
+void BehaviorTreeComponent::OnBehaviorAttack1(float deltaTime)
+{
+	if (!bActivateAttackAbility)
+	{
+		ExecuteAttack();
+	}
+}
+
+void BehaviorTreeComponent::OnBehaviorAttack2(float deltaTime)
 {
 	if (!bActivateAttackAbility)
 	{

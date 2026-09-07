@@ -43,6 +43,12 @@ void BehaviorBossComponent::ClearPreviouseBehaviorState(eBehaviorState prevState
 			
 		}
 		break;
+		
+	case eBehaviorState::Attack2:
+		{
+			
+		}
+		break;
 	}
 }
 
@@ -72,6 +78,12 @@ void BehaviorBossComponent::BeginNewBehaviorState()
 	case eBehaviorState::Attack1:
 		{
 			ExecuteAttackPattern1();
+		}
+		break;
+
+	case eBehaviorState::Attack2:
+		{
+			ExecuteAttackPattern2();
 		}
 		break;
 	}
@@ -113,9 +125,14 @@ void BehaviorBossComponent::OnBehaviorChaseTarget(float deltaTime)
 	SetIdleState();
 }
 
-void BehaviorBossComponent::OnBehaviorAttack(float deltaTime)
+void BehaviorBossComponent::OnBehaviorAttack1(float deltaTime)
 {
 
+}
+
+void BehaviorBossComponent::OnBehaviorAttack2(float deltaTime)
+{
+	
 }
 
 void BehaviorBossComponent::OnEndAbility(const AbilityObject& ability)
@@ -129,8 +146,8 @@ void BehaviorBossComponent::UpdateNextPatternTimer(float deltaTime)
 	TimerNextExecutePatternDelay.Tick(deltaTime);
 	if (TimerNextExecutePatternDelay.IsTimeOut())
 	{
-		//Util::RandomRange(1, 1)
-		int selectPattern = 0;
+		int selectPattern = Util::RandomRange(0, 1);
+		//int selectPattern = 1;
 		SetAttackState(selectPattern);
 
 		bExecuteFirstAttackPattern = false;
@@ -148,3 +165,12 @@ void BehaviorBossComponent::ExecuteAttackPattern1()
 	ownerBossEye->ActivateShockWaveAbility();
 }
 
+void BehaviorBossComponent::ExecuteAttackPattern2()
+{
+	if (!ownerBossEye || !ownerBossEye->IsOpenEyeActivated())
+	{
+		return;
+	}
+
+	ownerBossEye->ActivateEnergyBeamAbility();
+}

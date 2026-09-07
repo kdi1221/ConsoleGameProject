@@ -2,7 +2,7 @@
 
 namespace Craft
 {
-	const int NavigationBase::LIMIT_PATH_FIND_NUM = 100;
+	const int NavigationBase::LIMIT_PATH_FIND_NUM = 1200;
 
 	NavigationBase::NavigationBase()
 	{

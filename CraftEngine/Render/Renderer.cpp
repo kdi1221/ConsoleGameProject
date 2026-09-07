@@ -55,6 +55,9 @@ namespace Craft
 		assert(!instance);
 		instance = this;
 
+		renderQueue.reserve(10000);
+		renderQueueUI.reserve(1000);
+
 		// 이중 버퍼에 사용할 버퍼 생성.
 		screenBufferArray[0] = std::make_unique<ScreenBuffer>(screenSize);
 		screenBufferArray[0]->Clear();
@@ -89,7 +92,8 @@ namespace Craft
 		command.sortingOrder = sortingOrder;
 
 		// 렌더 큐에 명령 추가
-		renderQueue.emplace_back(command);
+		//renderQueue.emplace_back(command);
+		renderQueue.emplace_back(std::move(command));
 	}
 
 	void Renderer::SubmitUI(const std::wstring& image, const Vector2Int& position, Color color, int sortingOrder)
@@ -102,7 +106,8 @@ namespace Craft
 		command.sortingOrder = sortingOrder;
 
 		// 렌더 큐에 명령 추가
-		renderQueueUI.emplace_back(command);
+		//renderQueueUI.emplace_back(command);
+		renderQueueUI.emplace_back(std::move(command));
 	}
 
 	void Renderer::Draw(const CameraManager& cameraManager)
