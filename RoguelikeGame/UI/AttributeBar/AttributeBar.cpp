@@ -4,24 +4,27 @@
 
 using namespace Craft;
 
-AttributeBar::AttributeBar(const Vector2Int& positionLT, int radius, Craft::Color innerColor, Craft::Color outerColor)
+AttributeBar::AttributeBar(const Vector2Int& positionLT, int radius, Craft::Color innerColor, Craft::Color outerColor, Craft::Color amountColor)
 	:super(positionLT, radius, radius)
 	,innerFillColor(innerColor)
 	,outerFillColor(outerColor)
+	,amountTextColor(amountColor)
 {
 	//브레젠험 원 그리기로 원 영역 구하기
-	const Vector2Int centerPos = positionLT + Vector2Int(radius, radius);
+	//const Vector2Int centerPos = positionLT + Vector2Int(radius, radius);
 
 	/* y축 별 x 범위 */
 	std::unordered_map<int, std::pair<int, int>> mapCircleXRange;
 
 	/* y 최소,최대 값 */
+	int xMin = INT_MAX, xMax = INT_MIN;
 	int yMin = INT_MAX, yMax = INT_MIN;
 
 	auto callbackCirclePoints = [&](int xPos, int yPos)
 		{
 			/* 외곽 영역 포인트 저장 */
-			outerPoints.emplace_back(centerPos + Vector2Int(xPos, yPos));
+			//outerPoints.emplace_back(centerPos + Vector2Int(xPos, yPos));
+			outerPoints.emplace_back(Vector2Int(xPos, yPos));
 
 			/* 원 내부 영역을 구하기위한 x범위를 y위치별로 저장 */
 			auto iterYPosXRange = mapCircleXRange.find(yPos);
@@ -35,12 +38,17 @@ AttributeBar::AttributeBar(const Vector2Int& positionLT, int radius, Craft::Colo
 				iterYPosXRange->second.second = max(iterYPosXRange->second.second, xPos);
 			}
 
+			/* X값의 min, max 갱신 */
+			xMin = min(xMin, xPos);
+			xMax = max(xMax, xPos);
+
 			/* Y값의 min, max 갱신 */
 			yMin = min(yMin, yPos);
 			yMax = max(yMax, yPos);
 		};
 
-	StaticFunctionLibrary::BresenhamCircleProcess(positionLT, radius, callbackCirclePoints, 1.f);
+	//StaticFunctionLibrary::BresenhamCircleProcess(positionLT, radius, callbackCirclePoints, 1.f);
+	StaticFunctionLibrary::MidpointCircleProcess(positionLT, radius, static_cast<int>(radius * 0.6f), callbackCirclePoints);
 
 	/* y축별로 x min ~ x max를 돌아가면서 원 내부를 채운다. */
 	for (auto& iterCircleXRange : mapCircleXRange)
@@ -62,14 +70,23 @@ AttributeBar::AttributeBar(const Vector2Int& positionLT, int radius, Craft::Colo
 			innerFillImage[addX] = L'█';
 		}
 
-		innerFillImages.insert({ centerPos + Vector2Int(xStartPos, yPos), innerFillImage });
+		//innerFillImages.insert({ centerPos + Vector2Int(xStartPos, yPos), innerFillImage });
+		innerFillImages.insert({ Vector2Int(xStartPos, yPos), innerFillImage });
 	}
 
 	//y 최소값(위)
-	yMinPos = centerPos.y + yMin;
+	//yMinPos = centerPos.y + yMin;
+	yMinPos = yMin;
 
 	//y 최대값(밑)
-	yMaxPos = centerPos.y + yMax;
+	//yMaxPos = centerPos.y + yMax;
+	yMaxPos = yMax;
+
+	xMinPos = xMin;
+	xMaxPos = xMax;
+
+	centerPosition = Vector2Int((xMinPos + xMaxPos) >> 1, (yMinPos + yMaxPos) >> 1);
+	drawStringAmountPos = centerPosition;
 
 	//바 높이
 	barMaxHeight = yMaxPos - yMinPos;
@@ -113,6 +130,9 @@ void AttributeBar::Draw()
 	{
 		renderer.SubmitUI(L"█", outerPostion, outerFillColor, renderSortingOrder);
 	}
+	
+	/* 현재/최대 값 표시 */
+	renderer.SubmitUI(strAmount, drawStringAmountPos, amountTextColor, renderSortingOrder);
 }
 
 void AttributeBar::SetValue(float amout, float maxAmount)
@@ -124,5 +144,10 @@ void AttributeBar::SetValue(float amout, float maxAmount)
 
 	//바 현재 높이값
 	const int barYOffset = barMaxHeight - static_cast<int>(static_cast<float>(barMaxHeight) * percentage);
-	drawYOffsetPos = GetPosition().y + barYOffset;
+	//drawYOffsetPos = GetPosition().y + barYOffset;
+	drawYOffsetPos = yMinPos + barYOffset;
+
+	strAmount = std::to_wstring(static_cast<int>(currentAmount)) + L"/" + std::to_wstring(static_cast<int>(maxValue));
+	const int strAmountLength = static_cast<int>(strAmount.length());
+	drawStringAmountPos = centerPosition + Vector2Int(-(strAmountLength >> 1), 0);
 }

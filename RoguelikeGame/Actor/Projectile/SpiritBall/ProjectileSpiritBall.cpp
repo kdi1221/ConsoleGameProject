@@ -7,7 +7,7 @@ ProjectileSpiritBall::ProjectileSpiritBall(const Vector2Int& inPosition, const f
 	:super(inPosition, moveSpeed, teamID, damageValue)
 {
 	SetImage(L"•");
-	SetImageColor(Color::LightGreen);
+	SetImageColor(Color::LightRed);
 
 	SetLifeSpan(1.f);
 }

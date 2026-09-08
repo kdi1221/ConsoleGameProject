@@ -4,15 +4,12 @@
 #include "TileMap/Room/Room.h"
 #include "Tilemap/BSP/RoomSpace/RoomSpace.h"
 #include "Game/State/PlayerState/PS_Roguelike.h"
-
 #include "Actor/MapObject/RoomDoor.h"
 #include "Actor/MapObject/PlayerStart.h"
 #include "Actor/MapObject/NextLevel.h"
 #include "Actor/MapObject/NextBossLevel.h"
 #include "Actor/MapObject/Exit.h"
-
 #include "Actor/Pawn/Player/PlayerPawn.h"
-
 #include "Actor/Pawn/NPC/Slime/NPCSlime.h"
 #include "Actor/Pawn/NPC/GoblinArcher/NPCGoblinArcher.h"
 #include "Actor/Pawn/NPC/Orc/NPCOrc.h"
@@ -20,11 +17,12 @@
 #include "Actor/Pawn/NPC/Golem/NPCGolem.h"
 #include "Actor/Pawn/NPC/Imp/NPCImp.h"
 #include "Actor/Pawn/NPC/Sharman/NPCSharman.h"
-
 #include "Actor/Pawn/NPC/Boss/BossOneEye.h"
-
 #include "Actor/FieldItem/HealthPotion.h"
+#include "Actor/FieldItem/ManaPotion.h"
+#include "Actor/FieldItem/AttributeCrystal.h"
 #include "Actor/FieldItem/FieldSkillItem.h"
+#include "Ability/AbilityDataTable.h"
 #include <Engine/Engine.h>
 #include <Math/Vector2Int.h>
 #include <cassert>
@@ -557,8 +555,8 @@ void GM_Roguelike::OnPlayerVisitedTreasureRoom(const Room& visitRoom, const Craf
 	}
 
 	/* 스폰할 아이템 갯수 결정 */
-	const int spawnMinRange = min(3, maxSpawnNum);
-	const int spawnMaxRange = min(6, maxSpawnNum);
+	const int spawnMinRange = min(6, maxSpawnNum);
+	const int spawnMaxRange = min(12, maxSpawnNum);
 	int spawnItemNum = Util::RandomRange(spawnMinRange, spawnMaxRange);
 	int currentIndex = 0;
 
@@ -568,17 +566,26 @@ void GM_Roguelike::OnPlayerVisitedTreasureRoom(const Room& visitRoom, const Craf
 
 			std::shared_ptr<FieldItem> spawnedItem = nullptr;
 
-			if (randomValue < 20)
+			if (randomValue < 10)
 			{
-				spawnedItem = level->SpawnActor<FieldSkillItem>(spawnTilePos, 1);
+				spawnedItem = level->SpawnActor<AttributeCrystal>(spawnTilePos, 
+																	0 == Util::RandomRange(0, 1) ? AttributeCrystal::eAttributeCategory::Health : AttributeCrystal::eAttributeCategory::Mana,
+																	Util::RandomRange(8.f, 12.f));
 			}
-			else if (randomValue < 40)
+			else if (randomValue < 20)
 			{
-				spawnedItem = level->SpawnActor<FieldSkillItem>(spawnTilePos, 2);
+				static int fieldSkillItemAbilityIds[] = { 1, 2, 3, 4, 5 };
+				const int selectAbilityIdIndex = Util::RandomRange(0, static_cast<int>(_countof(fieldSkillItemAbilityIds) - 1));
+				const int selectAbilityID = fieldSkillItemAbilityIds[selectAbilityIdIndex];
+				spawnedItem = level->SpawnActor<FieldSkillItem>(spawnTilePos, selectAbilityID, AbilityDataTable::GetAbilityData(selectAbilityID).iconColor);
+			}
+			else if (randomValue < 60)
+			{
+				spawnedItem = level->SpawnActor<ManaPotion>(spawnTilePos, Util::RandomRange(5.f, 15.f));
 			}
 			else
 			{
-				spawnedItem = level->SpawnActor<HealthPotion>(spawnTilePos, Util::RandomRange(1.f, 10.f));
+				spawnedItem = level->SpawnActor<HealthPotion>(spawnTilePos, Util::RandomRange(5.f, 15.f));
 			}
 
 			return spawnedItem;

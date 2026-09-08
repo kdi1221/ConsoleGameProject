@@ -44,7 +44,7 @@ void ProjectileFrozenOrb::Tick(float deltaTime)
 	}
 }
 
-bool ProjectileFrozenOrb::OnBlockActor(std::shared_ptr<ActorOnTile> blockingActor)
+bool ProjectileFrozenOrb::OnBlockActor(std::shared_ptr<ActorOnTile> blockingActor, const Vector2Int& blockPosition, const Craft::Vector2Int& lastNonBlockPosition)
 {
 	/* 유효한 액터가 아니면 false */
 	if (!blockingActor)

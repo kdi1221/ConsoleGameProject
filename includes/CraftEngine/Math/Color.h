@@ -35,6 +35,10 @@ namespace Craft
 		BG_Purple = BACKGROUND_RED | BACKGROUND_BLUE,
 		BG_LightPurple = BG_Purple | BACKGROUND_INTENSITY,
 
+		BrightWhiteBGRed = BrightWhite | BG_Red,
+		BrightWhiteBGBlue = BrightWhite | BG_Blue,
+
+
 		
 
 		//배경색 -> BACKGROUND_BLUE 등 BACKGROUND로 시작

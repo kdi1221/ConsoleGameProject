@@ -17,17 +17,17 @@ QuickSlotIcon::QuickSlotIcon(const Craft::Vector2Int& positionLT)
 	const int drawBottom = iconPostionLT.y + drawHeight - 1;
 
 	/* 아이콘 출력위치 결정 */
-	iconImaeDrawPos = iconPostionLT + Vector2Int(drawWidth >> 1, drawHeight >> 1);
+	iconImageDrawPos = iconPostionLT + Vector2Int(drawWidth >> 1, drawHeight >> 1);
 
 	/* 쿨다운 시작 시 테두리 Draw할 시작 위치 */
 	cooldownStartBorderIndex = (drawWidth - 3) >> 1;
 
 	/* 뒷 배경 이미지 */
-	backgroundImages.resize(drawHeight);
-	for (int y = 0; y < drawHeight; ++y)
+	backgroundImages.resize(drawHeight + 2);
+	for (int y = 0; y <= drawHeight + 1; ++y)
 	{
 		backgroundImages[y].color = Color::Black;
-		backgroundImages[y].drawPos = Vector2Int(iconPostionLT.x, iconPostionLT.y + y);
+		backgroundImages[y].drawPos = Vector2Int(iconPostionLT.x, iconPostionLT.y + y - 1);
 
 		backgroundImages[y].image.resize(drawWidth);
 		for (int x = 0; x < drawWidth; ++x)
@@ -134,7 +134,19 @@ void QuickSlotIcon::Draw()
 
 	//가운데 아이콘 표시
 	const Color iconImageColor = bCooldownState ? iconImageColorCooldown : iconImageColorBase;
-	renderer.SubmitUI(iconImage, iconImaeDrawPos, iconImageColor, renderSortingOrder);
+	renderer.SubmitUI(iconImage, iconImageDrawPos, iconImageColor, renderSortingOrder);
+
+	//상단 이미지 표시(Lv)
+	if (!topInfoImage.empty())
+	{
+		renderer.SubmitUI(topInfoImage, topInfoImageDrawPos, Color::BrightWhite, renderSortingOrder);
+	}
+
+	//하단 이미지 표시(Key)
+	if (!bottomInfoImage.empty())
+	{
+		renderer.SubmitUI(bottomInfoImage, bottomInfoImageDrawPos, Color::BrightWhite, renderSortingOrder);
+	}
 }
 
 void QuickSlotIcon::SetIconImage(const std::wstring& image)
@@ -174,6 +186,37 @@ void QuickSlotIcon::StopCooldown()
 void QuickSlotIcon::SetGamePause(bool bPause)
 {
 	bGamePause = bPause;
+}
+
+void QuickSlotIcon::SetIconBottomImage(const std::wstring& bottomImage)
+{
+	bottomInfoImage = bottomImage;
+
+	const int imageLength = static_cast<int>(bottomInfoImage.length());
+	if (imageLength <= 0)
+	{
+		return;
+	}
+
+	const int drawWidth = GetWidth();
+	const int drawHeight = GetHeight();
+	const Vector2Int& iconPostionLT = GetPosition();
+	bottomInfoImageDrawPos = iconPostionLT + Vector2Int((drawWidth - imageLength) >> 1, drawHeight);
+}
+
+void QuickSlotIcon::SetIconTopImage(const std::wstring & topImage)
+{
+	topInfoImage = topImage;
+
+	const int imageLength = static_cast<int>(topInfoImage.length());
+	if (imageLength <= 0)
+	{
+		return;
+	}
+
+	const int drawWidth = GetWidth();
+	const Vector2Int& iconPostionLT = GetPosition();
+	topInfoImageDrawPos = iconPostionLT + Vector2Int((drawWidth - imageLength) >> 1, -1);
 }
 
 void QuickSlotIcon::UpdateCooldownTimer(const float deltaTime)

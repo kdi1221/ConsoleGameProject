@@ -55,10 +55,10 @@ public:
 
 protected:
 	/* 벽과 충돌했을때 호출(true면 destroy, false면 유지) */
-	virtual bool OnBlockWall();
+	virtual bool OnBlockWall(const Craft::Vector2Int& blockPosition, const Craft::Vector2Int& lastNonBlockPosition);
 
 	/* 다른 Actor와 충돌했을때 호출(true면 destroy, false면 유지) */
-	virtual bool OnBlockActor(std::shared_ptr<ActorOnTile> blockingActor);
+	virtual bool OnBlockActor(std::shared_ptr<ActorOnTile> blockingActor, const Craft::Vector2Int& blockPosition, const Craft::Vector2Int& lastNonBlockPosition);
 
 protected:
 	/* 이동 방향 반환 */

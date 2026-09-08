@@ -38,10 +38,14 @@ namespace Craft
 		void AddParticleEmitter(std::shared_ptr<ParticleEmitter> emitter);
 
 	protected:
+		virtual bool ShouldRemoveParticleElement(const FParticleElement& element, const Vector2Int& worldPosition) const;
 		virtual bool IsDrawParticleElement(const FParticleElement& element, const Vector2Int& drawPosition) const;
 
 	protected:
 		std::shared_ptr<Level> GetCurrentLevel() const;
+
+	protected:
+		inline const Vector2Int& GetCenterPosition() const { return centerPosition; }
 
 	private:
 		/* 파티클 입자 생성기 업데이트 */

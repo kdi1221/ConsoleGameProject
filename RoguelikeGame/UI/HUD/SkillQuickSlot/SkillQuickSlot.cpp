@@ -11,7 +11,15 @@ using namespace Craft;
 
 const int SkillQuickSlot::ICON_GAP = 2;
 
-const std::vector<int> SKILL_SLOT_ICON_KEYCODES = { '1', '2', '3', '4', VK_RBUTTON };
+const std::vector<std::pair<int, std::wstring>> SKILL_SLOT_ICON_KEYCODES = 
+{ 
+	{'1', L"1"},
+	{'2', L"2"},
+	{'3', L"3"},
+	{'4', L"4"},
+	{VK_RBUTTON, L"RMB"}
+};
+
 
 SkillQuickSlot::SkillQuickSlot(const Vector2Int& positionLT)
 	:super(positionLT, 
@@ -19,10 +27,11 @@ SkillQuickSlot::SkillQuickSlot(const Vector2Int& positionLT)
 		QuickSlotIcon::SLOT_ICON_HEIGHT)
 {
 	int iconXPos = QuickSlotIcon::SLOT_ICON_WIDTH;
-	for (int slotKeyCode : SKILL_SLOT_ICON_KEYCODES)
+	for (const auto& slotKeyCode : SKILL_SLOT_ICON_KEYCODES)
 	{
 		std::shared_ptr<QuickSlotIcon> addedSlotIcon = AddChildWidget<QuickSlotIcon>(Vector2Int(iconXPos, 0));
-		skillIcons.insert({ slotKeyCode, addedSlotIcon });
+		skillIcons.insert({ slotKeyCode.first, addedSlotIcon });
+		addedSlotIcon->SetIconBottomImage(slotKeyCode.second);
 		iconXPos += QuickSlotIcon::SLOT_ICON_WIDTH + ICON_GAP;
 	}
 }
@@ -43,6 +52,11 @@ void SkillQuickSlot::UpdateAbilityIcon(const PlayerAbilityInfo& abilityInfo)
 	const FAbilityData& abilityData = AbilityDataTable::GetAbilityData(abilityInfo.GetAbilityID());
 	slotIcon->SetIconImage(abilityData.iconImage);
 	slotIcon->SetIconImageColor(abilityData.iconColor);
+
+	// Ability 레벨 표시 
+	std::wstring abilityLevelText = L"Lv";
+	abilityLevelText += std::to_wstring(abilityInfo.GetAbilityLevel());
+	slotIcon->SetIconTopImage(abilityLevelText);
 }
 
 void SkillQuickSlot::AbilityCooldownChange(const AbilityObject& ability, const PlayerAbilityInfo& playerAbilityInfo, bool bCooldown)

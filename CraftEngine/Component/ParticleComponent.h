@@ -18,6 +18,7 @@ namespace Craft
 		virtual ~ParticleComponent() = default;
 
 	private:
+		virtual void BeginPlay() override;
 		virtual void Tick(float deltaTime) override;
 		virtual void PostTick(float deltaTime) override;
 		virtual void Draw() override;

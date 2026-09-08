@@ -13,6 +13,8 @@ PSEnergyBeam::PSEnergyBeam()
 
 void PSEnergyBeam::Initialize()
 {
+	super::Initialize();
+
 	std::shared_ptr<ParticleEmitter> beamBackgroundEmitter = std::make_shared<ParticleEmitter>();
 
 	auto SpawnElementChargingMode = [this](ParticleSystem& particleSystem)

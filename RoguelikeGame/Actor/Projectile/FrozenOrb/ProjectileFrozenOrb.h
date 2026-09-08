@@ -30,7 +30,7 @@ public:
 
 private:
 	/* 다른 Actor와 충돌했을때 호출(true면 destroy, false면 유지) */
-	virtual bool OnBlockActor(std::shared_ptr<ActorOnTile> blockingActor) override;
+	virtual bool OnBlockActor(std::shared_ptr<ActorOnTile> blockingActor, const Craft::Vector2Int& blockPosition, const Craft::Vector2Int& lastNonBlockPosition) override;
 
 public:
 	/* 매 딜레이 얼음살 생성 수 지정 */

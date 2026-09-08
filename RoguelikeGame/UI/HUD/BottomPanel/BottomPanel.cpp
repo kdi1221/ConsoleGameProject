@@ -7,9 +7,10 @@ using namespace Craft;
 BottomPanel::BottomPanel(const Vector2Int& positionLT, int width, int height)
 	:super(positionLT, width, height)
 {
-	const int attributeBarRadius = 8;
-	lifeBar = AddChildWidget<AttributeBar>(Vector2Int(5, -8), attributeBarRadius, Color::Red, Color::Yellow);
-	manaBar = AddChildWidget<AttributeBar>(Vector2Int(width - 22, -8), attributeBarRadius, Color::Blue, Color::Yellow);
+	//const int attributeBarRadius = 8;
+	const int attributeBarRadius = 12;
+	lifeBar = AddChildWidget<AttributeBar>(Vector2Int(16, 1), attributeBarRadius, Color::Red, Color::Yellow, Color::BrightWhiteBGRed);
+	manaBar = AddChildWidget<AttributeBar>(Vector2Int(width - 17, 1), attributeBarRadius, Color::Blue, Color::Yellow, Color::BrightWhiteBGBlue);
 
 	skillQuickSlot = AddChildWidget<SkillQuickSlot>(Vector2Int((width >> 1) - 35, 3));
 }

@@ -1,22 +1,15 @@
 #include "FieldSkillItem.h"
 #include "Actor/Pawn/Player/PlayerPawn.h"
-#include "Item/ItemData/ItemDataTable.h"
 #include <Engine/Engine.h>
 #include <cassert>
 
 using namespace Craft;
 
-FieldSkillItem::FieldSkillItem(const Vector2Int& position, int inItemID)
-	:FieldSkillItem(position, inItemID, ItemDataTable::GetItemData(inItemID))
+FieldSkillItem::FieldSkillItem(const Vector2Int& position, int inAbilityID, Craft::Color inColor)
+	:super(position, L"A", inColor)
+	,abilityID(inAbilityID)
 {
 	
-}
-
-FieldSkillItem::FieldSkillItem(const Vector2Int& position, int inItemID, const ItemData& itemData)
-	:super(position, itemData.fieldItemImage, itemData.color)
-	,itemID(inItemID)
-{
-
 }
 
 void FieldSkillItem::OnCollision(const std::shared_ptr<Actor>& other)
@@ -29,7 +22,7 @@ void FieldSkillItem::OnCollision(const std::shared_ptr<Actor>& other)
 		std::shared_ptr<PlayerPawn> collidePlayerPawn = Cast<PlayerPawn>(other);
 		assert(collidePlayerPawn && "collidePlayerPawn invalid..");
 
-		collidePlayerPawn->GainSkillItem(std::static_pointer_cast<FieldSkillItem>(shared_from_this()));
+		collidePlayerPawn->GainAbilityItem(*this);
 
 		Destroy();
 

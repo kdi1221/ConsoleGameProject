@@ -96,12 +96,12 @@ void Projectile::SetSortingOrder(eRenderSortingOrder order)
 	}
 }
 
-bool Projectile::OnBlockWall()
+bool Projectile::OnBlockWall(const Vector2Int& blockPosition, const Craft::Vector2Int& lastNonBlockPosition)
 {
 	return true;
 }
 
-bool Projectile::OnBlockActor(std::shared_ptr<ActorOnTile> blockingActor)
+bool Projectile::OnBlockActor(std::shared_ptr<ActorOnTile> blockingActor, const Vector2Int& blockPosition, const Craft::Vector2Int& lastNonBlockPosition)
 {
 	std::shared_ptr<Pawn> blockingPawn = Cast<Pawn>(blockingActor);
 	if (blockingPawn && blockingPawn->GetTeamID() != GetInstigatorTeamID())
@@ -135,6 +135,9 @@ void Projectile::PostMoveCheckBlockCollision()
 	std::vector<Vector2Int> movePaths;
 	StaticFunctionLibrary::GetBresenhamPath(prevPosition, postMovePosition, movePaths);
 
+	/* 직전까지 유효한 위치 */
+	Vector2Int lastNonBlockPosition = prevPosition;
+
 	/* 구한 경로를 따라가면서 충돌 여부를 확인한다. */
 	for (const Vector2Int& pathTileCoord : movePaths)
 	{
@@ -147,19 +150,20 @@ void Projectile::PostMoveCheckBlockCollision()
 			//벽과 충돌
 		case CheckBlockingResult::BlockWall:
 			{
-				isBlockDestroy = OnBlockWall();
+				isBlockDestroy = OnBlockWall(pathTileCoord, lastNonBlockPosition);
 			}
 			break;
 
 			//Actor와 충돌
 		case CheckBlockingResult::BlockActor:
 			{
-				isBlockDestroy = OnBlockActor(blockingActor);
+				isBlockDestroy = OnBlockActor(blockingActor, pathTileCoord, lastNonBlockPosition);
 			}
 			break;
 
 		default:
 			{
+				lastNonBlockPosition = pathTileCoord;
 				isBlockDestroy = false;
 			}
 			break;
@@ -167,7 +171,7 @@ void Projectile::PostMoveCheckBlockCollision()
 
 		if (isBlockDestroy)
 		{
-			/* 충돌된 상횡에서는 Destroy */
+			/* 충돌된 상황에서는 Destroy */
 			Destroy();
 
 			break;

@@ -33,13 +33,16 @@ int main(void)
 		return -1;
 	}
 	
-	game.AddNewLevel<MainMenuLevel>();
-	//game.AddNewLevel<EndingLevel>();
+	//game.AddNewLevel<MainMenuLevel>();
+	
 
 	//테스트 : 인게임 곧바로 시작
-	//game.InitializeGameSessionData();
-	//game.AddNewLevel<GameLevel>(TilemapLevel::eLevelCategory::MAZE_BSP);
+	game.InitializeGameSessionData();
+	game.AddNewLevel<GameLevel>(TilemapLevel::eLevelCategory::MAZE_BSP);
 	//game.AddNewLevel<GameLevel>(TilemapLevel::eLevelCategory::BOSS_ROOM);
+
+	//테스트 : 엔딩 레벨
+	//game.AddNewLevel<EndingLevel>();
 
 	//더미 - 프레임 테스트용
 	//game.AddNewLevel<DummyLevel>();

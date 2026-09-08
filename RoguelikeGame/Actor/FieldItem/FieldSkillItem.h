@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Actor/FieldItem/FieldItem.h"
+#include <Math/Color.h>
 
 struct ItemData;
 
@@ -10,18 +11,15 @@ class FieldSkillItem : public FieldItem
 	TYPE_DECLARATIONS(FieldSkillItem, FieldItem)
 
 public:
-	FieldSkillItem(const Craft::Vector2Int& position, int inItemID);
-
-private:
-	FieldSkillItem(const Craft::Vector2Int& position, int inItemID, const ItemData& itemData);
+	FieldSkillItem(const Craft::Vector2Int& position, int inAbilityID, Craft::Color inColor);
 
 public:
-	inline int GetItemID() const { return itemID; }
+	inline int GetItemAbilityID() const { return abilityID; }
 
 private:
 	virtual void OnCollision(const std::shared_ptr<Actor>& other) override;
 
 private:
-	int itemID = 0;
+	int abilityID = 0;
 };
 

@@ -2,6 +2,7 @@
 
 #include "GameState/PlayerState/PlayerState.h"
 #include <unordered_map>
+#include <queue>
 #include <windows.h>
 
 class PlayerPawn;
@@ -55,9 +56,10 @@ public:
 
 private:
 	/* 플레이어에게 특정 스킬 부여 */
-	void GrantAbilityToPlayer(int abilityID, int level, int keyCode);
+	const PlayerAbilityInfo& GrantAbilityToPlayer(int abilityID, int level, int keyCode);
 
-	/* TODO : 플레이어의 특정 스킬 레벨 올리기 */
+	/* 플레이어의 특정 스킬 레벨 올리기 */
+	const PlayerAbilityInfo& AddAbilityLevel(int abilityID, int addLevel);
 
 private:
 	/* 플레이어의 몬스터 킬수 업데이트 */
@@ -70,16 +72,13 @@ private:
 	void OnUpdatePlayerMana(float currentValue, float maxValue);
 
 	/* 플레이어가 특정 아이템을 획득할때 호출 */
-	void OnPlayerItemGain(int itemID);
+	void OnPlayerAbilityItemGain(int abilityID);
 
 	/* 플레이어 스킬 쿨타임 업데이트 이벤트 */
 	void OnPlayerAbilityCooldownChange(const AbilityObject& ability, bool bCooldown);
 
 	/* 플레이어 스킬 아이콘 업데이트 */
 	void UpdateAbilityIcon(const PlayerAbilityInfo& abilityInfo);
-
-	/* 특정 아이템 아이콘 및 텍스트 업데이트 */
-	//void UpdateItemListIconText(const ItemBase& updateItem);
 
 	/* 경과 시간 카운트 시작 */
 	void BeginGameElapsedTimeCount();
@@ -116,12 +115,8 @@ private:
 	/* 플레이어가 배운 스킬들(abilityID - PlayerAbilityInfo) */
 	std::unordered_map<int, std::unique_ptr<PlayerAbilityInfo>> mapGrantedAbilities;
 
-
-
-	/* 플레이어가 소유중인 아이템(TODO : 폐기 예정) */
-	std::unordered_map<int, std::unique_ptr<ItemBase>> mapItemlist;
-
-
+	/* 스킬에 부여될 예정인 입력 키코드 */
+	std::queue<int> reserveAbilityKeycode;
 
 	/* 경과 시간 누적 시작 여부 */
 	bool isCountTime = false;

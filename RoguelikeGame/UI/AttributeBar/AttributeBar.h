@@ -11,7 +11,7 @@ class AttributeBar : public Craft::Widget
 	TYPE_DECLARATIONS(AttributeBar, Widget)
 
 public:
-	AttributeBar(const Craft::Vector2Int& positionLT, int radius, Craft::Color innerColor, Craft::Color outerColor);
+	AttributeBar(const Craft::Vector2Int& positionLT, int radius, Craft::Color innerColor, Craft::Color outerColor, Craft::Color amountColor);
 	virtual ~AttributeBar();
 
 private:
@@ -27,17 +27,35 @@ private:
 	//내부 영역 색상
 	Craft::Color innerFillColor = Craft::Color::White;
 
+	//현재 값 텍스트 표시 색상
+	Craft::Color amountTextColor = Craft::Color::White;
+
 	//외부 영역 위치들
 	std::vector<Craft::Vector2Int> outerPoints;
 
 	//내부 영역을 채울 이미지(문자열)들
 	std::unordered_map<Craft::Vector2Int, std::wstring> innerFillImages;
 
+	//x 최소값
+	int xMinPos = 0;
+
+	//x 최대값
+	int xMaxPos = 0;
+
 	//y 최소값(위)
 	int yMinPos = 0;
 
 	//y 최대값(밑)
 	int yMaxPos = 0;
+
+	//중심 위치
+	Craft::Vector2Int centerPosition = Craft::Vector2Int::Zero;
+
+	//현재 값 출력 위치
+	Craft::Vector2Int drawStringAmountPos = Craft::Vector2Int::Zero;
+
+	//출력할 현재 값
+	std::wstring strAmount;
 
 	//바 최대 높이값
 	int barMaxHeight = 0;

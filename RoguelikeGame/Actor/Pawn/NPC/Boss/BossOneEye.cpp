@@ -15,7 +15,7 @@
 using namespace Craft;
 
 BossOneEye::BossOneEye(const Craft::Vector2Int& position, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
-	:super(position, 5000.f, eMonsterPattern::Boss, roomIndex)
+	:super(position, 10000.f, eMonsterPattern::Boss, roomIndex)
 {
 	timerAwakeDelay.SetTargetTime(5.f);
 }

@@ -70,6 +70,11 @@ namespace Craft
 		particleEmitters.emplace_back(emitter);
 	}
 
+	bool ParticleSystem::ShouldRemoveParticleElement(const FParticleElement& element, const Vector2Int& worldPosition) const
+	{
+		return false;
+	}
+
 	bool ParticleSystem::IsDrawParticleElement(const FParticleElement& element, const Vector2Int& drawPosition) const
 	{
 		return true;
@@ -104,6 +109,9 @@ namespace Craft
 				//생명주기 계산
 				if (particleElement.duration >= particleElement.lifeTime)
 				{
+					/* 입자 정보 초기화 */
+					particleElements[elementIndex].Reset();
+
 					/* 마지막 활성화 입자와 위치 교환 */
 					std::swap(particleElements[elementIndex], particleElements[--activateElementNum]);
 
@@ -125,6 +133,19 @@ namespace Craft
 
 			UpdateParticleElementImage(particleElement, deltaTime);
 			UpdateParticleElementColor(particleElement, deltaTime);
+
+			/* 위치 업데이트 후 입자가 제거되어야 될지 여부를 결정한다. */
+			const Vector2Int worldPosition = centerPosition + particleElement.position;
+			if (ShouldRemoveParticleElement(particleElement, worldPosition))
+			{
+				/* 입자 정보 초기화 */
+				particleElements[elementIndex].Reset();
+
+				/* 마지막 활성화 입자와 위치 교환 */
+				std::swap(particleElements[elementIndex], particleElements[--activateElementNum]);
+
+				continue;
+			}
 
 			++elementIndex;
 		}

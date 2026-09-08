@@ -4,7 +4,7 @@
 #include "Actor/Pawn/NPC/Boss/BossOneEye.h"
 #include "PlayerAbilityInfo.h"
 #include "Component/AbilitySystemComponent.h"
-
+#include "Ability/AbilityDataTable.h"
 
 #include "Item/ItemBase.h"
 #include "Item/ItemData/ItemDataTable.h"
@@ -17,7 +17,11 @@ PS_Roguelike::PS_Roguelike()
 	:startPlayTime()
 	,lastPauseTime()
 {
-
+	/* 플레이어 Ability 입력키 예약 키코드 */
+	reserveAbilityKeycode.push('1');
+	reserveAbilityKeycode.push('2');
+	reserveAbilityKeycode.push('3');
+	reserveAbilityKeycode.push('4');
 }
 
 PS_Roguelike::~PS_Roguelike()
@@ -28,20 +32,17 @@ PS_Roguelike::~PS_Roguelike()
 void PS_Roguelike::InitializeSessionData()
 {
 	killMonsterNum = 0;
-	playerMaxHealth = 400.f;
+	playerMaxHealth = 100.f;
 	playerCurrentHealth = playerMaxHealth;
-	playerMaxMana = 400.f;
+	playerMaxMana = 100.f;
 	playerCurrentMana = playerMaxMana;
 
 	/* 초기 Ability */
-	GrantAbilityToPlayer(1, 2, VK_RBUTTON);
-	GrantAbilityToPlayer(2, 1, '1');
-	GrantAbilityToPlayer(3, 1, '2');
-	GrantAbilityToPlayer(4, 1, '3');
-	GrantAbilityToPlayer(5, 1, '4');
-
-	/* 초기 아이템 */
-	//OnPlayerItemGain(1);
+	GrantAbilityToPlayer(1, 3, VK_RBUTTON);
+	//GrantAbilityToPlayer(2, 1, '1');
+	//GrantAbilityToPlayer(3, 1, '2');
+	//GrantAbilityToPlayer(4, 1, '3');
+	//GrantAbilityToPlayer(5, 1, '4');
 }
 
 void PS_Roguelike::OnInitializeLevel(std::weak_ptr<Level> level)
@@ -102,7 +103,7 @@ void PS_Roguelike::OnSpawnedPlayerPawn(std::weak_ptr<PlayerPawn> pawn)
 	currentPlayerPawn->SetManaChangeEventCallback(std::bind(&PS_Roguelike::OnUpdatePlayerMana, this, std::placeholders::_1, std::placeholders::_2));
 
 	/* 플레이어가 아이템 주울때 호출되는 이벤트 */
-	currentPlayerPawn->SetOnItemGainEvent(std::bind(&PS_Roguelike::OnPlayerItemGain, this, std::placeholders::_1));
+	currentPlayerPawn->SetOnAbilityItemGainEvent(std::bind(&PS_Roguelike::OnPlayerAbilityItemGain, this, std::placeholders::_1));
 
 	std::shared_ptr<AbilitySystemComponent> playerPawnASC = currentPlayerPawn->GetComponent<AbilitySystemComponent>();
 	assert(playerPawnASC && "Invalid PlayerPawnASC");
@@ -170,7 +171,6 @@ void PS_Roguelike::OnSpawnedBossMonster(std::shared_ptr<BossOneEye> spawnedBoss)
 
 		spawnedBoss->SetHealthChangeEventCallback(std::bind(&PS_Roguelike::OnUpdateBossHealth, this, std::placeholders::_1, std::placeholders::_2));
 	}
-
 }
 
 void PS_Roguelike::OnDeathBossMonster()
@@ -181,15 +181,30 @@ void PS_Roguelike::OnDeathBossMonster()
 	}
 }
 
-void PS_Roguelike::GrantAbilityToPlayer(int abilityID, int level, int keyCode)
+const PlayerAbilityInfo& PS_Roguelike::GrantAbilityToPlayer(int abilityID, int level, int keyCode)
 {
-	/* 이미 부여된 스킬이면 추가하지 않음 */
-	if (mapGrantedAbilities.find(abilityID) != mapGrantedAbilities.end())
+	auto insertResult = mapGrantedAbilities.insert({ abilityID, std::make_unique<PlayerAbilityInfo>(abilityID, level, keyCode) });
+	assert(insertResult.second && "Fail Grant Ability..");
+
+	return *insertResult.first->second;
+}
+
+const PlayerAbilityInfo& PS_Roguelike::AddAbilityLevel(int abilityID, int addLevel)
+{
+	auto findGrantedAbility = mapGrantedAbilities.find(abilityID);
+
+	assert(findGrantedAbility != mapGrantedAbilities.end() && findGrantedAbility->second && "Invalid Granted Ability");
+
+	PlayerAbilityInfo& abilityInfo = *findGrantedAbility->second;
+	const int currentLevel = abilityInfo.GetAbilityLevel();
+	const int newLevel = min(AbilityDataTable::GetAbilityData(abilityID).maxLevel, currentLevel + 1);
+
+	if (currentLevel != newLevel)
 	{
-		return;
+		abilityInfo.SetAbilityLevel(newLevel);
 	}
 
-	mapGrantedAbilities.insert({ abilityID, std::make_unique<PlayerAbilityInfo>(abilityID, level, keyCode) });
+	return abilityInfo;
 }
 
 void PS_Roguelike::OnUpdateMonsterKillNum()
@@ -225,26 +240,38 @@ void PS_Roguelike::OnUpdatePlayerMana(float currentValue, float maxValue)
 	}
 }
 
-void PS_Roguelike::OnPlayerItemGain(int itemID)
+void PS_Roguelike::OnPlayerAbilityItemGain(int abilityID)
 {
-	//TODO : 아이템에 맞는 Ability ID 찾아서 부여 또는 강화
+	/* 새로 스폰된 플레이어 폰의 체력및 체력 변경 콜백을 설정한다. */
+	std::shared_ptr<PlayerPawn> currentPlayerPawn = playerPawn.lock();
+	assert(currentPlayerPawn && "Invalid PlayerPawn");
 
-	/*auto finditerItem = mapItemlist.find(itemID);
-	if (finditerItem != mapItemlist.end())
+	auto iterGrantedAbility = mapGrantedAbilities.find(abilityID);	
+	if (iterGrantedAbility == mapGrantedAbilities.end())
 	{
-		ItemBase* findItem = finditerItem->second.get();
-		assert(findItem && "Invalid findItem");
-		findItem->SetItemNum(min(ItemDataTable::GetItemData(itemID).maxNum, findItem->GetItemNum() + 1));
-		UpdateItemListIconText(*findItem);
+		/* 부여되지 않은 스킬이면 부여 */
+		const PlayerAbilityInfo& grantedAbilityInfo = GrantAbilityToPlayer(abilityID, 1, reserveAbilityKeycode.front());
+
+		/* 예약 키코드 제거 */
+		reserveAbilityKeycode.pop();
+
+		/* Ability Icon 먼저 업데이트 */
+		UpdateAbilityIcon(grantedAbilityInfo);
+
+		/* Player Pawn에게 Ability 부여(이 과정에서 Cooltime등 Ability 정보들도 HUD에 업데이트) */
+		currentPlayerPawn->GrantAbility(grantedAbilityInfo);
 	}
 	else
 	{
-		auto insertResult = mapItemlist.insert(std::pair<int, std::unique_ptr<ItemBase>>(itemID, std::make_unique<ItemBase>(itemID, 1)));
-		ItemBase* insertItem = insertResult.first->second.get();
-		assert(insertItem && "Invalid insertItem");
+		/* 부여된 스킬이면 스킬 레벨업 */
+		const PlayerAbilityInfo& grantedAbilityInfo = AddAbilityLevel(abilityID, 1);
 
-		UpdateItemListIconText(*insertItem);
-	}*/
+		/* Ability Icon 먼저 업데이트 */
+		UpdateAbilityIcon(grantedAbilityInfo);
+
+		/* 플레이어한테 알려야 함 */
+		currentPlayerPawn->SetGrantedAbilityLevel(grantedAbilityInfo);
+	}
 }
 
 void PS_Roguelike::OnPlayerAbilityCooldownChange(const AbilityObject& ability, bool bCooldown)
@@ -270,15 +297,6 @@ void PS_Roguelike::UpdateAbilityIcon(const PlayerAbilityInfo& abilityInfo)
 		hudPlayer->UpdateAbilityIcon(abilityInfo);
 	}
 }
-
-//void PS_Roguelike::UpdateItemListIconText(const ItemBase& updateItem)
-//{
-//	HUDPlayer* hudPlayer = GetHUD<HUDPlayer>();
-//	if (hudPlayer)
-//	{
-//		hudPlayer->UpdateItemListIcon(updateItem);
-//	}
-//}
 
 void PS_Roguelike::BeginGameElapsedTimeCount()
 {

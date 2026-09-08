@@ -308,9 +308,9 @@ eFindPathResult NavigationTilemap::FindPath(std::shared_ptr<Actor> agent,
 		return eFindPathResult::Fail;
 	}
 
-	char szTmp[256] = { 0 };
+	/*char szTmp[256] = { 0 };
 	sprintf_s(szTmp, "findPathResult[%s] closenOdeCoord num[%d]\n", findPathResult == eFindPathResult::Success ? "Success" : "Throttled", static_cast<int>(mapCloseNodeCoords.size()));
-	OutputDebugStringA(szTmp);
+	OutputDebugStringA(szTmp);*/
 
 	//Success, 또는 Throttled상태에서는 마지막 탐색 지점까지의 경로를 완성한다.
 	resultPath.clear();

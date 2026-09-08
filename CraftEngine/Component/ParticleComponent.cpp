@@ -10,6 +10,13 @@ namespace Craft
 		
 	}
 
+	void ParticleComponent::BeginPlay()
+	{
+		super::BeginPlay();
+
+		UpdateParticleSystemPosition();
+	}
+
 	void ParticleComponent::Tick(float deltaTime)
 	{
 		super::Tick(deltaTime);

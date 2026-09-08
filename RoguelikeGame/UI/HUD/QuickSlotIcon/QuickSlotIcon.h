@@ -38,6 +38,8 @@ public:
 	void SetCooldownElapsed(const float elapsedTime);
 	void StopCooldown();
 	void SetGamePause(bool bPause);
+	void SetIconBottomImage(const std::wstring& bottomImage);
+	void SetIconTopImage(const std::wstring& topImage);
 
 private:
 	void UpdateCooldownTimer(const float deltaTime);
@@ -68,6 +70,12 @@ private:
 	//아이콘 이미지
 	std::wstring iconImage = L"";
 
+	//하단 출력할 정보 이미지 
+	std::wstring bottomInfoImage = L"";
+
+	//상단 출력할 정보 이미지 
+	std::wstring topInfoImage = L"";
+
 	//아이콘 이미지 색상
 	Craft::Color iconImageColorBase = Craft::Color::White;
 
@@ -75,7 +83,13 @@ private:
 	Craft::Color iconImageColorCooldown = Craft::Color::DarkGray;
 
 	//아이콘 이미지 출력 위치
-	Craft::Vector2Int iconImaeDrawPos = Craft::Vector2Int::Zero;
+	Craft::Vector2Int iconImageDrawPos = Craft::Vector2Int::Zero;
+
+	//상단 정보 이미지 출력 위치
+	Craft::Vector2Int topInfoImageDrawPos = Craft::Vector2Int::Zero;
+
+	//하단 정보 이미지 출력 위치
+	Craft::Vector2Int bottomInfoImageDrawPos = Craft::Vector2Int::Zero;
 
 	//외곽 모서리 Cooldown 만족시 색상
 	Craft::Color outlineColorBase = Craft::Color::Yellow;

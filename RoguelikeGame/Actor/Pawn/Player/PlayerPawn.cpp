@@ -5,15 +5,9 @@
 #include "Component/Attribute/PlayerAttributeComponent.h"
 #include "Component/ParticleComponent.h"
 #include "Game/State/PlayerState/PlayerAbilityInfo.h"
-
-
-
 #include "Actor/FieldItem/FieldSkillItem.h"
-#include "Item/ItemData/ItemDataTable.h"
 #include "Game/State/GameMode/GM_Roguelike.h"
-
 #include <Math/define.h>
-
 #include <StaticLibrary/StaticFunctionLibrary.h>
 #include <Engine/Engine.h>
 #include <Engine/Config/ConfigBase.h>
@@ -21,6 +15,8 @@
 #include <Math/Vector2Float.h>
 #include <cassert>
 #include <Windows.h>
+
+
 
 using namespace Craft;
 
@@ -129,39 +125,18 @@ void PlayerPawn::SetManaChangeEventCallback(OnChangeManaType callback)
 	onChangeManaEvent = callback;
 }
 
-void PlayerPawn::GainSkillItem(std::shared_ptr<FieldSkillItem> gainItem)
+void PlayerPawn::GainAbilityItem(const FieldSkillItem& gainItem)
 {
-	assert(gainItem && "Invalid gainItem..");
+	const int gainAbilityID = gainItem.GetItemAbilityID();
 
-	//const int gainItemID = gainItem->GetItemID();
-
-	//const ItemData& gainItemData = ItemDataTable::GetItemData(gainItemID);
-	//auto iterfindGrantAbility = grantProjectileAbilities.find(gainItemData.abilityID);
-	//if (iterfindGrantAbility == grantProjectileAbilities.end())
-	//{
-	//	//획득한 스킬 아이템으로 Ability 추가
-	//	GrantAbility(gainItemData.abilityID, 1);
-	//}
-	//else
-	//{
-	//	/* 기존 Ability 강화 */
-	//	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
-	//	assert(abilitySystemComponent && "Invalid abilitySystemComponent");
-
-	//	AbilityObject* grantedAbility = abilitySystemComponent->GetAbility<AbilityObject>(*iterfindGrantAbility);
-	//	assert(grantedAbility && "Invalid grantedAbility");
-
-	//	grantedAbility->SetAbilityLevel(min(gainItemData.maxNum, grantedAbility->GetAbilityLevel() + 1));
-	//}
-
-	///* 아이템 획득했음을 알림 */
-	//if (onItemGainEvent)
-	//{
-	//	onItemGainEvent(gainItemID);
-	//}
+	/* 아이템 획득했음을 알림 */
+	if (onItemGainEvent)
+	{
+		onItemGainEvent(gainAbilityID);
+	}
 }
 
-void PlayerPawn::SetOnItemGainEvent(OnItemGainEventType callback)
+void PlayerPawn::SetOnAbilityItemGainEvent(OnItemGainEventType callback)
 {
 	onItemGainEvent = callback;
 }
@@ -196,6 +171,37 @@ void PlayerPawn::GrantAbility(const PlayerAbilityInfo& abilityInfo)
 
 		grantedAbility->SetCooldownElapsedTime(cooldownElapsedTime);
 	}
+}
+
+void PlayerPawn::SetGrantedAbilityLevel(const PlayerAbilityInfo& abilityInfo)
+{
+	std::shared_ptr<AbilitySystemComponent> abilitySystemComponent = GetAbilitySystemComponent();
+	assert(abilitySystemComponent && "Invalid abilitySystemComponent");
+
+	AbilityObject* grantedAbility = abilitySystemComponent->GetAbility<AbilityObject>(abilityInfo.GetAbilityID());
+	assert(grantedAbility && "Invalid grantedAbility");
+
+	grantedAbility->SetAbilityLevel(abilityInfo.GetAbilityLevel());
+}
+
+void PlayerPawn::IncreasesMaxHealth(float amount)
+{
+	if (!playerAttributeComponent)
+	{
+		return;
+	}
+
+	playerAttributeComponent->SetMaxHealth(playerAttributeComponent->GetMaxHealth() + amount);
+}
+
+void PlayerPawn::IncreasesMaxMana(float amount)
+{
+	if (!playerAttributeComponent)
+	{
+		return;
+	}
+
+	playerAttributeComponent->SetMaxMana(playerAttributeComponent->GetMaxMana() + amount);
 }
 
 void PlayerPawn::ConsumeMana(float consumeValue)

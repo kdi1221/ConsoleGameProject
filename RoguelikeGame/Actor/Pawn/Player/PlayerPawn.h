@@ -53,13 +53,22 @@ public:
 	void SetManaChangeEventCallback(OnChangeManaType callback);
 
 	/* 플레이어가 특정 스킬 아이템 획득 */
-	void GainSkillItem(std::shared_ptr<FieldSkillItem> gainItem);
+	void GainAbilityItem(const FieldSkillItem& gainItem);
 
 	/* 플레이어가 특정 스킬 아이템 획득시 호출되는 이벤트 콜백 설정 */
-	void SetOnItemGainEvent(OnItemGainEventType callback);
+	void SetOnAbilityItemGainEvent(OnItemGainEventType callback);
 
 	/* 플레이어 폰, 특정 스킬 부여 */
 	void GrantAbility(const PlayerAbilityInfo& abilityInfo);
+
+	/* 플레이어 폰, 특정 스킬 레벨 설정 */
+	void SetGrantedAbilityLevel(const PlayerAbilityInfo& abilityInfo);
+
+	/* 최대 Health 증가 */
+	void IncreasesMaxHealth(float amount);
+
+	/* 최대 Mana 증가 */
+	void IncreasesMaxMana(float amount);
 
 public:
 	/* 마나 소모 */
