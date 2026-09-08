@@ -2,6 +2,7 @@
 #include "Level/GameLevel.h"
 #include "Level/MainMenuLevel.h"
 #include "Level/DummyLevel.h"
+#include "Level/EndingLevel.h"
 #include <Resource/ResourceManager.h>
 
 //#define _CRTDBG_MAP_ALLOC
@@ -32,12 +33,13 @@ int main(void)
 		return -1;
 	}
 	
-	//game.AddNewLevel<MainMenuLevel>();
+	game.AddNewLevel<MainMenuLevel>();
+	//game.AddNewLevel<EndingLevel>();
 
 	//테스트 : 인게임 곧바로 시작
-	game.InitializeGameSessionData();
+	//game.InitializeGameSessionData();
 	//game.AddNewLevel<GameLevel>(TilemapLevel::eLevelCategory::MAZE_BSP);
-	game.AddNewLevel<GameLevel>(TilemapLevel::eLevelCategory::BOSS_ROOM);
+	//game.AddNewLevel<GameLevel>(TilemapLevel::eLevelCategory::BOSS_ROOM);
 
 	//더미 - 프레임 테스트용
 	//game.AddNewLevel<DummyLevel>();

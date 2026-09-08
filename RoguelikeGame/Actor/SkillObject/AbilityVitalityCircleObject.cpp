@@ -47,6 +47,16 @@ void AbilityVitalityCircleObject::Tick(float deltaTime)
 	}
 }
 
+void AbilityVitalityCircleObject::Destroy()
+{
+	if (onDestroyVitalityCircleCallback)
+	{
+		onDestroyVitalityCircleCallback(*this);
+	}
+
+	super::Destroy();
+}
+
 //void AbilityVitalityCircleObject::Draw()
 //{
 //	super::Draw();
@@ -88,6 +98,11 @@ void AbilityVitalityCircleObject::SetLifeSpan(float lifeTime)
 void AbilityVitalityCircleObject::SetIntervalRegeneration(float interval)
 {
 	timerIntervalRegen.SetTargetTime(interval);
+}
+
+void AbilityVitalityCircleObject::SetOnDestroyVitalityCircleCallback(OnDestroyVitalityCircleCallbackType callback)
+{
+	onDestroyVitalityCircleCallback = callback;
 }
 
 void AbilityVitalityCircleObject::ExecuteRegeneration()

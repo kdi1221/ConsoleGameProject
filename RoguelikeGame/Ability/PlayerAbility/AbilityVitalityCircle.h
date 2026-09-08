@@ -2,11 +2,6 @@
 
 #include "Ability/AbilityObject.h"
 
-namespace Craft
-{
-	class Actor;
-}
-
 class AbilityVitalityCircleObject;
 
 //플레이어 스킬 - 회복 마법진
@@ -30,7 +25,7 @@ public:
 
 private:
 	/* 생성되었던 마법진이 파괴될때 호출 */
-	void OnSpawnedVitalityCircleActorDestroy(std::weak_ptr<Craft::Actor> destroyActor);
+	void OnSpawnedVitalityCircleActorDestroy(const AbilityVitalityCircleObject& destroyedCircle);
 
 	/* 기존 마법진 Destroy 처리 */
 	void SpawnedVitalityCircleDestroy();

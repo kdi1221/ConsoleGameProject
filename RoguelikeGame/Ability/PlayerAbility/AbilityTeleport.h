@@ -12,6 +12,9 @@ public:
 	virtual ~AbilityTeleport() = default;
 
 public:
+	/* Ability 활성화 가능 여부 */
+	virtual bool CanActivateAbility() const override;
+
 	/* Ability 활성화 */
 	virtual void ActivateAbility() override;
 

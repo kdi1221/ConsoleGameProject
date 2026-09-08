@@ -8,6 +8,7 @@
 #include "Actor/MapObject/RoomDoor.h"
 #include "Actor/MapObject/PlayerStart.h"
 #include "Actor/MapObject/NextLevel.h"
+#include "Actor/MapObject/NextBossLevel.h"
 #include "Actor/MapObject/Exit.h"
 
 #include "Actor/Pawn/Player/PlayerPawn.h"
@@ -44,6 +45,7 @@ void GM_Roguelike::OnInitializeLevel(std::weak_ptr<Craft::Level> level)
 {
 	super::OnInitializeLevel(level);
 
+	/* 타일맵, 즉 인게임 레벨일때 */
 	if (std::shared_ptr<TilemapLevel> currentTileMap = GetCurrentLevel<TilemapLevel>())
 	{
 		/* 타일맵 레벨 내에서 발생하는 이벤트들을 대기한다. */
@@ -56,28 +58,37 @@ void GM_Roguelike::OnInitializeLevel(std::weak_ptr<Craft::Level> level)
 			this,
 			std::placeholders::_1,
 			std::placeholders::_2));
+
+		if (TilemapLevel::eLevelCategory::BOSS_ROOM == currentTileMap->GetLevelCategory())
+		{
+			bEnableTeleport = false;
+		}
+		else
+		{
+			bEnableTeleport = true;
+		}
+
+		ReadyGameActorSpawn();
+		PlayerPawnSpawn();
+
+		IncrementFloorLevel();
+
+
+		/*switch (currentFloorLevel)
+		{
+		case 1:
+			Engine::Get().PlayBackgroundMusic("BGM/stage1.wav");
+			break;
+
+		case 2:
+			Engine::Get().PlayBackgroundMusic("BGM/stage2.wav");
+			break;
+
+		default:
+			Engine::Get().PlayBackgroundMusic("BGM/stage3.wav");
+			break;
+		}*/
 	}
-
-	ReadyGameActorSpawn();
-	PlayerPawnSpawn();
-
-	IncrementFloorLevel();
-
-	/*switch (currentFloorLevel)
-	{
-	case 1:
-		Engine::Get().PlayBackgroundMusic("BGM/stage1.wav");
-		break;
-
-	case 2:
-		Engine::Get().PlayBackgroundMusic("BGM/stage2.wav");
-		break;
-
-	default:
-		Engine::Get().PlayBackgroundMusic("BGM/stage3.wav");
-		break;
-	}*/
-	
 }
 
 void GM_Roguelike::OnDestroyedCurrentLevel()
@@ -597,9 +608,16 @@ void GM_Roguelike::OnPlayerVisitedNextRoom(const Room& visitRoom, const Craft::V
 
 	const RoomSpace& visitRoomSpace = visitRoom.GetRoomSpace();
 
-	//다음 층으로 이동할 입구 오브젝트 생성
+	//다음 층, 또는 보스방으로 이동할 입구 오브젝트 생성
 	const Vector2Int& selectTilePos = visitRoomSpace.GetPositionCenter();
-	level->SpawnActor<NextLevel>(selectTilePos);
+	if (currentFloorLevel == connectBossLevelFloor)
+	{
+		level->SpawnActor<NextBossLevel>(selectTilePos);
+	}
+	else
+	{
+		level->SpawnActor<NextLevel>(selectTilePos);
+	}
 }
 
 void GM_Roguelike::OnPlayerVisitedBossRoom(const Room& visitRoom, const Craft::Vector2Int& playerPosition)
@@ -637,13 +655,11 @@ void GM_Roguelike::OnPlayerVisitedBossRoom(const Room& visitRoom, const Craft::V
 	/* 보스가 사망했을때의 이벤트 설정 */
 	spawnedBossActor->SetDeathEventCallback(std::bind(&GM_Roguelike::OnEventBossDeath, this, std::placeholders::_1));
 
-	/* 생성된 NPC가 사망했을때의 이벤트 설정 */
-	//spawnedNPC->SetDeathEventCallback(std::bind(&GM_Roguelike::OnEventNPCDeath, this, std::placeholders::_1));
-
-
-
 	/* 전투 진행여부 설정 */
 	bBattleRoomProcess = true;
+
+	/* 플레이어 텔레포트 사용 가능 여부 */
+	bEnableTeleport = true;
 }
 
 void GM_Roguelike::OnRoomBattleEnd()

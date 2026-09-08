@@ -35,7 +35,7 @@ private:
 
 	Craft::Vector2Int positionLT = Craft::Vector2Int::Zero;
 	int menuWidth = 30;
-	int menuHeight = 10;
+	int menuHeight = 11;
 
 	int currentIndex = 0;
 	Craft::Color selectedColor = Craft::Color::Yellow;

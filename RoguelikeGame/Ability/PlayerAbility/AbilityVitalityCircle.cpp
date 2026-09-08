@@ -85,7 +85,7 @@ void AbilityVitalityCircle::ActivateAbility()
 	spawnedVitalityCircle->SetManaRegeneration(8.f);
 	spawnedVitalityCircle->SetLifeSpan(10.f);
 	spawnedVitalityCircle->SetIntervalRegeneration(0.5f);
-	spawnedVitalityCircle->SetOnDestroyedCallback(std::bind(&AbilityVitalityCircle::OnSpawnedVitalityCircleActorDestroy, this, std::placeholders::_1));
+	spawnedVitalityCircle->SetOnDestroyVitalityCircleCallback(std::bind(&AbilityVitalityCircle::OnSpawnedVitalityCircleActorDestroy, this, std::placeholders::_1));
 
 	spawnedCircleObject = spawnedVitalityCircle;
 
@@ -103,16 +103,9 @@ void AbilityVitalityCircle::CancelAbility()
 	super::CancelAbility();
 }
 
-void AbilityVitalityCircle::OnSpawnedVitalityCircleActorDestroy(std::weak_ptr<Actor> destroyActor)
+void AbilityVitalityCircle::OnSpawnedVitalityCircleActorDestroy(const AbilityVitalityCircleObject& destroyedCircle)
 {
-	std::shared_ptr<AbilityVitalityCircleObject> destroyCircleActor = Cast<AbilityVitalityCircleObject>(destroyActor.lock());
-	std::shared_ptr<AbilityVitalityCircleObject> spawnedCircleActor = spawnedCircleObject.lock();
-
-	if (destroyCircleActor)
-	{
-		assert(spawnedCircleActor == destroyCircleActor && "spawnedCircleActor != destroyCircleActor");
-		spawnedCircleObject.reset();
-	}
+	spawnedCircleObject.reset();
 }
 
 void AbilityVitalityCircle::SpawnedVitalityCircleDestroy()
@@ -124,7 +117,7 @@ void AbilityVitalityCircle::SpawnedVitalityCircleDestroy()
 	}
 
 	/* 기존에 생성했던 마법진에 연결된 콜백을 초기화한다.*/
-	spawnedVitalityCircle->SetOnDestroyedCallback(nullptr);
+	spawnedVitalityCircle->SetOnDestroyVitalityCircleCallback(nullptr);
 	spawnedVitalityCircle->Destroy();
 
 	/* Destroy 후 초기화 */

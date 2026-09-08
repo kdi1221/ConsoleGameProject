@@ -31,8 +31,8 @@ private:
 	std::vector<std::unique_ptr<FMenuItem>> menuList;
 
 	Craft::Vector2Int positionLT = Craft::Vector2Int::Zero;
-	int menuWidth = 30;
-	int menuHeight = 7;
+	int menuWidth = 40;
+	int menuHeight = 8;
 
 	int currentIndex = 0;
 	Craft::Color selectedColor = Craft::Color::Yellow;

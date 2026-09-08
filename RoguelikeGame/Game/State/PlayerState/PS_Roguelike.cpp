@@ -60,30 +60,31 @@ void PS_Roguelike::OnDestroyedCurrentLevel()
 
 	/* PlayerPawn의 Ability Cooltime 저장 */
 	std::shared_ptr<PlayerPawn> currentPlayerPawn = playerPawn.lock();
-	assert(currentPlayerPawn && "Invalid PlayerPawn");
-
-	std::shared_ptr<AbilitySystemComponent> playerPawnASC = currentPlayerPawn->GetComponent<AbilitySystemComponent>();
-	assert(playerPawnASC && "Invalid PlayerPawnASC");
-
-	for (auto& grantedAbility : mapGrantedAbilities)
+	if (currentPlayerPawn)
 	{
-		AbilityObject* findAbilityObject = playerPawnASC->GetAbility<AbilityObject>(grantedAbility.first);
-		assert(findAbilityObject && "Invalid abilityObject");
+		std::shared_ptr<AbilitySystemComponent> playerPawnASC = currentPlayerPawn->GetComponent<AbilitySystemComponent>();
+		assert(playerPawnASC && "Invalid PlayerPawnASC");
 
-		std::unique_ptr<PlayerAbilityInfo>& playerAbilityInfo = grantedAbility.second;
-		assert(playerAbilityInfo && "Invalid playerAbilityInfo");
-
-		if (findAbilityObject->IsCooldown())
+		for (auto& grantedAbility : mapGrantedAbilities)
 		{
-			playerAbilityInfo->SaveCooldownElapsedTime(findAbilityObject->GetCooldownElapsedTime());
-		}
-		else
-		{
-			playerAbilityInfo->ResetCooldownElapsedTime();
-		}
-	}
+			AbilityObject* findAbilityObject = playerPawnASC->GetAbility<AbilityObject>(grantedAbility.first);
+			assert(findAbilityObject && "Invalid abilityObject");
 
-	playerPawn.reset();
+			std::unique_ptr<PlayerAbilityInfo>& playerAbilityInfo = grantedAbility.second;
+			assert(playerAbilityInfo && "Invalid playerAbilityInfo");
+
+			if (findAbilityObject->IsCooldown())
+			{
+				playerAbilityInfo->SaveCooldownElapsedTime(findAbilityObject->GetCooldownElapsedTime());
+			}
+			else
+			{
+				playerAbilityInfo->ResetCooldownElapsedTime();
+			}
+		}
+
+		playerPawn.reset();
+	}	
 }
 
 void PS_Roguelike::OnSpawnedPlayerPawn(std::weak_ptr<PlayerPawn> pawn)

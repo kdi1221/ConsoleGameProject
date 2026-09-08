@@ -15,6 +15,9 @@ class AbilityVitalityCircleObject : public SkillObject
 	TYPE_DECLARATIONS(AbilityVitalityCircleObject, SkillObject)
 
 public:
+	using OnDestroyVitalityCircleCallbackType = std::function<void(const AbilityVitalityCircleObject&)>;
+
+public:
 	AbilityVitalityCircleObject(const Craft::Vector2Int& position);
 	virtual ~AbilityVitalityCircleObject() = default;
 
@@ -22,6 +25,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
 	//virtual void Draw() override;
+	virtual void Destroy() override;
 
 public:
 	void SetInstigatorTeamID(eTeamID teamID);
@@ -30,6 +34,8 @@ public:
 	void SetManaRegeneration(float rate);
 	void SetLifeSpan(float lifeTime);
 	void SetIntervalRegeneration(float interval);
+	void SetOnDestroyVitalityCircleCallback(OnDestroyVitalityCircleCallbackType callback);
+
 	
 private:
 	void ExecuteRegeneration();
@@ -52,6 +58,9 @@ private:
 
 	/* 회복 주기 */
 	Timer timerIntervalRegen;
+
+	/* Destroy시 호출되는 콜백 */
+	OnDestroyVitalityCircleCallbackType onDestroyVitalityCircleCallback;
 
 private:
 	/* 마법진 표시 파티클 컴포넌트 */

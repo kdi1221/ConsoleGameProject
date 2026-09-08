@@ -5,6 +5,8 @@
 #include "Ability/NPCAbility/Boss/AbilitySummon.h"
 #include "Ability/NPCAbility/Boss/AbilityShockWave.h"
 #include "Ability/NPCAbility/Boss/AbilityEnergyBeam.h"
+#include "Actor/MapObject/NextEndingLevel.h"
+#include <Level/Level.h>
 #include <Util/Util.h>
 #include <Render/Renderer.h>
 #include <Resource/ResourceManager.h>
@@ -158,6 +160,18 @@ void BossOneEye::Draw()
 			renderer.Submit(outlineImage.lineImages[downOutlineIndex].image, drawLinePos, outlineImage.drawColor, static_cast<int>(eRenderSortingOrder::Boss));
 		}
 	}
+}
+
+void BossOneEye::Destroy()
+{
+	/* 자신의 위치에 EngineLevel 액터 생성 */
+	std::shared_ptr<Level> level = GetOwner();
+	if (level)
+	{
+		level->SpawnActor<NextEndingLevel>(GetWorldPosition());
+	}
+
+	super::Destroy();
 }
 
 void BossOneEye::ForEachOccupiedTileOffset(std::function<void(const Craft::Vector2Int&)> callbackFunc) const

@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -111,6 +111,8 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Ability\PlayerAbility\AbilityTeleport.cpp" />
     <ClCompile Include="Ability\PlayerAbility\AbilityVitalityCircle.cpp" />
     <ClCompile Include="Actor\ActorOnTile.cpp" />
+    <ClCompile Include="Actor\MapObject\NextBossLevel.cpp" />
+    <ClCompile Include="Actor\MapObject\NextEndingLevel.cpp" />
     <ClCompile Include="Actor\Pawn\NPC\Boss\BossOneEye.cpp" />
     <ClCompile Include="Actor\FieldItem\FieldItem.cpp" />
     <ClCompile Include="Actor\FieldItem\FieldSkillItem.cpp" />
@@ -141,6 +143,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Actor\SkillObject\AbilityShockWaveActor.cpp" />
     <ClCompile Include="Actor\SkillObject\AbilityVitalityCircleObject.cpp" />
     <ClCompile Include="Actor\SkillObject\SkillObjectActor.cpp" />
+    <ClCompile Include="Level\EndingLevel.cpp" />
     <ClCompile Include="Particle\ParticleSystemOnTilemap.cpp" />
     <ClCompile Include="Particle\ParticleSystemVitalityCircle.cpp" />
     <ClCompile Include="Particle\PSEnergyBeam.cpp" />
@@ -201,6 +204,8 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Ability\PlayerAbility\AbilityTeleport.h" />
     <ClInclude Include="Ability\PlayerAbility\AbilityVitalityCircle.h" />
     <ClInclude Include="Actor\ActorOnTile.h" />
+    <ClInclude Include="Actor\MapObject\NextBossLevel.h" />
+    <ClInclude Include="Actor\MapObject\NextEndingLevel.h" />
     <ClInclude Include="Actor\Pawn\NPC\Boss\BossOneEye.h" />
     <ClInclude Include="Actor\FieldItem\FieldItem.h" />
     <ClInclude Include="Actor\FieldItem\FieldSkillItem.h" />
@@ -231,6 +236,7 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Actor\SkillObject\AbilityShockWaveActor.h" />
     <ClInclude Include="Actor\SkillObject\AbilityVitalityCircleObject.h" />
     <ClInclude Include="Actor\SkillObject\SkillObjectActor.h" />
+    <ClInclude Include="Level\EndingLevel.h" />
     <ClInclude Include="Particle\ParticleDefines.h" />
     <ClInclude Include="Particle\ParticleSystemOnTilemap.h" />
     <ClInclude Include="Particle\ParticleSystemVitalityCircle.h" />

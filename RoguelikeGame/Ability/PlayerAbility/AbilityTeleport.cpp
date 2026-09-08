@@ -17,6 +17,22 @@ AbilityTeleport::AbilityTeleport(ABILITY_ID_TYPE id, int level)
 	SetManaCost(5.f);
 }
 
+bool AbilityTeleport::CanActivateAbility() const
+{
+	if (!super::CanActivateAbility())
+	{
+		return false;
+	}
+
+	GM_Roguelike* gameMode = Engine::Get().GetGameMode<GM_Roguelike>();
+	if (!gameMode)
+	{
+		return false;
+	}
+
+	return gameMode->IsEnablePlayerTeleport();
+}
+
 void AbilityTeleport::ActivateAbility()
 {
 	super::ActivateAbility();
@@ -79,13 +95,8 @@ void AbilityTeleport::ActivateAbility()
 		iterlastMoveEnableTileCoord = iterMoveNextTileCoord;
 	}
 
-
 	/* Owner Pawn의 위치 이동 */
 	ownerPawn->SetPosition(*iterlastMoveEnableTileCoord);
-	
-	//TODO : 소환수들도 같이 움직여야 함
-
-
 
 	/* 사운드 재생 */
 	Engine::Get().PlayOneShot("Effect/teleport.wav");

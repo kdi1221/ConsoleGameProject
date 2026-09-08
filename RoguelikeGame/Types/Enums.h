@@ -97,9 +97,6 @@ enum class eRenderSortingOrder : int
 	//타일
 	Tile = 0,
 
-	//보스
-	Boss,
-
 	//필드 내 존재하는 아이템
 	FieldItem,
 
@@ -123,6 +120,9 @@ enum class eRenderSortingOrder : int
 
 	//폰
 	Pawn,
+
+	//보스
+	Boss,
 
 	//UI
 	UI

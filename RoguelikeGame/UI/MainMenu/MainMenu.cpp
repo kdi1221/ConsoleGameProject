@@ -35,7 +35,7 @@ void MainMenu::CreateMenu(std::weak_ptr<Craft::Level> activeLevel)
 	const int viewHeight = configBase.GetDisplayHeight();
 
 	positionLT.x = halfWidth - (menuWidth >> 1);
-	positionLT.y = viewHeight - menuHeight - 7;
+	positionLT.y = viewHeight - menuHeight - 10;
 
 	/* Background 위젯 */
 	std::shared_ptr<BackgroundWidget> ingameBackground = level->CreateWidget<BackgroundWidget>(positionLT, menuWidth, menuHeight, Color::Yellow);
@@ -91,7 +91,9 @@ void MainMenu::Draw()
 		Color textColor = (ix == currentIndex) ? selectedColor : unselectedColor;
 
 		// 메뉴 목록 그리기
-		int drawXPos = positionLT.x + menuHalfWidth - (static_cast<int>(menuList[ix]->text.length()) >> 1);
+		const int textWidth = static_cast<int>(menuList[ix]->text.length());
+		const int drawXPos = positionLT.x + (menuWidth - textWidth) / 2;
+
 
 		const Vector2Int drawMenuPos(drawXPos, positionLT.y + 2 + (ix * 3));
 		Renderer::Get().SubmitUI(menuList[ix]->text, drawMenuPos, textColor, static_cast<int>(eRenderSortingOrder::UI));

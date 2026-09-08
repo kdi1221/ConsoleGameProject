@@ -34,6 +34,7 @@ public:
 private:
 	virtual void Tick(float deltaTime) override;
 	virtual void Draw() override;
+	virtual void Destroy() override;
 
 	/* 점유하는 타일 좌표들에 대한 조회 */
 	virtual void ForEachOccupiedTileOffset(std::function<void(const Craft::Vector2Int&)> callbackFunc) const override;

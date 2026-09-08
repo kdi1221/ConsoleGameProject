@@ -48,6 +48,9 @@ public:
 	/* 전투방 내에서 전투 진행 여부 */
 	inline bool IsBattleRoomProcess() const { return bBattleRoomProcess; }
 
+	/* 현재 텔레포트 사용 가능 여부 */
+	inline bool IsEnablePlayerTeleport() const { return bEnableTeleport; }
+
 private:
 	/* 플레이어 상태 객체 생성 */
 	virtual std::unique_ptr<Craft::PlayerState> CreatePlayerState() const override;
@@ -122,7 +125,13 @@ private:
 
 	/* 현재 진행 층수 */
 	int currentFloorLevel = 0;
+
+	/* 보스 층과 연결된 층수 */
+	int connectBossLevelFloor = 3;
 	
 	/* 현재 층에서 다음 레벨로 향하는 방의 입구 타일 위치 */
 	Craft::Vector2Int nextFloorRoomDoorPos = Craft::Vector2Int::Zero;
+
+	/* 플레이어의 텔레포트 사용 가능 여부(보스 연출등에서는 사용 불가) */
+	bool bEnableTeleport = false;
 };

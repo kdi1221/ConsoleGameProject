@@ -89,6 +89,20 @@ void AbilityEnergyBeam::ActivateAbility()
 	}
 }
 
+void AbilityEnergyBeam::CancelAbility()
+{
+	for (auto& iterEnergyBeamObejct : spawnedBeamActors)
+	{
+		if (std::shared_ptr<AbilityEnergyBeamObject> spawendBeamObejct = iterEnergyBeamObejct.second)
+		{
+			spawendBeamObejct->SetOnDestroyBeamCallback(nullptr);
+			spawendBeamObejct->Destroy();
+		}	
+	}
+
+	super::CancelAbility();
+}
+
 void AbilityEnergyBeam::OnEnergyBeamObjectDestroyed(const AbilityEnergyBeamObject& destroyBeamObject)
 {
 	spawnedBeamActors.erase(destroyBeamObject.GetBeamIndex());

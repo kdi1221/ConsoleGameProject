@@ -48,6 +48,9 @@ public:
 	/* Ability 활성화 */
 	virtual void ActivateAbility() override;
 
+	/* Ability 취소 */
+	virtual void CancelAbility() override;
+
 private:
 	void OnEnergyBeamObjectDestroyed(const AbilityEnergyBeamObject& destroyBeamObject);
 

@@ -74,7 +74,7 @@ void AbilityEnergyBeamObject::BeginPlay()
 	const int range = 10;
 	assert(particleComponent && "Invalid particleComponent");
 	std::shared_ptr<PSEnergyBeam> spawnedParticleSystem = std::make_shared<PSEnergyBeam>();
-	spawnedParticleSystem->SetBeamRange(currentRange);
+	spawnedParticleSystem->SetBeamRange(static_cast<int>(currentRange));
 	spawnedParticleSystem->SetCurrentBeamExpandMode(beamExpandMode);
 	spawnedParticleSystem->SetBeamProgressDirection(progressDirection);
 	spawnedParticleSystem->SetBeamVerticalRange(beamVerticalRange);
@@ -228,7 +228,7 @@ void AbilityEnergyBeamObject::ExpandBeamRect(float deltaTime)
 
 	if (std::shared_ptr<PSEnergyBeam> psEnergyBeamPtr = psEnergyBeam.lock())
 	{
-		psEnergyBeamPtr->SetBeamRange(currentRange);
+		psEnergyBeamPtr->SetBeamRange(static_cast<int>(currentRange));
 	}
 }
 

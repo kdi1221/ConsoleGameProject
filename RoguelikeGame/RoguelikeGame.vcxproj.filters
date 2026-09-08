@@ -276,6 +276,15 @@
     <ClCompile Include="Particle\PSEnergyBeam.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Actor\MapObject\NextBossLevel.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Level\EndingLevel.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\MapObject\NextEndingLevel.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Level\TestLevel.h">
@@ -555,6 +564,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Particle\ParticleDefines.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\MapObject\NextBossLevel.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Level\EndingLevel.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\MapObject\NextEndingLevel.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

@@ -9,13 +9,16 @@ using namespace Craft;
 
 static const std::wstring titleAsciiArts[] =
 {
- L" _____    ____    _____  _    _  ______    __          __ _____  ______     ___      _____   _____",
- L"|  __ ⧵  / __ ⧵  / ____|| |  | ||  ____|   ⧵ ⧵        / /|_   _||___  /    /   ⧵    |  __ ⧵ |  __ ⧵ ",
- L"| |__) || |  | || |  __ | |  | || |__       ⧵ ⧵  /⧵  / /   | |     / /    /  ^  ⧵   | |__) || |  | |",
- L"|  _  / | |  | || | |_ || |  | ||  __|       ⧵ ⧵/  ⧵/ /    | |    / /    /  /_⧵  ⧵  |  _  / | |  | |",
- L"| | ⧵ ⧵ | |__| || |__| || |__| || |____       ⧵  /⧵  /    _| |_  / /__  /  _____  ⧵ | | ⧵ ⧵ | |__| |",
- L"|_|  ⧵_⧵ ⧵____/  ⧵_____| ⧵____/ |______|       ⧵/  ⧵/    |_____|/_____|/__/     ⧵__⧵|_|  ⧵_⧵|_____/ ",
- L"                                                                       |__|     |__|                "
+	L"████████      ██████      ██████    ██      ██  ██████████        ██      ██  ██████  ██████████    ██████    ████████    ████████",
+	L"████████      ██████      ██████    ██      ██  ██████████        ██      ██  ██████  ██████████    ██████    ████████    ████████",
+	L"██      ██  ██      ██  ██          ██      ██  ██                ██      ██    ██          ██    ██      ██  ██      ██  ██      ██",
+	L"██      ██  ██      ██  ██          ██      ██  ██                ██      ██    ██          ██    ██      ██  ██      ██  ██      ██",
+	L"████████    ██      ██  ██    ████  ██      ██  ████████          ██  ██  ██    ██        ██      ██████████  ████████    ██      ██",
+	L"████████    ██      ██  ██    ████  ██      ██  ████████          ██  ██  ██    ██        ██      ██████████  ████████    ██      ██",
+	L"██    ██    ██      ██  ██      ██  ██      ██  ██                ████  ████    ██      ██        ██      ██  ██    ██    ██      ██",
+	L"██    ██    ██      ██  ██      ██  ██      ██  ██                ████  ████    ██      ██        ██      ██  ██    ██    ██      ██",
+	L"██      ██    ██████      ██████      ██████    ██████████        ██      ██  ██████  ██████████  ██      ██  ██      ██  ████████",
+	L"██      ██    ██████      ██████      ██████    ██████████        ██      ██  ██████  ██████████  ██      ██  ██      ██  ████████"
 };
 
 MainMenuLevel::MainMenuLevel()
@@ -33,8 +36,8 @@ void MainMenuLevel::OnInitialized()
 	mainMenu = std::make_unique<MainMenu>();
 	assert(mainMenu && "Invalid mainMenu");
 	mainMenu->CreateMenu(weak_from_this());
-	mainMenu->AddMenuItem(L"Play Game", std::bind(&MainMenuLevel::OnPlay, this));
-	mainMenu->AddMenuItem(L"Quit", std::bind(&MainMenuLevel::OnQuitGame, this));
+	mainMenu->AddMenuItem(L"PLAY GAME", std::bind(&MainMenuLevel::OnPlay, this));
+	mainMenu->AddMenuItem(L"EXIT GAME", std::bind(&MainMenuLevel::OnQuitGame, this));
 
 	Engine::Get().PlayBackgroundMusic("BGM/Mainmenu.wav");
 }
