@@ -2,6 +2,7 @@
 #include "Actor/Projectile/SpiritBall/ProjectileSpiritBall.h"
 #include "Actor/Projectile/FireBall/ProjectileFireBall.h"
 #include "Actor/Pawn/Pawn.h"
+#include "Engine/Engine.h"
 #include <Level/Level.h>
 #include <cassert>
 
@@ -10,8 +11,8 @@ using namespace Craft;
 AbilityShotSpiritBall::AbilityShotSpiritBall(ABILITY_ID_TYPE id, int level)
 	:super(id, level)
 {
-	SetCooldownTime(0.5f);
-	SetManaCost(3.f);
+	SetCooldownTime(0.7f);
+	SetManaCost(5.f);
 }
 
 void AbilityShotSpiritBall::ActivateAbility()
@@ -86,6 +87,8 @@ void AbilityShotSpiritBall::ActivateAbility()
 		/* 생성된 Projectile의 LifeSpan 지정 */
 		spawnedProjectile->SetLifeSpan(1.f);
 	}
+
+	Engine::Get().PlayOneShot("Effect/firecast.wav");
 
 	EndAbility(false);
 }

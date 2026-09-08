@@ -46,6 +46,8 @@ void EndingLevel::OnInitialized()
 	mainMenu->CreateMenu(weak_from_this());
 	mainMenu->AddMenuItem(L"RETURN TO TITLE ", std::bind(&EndingLevel::OnReturnTitle, this));
 	mainMenu->AddMenuItem(L"EXIT GAME", std::bind(&EndingLevel::OnExitGame, this));
+
+	Engine::Get().PlayBackgroundMusic("BGM/Ending.wav");
 }
 
 void EndingLevel::Tick(float deltaTime)

@@ -2,6 +2,7 @@
 #include "ProjectileIceBolt.h"
 #include "Actor/Pawn/Pawn.h"
 #include "Actor/MapObject/RoomDoor.h"
+#include "Actor/Pawn/NPC/Boss/BossOneEye.h"
 #include <Component/SpriteRendererComponent.h>
 #include <Math/Vector2Float.h>
 #include <Level/Level.h>
@@ -77,6 +78,12 @@ bool ProjectileFrozenOrb::OnBlockActor(std::shared_ptr<ActorOnTile> blockingActo
 		/* 충돌한 다른 Pawn에게 데미지 적용 */
 		setDamagedPawns.insert(pawnUniqueID);
 		blockingPawn->TakeDamage(GetDamageValue());
+
+		/* 보스의 경우 뚫고 들어가지 못하게 함 */
+		if (blockingPawn->IsTypeOf<BossOneEye>())
+		{
+			return true;
+		}
 	}
 
 	/* 그 외 충돌은 모두 지나가게 함*/

@@ -45,11 +45,11 @@ public:
 	// 재생 중인 오디오 중지 함수.
 	void StopBackgroundMusic();
 
-private:
 	// 파일 경로 기준으로 효과음을 캐시에 로드.
 	// 이미 로드된 파일이면 재로딩하지 않음.
 	void LoadSoundEffect(const std::string& filename);
 
+private:
 	// 재생이 끝난 원샷 보이스를 정리해 메모리 누수 방지.
 	void CleanupStoppedVoices();
 

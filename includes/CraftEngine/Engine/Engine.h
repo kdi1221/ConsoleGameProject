@@ -48,6 +48,9 @@ namespace Craft
 		void PlayBackgroundMusic(const std::string& filename);
 		void StopBackgroundMusic();
 
+		//사운드 로드 함수
+		void LoadSound(const std::string& filename);
+
 		//게임 세션 상태 데이터(게임모드, 플레이어 상태 등) 생성
 		void InitializeGameSessionData();
 

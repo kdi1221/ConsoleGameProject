@@ -185,6 +185,16 @@ namespace Craft
 		sound->StopBackgroundMusic();
 	}
 
+	void Engine::LoadSound(const std::string& filename)
+	{
+		if (!sound)
+		{
+			return;
+		}
+
+		sound->LoadSoundEffect(std::string("../Assets/Sound/") + filename);
+	}
+
 	void Engine::InitializeGameSessionData()
 	{
 		gameMode = CreateGameMode();

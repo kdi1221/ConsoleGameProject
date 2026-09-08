@@ -13,8 +13,8 @@ using namespace Craft;
 AbilityTeleport::AbilityTeleport(ABILITY_ID_TYPE id, int level)
 	:super(id, level)
 {
-	SetCooldownTime(0.5f);
-	SetManaCost(5.f);
+	SetCooldownTime(0.8f);
+	SetManaCost(10.f);
 }
 
 bool AbilityTeleport::CanActivateAbility() const
@@ -54,8 +54,11 @@ void AbilityTeleport::ActivateAbility()
 	const Vector2Int& prevPosition = ownerPawn->GetWorldPosition();
 	const RoomDefines::UNIQUE_INDEX_TYPE ownerRoomIndex = tilemapLevel->GetRoomIndexInTile(prevPosition);
 
+	/* 레벨에 따른 텔레포트 이동 거리 조절 */
+	const float range = 10.f + (static_cast<float>(GetAbilityLevel()) * 7.f);
+
 	/* 텔레포트 목표 지점 */
-	const Vector2Int destinationPosition = prevPosition + static_cast<Vector2Int>(aimingDirection * maxRange);
+	const Vector2Int destinationPosition = prevPosition + static_cast<Vector2Int>(aimingDirection * range);
 
 	//브레젠험 직선그리기로 도착지점까지의 경로 타일들을 구한다.
 	std::vector<Vector2Int> pathTiles;

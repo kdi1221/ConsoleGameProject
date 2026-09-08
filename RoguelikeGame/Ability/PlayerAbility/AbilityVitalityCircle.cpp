@@ -10,7 +10,7 @@ using namespace Craft;
 AbilityVitalityCircle::AbilityVitalityCircle(ABILITY_ID_TYPE id, int level)
 	:super(id, level)
 {
-	SetCooldownTime(5.f);
+	SetCooldownTime(4.f);
 	SetManaCost(25.f);
 }
 
@@ -77,14 +77,42 @@ void AbilityVitalityCircle::ActivateAbility()
 	/* owner의 Team ID*/
 	eTeamID instigatorTeamID = ownerPawn->GetTeamID();
 
+	float healthRegen = 7.f;
+	float manaRegen = 6.f;
+	float circleLifeSpan = 10.f;
+	float intervalRegen = 0.4f;
+	switch (GetAbilityLevel())
+	{
+	case 1:
+		healthRegen = 3.f;
+		manaRegen = 2.f;
+		circleLifeSpan = 6.f;
+		intervalRegen = 0.5f;
+		break;
+
+	case 2:
+		healthRegen = 5.f;
+		manaRegen = 4.f;
+		circleLifeSpan = 8.f;
+		intervalRegen = 0.5f;
+		break;
+
+	default:
+		healthRegen = 7.f;
+		manaRegen = 6.f;
+		circleLifeSpan = 10.f;
+		intervalRegen = 0.4f;
+		break;
+	}
+
 	//지정한 위치에 회복진 생성
 	std::shared_ptr<AbilityVitalityCircleObject> spawnedVitalityCircle = currentLevel->SpawnActor<AbilityVitalityCircleObject>(spawnLocation);
 	spawnedVitalityCircle->SetInstigatorTeamID(instigatorTeamID);
 	spawnedVitalityCircle->SetlimitRange(12.f);
-	spawnedVitalityCircle->SetHealthRegeneration(8.f);
-	spawnedVitalityCircle->SetManaRegeneration(8.f);
-	spawnedVitalityCircle->SetLifeSpan(10.f);
-	spawnedVitalityCircle->SetIntervalRegeneration(0.5f);
+	spawnedVitalityCircle->SetHealthRegeneration(healthRegen);
+	spawnedVitalityCircle->SetManaRegeneration(manaRegen);
+	spawnedVitalityCircle->SetLifeSpan(circleLifeSpan);
+	spawnedVitalityCircle->SetIntervalRegeneration(intervalRegen);
 	spawnedVitalityCircle->SetOnDestroyVitalityCircleCallback(std::bind(&AbilityVitalityCircle::OnSpawnedVitalityCircleActorDestroy, this, std::placeholders::_1));
 
 	spawnedCircleObject = spawnedVitalityCircle;

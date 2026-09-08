@@ -226,6 +226,14 @@ void BossOneEye::OnActivateAbility(const AbilityObject& ability, bool bActivate)
 	super::OnActivateAbility(ability, bActivate);
 }
 
+void BossOneEye::OnDeath()
+{
+	/* 배경음 재생 중지 */
+	Engine::Get().StopBackgroundMusic();
+
+	super::OnDeath();
+}
+
 void BossOneEye::ActivateSummonAbility()
 {
 	std::shared_ptr<AbilitySystemComponent> abilitySystemComponentPtr = GetAbilitySystemComponent();

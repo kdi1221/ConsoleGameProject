@@ -3,7 +3,9 @@
 #include "Level/MainMenuLevel.h"
 #include "Level/DummyLevel.h"
 #include "Level/EndingLevel.h"
-#include <Resource/ResourceManager.h>
+#include "Level/GameOverLevel.h"
+#include "Level/LoadingLevel.h"
+//#include <Resource/ResourceManager.h>
 
 //#define _CRTDBG_MAP_ALLOC
 //#include <stdlib.h>
@@ -27,22 +29,27 @@ int main(void)
 	game.InitializeEngine();
 
 	//리소스 로드
-	ResourceManager& resourceManager = game.GetResourceManager<ResourceManager>();
+	/*ResourceManager& resourceManager = game.GetResourceManager<ResourceManager>();
 	if (!resourceManager.LoadResources())
 	{
 		return -1;
-	}
+	}*/
 	
+	game.AddNewLevel<LoadingLevel>();
+
 	//game.AddNewLevel<MainMenuLevel>();
 	
 
 	//테스트 : 인게임 곧바로 시작
-	game.InitializeGameSessionData();
-	game.AddNewLevel<GameLevel>(TilemapLevel::eLevelCategory::MAZE_BSP);
+	//game.InitializeGameSessionData();
+	//game.AddNewLevel<GameLevel>(TilemapLevel::eLevelCategory::MAZE_BSP);
 	//game.AddNewLevel<GameLevel>(TilemapLevel::eLevelCategory::BOSS_ROOM);
 
 	//테스트 : 엔딩 레벨
 	//game.AddNewLevel<EndingLevel>();
+
+	//테스트 : 게임오버 레벨
+	//game.AddNewLevel<GameOverLevel>();
 
 	//더미 - 프레임 테스트용
 	//game.AddNewLevel<DummyLevel>();

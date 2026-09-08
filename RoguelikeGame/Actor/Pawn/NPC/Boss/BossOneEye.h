@@ -48,6 +48,9 @@ private:
 	/* AbilitySystemComponent에서 Ability 활성화 되었을때 호출 */
 	virtual void OnActivateAbility(const AbilityObject& ability, bool bActivate) override;
 
+	/* Pawn의 Death 이벤트 */
+	virtual void OnDeath() override;
+
 public:
 	/* 소환 능력 활성화 */
 	void ActivateSummonAbility();

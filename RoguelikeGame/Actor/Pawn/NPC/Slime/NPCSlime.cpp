@@ -6,7 +6,7 @@
 using namespace Craft;
 
 NPCSlime::NPCSlime(const Vector2Int& position, RoomDefines::UNIQUE_INDEX_TYPE roomIndex)
-	:super(position, L"s", Color::Purple, 25.f, 5.f, 0.f, 2.f, 1.f, roomIndex)
+	:super(position, L"s", Color::Purple, 25.f, 5.f, 4.f, 2.f, 1.f, roomIndex)
 {
 
 }

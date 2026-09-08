@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -148,6 +148,8 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClCompile Include="Actor\SkillObject\AbilityVitalityCircleObject.cpp" />
     <ClCompile Include="Actor\SkillObject\SkillObjectActor.cpp" />
     <ClCompile Include="Level\EndingLevel.cpp" />
+    <ClCompile Include="Level\GameOverLevel.cpp" />
+    <ClCompile Include="Level\LoadingLevel.cpp" />
     <ClCompile Include="Particle\ParticleSystemOnTilemap.cpp" />
     <ClCompile Include="Particle\ParticleSystemVitalityCircle.cpp" />
     <ClCompile Include="Particle\PSEnergyBeam.cpp" />
@@ -246,6 +248,8 @@ xcopy ..\Library\SoundSystem\$(Configuration)\SoundSystem.dll $(OutDir)\ /e /y /
     <ClInclude Include="Actor\SkillObject\AbilityVitalityCircleObject.h" />
     <ClInclude Include="Actor\SkillObject\SkillObjectActor.h" />
     <ClInclude Include="Level\EndingLevel.h" />
+    <ClInclude Include="Level\GameOverLevel.h" />
+    <ClInclude Include="Level\LoadingLevel.h" />
     <ClInclude Include="Particle\ParticleDefines.h" />
     <ClInclude Include="Particle\ParticleSystemOnTilemap.h" />
     <ClInclude Include="Particle\ParticleSystemVitalityCircle.h" />

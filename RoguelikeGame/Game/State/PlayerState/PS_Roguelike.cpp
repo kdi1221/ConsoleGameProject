@@ -52,10 +52,10 @@ void PS_Roguelike::InitializeSessionData()
 
 	/* 초기 Ability */
 	GrantAbilityToPlayer(1, 3, VK_RBUTTON);
-	GrantAbilityToPlayer(2, 1, '1');
-	GrantAbilityToPlayer(3, 1, '2');
-	GrantAbilityToPlayer(4, 1, '3');
-	GrantAbilityToPlayer(5, 1, '4');
+	GrantAbilityToPlayer(2, 3, '1');
+	GrantAbilityToPlayer(3, 3, '2');
+	GrantAbilityToPlayer(4, 3, '3');
+	GrantAbilityToPlayer(5, 3, '4');
 }
 
 void PS_Roguelike::OnInitializeLevel(std::weak_ptr<Level> level)

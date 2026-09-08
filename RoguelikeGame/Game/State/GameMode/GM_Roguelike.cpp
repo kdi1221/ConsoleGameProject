@@ -1,6 +1,7 @@
 ﻿#include "GM_Roguelike.h"
 #include "Util/Util.h"
 #include "Level/GameLevel.h"
+#include "Level/GameOverLevel.h"
 #include "TileMap/Room/Room.h"
 #include "Tilemap/BSP/RoomSpace/RoomSpace.h"
 #include "Game/State/PlayerState/PS_Roguelike.h"
@@ -71,21 +72,27 @@ void GM_Roguelike::OnInitializeLevel(std::weak_ptr<Craft::Level> level)
 
 		IncrementFloorLevel();
 
-
-		/*switch (currentFloorLevel)
+		if (TilemapLevel::eLevelCategory::BOSS_ROOM == currentTileMap->GetLevelCategory())
 		{
-		case 1:
-			Engine::Get().PlayBackgroundMusic("BGM/stage1.wav");
-			break;
+			Engine::Get().PlayBackgroundMusic("BGM/BossIntro.wav");
+		}
+		else
+		{
+			switch (currentFloorLevel)
+			{
+			case 1:
+				Engine::Get().PlayBackgroundMusic("BGM/stage1.wav");
+				break;
 
-		case 2:
-			Engine::Get().PlayBackgroundMusic("BGM/stage2.wav");
-			break;
+			case 2:
+				Engine::Get().PlayBackgroundMusic("BGM/stage2.wav");
+				break;
 
-		default:
-			Engine::Get().PlayBackgroundMusic("BGM/stage3.wav");
-			break;
-		}*/
+			default:
+				Engine::Get().PlayBackgroundMusic("BGM/stage3.wav");
+				break;
+			}
+		}
 	}
 }
 
@@ -667,6 +674,9 @@ void GM_Roguelike::OnPlayerVisitedBossRoom(const Room& visitRoom, const Craft::V
 
 	/* 플레이어 텔레포트 사용 가능 여부 */
 	bEnableTeleport = true;
+
+	/* 보스 브금 재생 */
+	Engine::Get().PlayBackgroundMusic("BGM/BossMain.wav");
 }
 
 void GM_Roguelike::OnRoomBattleEnd()
@@ -712,7 +722,11 @@ void GM_Roguelike::OnEventNPCDeath(std::shared_ptr<Pawn> deathPawn)
 
 void GM_Roguelike::OnEventPlayerDeath(std::shared_ptr<Pawn> deathPawn)
 {
-	std::shared_ptr<GameLevel> gameLevel = GetCurrentLevel<GameLevel>();
+	Engine::Get().StopBackgroundMusic();
+
+	Engine::Get().AddNewLevel<GameOverLevel>();
+
+	/*std::shared_ptr<GameLevel> gameLevel = GetCurrentLevel<GameLevel>();
 	if (gameLevel)
 	{
 		PS_Roguelike* playerState = GetPlayerState<PS_Roguelike>();
@@ -721,7 +735,7 @@ void GM_Roguelike::OnEventPlayerDeath(std::shared_ptr<Pawn> deathPawn)
 		gameLevel->OnPlayerDeath(*playerState);
 
 		Engine::Get().PlayBackgroundMusic("BGM/defeat.wav");
-	}
+	}*/
 }
 
 void GM_Roguelike::OnEventBossDeath(std::shared_ptr<Pawn> deathPawn)
